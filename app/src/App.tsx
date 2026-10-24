@@ -1,5 +1,7 @@
 import CareerTracker from '@/components/CareerTracker'
 // 应用状态机：标题 → 层级进入 → 游戏（HUD）→ 暂停/背包/死亡/胜利
+import { shouldStartInFoyer } from '@/game/core/foyerFlag'
+import { FOYER_ID } from '@/game/world/foyerLayout'
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 import { Routes, Route } from 'react-router'
 import { engine } from '@/game/engine'
@@ -15,7 +17,7 @@ import * as THREE from 'three'
 import { audio } from '@/game/core/audio'
 import { randomSeed, parseSeedInput } from '@/game/core/rng'
 import { preloadGameResources } from '@/game/core/preload'
-import { getKeybinds, isHolsterKey, type KeyBindMap } from '@/game/core/keybinds'
+import { bindLabelFor, getKeybinds, isHolsterKey, type KeyBindMap } from '@/game/core/keybinds'
 import { levelLabel, levelNo, levelDefOf } from '@/game/levels'
 import { generateLevel, floorHeight } from '@/game/world/mapgen'
 import { prepareChunkWindow } from '@/game/world/chunkCache'
@@ -25,7 +27,6 @@ import TitleScreen from '@/components/TitleScreen'
 import SettingsModal, { createDefaultSettings, THEMES, type GameSettings } from '@/components/SettingsModal'
 import HowToPlay from '@/components/HowToPlay'
 import LevelIntro from '@/components/LevelIntro'
-import FallIntro from '@/components/FallIntro'
 import LoadingScreen from '@/components/LoadingScreen'
 import HUD, { type LogEntry, type Toast } from '@/components/HUD'
 import TouchControls from '@/components/TouchControls'
@@ -37,6 +38,7 @@ import LandmarkOverlay from '@/components/LandmarkOverlay'
 import DialogOverlay from '@/components/DialogOverlay'
 import FacilityPanel from '@/components/FacilityPanel'
 import BntgAtm from '@/components/BntgAtm'
+import VendingOverlay from '@/components/VendingOverlay'
 import AvatarEditor from '@/components/AvatarEditor'
 import DeathScreen from '@/components/DeathScreen'
 import NotebookOverlay from '@/components/NotebookOverlay'
@@ -46,15 +48,24 @@ import FullscreenHint from '@/components/FullscreenHint'
 import PortraitNotice from '@/components/PortraitNotice'
 import LayoutEditor, { loadTouchLayout, type TouchLayoutStore } from '@/components/LayoutEditor'
 import Cutscene, { type CutKind, type CutIn } from '@/components/Cutscene'
+import RealityBreak from '@/components/RealityBreak'
+import { resetBreakCube, setBreakCubeCapturer } from '@/game/core/breakCube'
+import { prepareBreakAnimation, resetBreakPreparation } from '@/components/realityBreak3d/breakPreparation'
+import { breakAppearance } from '@/components/realityBreak3d/breakBody'
 import DesignMode from '@/components/DesignMode' // v54：设计模式（开发者模式入口在标题屏）
 import LobbyOverlay from '@/components/LobbyOverlay' // v58：联机大厅
+import { GUNS, AMMO, isGun, type GunType, type AmmoType } from '@/game/content/firearms'
+import { gunMag, gunReload, gunSelectAmmo, gunUnload } from '@/game/engine/firearms'
 import SquirtRadial, { type SquirtWheelAction, type SquirtWheelOption, type SquirtWheelState } from '@/components/SquirtRadial'
 import { MpSession } from '@/game/net/session'
 import { applyMpEvent } from '@/game/net/apply'
 import { MULTIPLAYER_ENABLED } from '@/game/core/features'
+import PhoneOverlay from '@/components/PhoneOverlay'
+import { hudOn, type HudKey } from '@/game/engine/hud'
+import { carriesPhone, takePhoto } from '@/game/engine/phone'
 
 type Screen = 'title' | 'loading' | 'intro' | 'game' | 'fall' | 'design'
-type Overlay = 'none' | 'settings' | 'howto' | 'pause' | 'radio' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'lobby' | 'facility' | 'bank'
+type Overlay = 'none' | 'phone' | 'settings' | 'howto' | 'pause' | 'radio' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'lobby' | 'facility' | 'bank' | 'vending'
 
 // 冒烟测试钩子（Playwright page.evaluate 用）
 if (typeof window !== 'undefined') {
@@ -154,6 +165,10 @@ function Game() {
   const loadingRef = useRef(false)
   const [, setTick] = useState(0)
   const overlayRef = useRef(overlay)
+  // 手机相机取景模式（前厅起；游戏继续，E/攻击键拍照）
+  const [cameraMode, setCameraMode] = useState(false)
+  const cameraModeRef = useRef(false)
+  cameraModeRef.current = cameraMode
   overlayRef.current = overlay
   const invTabRef = useRef(invTab)
   invTabRef.current = invTab
@@ -168,7 +183,7 @@ function Game() {
         squirtWheelRef.current = null
         setSquirtWheel(null)
       }
-      engine.inspectHeld = false
+      engine.inspectHeld = false; engine.specialHeld = false; engine.specialPressed = false
     }
   }, [screen, overlay])
 
@@ -350,6 +365,9 @@ function Game() {
         case 'faction':
           if(screenRef.current!=='game')break
           setFactionPage(e.text??'meg');setInvTab('图鉴');setOverlay('inventory');break
+        case 'vending':
+          if(screenRef.current!=='game')break
+          setOverlay('vending');break
         case 'bank':
           if(screenRef.current!=='game')break
           setAtmId(e.text??'');setOverlay('bank');break
@@ -371,9 +389,8 @@ function Game() {
     return engine.on(handler)
   }, [addLog, updateWorldLoading])
 
-  // 开始新一局的最终提交：先播开场坠落动画 FallIntro（新游戏），或直接进入存档层级（继续游戏）
+  // 开始新一局的最终提交：新游戏进入前厅或 Level 0（旧 FallIntro 已由前厅替换、不再使用），继续游戏直接进入存档层级
   // v54：slot=绑定的存档槽（新游戏只能绑手动槽；继续游戏沿用所读槽位）
-  const [fallPlaying, setFallPlaying] = useState(false)
   // v58：联机会话（非空=联机局进行中）
   const mpSessionRef = useRef<MpSession | null>(null)
   const onMpStart = useCallback((session: MpSession, seed: number) => {
@@ -402,7 +419,9 @@ function Game() {
       for (const k of Object.keys(c)) if (k.startsWith('npc_rand_')) { delete c[k]; cleared = true }
       if (cleared) saveCodex(c)
     }
-    engine.newRun(s, settings.difficulty, slot, fresh)
+    // 序章「前厅」替换旧 FallIntro：新游戏按全局标记/设置决定从前厅或直接从 Level 0 开始（联机局不进前厅）
+    const startLevel = fresh && !engine.mpSession && shouldStartInFoyer(settings.enableFoyer) ? FOYER_ID : 0
+    engine.newRun(s, settings.difficulty, slot, fresh, startLevel)
     engine.paused = true
     setLoadState(prev => ({ ...prev, progress: 96, label: '准备附近场景', detail: '正在分帧构建入口并预热渲染', history: [...prev.history.slice(-7), '地图数据就绪，正在构建入口场景'] }))
     // The animation loop keeps rendering under LoadingScreen. Do not dismiss it
@@ -422,24 +441,18 @@ function Game() {
     setHudHidden(false)
     setLog([])
     setOverlay('none')
-    if (!fresh) {
-      // 继续游戏：跳过开场坠落动画，直接进入游戏（引擎读档恢复到存档层级）
-      setScreen('game')
-      engine.paused = false
-    } else {
-      engine.paused = true
-      setFallPlaying(true)
-      setScreen('fall')
-    }
+    // 继续游戏与新游戏都直接进入：新游戏不再播旧 FallIntro（前厅即开场；直接进 L0 时保留引擎的摔落爬起 introT）
+    setScreen('game')
+    engine.paused = false
     refreshSlots()
-  }, [settings.difficulty, settings.newGameSeed, refreshSlots])
+  }, [settings.difficulty, settings.newGameSeed, settings.enableFoyer, refreshSlots])
 
   // 点击「开始游戏/继续游戏」后：显示加载界面 → 预载贴图/BGM 资源并回报进度 → 再进入游戏。
   // 预载失败一律降级放行（渲染层/音频层均有程序化兜底）。
   const requestStart = useCallback((seed?: number, slot: SaveSlotId = 'slot1', targetLevel = seed !== undefined ? engine.player.level : 0, forceFresh = false) => {
     if (loadingRef.current) return
     loadingRef.current = true
-    if (seed === undefined || forceFresh) targetLevel = 0
+    if (seed === undefined || forceFresh) targetLevel = !engine.mpSession && shouldStartInFoyer(settings.enableFoyer) ? FOYER_ID : 0
     audio.resume() // 用户手势内解锁 WebAudio
     const runSeed = seed ?? parseSeedInput(settings.newGameSeed) ?? randomSeed()
     setLog([])
@@ -477,7 +490,7 @@ function Game() {
       }
       finally { loadingRef.current = false }
     })
-  }, [settings.bgmStyle, settings.newGameSeed, commitStart, refreshSlots])
+  }, [settings.bgmStyle, settings.newGameSeed, settings.enableFoyer, commitStart, refreshSlots])
 
   // v54：从槽位继续（读快照取种子与层级）；空槽回退为新游戏
   const continueSlot = useCallback((slot: SaveSlotId) => {
@@ -486,24 +499,57 @@ function Game() {
     else requestStart(undefined, slot === 'auto' ? 'slot1' : slot, 0)
   }, [requestStart])
 
+  // 设置「始终显示全部 HUD」→ 引擎（HUD 渲染与界面入口共用）
+  useEffect(() => { engine.hudShowAll = settings.showAllHud }, [settings.showAllHud])
+  // 相机快门：在渲染完成后的同一任务里截取画面缩略图
+  const snapPhoto = useCallback(() => {
+    engine.pendingPhoto = (cv: HTMLCanvasElement) => {
+      let thumb: string | undefined
+      try {
+        const t = document.createElement('canvas'); t.width = 240; t.height = Math.round(240 * cv.height / Math.max(1, cv.width))
+        t.getContext('2d')?.drawImage(cv, 0, 0, t.width, t.height)
+        thumb = t.toDataURL('image/jpeg', 0.72)
+      } catch { thumb = undefined }
+      const n = takePhoto(engine, thumb)
+      if (n) { engine.msg(`咔嚓——${n.title} 已存进手机笔记。`, 'system'); engine.emit({ kind: 'toast', text: `📷 ${n.title}` }) }
+    }
+  }, [])
+  const openPhone = useCallback(() => {
+    if (!engine.player.phone || !carriesPhone(engine.player)) { engine.msg('你没带手机。', 'system'); return }
+    setCameraMode(false); audio.uiTick(); setOverlay('phone')
+  }, [])
   // 键盘输入（v18：全部键位读自定义绑定表 getKeybinds()，方向键/Ctrl/Tab 为始终生效的辅助键）
   useEffect(() => {
     const keys: Record<string, boolean> = {}
     type ReloadHold = { timer: number; wheelOpened: boolean }
     let reloadHold: ReloadHold | null = null
     const heldSquirtGun = () => !engine.handsStowed && engine.player.hotbar[engine.player.selected]?.type === 'squirtgun'
+    const heldFirearm = () => !engine.handsStowed && isGun(engine.player.hotbar[engine.player.selected]?.type)
+    const heldWheelItem = () => heldSquirtGun() || heldFirearm()
     const publishWheel = (wheel: SquirtWheelState | null) => {
       squirtWheelRef.current = wheel
       setSquirtWheel(wheel)
     }
     const openSquirtWheel = () => {
-      if (portraitBlockedRef.current || !heldSquirtGun() || screenRef.current !== 'game' || overlayRef.current !== 'none') return false
+      if (portraitBlockedRef.current || !heldWheelItem() || screenRef.current !== 'game' || overlayRef.current !== 'none') return false
+      if (heldFirearm()) {
+        // 枪械选弹轮盘：该枪所有适配弹种（背包里没有的灰显不列），外加「退弹」
+        const s = engine.player.hotbar[engine.player.selected]!, def = GUNS[s.type as GunType]
+        const options: SquirtWheelOption[] = def.ammo.filter((a) => engine.countItem(a) > 0).map((a) => ({ action: `ammo:${a}` as const, label: AMMO[a].name, detail: `背包 ×${engine.countItem(a)}${s.ammoSel === a ? ' · 当前' : ''}`, color: AMMO[a].special ? '#ffd94d' : AMMO[a].hull }))
+        if (gunMag(s).some((c) => c)) options.push({ action: 'unload', label: '退弹', detail: '拔出膛里的弹', color: '#9a8a72' })
+        if (!options.length) { engine.msg(`身上没有${def.name}能用的弹。`, 'system'); return false }
+        publishWheel({ options, selected: 'cancel', cursorX: 0, cursorY: 0, title: `${def.name} · 选弹` })
+        audio.uiTick()
+        return true
+      }
       const options: SquirtWheelOption[] = engine.squirtTank === 'none'
         ? [
             { action: 'water', label: '清水', detail: '无需物品', color: '#79cde8' },
             ...(engine.countItem('almond') > 0 ? [{ action: 'almond', label: '杏仁水', detail: `背包 ×${engine.countItem('almond')}`, color: '#a7d982' }] as SquirtWheelOption[] : []),
             ...(engine.countItem('cashew') > 0 ? [{ action: 'cashew', label: '腰果水', detail: `背包 ×${engine.countItem('cashew')}`, color: '#c59a57' }] as SquirtWheelOption[] : []),
             ...(engine.countItem('liquidpain') > 0 ? [{ action: 'liquidpain', label: '液态痛苦', detail: `背包 ×${engine.countItem('liquidpain')}`, color: '#d65343' }] as SquirtWheelOption[] : []),
+            ...(engine.countItem('memoryjuice') > 0 ? [{ action: 'memoryjuice', label: '记忆汁液', detail: `背包 ×${engine.countItem('memoryjuice')} · 同清水`, color: '#d9822e' }] as SquirtWheelOption[] : []),
+            ...(engine.countItem('laughrepellent') > 0 ? [{ action: 'laughrepellent', label: '驱笑剂', detail: `背包 ×${engine.countItem('laughrepellent')} · 同清水`, color: '#cfe8e6' }] as SquirtWheelOption[] : []),
             ...(engine.countItem('acidcallus') > 0 ? [{ action: 'acid', label: '酸液', detail: `酸性胼胝 ×${engine.countItem('acidcallus')}`, color: '#c9d83a' }] as SquirtWheelOption[] : []),
           ]
         : [{ action: 'clear', label: '清空储罐', detail: `${engine.squirtAmmo} 份残液`, color: '#d06a55' }]
@@ -513,13 +559,16 @@ function Game() {
     }
     const executeWheelAction = (action: SquirtWheelAction) => {
       if (action === 'cancel') return
+      if (action === 'unload') { gunUnload(engine); return }
+      if (action.startsWith('ammo:')) { gunSelectAmmo(engine, action.slice(5) as AmmoType); return }
       if (action === 'clear') {
         if (engine.squirtTank !== 'none') engine.squirtQuickLiquid = engine.squirtTank
         engine.clearSquirt()
         return
       }
-      engine.squirtQuickLiquid = action
-      engine.loadSquirt(action)
+      const liquid = action as Exclude<SquirtWheelAction, 'cancel' | 'clear' | 'unload' | `ammo:${string}`>
+      engine.squirtQuickLiquid = liquid
+      engine.loadSquirt(liquid)
     }
     const quickReloadSquirt = () => {
       const liquid = engine.squirtTank === 'none' ? engine.squirtQuickLiquid : engine.squirtTank
@@ -530,7 +579,13 @@ function Game() {
       [kb.inventory, '背包'], ['Tab', '背包'], [kb.map, '地图'],
       [kb.codex, '图鉴'], [kb.quest, '任务'], [kb.status, '状态'], [kb.log, '日志'],
     ]
-    const openTab = (t: typeof invTab) => { discoverFromEngine(engine);setFactionPage(undefined); setInvTab(t); setOverlay('inventory') }
+    // 前厅 HUD 权限：对应区块未解锁时不打开该页签（背包/图鉴需要背包，地图需要小地图，任务/日志需要手机，状态需在 L0 解锁）
+    const TAB_HUD: Record<string, HudKey> = { 背包: 'inventory', 图鉴: 'inventory', 地图: 'minimap', 任务: 'quest', 日志: 'log', 状态: 'status' }
+    const openTab = (t: typeof invTab) => {
+      const need = TAB_HUD[t]
+      if (need && !hudOn(engine, need)) { engine.msg(need === 'inventory' ? '你还没有背包。' : need === 'status' ? '现在还用不着看这个。' : '先拿上手机。', 'system'); return }
+      discoverFromEngine(engine);setFactionPage(undefined); setInvTab(t); setOverlay('inventory')
+    }
     const down = (e: KeyboardEvent) => {
       if (portraitBlockedRef.current) return
       // v54：F1 防呆——浏览器「帮助」默认键，任意界面一律拦截默认行为
@@ -546,6 +601,9 @@ function Game() {
             return
           }
         }
+        if (overlayRef.current === 'phone' && e.code === kb.phone) { e.preventDefault(); setOverlay('none'); return }
+        // 手机界面开着时游戏不暂停：手电键照常开关副手光源
+        if (overlayRef.current === 'phone' && e.code === kb.flashlight && !e.repeat) { e.preventDefault(); engine.input.toggleLight = true; return }
         if (e.key === 'Escape' && overlayRef.current !== 'none' && overlayRef.current !== 'death' && overlayRef.current !== 'victory') {
           setOverlay(screenRef.current === 'game' ? 'none' : 'none')
         }
@@ -554,6 +612,12 @@ function Game() {
       const c = e.code
       keys[c] = true
       const b = getKeybinds()
+      // 手机：相机取景模式下 交互键=快门，Esc/手机键=退出取景
+      if (cameraModeRef.current) {
+        if (c === b.interact && !e.repeat) { e.preventDefault(); snapPhoto(); return }
+        if (c === 'Escape' || c === b.phone) { e.preventDefault(); setCameraMode(false); return }
+      }
+      if (c === b.phone && !e.repeat) { e.preventDefault(); openPhone(); return }
       if (isHolsterKey(c, b)) {
         e.preventDefault()
         if (!e.repeat) {
@@ -565,7 +629,7 @@ function Game() {
       }
       // 攻击 / 快捷使用（默认在鼠标键上，改绑到键盘时由此分发）
       if (c === b.attack && !e.repeat) { engine.input.attack = true; engine.input.attackHeld = true }
-      if (c === b.quickuse) engine.quickUse()
+      if (c === b.quickuse) { if (heldFirearm()) engine.input.aimHeld = true; else engine.quickUse() } // 枪械：右键 = 按住贴腮瞄准
       if (c === b.quickdrop) engine.quickDrop() // v20：Q 快捷丢弃当前手持
       // 交互：战利品面板打开时 = 拿取全部物品（而不是重新搜索该容器）；
       // v20：物品已拿空（仅剩"离开"）时 E 直接关闭容器界面
@@ -577,7 +641,8 @@ function Game() {
       }
       if (c === b.flashlight) engine.input.toggleLight = true
       if (c === b.inspect && !engine.handsStowed) engine.inspectHeld = true
-      if (c === b.reload && !e.repeat && heldSquirtGun()) {
+      if (c === b.special) { if (!e.repeat) engine.specialPressed = true; engine.specialHeld = true }
+      if (c === b.reload && !e.repeat && heldWheelItem()) {
         e.preventDefault()
         if (!reloadHold) {
           const hold: ReloadHold = { timer: 0, wheelOpened: false }
@@ -616,24 +681,27 @@ function Game() {
       if (isHolsterKey(e.code, b)) e.preventDefault()
       if (e.code === b.jump) engine.input.jump = false // v57t：松键即停止持续上浮（深水跳跃是长按态，不能永远锁存）
       if (e.code === b.inspect) engine.inspectHeld = false
+      if (e.code === b.special) engine.specialHeld = false
       if (e.code === b.attack) engine.input.attackHeld = false
+      if (e.code === b.quickuse) engine.input.aimHeld = false
       if (e.code === b.reload && reloadHold) {
         const hold = reloadHold
         reloadHold = null
         window.clearTimeout(hold.timer)
         const action = squirtWheelRef.current?.selected ?? 'cancel'
         publishWheel(null)
-        if (!portraitBlockedRef.current && screenRef.current === 'game' && overlayRef.current === 'none' && heldSquirtGun()) {
+        if (!portraitBlockedRef.current && screenRef.current === 'game' && overlayRef.current === 'none' && heldWheelItem()) {
           if (hold.wheelOpened) executeWheelAction(action)
+          else if (heldFirearm()) gunReload(engine)
           else quickReloadSquirt()
         }
       }
       updateMove()
     }
     const updateMove = () => {
-      if (portraitBlockedRef.current) {
+      if (portraitBlockedRef.current || overlayRef.current !== 'none') {
         for (const key of Object.keys(keys)) delete keys[key]
-        engine.input.mx = 0; engine.input.my = 0
+        engine.input.mx = 0; engine.input.my = 0; engine.input.aimHeld = false
         engine.input.sprint = false; engine.input.crouch = false
         return
       }
@@ -653,7 +721,7 @@ function Game() {
       if (reloadHold) window.clearTimeout(reloadHold.timer)
       reloadHold = null
       publishWheel(null)
-      engine.inspectHeld = false
+      engine.inspectHeld = false; engine.specialHeld = false; engine.specialPressed = false
       window.removeEventListener('keydown', down)
       window.removeEventListener('keyup', up)
     }
@@ -716,7 +784,7 @@ function Game() {
       look.locked = rawCaptureReady && document.pointerLockElement === canvas
       mouseLook.reset(performance.now())
     }
-    const onFocusChange = () => { engine.input.attackHeld = false; engine.input.attack = false; engine.meleePress = null; engine.meleePending = null; engine.meleeCharge = 0; mouseLook.reset(performance.now());look.locked=rawCaptureReady&&document.hasFocus()&&!document.hidden&&document.pointerLockElement===canvas }
+    const onFocusChange = () => { engine.input.aimHeld = false; engine.input.attackHeld = false; engine.specialHeld = false; engine.specialPressed = false; engine.input.attack = false; engine.meleePress = null; engine.meleePending = null; engine.meleeCharge = 0; mouseLook.reset(performance.now());look.locked=rawCaptureReady&&document.hasFocus()&&!document.hidden&&document.pointerLockElement===canvas }
     // Pointer Lock's mousemove is the authoritative relative-motion stream.
     // Do not also consume pointermove/coalesced events or reconstruct movement
     // from screen coordinates: the browser can recenter its hidden OS cursor.
@@ -758,7 +826,7 @@ function Game() {
       const b = getKeybinds()
       if (code === b.holster) engine.toggleHands()
       else if (code === b.attack) engine.input.attack = true
-      else if (code === b.quickuse) engine.quickUse()
+      else if (code === b.quickuse) { if (!engine.handsStowed && isGun(engine.player.hotbar[engine.player.selected]?.type)) engine.input.aimHeld = true; else engine.quickUse() }
       else if (code === b.quickdrop) engine.quickDrop()
       else if (code === b.interact) {
         if (engine.lootPanel) {
@@ -773,10 +841,11 @@ function Game() {
     const onMouseDown = (e: MouseEvent) => {
       if (!look.locked) return
       if (portraitBlockedRef.current || screenRef.current !== 'game' || overlayRef.current !== 'none') return
+      if (cameraModeRef.current && `Mouse${e.button}` === getKeybinds().attack) { snapPhoto(); return } // 相机快门
       if (`Mouse${e.button}` === getKeybinds().attack) engine.input.attackHeld = true // 近战重制：按住蓄力
       fireDiscrete(`Mouse${e.button}`)
     }
-    const onMouseUp = (e: MouseEvent) => { if (`Mouse${e.button}` === getKeybinds().attack) engine.input.attackHeld = false }
+    const onMouseUp = (e: MouseEvent) => { if (`Mouse${e.button}` === getKeybinds().attack) engine.input.attackHeld = false; if (`Mouse${e.button}` === getKeybinds().quickuse) engine.input.aimHeld = false }
     // 屏蔽右键菜单（游戏中右键默认用作快捷使用）
     const onContextMenu = (e: Event) => {
       if (screenRef.current === 'game') e.preventDefault()
@@ -826,6 +895,7 @@ function Game() {
     renderer.setResolutionMode(settingsRef.current.renderResolution)
     // 诊断钩子（自动化测试用）：暴露渲染器与 THREE 构造器
     ;(window as unknown as { __renderer: typeof renderer }).__renderer = renderer
+    setBreakCubeCapturer((_cv,signal) => renderer.captureCubeAtlas(engine,512,signal), () => prepareBreakAnimation(renderer.breakCubePose(engine), breakAppearance(engine.player)), resetBreakPreparation)
     ;(window as unknown as { __THREE: typeof THREE }).__THREE = THREE
     let raf = 0
     let last = performance.now()
@@ -921,7 +991,8 @@ function Game() {
         }
       } else frameTimes = []
 
-      const paused = overlayRef.current !== 'none' && overlayRef.current !== 'death' && overlayRef.current !== 'victory'
+      // 售货机与手机界面保持实时运行。
+      const paused = overlayRef.current !== 'none' && overlayRef.current !== 'death' && overlayRef.current !== 'victory' && overlayRef.current !== 'vending' && overlayRef.current !== 'phone'
       // v23：过场演出播放中、且引擎的层级切换已完成 → 冻结操作，等过场放完再交还控制权
       const cine = cutRef.current !== null && engine.transition === null
       // Give the title/cut animation exclusive frame time while it enters or
@@ -958,6 +1029,7 @@ function Game() {
           || (screenRef.current === 'intro' && introPhaseRef.current !== 'holding')) return
         mpSessionRef.current?.tick(engine, dt) // v58：联机状态同步（12Hz）
         renderer.render(canvas, engine, { grain: settings.grain, flicker: 0, shake: settings.shake }, dt)
+        if (engine.pendingPhoto) { const cb = engine.pendingPhoto; engine.pendingPhoto = null; cb(canvas) } // 手机相机：同一任务内截取刚渲染的画面
         // loadLevel can replace the map inside update(). Publish readiness for
         // that exact map immediately, independently of the throttled HUD rate.
         if (engine.map !== pendingMap) { pendingMap = engine.map; waitingForMap = true }
@@ -976,6 +1048,7 @@ function Game() {
     return () => {
       alive = false
       attractEpoch++
+      setBreakCubeCapturer(null)
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', resize)
     }
@@ -1050,6 +1123,7 @@ function Game() {
   }, [settings.lightMode, settings.realWater, settings.shadowQuality, settings.sunShadows, settings.lightShadows, settings.reflectivity, settings.bloomFx, settings.bloomStrength, settings.exposure,settings.eyeAdaptation,settings.ambientOcclusion,settings.grain,settings.grainStrength,settings.vignetteStrength,settings.colorGrade,settings.scanlineStrength])
 
   const quitToTitle = () => {
+    resetBreakCube()
     // 「保存并退出」必须在 over 置位前同步落盘，不能依赖暂停菜单打开后的下一帧自动保存。
     engine.persist()
     // v58：离开联机局——解散/断开并还原引擎联机字段
@@ -1101,13 +1175,13 @@ function Game() {
 
       {/* 受伤闪屏 */}
       {damageFlash > 0 && (
-        <div key={damageFlash} className="pointer-events-none fixed inset-0 z-40" style={{ boxShadow: 'inset 0 0 120px 40px rgba(179,53,43,0.7)', animation: 'damageFlash 0.18s ease-out both' }} />
+        <div key={`damage-${damageFlash}`} className="pointer-events-none fixed inset-0 z-40" style={{ boxShadow: 'inset 0 0 120px 40px rgba(179,53,43,0.7)', animation: 'damageFlash 0.18s ease-out both' }} />
       )}
       {sanityFlash > 0 && (
-        <div key={sanityFlash} className="pointer-events-none fixed inset-0 z-40" style={{ boxShadow: 'inset 0 0 120px 40px rgba(122,111,208,0.6)', animation: 'damageFlash 0.3s ease-out both' }} />
+        <div key={`sanity-${sanityFlash}`} className="pointer-events-none fixed inset-0 z-40" style={{ boxShadow: 'inset 0 0 120px 40px rgba(122,111,208,0.6)', animation: 'damageFlash 0.3s ease-out both' }} />
       )}
       {floorShift && (
-        <div key={floorShift.id} className="pointer-events-none fixed inset-0 z-[90] flex items-center justify-center bg-black text-sm tracking-[0.32em] text-stone-400" style={{ animation: 'floorShift 1.3s ease-in-out both' }}>
+        <div key={`floor-shift-${floorShift.id}`} className="pointer-events-none fixed inset-0 z-[90] flex items-center justify-center bg-black text-sm tracking-[0.32em] text-stone-400" style={{ animation: 'floorShift 1.3s ease-in-out both' }}>
           {floorShift.text}
         </div>
       )}
@@ -1123,9 +1197,23 @@ function Game() {
       )}
 
       {/* 出口过渡动画（v23：切入切出过场演出）*/}
-      {cut && (
+      {cut && String(cut.kind) === 'realitybreak' && (
+        // 前厅 M4：回程终点的现实破碎过场（替换 Cutscene 'fall'）
+        <RealityBreak
+          key={`reality-break-${cut.id}`}
+          levelId={cut.levelId}
+          toName={cut.toName}
+          ready={!worldLoading}
+          onStageChange={(stage) => { cutStageRef.current = stage }}
+          onDone={() => {
+            cutRef.current = null
+            setCut(null)
+          }}
+        />
+      )}
+      {cut && String(cut.kind) !== 'realitybreak' && (
         <Cutscene
-          key={cut.id}
+          key={`cutscene-${cut.id}`}
           kind={cut.kind}
           levelId={cut.levelId}
           cutIn={cut.cutIn}
@@ -1156,7 +1244,7 @@ function Game() {
       {/* 层级进入卡 */}
       {screen === 'intro' && (
         <LevelIntro
-          key={engine.mapRev}
+          key={`level-intro-${engine.mapRev}`}
           level={levelNo(levelDef.id)}
           levelId={levelDef.id}
           name={levelDef.name}
@@ -1174,13 +1262,6 @@ function Game() {
         />
       )}
 
-      {/* 开场坠落动画（街道→坠落→摔进 L0；淡出时进入游戏，爬起动画由引擎 introT 驱动） */}
-      {fallPlaying && (
-        <FallIntro
-          onReveal={() => setScreen('game')}
-          onDone={() => { setFallPlaying(false); setScreen('game') }}
-        />
-      )}
 
       {screen === 'game' && worldLoading && !cut && (
         <div className="fixed inset-0 z-[65] flex items-center justify-center bg-black/90 text-amber-100" role="status">正在准备附近场景…</div>
@@ -1196,7 +1277,8 @@ function Game() {
           devMode={settings.devMode}
           fxScale={0}
           onPause={() => setOverlay('pause')}
-          onInventory={() => { discoverFromEngine(engine); setInvTab('背包'); setOverlay('inventory') }}
+          onInventory={() => { if (!hudOn(engine, 'inventory')) { engine.msg('你还没有背包。', 'system'); return } discoverFromEngine(engine); setInvTab('背包'); setOverlay('inventory') }}
+          onPhone={openPhone}
           onSelectSlot={(i) => { engine.player.selected = i; audio.uiTick() }}
           onUseSlot={(i) => engine.useSlot('hotbar', i)}
         />
@@ -1208,6 +1290,25 @@ function Game() {
       )}
       {overlay === 'notebook' && (
         <NotebookOverlay onClose={() => setOverlay('none')} />
+      )}
+      {overlay === 'phone' && screen === 'game' && (
+        <PhoneOverlay engine={engine} isMobile={isMobile} onClose={() => setOverlay('none')} onCamera={() => { setOverlay('none'); setCameraMode(true); engine.markTutorial('phone_camera') }} />
+      )}
+      {cameraMode && screen === 'game' && overlay === 'none' && (
+        <div className="pointer-events-none fixed inset-0 z-[44]" data-phone-camera>
+          <div className="absolute inset-[7%] border-2" style={{ borderColor: 'rgba(255,255,255,.55)', borderRadius: 18 }} />
+          <div className="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 border" style={{ borderColor: 'rgba(255,214,90,.8)' }} />
+          <div className="absolute left-[9%] top-[9%] font-mono text-[12px]" style={{ color: '#fff', textShadow: '0 1px 2px #000' }}>● REC 相机 · {Math.round(engine.player.phone?.battery ?? 0)}%</div>
+          <div className="absolute bottom-[10%] left-1/2 -translate-x-1/2 rounded px-3 py-1 font-mono text-[12px]" style={{ background: 'rgba(0,0,0,.55)', color: '#fff' }}>
+            {isMobile ? '点「快门」拍照 · 点「退出」' : `[${bindLabelFor('interact')}] / [${bindLabelFor('attack')}] 拍照 · [Esc] / [${bindLabelFor('phone')}] 退出`}
+          </div>
+          {isMobile && (
+            <div className="pointer-events-auto absolute bottom-[18%] left-1/2 flex -translate-x-1/2 gap-6">
+              <button className="h-16 w-16 rounded-full border-4" style={{ borderColor: '#fff', background: 'rgba(255,255,255,.25)' }} aria-label="快门" onClick={() => snapPhoto()} />
+              <button className="rounded px-3 text-[12px]" style={{ background: 'rgba(0,0,0,.6)', color: '#fff' }} onClick={() => setCameraMode(false)}>退出</button>
+            </div>
+          )}
+        </div>
       )}
       {overlay === 'doc' && (
         <DocOverlay docId={docId} onClose={() => setOverlay('none')} />
@@ -1224,7 +1325,7 @@ function Game() {
           engine={engine}
           settings={settings}
           layout={activeTouchLayout}
-          onInventory={() => { discoverFromEngine(engine); setOverlay('inventory') }}
+          onInventory={() => { if (!hudOn(engine, 'inventory')) { engine.msg('你还没有背包。', 'system'); return } discoverFromEngine(engine); setOverlay('inventory') }}
           onPause={() => setOverlay('pause')}
         />
       )}
@@ -1294,6 +1395,7 @@ function Game() {
         />
       )}
       {overlay === 'radio' && <RadioOverlay onClose={() => setOverlay('pause')} />}
+      {overlay === 'vending' && <VendingOverlay onClose={()=>setOverlay('none')}/>}
       {overlay === 'bank' && <BntgAtm key={atmId} atmId={atmId} onClose={()=>setOverlay('none')}/>}
       {overlay === 'facility' && <FacilityPanel faction={facilityFaction} onClose={()=>setOverlay('none')}/>}
       {overlay === 'inventory' && <InventoryOverlay key={factionPage??'all'} engine={engine} onClose={() => {setOverlay('none');setFactionPage(undefined)}} initialTab={invTab} initialFaction={factionPage} />}

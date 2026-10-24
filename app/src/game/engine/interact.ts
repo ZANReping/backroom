@@ -1,4 +1,5 @@
 import { usableAxe, wearSlot, slotDur, slotMaxDur } from './melee'
+import { openVending, vm36OpenBack } from './vendingAI'
 import { DUR_DOOR } from '../content/melee'
 import { actualRank, fieldTargets, recordField } from './career'
 import {bntgAtmAccessible} from './bntgBank'
@@ -28,6 +29,8 @@ import { furnitureSeats } from '../content/furnitureSeats'
 import { tinyState, tinyRefusesTalk, pokeChime, chimeRinging } from './tinyAI'
 import { thingBreathRemark } from './thingAI'
 import { arachnidInteract } from './arachnidAI' // [L8-arachnid]
+import { foyerInteract, foyerTargets } from './foyer'
+import { FOYER_ID } from '../world/foyerLayout'
 
 type DiffMult = { dmg: number; drain: number }
 
@@ -115,12 +118,17 @@ export function updateContainerSearch(eng: Engine, dt: number) {
 }
 
 /** 未涂黑窗户陷阱 / 锈蚀钢筋 / 蒸汽阀门伤害（原 step 内联段；true=本帧已死亡） */
+/** [window] 查看普通窗户的描述（被 Entity 2 占据的窗户由实体本身表现，不走这里） */
+const WINDOW_LOOK: Record<number, string[]> = {
+  2: ['钢格窗后面什么都没有，只有一片油腻的黑。', '玻璃上糊着几张撕烂的告示。窗外是另一段管道——还是只是你的倒影？', '一扇普通的窗户。至少现在是。'],
+  12: ['窗外只有一片灰白的雾，看不出远近。', '玻璃很干净，干净得像从来没有人往外看过。', '一扇普通的图书馆窗户。窗台上积着薄灰。'],
+}
 export function triggerStructs(eng: Engine, dt: number, dm: DiffMult): boolean {
   const p = eng.player, m = eng.map!
   // 未涂黑窗户陷阱（wiki L4：未涂黑的窗户必须避开）——靠近即触发一次
   for (const s of m.structures) {
     if(s.kind==='trade_anomaly'&&s.data?.hidden)continue
-    if (s.kind !== 'windowtrap' || s.data?.triggered) continue
+    if (s.kind !== 'windowtrap' || s.data?.triggered || !s.data?.l4) continue // [window] L2 的普通窗户不再自带惊吓：真正的威胁是 Entity 2（windowAI）
     const d = Math.hypot(s.x + 0.5 - p.x, s.y + 0.5 - p.y)
     if (d < 1.9) {
       s.data = { ...s.data, triggered: 1 }
@@ -216,7 +224,7 @@ export function structureInteractionProfile(s: Structure): StructureInteractionP
       horizontalRadius = Math.min(1.65, Math.max(0.42, (Number(s.data?.pw) || 1.8) / 2))
       break
     }
-    case 'windowblack': case 'windowtrap': case 'glasswin': lo = 0.55; hi = 2.2; horizontalRadius = 0.5; break
+    case 'libwindow': case 'windowblack': case 'windowtrap': case 'glasswin': lo = 0.55; hi = 2.2; horizontalRadius = 0.5; break
     case 'statue': lo = 0.15; hi = 2.65; horizontalRadius = 0.48; break
     case 'handspike': lo = 0; hi = 1.25; horizontalRadius = 0.38; break
     case 'clipfuse': lo = 0; hi = 2.8; horizontalRadius = Math.min(1.2, Math.max(s.w, s.h) / 2); break
@@ -384,6 +392,7 @@ export function rayInteractionVolume(ray: InteractionRay, box: InteractionVolume
     [ray.oz, ray.dz, box.minZ, box.maxZ],
   ] as const
   for (const [origin, direction, min, max] of axes) {
+    if (![origin, direction, min, max].every(Number.isFinite) || min > max) return null
     if (Math.abs(direction) < 1e-7) {
       if (origin < min || origin > max) return null
       continue
@@ -401,7 +410,9 @@ export function rayInteractionVolume(ray: InteractionRay, box: InteractionVolume
 /** 结构交互体积：水平面复用物理碰撞的精确轮廓，垂直面复用可见模型高度。 */
 export function structureInteractionVolume(eng: Engine, s: Structure, band: FloorBand): InteractionVolume {
   const m = eng.map!
-  const boxes = structColliders(s, m)
+  const physical = structColliders(s, m)
+  // Non-solid seat proxies still need a finite, local interaction outline.
+  const boxes = physical.length ? physical : [{ x0: s.x, y0: s.y, x1: s.x + s.w, y1: s.y + s.h }]
   const profile = structureInteractionProfile(s)
   const base = floorHeight(m, s.x + s.w / 2, s.y + s.h / 2, band)
   return {
@@ -584,6 +595,11 @@ export function scanInteract(eng: Engine) {
         .42, volumeAt(wx, wy, -.06, .45, .16), d)
     }
   }
+  // 前厅（序章）：门/抽屉/衣柜/冰箱/电脑等交互目标（engine/foyer.ts）
+  if (p.level === FOYER_ID) for (const t of foyerTargets(eng)) {
+    const probe = interactionProbe(eng, t.x, t.y, t.z, 0, t.range, t.radius, t.volume, t.s, undefined, t.radius)
+    if (probe) commitCandidate({ kind: 'foyer', label: t.label, foyerId: t.id, s: t.s }, probe.a - (t.priority ?? 0), probe.d, true)
+  }
   // 地面物品（半径 2.0m；v13：按物品所在高度过滤楼层）
   for (const it of m.items) {
     const iz = it.z ?? groundHeightAt(m, it.x, it.y)
@@ -620,6 +636,7 @@ export function scanInteract(eng: Engine) {
   }
   for (const marker of fieldTargets(eng)) consider('careerField','记录现场证据',marker,Math.hypot(marker.x-p.x,marker.y-p.y),true)
   for (const s of m.structures) {
+    if(s.data?.windowGone)continue // The disappeared frame is now an ordinary wall.
     // v13：结构按楼层过滤（楼上楼下同名容器互不干扰）；lift 跨层服务
     if (s.kind !== 'lift' && (s.floor ?? 0) !== band) continue
     const d = structureSurfaceDistance(s, p.x, p.y) // 大结构按最近表面，而非中心计交互距离
@@ -682,7 +699,8 @@ export function scanInteract(eng: Engine) {
     else if (s.kind === 'inkdoor') consider('inkdoor', s.data?.open ? '关上 墨黑色金属门' : '打开 墨黑色金属门', s, d, true)
     else if (s.kind === 'bargate') consider('bargate', s.data?.open ? '关上 栅栏门' : '打开 栅栏门', s, d, true)
     else if (s.kind === 'glasswin' && !s.data?.partition) consider('glasswin', DECOR_VIEWS.glasswin.label, s, d, true)
-    else if (s.kind === 'windowtrap') consider('windowtrap', s.data?.triggered ? '查看 窗户（已无异常）' : '查看 未涂黑的窗户', s, d, true)
+    else if (s.kind === 'windowtrap') consider('windowtrap', !s.data?.l4 ? '查看 窗户' : s.data?.triggered ? '查看 窗户（已无异常）' : '查看 未涂黑的窗户', s, d, true)
+    else if (s.kind === 'libwindow') consider('libwindow', '查看 窗户', s, d, true)
     else if (s.kind === 'windowblack') consider('windowblack', DECOR_VIEWS.windowblack.label, s, d, true)
     else if (s.kind === 'graffiti') consider('graffiti', DECOR_VIEWS.graffiti.label, s, d, true)
     else if (s.kind === 'statue') consider('statue', DECOR_VIEWS.statue.label, s, d, true)
@@ -704,7 +722,7 @@ export function scanInteract(eng: Engine) {
   }
   // v35：NPC 与其他类别统一竞争，玩家正对 NPC 时不再被附近容器/出口抢走交互。
   for (const n of eng.npcs) {
-    if (n.dead || n.hostile) continue // v39：尸体与敌对员工不可交谈
+    if (n.dead || n.hostile || n.def.ambient) continue // v39：尸体与敌对员工不可交谈；前厅街景路人不可交谈
     if ((n.floor ?? 0) !== band) continue // v46：隔层不可交谈（夹楼 NPC 须上到 2F）
     const npcBase = floorHeight(m, n.x, n.y, n.floor ?? band)
     const { radius: bodyRadius, height: bodyHeight } = NPC_INTERACTION_BODY
@@ -769,18 +787,18 @@ export function scanInteract(eng: Engine) {
     considerTarget({ kind: 'shrimp', label: '活抓 旱虾', ent: e }, e.x, e.y, e.z + 0.1, entityBand, INTERACT_RANGE.item, true, 0.26 * sz,
       volumeAt(e.x, e.y, e.z, 0.26 * sz, 0.22), surfaceDistance, undefined, 0.12)
   }
-  // v51：人制品售货机（Entity 36）——正面取货 / 背面看标语。
+  // [vending] 人制品售货机（Entity 36）——正面打开售货界面 / 背面辨认标语（安全）；打坏后从背面撬开暗格
   for (const e of m.entities) {
-    if (e.dead || e.def.type !== 'vendingmachine' || e.activated) continue
+    if (e.dead || e.def.type !== 'vendingmachine') continue
     const entityBand = bandOfZ(e.z)
     if (entityBand !== band) continue
     // 正/背面：玩家在机器朝向的一侧为正面
     const behind = Math.cos(e.facing) * (p.x - e.x) + Math.sin(e.facing) * (p.y - e.y) < 0
-    considerTarget({
-        kind: 'vendingmachine',
-        label: behind ? '查看 人制品售货机（背面）' : '取出 人制品',
-        ent: e, vmBack: behind,
-      }, e.x, e.y, e.z + 0.95, entityBand, INTERACT_RANGE.object, true, 0.5,
+    const broken = e.vm?.mode === 'broken'
+    if (e.vm && e.vm.mode !== 'dormant' && !broken) continue
+    const label = broken ? (behind ? (e.vm!.opened ? '倾听 后部暗格' : '撬开 后部暗格') : '查看 倒下的售货机')
+      : behind ? '查看 售货机背面' : '使用 自动售货机'
+    considerTarget({ kind: 'vendingmachine', label, ent: e, vmBack: behind }, e.x, e.y, e.z + 0.95, entityBand, INTERACT_RANGE.object, true, 0.5,
       volumeAt(e.x, e.y, e.z, 0.5, 1.9))
   }
   eng.interactTarget = choice.current?.target ?? (eng.seating ? { kind: 'stand', label: '起身', s: eng.seating.structure } : null)
@@ -788,7 +806,7 @@ export function scanInteract(eng: Engine) {
 
 function sameInteractionTarget(a: Engine['interactTarget'], b: Engine['interactTarget']): boolean {
   if (!a || !b || a.kind !== b.kind) return false
-  return a.s === b.s && a.it === b.it && a.e === b.e && a.npc === b.npc && a.ent === b.ent
+  return a.s === b.s && a.it === b.it && a.e === b.e && a.npc === b.npc && a.ent === b.ent && a.foyerId === b.foyerId
 }
 
 export function doInteract(eng: Engine) {
@@ -803,6 +821,7 @@ export function doInteract(eng: Engine) {
   const p = eng.player, m = eng.map
   switch (t.kind) {
     case 'sit': { if (t.s) beginSitting(eng, t.s); break }
+    case 'foyer': { foyerInteract(eng, t.foyerId); break }
     case 'stand': { standUp(eng); break }
     case 'careerField': { recordField(eng,String(t.s?.data?.faction) as CareerId);break }
     case 'bntgAtm': {
@@ -884,7 +903,7 @@ export function doInteract(eng: Engine) {
         }
         const n = bi.count ?? 1 // 整叠丢弃的地面物品带堆叠数量
         let got = 0
-        for (let k = 0; k < n; k++) if (eng.addItem(bi.type, { dur: bi.dur, blood: bi.blood })) got++
+        for (let k = 0; k < n; k++) if (eng.addItem(bi.type, { dur: bi.dur, blood: bi.blood, mag: bi.mag, ammoSel: bi.ammoSel, stage: bi.stage, cyl: bi.cyl })) got++
         if (got > 0) {
           if (got >= n) {
             m.items = m.items.filter((i) => i !== bi)
@@ -1325,17 +1344,18 @@ export function doInteract(eng: Engine) {
       break
     }
     case 'vendingmachine': {
-      // v51：人制品售货机——背面看标语（此后背对它即激活）；正面取一份人制品
+      // [vending] 背面看标语（只是辨认，不再触发活化）；正面打开售货界面；打坏后撬开后部暗格
       const e = t.ent
       if (!e || e.dead || e.def.type !== 'vendingmachine') return
-      if (t.vmBack) {
-        eng.msg('人制品售货机 · 艾里克家族出品 ——「它于人人，人人为它，它为人人。」· 2019，亚利桑那', 'lore')
-        e.activated = true // 标记：玩家已看过背面——背对它时激活
-        eng.msg('看完最好也别背对它。', 'system')
-      } else {
-        eng.msg('格子里的金属线没有转动——一只白骨化的人手把产品推到了取货口。（获得 人制品 ×1）', 'lore')
-        if (!eng.addItem('manmade')) eng.msg('背包已满，取不走这份产品。', 'system')
+      if (e.vm?.mode === 'broken') {
+        if (t.vmBack) vm36OpenBack(eng, e)
+        else eng.msg('它侧倒在地上，灯箱碎了。玻璃后面的货已经发黑。', 'system')
+        break
       }
+      if (t.vmBack) {
+        eng.msg('背面印着：「人制品售货机 · 艾里克家族出品 ——它于人人，人人为它，它为人人。· 2019，亚利桑那」', 'lore')
+        eng.msg('这不是普通的售货机。记住它的样子。', 'system')
+      } else openVending(eng, { e })
       break
     }
     case 'glasswin': {
@@ -1345,8 +1365,10 @@ export function doInteract(eng: Engine) {
       p.sanity = Math.min(100, p.sanity + DECOR_VIEWS.glasswin.sanity)
       break
     }
+    case 'libwindow': { eng.msg(WINDOW_LOOK[601][Math.floor(Math.random() * WINDOW_LOOK[601].length)], 'lore'); break }
     case 'windowtrap': {
       const s = t.s && t.s.kind === 'windowtrap' ? t.s : null
+      if (s && !s.data?.l4) { eng.msg(WINDOW_LOOK[2][Math.floor(Math.random() * WINDOW_LOOK[2].length)], 'lore'); break } // [window] L2 普通窗户
       if (!s || s.data?.triggered) { eng.msg('玻璃后面只剩黑暗。', 'system'); return }
       s.data = { ...s.data, triggered: 1 }
       p.sanity = Math.max(0, p.sanity - 14)
@@ -1461,33 +1483,8 @@ export function doInteract(eng: Engine) {
       eng.msg(s.data?.almond ? '你用纸杯接了点杏仁水喝下。（口渴 +20，理智 +4）' : '你用纸杯接了一杯水。冷得刚好。（口渴 +20）', 'loot'); audio.pickup(); break
     }
     case 'vending': {
-      if (t.s?.data?.trade) {
-        // v54：免费取用——但每台机器迟早会卡：每次出货后 25% 概率卡死（data.jammed），之后无法再用
-        const s = t.s
-        if (s.data?.jammed) {
-          eng.msg('出货口的东西卡在一半，怎么拍都不动。', 'system')
-          break
-        }
-        const roll = Math.random()
-        const out = roll < 0.32 ? 'almond' : roll < 0.58 ? 'canned' : roll < 0.84 ? 'coffee' : roll < 0.94 ? 'cashew' : 'luckymilk'
-        eng.addItem(out)
-        const flavor: Record<string, string> = {
-          almond: '机器哐当一声，滚出一瓶杏仁水。', canned: '机器哐当一声，滚出一罐没标签的罐头。',
-          coffee: '机器哐当一声，滚出一罐咖啡。', cashew: '机器哐当一声，滚出一瓶……杏仁水？标签的颜色好像有点深。',
-          luckymilk: '机器哐当一声，滚出一盒印着四叶草奶牛的豆奶——你从没见过这个牌子。',
-        }
-        eng.msg(flavor[out], 'loot')
-        if (Math.random() < 0.25) {
-          s.data = { ...s.data, jammed: 1 }
-          eng.msg('出货的声响卡在一半，变成一种很低的不情愿的嗡嗡声。', 'system')
-        }
-        break
-      }
-      if (p.tapes > 0 && eng.consumeItem('tape')) {
-        p.tapes--
-        eng.addItem('coffee'); eng.addItem('canned')
-        eng.msg('售货机吞下一盘磁带，吐出了咖啡和罐头。（公平交易？）', 'lore')
-      } else eng.msg('售货机上贴着字条：「只收磁带」。', 'system')
+      // [vending] 普通售货机：打开售货界面（免费机 / 只收磁带的旧机器共用）
+      if (t.s) openVending(eng, { s: t.s })
       break
     }
     case 'frontdesk': {

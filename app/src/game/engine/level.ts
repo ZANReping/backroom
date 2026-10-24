@@ -1,4 +1,7 @@
+import { resetBreakCube } from '../core/breakCube'
 import {captureTradersWorld,restoreTradersWorld} from '../world/tradersWorld'
+import { completeFoyer } from './foyer'
+import { FOYER_ID } from '../world/foyerLayout'
 import { resetSwim } from './swim'
 import { newL7Fx } from './l7Events'
 import { captureL0,restoreL0 } from './l0State'
@@ -33,6 +36,7 @@ export function nextMapSeed(eng: Engine, id: number): number {
 }
 
 export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; firstVisit: boolean }, preparedMapSeed?: number) {
+  if (eng.player.level === FOYER_ID && id !== FOYER_ID) resetBreakCube()
   if(!restore&&eng.map?.traders)eng.tradersWorld=captureTradersWorld(eng.map)
   eng.seating = null
   settleGlowFlight(eng)
@@ -261,11 +265,12 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
       homeX: sp.x, homeY: sp.y, tx: sp.x, ty: sp.y,
       moveT: 1 + Math.random() * 5, bubbleText: '', bubbleT: 0,
     }))
-  for (const n of eng.npcs) if (!eng.knownNpcs.some((k) => k.id === n.id)) eng.knownNpcs.push(n.def)
+  for (const n of eng.npcs) if (!n.def.ambient && !eng.knownNpcs.some((k) => k.id === n.id)) eng.knownNpcs.push(n.def)
   // v39：无限层级的 chunk NPC（衔尾段 BRC 员工）——活体对象由 LiveChunk 持有，这里收集为工作列表
   if (eng.map.inf) eng.syncInfNpcs()
   // 持续性效果状态换层重置（EFFECTS 注册表 level 组：停电计时/备份、provoked、植殖癌进展——逐字段语义一致）
   resetEffects(eng, 'level')
+  eng.vendRun.structs.clear(); eng.vendUi = null // [vending] 普通售货机运行时状态属于上一层
   // 现象「孤立效应」：每次进入 Level 0，画面微调色重新随机（极其轻微，一般无法察觉）
   eng.colorGrade = id === 0
     ? {
@@ -360,7 +365,7 @@ export function syncInfNpcs(eng: Engine) {
   eng.npcs = []
   for (const c of m.inf.chunks.values()) for (const n of c.npcs) eng.npcs.push(n)
   if (eng.player.level===11) eng.npcs=eng.npcs.sort((a,b)=>Math.hypot(a.x-eng.player.x,a.y-eng.player.y)-Math.hypot(b.x-eng.player.x,b.y-eng.player.y)).slice(0,32)
-  for (const n of eng.npcs) if (!eng.knownNpcs.some((k) => k.id === n.id)) eng.knownNpcs.push(n.def)
+  for (const n of eng.npcs) if (!n.def.ambient && !eng.knownNpcs.some((k) => k.id === n.id)) eng.knownNpcs.push(n.def)
 }
 
 export function updateInfiniteWindow(eng: Engine, prepared?:ReadonlyMap<string,import('../world/infiniteRegistry').GenChunk>) {
@@ -642,6 +647,7 @@ export function takeExit(eng: Engine, def: ExitDef) {  const p = eng.player
     p.stamina = Math.max(10, p.stamina - 30)
     eng.msg('漫长跋涉耗尽了储备。（饥饿、口渴、体力各 -30，最低保留 10）', 'damage')
   }
+  if (p.level === FOYER_ID) completeFoyer(eng) // 离开前厅：全局标记已完成（P1 临时出口；P3 由 RealityBreak 接管）
   // v23：立刻解析 random 目标——过场演出需要知道「切入」的是哪一层
   // v35：'back' 解析为进入据点前的层级（据点入口的返程）
   const resolved = def.dest === 'back' ? (eng.outpostReturn ?? 1) : def.dest

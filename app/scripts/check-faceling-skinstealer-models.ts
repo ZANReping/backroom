@@ -12,10 +12,13 @@ Object.defineProperty(globalThis,'document',{value:{createElement:(tag:string)=>
 let checks=0;const ok=(v:unknown,s:string)=>{assert(v,s);checks++}
 for(let seed=0;seed<5000;seed++){
  const a=planFacelingFace(seed);ok(JSON.stringify(a)===JSON.stringify(planFacelingFace(seed)),`determinism ${seed}`)
- ok(a.organs.length<=3&&new Set(a.organs.map(o=>o.kind)).size>=2,`organ counts ${seed}`)
- ok(a.missing.length>0,`missing class ${seed}`)
- ok(a.organs.filter(o=>o.kind==='eye'&&o.normal).length<=1,`no normal eye pair ${seed}`)
- ok(!a.organs.some(o=>o.kind==='mouth'&&Math.abs(o.t-.211)<.045&&Math.abs(o.x)<.15&&Math.abs(o.rot)<.15),`abnormal mouth ${seed}`)
+ // v90 进化种：晚期双小眼 + 连鼻孔 + 无唇张口 + 双扁耳；早期独眼、独耳，鼻/口可缺
+ const eyes=a.organs.filter(o=>o.kind==='eye')
+ ok(eyes.every(o=>o.form==='small')&&eyes.length===(a.stage==='late'?2:1),`evolved eyes ${seed}`)
+ ok(a.organs.every(o=>o.kind!=='nose'||o.form==='merged')&&a.organs.every(o=>o.kind!=='mouth'||o.form==='agape'),`evolved nose/mouth ${seed}`)
+ ok(a.stage==='early'||(a.organs.length===4&&a.ears.every(e=>e==='flat')&&a.missing.length===0),`late complete ${seed}`)
+ ok(a.stage==='late'||a.ears.filter(e=>e==='flat').length===1,`early one ear ${seed}`)
+ ok(a.normal.length===0&&a.organs.length<=4,`no human-normal organs ${seed}`)
 }
 function resources(root:THREE.Object3D){
  const geometries=new Set<THREE.BufferGeometry>(),materials=new Set<THREE.Material>(),textures=new Set<THREE.Texture>();let draws=0,tris=0
@@ -55,7 +58,7 @@ function pair(factory:()=>THREE.Group){
  return {draws:ar.draws,tris:ar.tris,sharedTextures:ar.textures.size}
 }
 const stats=[]
-for(const l3face of [false,true])for(const seed of [1,9,77,301])stats.push({kind:'faceling',l3face,seed,...pair(()=>buildEntityMesh('faceling',{seed,l3face}))})
+for(const l3face of [false,true])for(const seed of [1,9,77,301,3,71])stats.push({kind:'faceling',l3face,seed,...pair(()=>buildEntityMesh('faceling',{seed,l3face}))})
 stats.push({kind:'skinstealer',...pair(()=>buildSkinStealerMesh(12))})
 for(const phase of ['docile','hunt','reveal'] as const){
  const root=buildSkinStealerMesh(12),e=makeEntity('skinstealer',0,0);e.ss={phase,emerge:phase==='reveal'?.7:0} as SkinStealerState

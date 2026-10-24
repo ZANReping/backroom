@@ -1,0 +1,239 @@
+
+> my-app@0.0.0 check:four-import
+> esbuild scripts/check-four-import.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-four-import.mjs && node .cache/check-four-import.mjs
+
+
+  .cache\check-four-import.mjs  2.9mb
+
+Done in 103ms
+{
+  "ok": true,
+  "checks": 626,
+  "failures": [],
+  "timings": [
+    {
+      "label": "classic vending cold",
+      "ms": 24.546299999999974,
+      "meshes": 127,
+      "tris": 7072,
+      "materials": 40
+    },
+    {
+      "label": "classic vending warm",
+      "ms": 1.6406000000000063,
+      "meshes": 127,
+      "tris": 7072,
+      "materials": 40
+    },
+    {
+      "label": "classic e36 cold",
+      "ms": 47.203400000000045,
+      "meshes": 366,
+      "tris": 33738,
+      "materials": 81
+    },
+    {
+      "label": "classic e36 warm",
+      "ms": 15.701099999999997,
+      "meshes": 366,
+      "tris": 33738,
+      "materials": 81
+    },
+    {
+      "label": "classic l2 cold",
+      "ms": 11.135400000000004,
+      "meshes": 22,
+      "tris": 3516,
+      "materials": 5
+    },
+    {
+      "label": "classic l2 warm",
+      "ms": 1.7554000000000087,
+      "meshes": 22,
+      "tris": 3516,
+      "materials": 5
+    },
+    {
+      "label": "classic ordinary l2 cold",
+      "ms": 0.6007999999999356,
+      "meshes": 4,
+      "tris": 220,
+      "materials": 4
+    },
+    {
+      "label": "classic ordinary l2 warm",
+      "ms": 0.47040000000004056,
+      "meshes": 4,
+      "tris": 220,
+      "materials": 4
+    },
+    {
+      "label": "classic l4 cold",
+      "ms": 6.76260000000002,
+      "meshes": 23,
+      "tris": 3764,
+      "materials": 6
+    },
+    {
+      "label": "classic l4 warm",
+      "ms": 2.502900000000068,
+      "meshes": 23,
+      "tris": 3764,
+      "materials": 6
+    },
+    {
+      "label": "classic ordinary l4 cold",
+      "ms": 0.7291999999999916,
+      "meshes": 5,
+      "tris": 468,
+      "materials": 5
+    },
+    {
+      "label": "classic ordinary l4 warm",
+      "ms": 0.7179999999999609,
+      "meshes": 5,
+      "tris": 468,
+      "materials": 5
+    },
+    {
+      "label": "classic l601 cold",
+      "ms": 3.7468999999999824,
+      "meshes": 23,
+      "tris": 4044,
+      "materials": 6
+    },
+    {
+      "label": "classic l601 warm",
+      "ms": 2.7189999999999372,
+      "meshes": 23,
+      "tris": 4044,
+      "materials": 6
+    },
+    {
+      "label": "classic ordinary l601 cold",
+      "ms": 0.6798000000000002,
+      "meshes": 5,
+      "tris": 748,
+      "materials": 5
+    },
+    {
+      "label": "classic ordinary l601 warm",
+      "ms": 0.5828000000000202,
+      "meshes": 5,
+      "tris": 748,
+      "materials": 5
+    },
+    {
+      "label": "realistic vending cold",
+      "ms": 1.4669000000000096,
+      "meshes": 127,
+      "tris": 7072,
+      "materials": 40
+    },
+    {
+      "label": "realistic vending warm",
+      "ms": 1.1584000000000287,
+      "meshes": 127,
+      "tris": 7072,
+      "materials": 40
+    },
+    {
+      "label": "realistic e36 cold",
+      "ms": 13.059799999999996,
+      "meshes": 366,
+      "tris": 33738,
+      "materials": 81
+    },
+    {
+      "label": "realistic e36 warm",
+      "ms": 11.342399999999998,
+      "meshes": 366,
+      "tris": 33738,
+      "materials": 81
+    },
+    {
+      "label": "realistic l2 cold",
+      "ms": 1.2750999999999522,
+      "meshes": 22,
+      "tris": 3516,
+      "materials": 5
+    },
+    {
+      "label": "realistic l2 warm",
+      "ms": 1.0393000000000256,
+      "meshes": 22,
+      "tris": 3516,
+      "materials": 5
+    },
+    {
+      "label": "realistic ordinary l2 cold",
+      "ms": 0.2479000000000724,
+      "meshes": 4,
+      "tris": 220,
+      "materials": 4
+    },
+    {
+      "label": "realistic ordinary l2 warm",
+      "ms": 0.20029999999997017,
+      "meshes": 4,
+      "tris": 220,
+      "materials": 4
+    },
+    {
+      "label": "realistic l4 cold",
+      "ms": 1.7498000000000502,
+      "meshes": 23,
+      "tris": 3764,
+      "materials": 6
+    },
+    {
+      "label": "realistic l4 warm",
+      "ms": 1.521199999999908,
+      "meshes": 23,
+      "tris": 3764,
+      "materials": 6
+    },
+    {
+      "label": "realistic ordinary l4 cold",
+      "ms": 0.4962000000000444,
+      "meshes": 5,
+      "tris": 468,
+      "materials": 5
+    },
+    {
+      "label": "realistic ordinary l4 warm",
+      "ms": 0.48089999999990596,
+      "meshes": 5,
+      "tris": 468,
+      "materials": 5
+    },
+    {
+      "label": "realistic l601 cold",
+      "ms": 5.4044999999999845,
+      "meshes": 23,
+      "tris": 4044,
+      "materials": 6
+    },
+    {
+      "label": "realistic l601 warm",
+      "ms": 2.070600000000013,
+      "meshes": 23,
+      "tris": 4044,
+      "materials": 6
+    },
+    {
+      "label": "realistic ordinary l601 cold",
+      "ms": 0.7873999999999342,
+      "meshes": 5,
+      "tris": 748,
+      "materials": 5
+    },
+    {
+      "label": "realistic ordinary l601 warm",
+      "ms": 0.8244000000000824,
+      "meshes": 5,
+      "tris": 748,
+      "materials": 5
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:foyer-v2
+> esbuild scripts/check-foyer-v2.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-foyer-v2.mjs && node .cache/check-foyer-v2.mjs
+
+
+  .cache\check-foyer-v2.mjs  6.2mb
+
+Done in 248ms
+{"checks":230,"ok":true,"walkers":5,"seats":7,"reachableCells":1645}

@@ -14,6 +14,7 @@ export const BIND_ACTIONS: BindActionDef[] = [
   { id: 'crouch', label: '蹲伏' },
   { id: 'attack', label: '攻击' },
   { id: 'interact', label: '交互' },
+  { id: 'special', label: '特殊交互（按住；随情境变化，如窗户旁「默念」）' },
   { id: 'flashlight', label: '手电' },
   { id: 'inventory', label: '背包' },
   { id: 'map', label: '地图' },
@@ -21,6 +22,7 @@ export const BIND_ACTIONS: BindActionDef[] = [
   { id: 'quest', label: '任务' },
   { id: 'status', label: '状态' },
   { id: 'log', label: '日志' },
+  { id: 'phone', label: '手机（前厅起随身）' },
   { id: 'sprint', label: '冲刺' },
   { id: 'quickuse', label: '快捷使用' },
   { id: 'quickdrop', label: '快捷丢弃' },
@@ -45,10 +47,11 @@ export type KeyBindMap = Record<string, string>
 export const DEFAULT_KEYBINDS: KeyBindMap = {
   forward: 'KeyW', back: 'KeyS', left: 'KeyA', right: 'KeyD',
   jump: 'Space', crouch: 'KeyC',
-  attack: 'Mouse0', interact: 'KeyE', flashlight: 'KeyF',
+  attack: 'Mouse0', interact: 'KeyE', special: 'KeyX', flashlight: 'KeyF',
   inventory: 'KeyI', map: 'KeyM', sprint: 'ShiftLeft', quickuse: 'Mouse2', quickdrop: 'KeyQ',
   reload: 'KeyR', inspect: 'KeyV', holster: 'AltLeft',
   codex: 'KeyG', quest: 'KeyJ', status: 'KeyU', log: 'KeyL',
+  phone: 'KeyP', // 前厅：手机界面
   hidehud: 'F1', // v54：沉浸模式（F1 是浏览器「帮助」默认键，keydown 处 preventDefault）
   hidehud2: 'F2', // v54：半沉浸模式（隐藏 HUD 铬件，保留手部建模与准星）
   slot1: 'Digit1', slot2: 'Digit2', slot3: 'Digit3', slot4: 'Digit4',

@@ -1,0 +1,588 @@
+{
+  "checks": [
+    "dbshotgun hip hands opaque without depth passes",
+    "dbshotgun ADS hands and sleeves fade with depth prepass",
+    "dbshotgun live reused view keeps front sight in the center window",
+    "dbshotgun release ADS restores opaque hands",
+    "dbshotgun existing load choreography completes",
+    "dbshotgun shooting returns to opaque hip grip",
+    "leverrifle hip hands opaque without depth passes",
+    "leverrifle ADS hands and sleeves fade with depth prepass",
+    "leverrifle live reused view keeps front sight in the center window",
+    "leverrifle release ADS restores opaque hands",
+    "leverrifle existing load choreography completes",
+    "leverrifle shooting returns to opaque hip grip",
+    "revolver hip hands opaque without depth passes",
+    "revolver ADS hands and sleeves fade with depth prepass",
+    "revolver live reused view keeps front sight in the center window",
+    "revolver release ADS restores opaque hands",
+    "revolver existing load choreography completes",
+    "revolver shooting returns to opaque hip grip",
+    "musket hip hands opaque without depth passes",
+    "musket ADS hands and sleeves fade with depth prepass",
+    "musket live reused view keeps front sight in the center window",
+    "musket release ADS restores opaque hands",
+    "musket existing load choreography completes",
+    "musket shooting returns to opaque hip grip",
+    "trapdoor hip hands opaque without depth passes",
+    "trapdoor ADS hands and sleeves fade with depth prepass",
+    "trapdoor live reused view keeps front sight in the center window",
+    "trapdoor release ADS restores opaque hands",
+    "trapdoor existing load choreography completes",
+    "trapdoor shooting returns to opaque hip grip",
+    "gun detach returns opaque shared hand to melee",
+    "ordinary consumable hand remains opaque",
+    "Alt holster clears ADS fade",
+    "repeated five-gun swaps and ADS stabilize geometry/texture/program counts",
+    "all swap cycles end with opaque hands and depth passes retired"
+  ],
+  "screenshots": [
+    "10-dbshotgun-hip",
+    "11-dbshotgun-ads",
+    "12-dbshotgun-reload",
+    "10-leverrifle-hip",
+    "11-leverrifle-ads",
+    "12-leverrifle-reload",
+    "10-revolver-hip",
+    "11-revolver-ads",
+    "12-revolver-reload",
+    "10-musket-hip",
+    "11-musket-ads",
+    "12-musket-reload",
+    "10-trapdoor-hip",
+    "11-trapdoor-ads",
+    "12-trapdoor-reload",
+    "20-crowbar-restored",
+    "21-lighter-restored",
+    "22-holstered",
+    "30-final-ads"
+  ],
+  "guns": [
+    {
+      "type": "dbshotgun",
+      "hip": {
+        "type": "dbshotgun",
+        "aim": 0,
+        "sight": [
+          0.09184899854316374,
+          -0.18409013132462423,
+          0.882865454402842
+        ],
+        "hands": [
+          {
+            "side": "L",
+            "opacity": 1,
+            "sleeveOpacity": 1,
+            "transparent": false,
+            "depth": 0,
+            "visible": true
+          },
+          {
+            "side": "R",
+            "opacity": 1,
+            "sleeveOpacity": 1,
+            "transparent": false,
+            "depth": 0,
+            "visible": true
+          }
+        ],
+        "memory": {
+          "geometries": 1085,
+          "textures": 83
+        },
+        "programs": 48,
+        "position": {
+          "x": 335.6,
+          "y": 32.6,
+          "z": 0
+        },
+        "yaw": 0,
+        "pitch": -0.013708818580901843
+      },
+      "ads": {
+        "type": "dbshotgun",
+        "aim": 1,
+        "sight": [
+          -6.440614574255794e-14,
+          0.0031685473449568633,
+          0.886850575827589
+        ],
+        "hands": [
+          {
+            "side": "L",
+            "opacity": 0.38,
+            "sleeveOpacity": 0.38,
+            "transparent": true,
+            "depth": 1,
+            "visible": true
+          },
+          {
+            "side": "R",
+            "opacity": 0.38,
+            "sleeveOpacity": 0.38,
+            "transparent": true,
+            "depth": 1,
+            "visible": true
+          }
+        ],
+        "memory": {
+          "geometries": 1092,
+          "textures": 83
+        },
+        "programs": 50,
+        "position": {
+          "x": 335.6,
+          "y": 32.6,
+          "z": 0
+        },
+        "yaw": 0,
+        "pitch": -0.013708818580901843
+      },
+      "slot": {
+        "type": "dbshotgun",
+        "count": 1,
+        "mag": [
+          "spent",
+          "shell_buck"
+        ]
+      }
+    },
+    {
+      "type": "leverrifle",
+      "hip": {
+        "type": "leverrifle",
+        "aim": 0,
+        "sight": [
+          0.1169599647956139,
+          -0.23275053093860476,
+          0.8603166323409762
+        ],
+        "hands": [
+          {
+            "side": "L",
+            "opacity": 1,
+            "sleeveOpacity": 1,
+            "transparent": false,
+            "depth": 0,
+            "visible": true
+          },
+          {
+            "side": "R",
+            "opacity": 1,
+            "sleeveOpacity": 1,
+            "transparent": false,
+            "depth": 0,
+            "visible": true
+          }
+        ],
+        "memory": {
+          "geometries": 1112,
+          "textures": 89
+        },
+        "programs": 52,
+        "position": {
+          "x": 335.6,
+          "y": 32.6,
+          "z": 0
+        },
+        "yaw": 0,
+        "pitch": -0.013708818580901843
+      },
+      "ads": {
+        "type": "leverrifle",
+        "aim": 1,
+        "sight": [
+          8.083605510398346e-14,
+          -0.00160838182881457,
+          0.865913867431629
+        ],
+        "hands": [
+          {
+            "side": "L",
+            "opacity": 0.38372041001446366,
+            "sleeveOpacity": 0.38372041001446366,
+            "transparent": true,
+            "depth": 1,
+            "visible": true
+          },
+          {
+            "side": "R",
+            "opacity": 0.38372041001446366,
+            "sleeveOpacity": 0.38372041001446366,
+            "transparent": true,
+            "depth": 1,
+            "visible": true
+          }
+        ],
+        "memory": {
+          "geometries": 1115,
+          "textures": 89
+        },
+        "programs": 52,
+        "position": {
+          "x": 335.6,
+          "y": 32.6,
+          "z": 0
+        },
+        "yaw": 0,
+        "pitch": -0.013708818580901843
+      },
+      "slot": {
+        "type": "leverrifle",
+        "count": 1,
+        "mag": [
+          "cart_4440",
+          "cart_4440",
+          "cart_4440",
+          "cart_4440",
+          "cart_4440",
+          "cart_4440",
+          "cart_4440",
+          "cart_4440",
+          "cart_4440",
+          "",
+          ""
+        ]
+      }
+    },
+    {
+      "type": "revolver",
+      "hip": {
+        "type": "revolver",
+        "aim": 0,
+        "sight": [
+          0.14112340058071546,
+          -0.19049031140727762,
+          0.8070398801872902
+        ],
+        "hands": [
+          {
+            "side": "L",
+            "opacity": 1,
+            "sleeveOpacity": 1,
+            "transparent": false,
+            "depth": 0,
+            "visible": true
+          },
+          {
+            "side": "R",
+            "opacity": 1,
+            "sleeveOpacity": 1,
+            "transparent": false,
+            "depth": 0,
+            "visible": true
+          }
+        ],
+        "memory": {
+          "geometries": 1149,
+          "textures": 89
+        },
+        "programs": 52,
+        "position": {
+          "x": 335.6,
+          "y": 32.6,
+          "z": 0
+        },
+        "yaw": 0,
+        "pitch": -0.013708818580901843
+      },
+      "ads": {
+        "type": "revolver",
+        "aim": 1,
+        "sight": [
+          -2.2446532620236878e-12,
+          -0.0019563091498547205,
+          0.8253541953215829
+        ],
+        "hands": [
+          {
+            "side": "L",
+            "opacity": 0.3808087763599989,
+            "sleeveOpacity": 0.3808087763599989,
+            "transparent": true,
+            "depth": 1,
+            "visible": true
+          },
+          {
+            "side": "R",
+            "opacity": 0.3808087763599989,
+            "sleeveOpacity": 0.3808087763599989,
+            "transparent": true,
+            "depth": 1,
+            "visible": true
+          }
+        ],
+        "memory": {
+          "geometries": 1149,
+          "textures": 89
+        },
+        "programs": 52,
+        "position": {
+          "x": 335.6,
+          "y": 32.6,
+          "z": 0
+        },
+        "yaw": 0,
+        "pitch": -0.013708818580901843
+      },
+      "slot": {
+        "type": "revolver",
+        "count": 1,
+        "mag": [
+          "spent",
+          "cart_4440",
+          "cart_4440",
+          "cart_4440",
+          "cart_4440",
+          "cart_4440"
+        ],
+        "cyl": 1
+      }
+    },
+    {
+      "type": "musket",
+      "hip": {
+        "type": "musket",
+        "aim": 0,
+        "sight": [
+          0.0649924609574281,
+          -0.1378363996506675,
+          0.9072470526024894
+        ],
+        "hands": [
+          {
+            "side": "L",
+            "opacity": 1,
+            "sleeveOpacity": 1,
+            "transparent": false,
+            "depth": 0,
+            "visible": true
+          },
+          {
+            "side": "R",
+            "opacity": 1,
+            "sleeveOpacity": 1,
+            "transparent": false,
+            "depth": 0,
+            "visible": true
+          }
+        ],
+        "memory": {
+          "geometries": 1167,
+          "textures": 89
+        },
+        "programs": 52,
+        "position": {
+          "x": 335.6,
+          "y": 32.6,
+          "z": 0
+        },
+        "yaw": 0,
+        "pitch": -0.013708818580901843
+      },
+      "ads": {
+        "type": "musket",
+        "aim": 1,
+        "sight": [
+          -4.497612879421672e-13,
+          0.0019709762896880974,
+          0.9098079079554471
+        ],
+        "hands": [
+          {
+            "side": "L",
+            "opacity": 0.38,
+            "sleeveOpacity": 0.38,
+            "transparent": true,
+            "depth": 1,
+            "visible": true
+          },
+          {
+            "side": "R",
+            "opacity": 0.38,
+            "sleeveOpacity": 0.38,
+            "transparent": true,
+            "depth": 1,
+            "visible": true
+          }
+        ],
+        "memory": {
+          "geometries": 1169,
+          "textures": 89
+        },
+        "programs": 52,
+        "position": {
+          "x": 335.6,
+          "y": 32.6,
+          "z": 0
+        },
+        "yaw": 0,
+        "pitch": -0.013708818580901843
+      },
+      "slot": {
+        "type": "musket",
+        "count": 1,
+        "mag": [
+          ""
+        ],
+        "ammoSel": "cart_paper",
+        "stage": 0
+      }
+    },
+    {
+      "type": "trapdoor",
+      "hip": {
+        "type": "trapdoor",
+        "aim": 0,
+        "sight": [
+          0.07983295921127347,
+          -0.1659876226030461,
+          0.8938688070803836
+        ],
+        "hands": [
+          {
+            "side": "L",
+            "opacity": 1,
+            "sleeveOpacity": 1,
+            "transparent": false,
+            "depth": 0,
+            "visible": true
+          },
+          {
+            "side": "R",
+            "opacity": 1,
+            "sleeveOpacity": 1,
+            "transparent": false,
+            "depth": 0,
+            "visible": true
+          }
+        ],
+        "memory": {
+          "geometries": 1192,
+          "textures": 89
+        },
+        "programs": 52,
+        "position": {
+          "x": 335.6,
+          "y": 32.6,
+          "z": 0
+        },
+        "yaw": 0,
+        "pitch": -0.013708818580901843
+      },
+      "ads": {
+        "type": "trapdoor",
+        "aim": 1,
+        "sight": [
+          -1.0578848579447393e-12,
+          -0.0038673538340308314,
+          0.89718206072348
+        ],
+        "hands": [
+          {
+            "side": "L",
+            "opacity": 0.382734095514333,
+            "sleeveOpacity": 0.382734095514333,
+            "transparent": true,
+            "depth": 1,
+            "visible": true
+          },
+          {
+            "side": "R",
+            "opacity": 0.382734095514333,
+            "sleeveOpacity": 0.382734095514333,
+            "transparent": true,
+            "depth": 1,
+            "visible": true
+          }
+        ],
+        "memory": {
+          "geometries": 1195,
+          "textures": 89
+        },
+        "programs": 52,
+        "position": {
+          "x": 335.6,
+          "y": 32.6,
+          "z": 0
+        },
+        "yaw": 0,
+        "pitch": -0.013708818580901843
+      },
+      "slot": {
+        "type": "trapdoor",
+        "count": 1,
+        "mag": [
+          "spent"
+        ]
+      }
+    }
+  ],
+  "resources": [
+    {
+      "round": 0,
+      "geometries": 1211,
+      "textures": 93,
+      "programs": 53
+    },
+    {
+      "round": 1,
+      "geometries": 1209,
+      "textures": 93,
+      "programs": 53
+    },
+    {
+      "round": 2,
+      "geometries": 1211,
+      "textures": 93,
+      "programs": 53
+    },
+    {
+      "round": 3,
+      "geometries": 1211,
+      "textures": 93,
+      "programs": 53
+    },
+    {
+      "round": 4,
+      "geometries": 1211,
+      "textures": 93,
+      "programs": 53
+    },
+    {
+      "round": 5,
+      "geometries": 1211,
+      "textures": 93,
+      "programs": 53
+    },
+    {
+      "round": 6,
+      "geometries": 1211,
+      "textures": 93,
+      "programs": 53
+    },
+    {
+      "round": 7,
+      "geometries": 1211,
+      "textures": 93,
+      "programs": 53
+    }
+  ],
+  "final": {
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "memory": {
+      "geometries": 1211,
+      "textures": 93
+    },
+    "programs": 53,
+    "position": {
+      "x": 335.6,
+      "y": 32.6,
+      "z": 0
+    },
+    "viewport": [
+      1920,
+      1080
+    ]
+  }
+}

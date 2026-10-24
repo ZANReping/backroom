@@ -10,14 +10,16 @@ import {tradersFitoutColliders} from '../src/game/content/tradersFitout'
 import {bakeTradersGeometry,type TradersProbe,type TradersProbeField} from '../src/game/renderer/tradersBakedLighting'
 import {seatsFor} from '../src/game/world/seating'
 import {buildTradersShutter,tradersCeilingStep,type TradersAssets} from '../src/game/renderer/tradersMeshes'
-const mats=new Map<string,THREE.Material>(),assets={material:(surface:string,color:string)=>{const key=surface+color;let m=mats.get(key);if(!m){m=new THREE.MeshStandardMaterial({color});m.userData.surface=surface;mats.set(key,m)}return m},labelGeometry:(_t:string,w:number,h:number)=>new THREE.PlaneGeometry(w,h)} as unknown as TradersAssets
+const mats=new Map<string,THREE.Material>(),assets={material:(surface:string,color:string)=>{const key=surface+color;let m=mats.get(key);if(!m){m=new THREE.MeshStandardMaterial({color});m.userData.surface=surface;mats.set(key,m)}return m},labelGeometry:(_t:string,w:number,h:number)=>new THREE.PlaneGeometry(w,h),signGeometry:(_k:string,w:number,h:number)=>new THREE.PlaneGeometry(w,h),labelPart(_t:string,w:number,h:number){return{geometry:new THREE.PlaneGeometry(w,h),material:this.material('label','#ffffff')}}} as unknown as TradersAssets
 const issues:unknown[]=[],counts:Record<string,number>={},models:unknown[]=[],tested=new Set<string>()
 const m=createTradersMap(levelDefOf(102)!,424242);assert.equal(m.traders!.chunks.size,0);for(let y=0;y<9;y++)for(let x=0;x<14;x++)generateTradersChunk(m,x,y)
 for(const s of m.structures.filter(s=>s.data?.tradersModel)){
  const model=String(s.data?.dressing??s.data?.tradersModel);counts[model]=(counts[model]??0)+1
  const root=buildTradersFitout(s,assets)!;root.updateMatrixWorld(true)
  const box=new THREE.Box3().setFromObject(root),cx=s.x+s.w/2,cy=s.y+s.h/2
- if(s.data?.tradersModel==='dressing'&&(box.min.x<s.x-.07||box.max.x>s.x+s.w+.07||box.min.z<s.y-.07||box.max.z>s.y+s.h+.07||box.max.y>Number(s.data?.height??DRESSING_SIZE[model as DressingKind][2])+.08||box.min.y<-.025))issues.push({id:s.data?.tradersId,issue:'bounds',nominal:[s.x,s.y,s.w,s.h],min:box.min.toArray(),max:box.max.toArray()})
+ // 北排主题小店的 shopPiece 是带装饰外溢的整组陈设（挂墙物、柜台后钥匙板、斜靠板材）：网格只需留在本店墙内、不高于顶棚。
+ if(model==='shopPiece'){const r=TRADERS_ROOMS.find(r=>r.id===s.data?.roomId)!;if(box.min.x<r.x+.05||box.max.x>r.x+r.w-.05||box.min.z<r.y+.05||box.max.z>r.y+r.h-.05||box.max.y>r.height+.01||box.min.y<-.025)issues.push({id:s.data?.tradersId,issue:'shop bounds',nominal:[r.x,r.y,r.w,r.h],min:box.min.toArray(),max:box.max.toArray()})}
+ else if(s.data?.tradersModel==='dressing'&&(box.min.x<s.x-.07||box.max.x>s.x+s.w+.07||box.min.z<s.y-.07||box.max.z>s.y+s.h+.07||box.max.y>Number(s.data?.height??DRESSING_SIZE[model as DressingKind][2])+.08||box.min.y<-.025))issues.push({id:s.data?.tradersId,issue:'bounds',nominal:[s.x,s.y,s.w,s.h],min:box.min.toArray(),max:box.max.toArray()})
  if(s.data?.wallId){const wall=TRADERS_WALLS.find(w=>w.id===s.data?.wallId)!,nx=Number(s.data?.wallNormalX),ny=Number(s.data?.wallNormalY),angle=Number(s.data?.deg)*Math.PI/180
   if(Math.sin(angle)*nx+Math.cos(angle)*ny<.999)issues.push({id:s.data?.tradersId,issue:'facing'})
   const back=nx>0?box.min.x-(wall.x+wall.w):nx<0?wall.x-box.max.x:ny>0?box.min.z-(wall.y+wall.h):wall.y-box.max.z

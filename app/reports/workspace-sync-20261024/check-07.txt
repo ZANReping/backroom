@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:ferren-foyer-integration
+> esbuild scripts/check-ferren-foyer-integration.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-ferren-foyer-integration.mjs && node .cache/check-ferren-foyer-integration.mjs
+
+
+  .cache\check-ferren-foyer-integration.mjs  5.1mb
+
+Done in 217ms
+{"checks":48,"ok":true}

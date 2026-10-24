@@ -1,0 +1,93 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 5660,
+  "cdp": 5661,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:5660/verifier/four-import-game.ts",
+      "status": 500,
+      "statusText": "Internal Server Error",
+      "headers": {
+        "Access-Control-Allow-Origin": "http://127.0.0.1:5660",
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "11966",
+        "Date": "Fri, 23 Oct 2026 04:53:19 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/html",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 265,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 5660,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 211,
+      "timing": {
+        "requestTime": 91759.801093,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.441,
+        "sendEnd": 0.477,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 44.475,
+        "receiveHeadersEnd": 44.614
+      },
+      "responseTime": 1792731199140.175,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\four-import-20261023\\actual-game-realistic\\qa-1792731171993-72364",
+    "--remote-debugging-port=5661",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 70288,
+    "server": 46296
+  },
+  "appBootMs": 13019.646799999999,
+  "entryMs": 3576.252700000001,
+  "firstPlayableMs": 23205.0361,
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5660/verifier/four-import-game.ts\",\"lineNumber\":0,\"columnNumber\":0,\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"TypeError\",\"description\":\"TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5660/verifier/four-import-game.ts\",\"objectId\":\"6697109957125998461.2.1\"}}",
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 11225
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 4\n废弃办公室\nB4\n磁带\n0/6\n空旷区\n100%\n1\n2\n3\n4\n5\n6\n7\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n开发者模式\n🛠 开发者模式 · DEV\n▾\n召唤\n状态\n传送\n世界\n信息\n实体\n物品\n装饰物\n搜索实体 / 变种\n自然生成层级\n全部层级\n当前层级\nLevel 0 · 教学关卡\nLevel 1 · 宜居地带\nLevel 2 · 废弃公共带\nLevel 3 · 电站\nLevel 4 · 废弃办公室\nLevel 5 · 恐怖酒店\nLevel 6 · 熄灯\nLevel 7 · 深海恐惧\nLevel 8 · 洞穴系统\nLevel 9 · 郊区\nLevel 10 · 丰裕\nLevel 11 · 不夜城\nLevel 601 · 终末\n其他 / 无自然生成\n39 类实体\n49 个子变种 / 初始状态\n\n在前方 3 米的安全位置召唤。\n\n● 笑魇\nsmiler\n自动 · 按原生成规则\n普通笑魇\n幽影笑魇\n饥饿笑魇\n犬形笑魇\n巨笑魇\n召唤\n● 手臂\narms\n标准形态\n召唤\n● 爆酸者\nburster\n标准形态\n召唤\n● 电弧体\narcwraith\n标准形态\n召唤\n● 人制品售货机\nvendingmachine\n标准形态\n召唤\n● Nguithr'xurh\nnguithr\n标准形态\n召唤\n● 疫疾\nmalady\n标准形态\n召唤\n● 活化的人制品售货机\nvmad\n标准形态\n召唤\n● 钝人\nduller\n标准形态\n召唤\n● 窃皮者\nskinstealer\n自动 · 按原生成规则\n人皮伪装（初始状态）\n温顺真身（初始状态）\n饥饿真身（初始状态）\n召唤\n● 无面灵\nfaceling\n自动 · 按原生成规则\n普通种\n进化种（易怒）\n召唤\n● 复印机幽灵\ncopierwraith\n标准形态\n召唤\n● 久坐者\nseated\n标准形态\n召唤\n● 侍者\nbellhop\n标准形态\n召唤\n● 镜中人\nmirrorself\n标准形态\n召唤\n● 旱虾\ndryshrimp\n标准形态\n召唤\n● 蛛形纲\narachnid\n自动 · 按原生成规则\n洞穴狼蛛\n织网蛛\n跳蛛\n盲眼洞蛛\n群居幼蛛潮\n长脚盲蛛\n水蛛\n极巨蛛\n寡妇毒蛛\n再生蛛\n不死蛛\n抗火蛛\n无氧蛛\n洞蝎\n鞭蝎\n吸附蜱\n螨群\n食草型\n召唤\n● 猎犬\nhound\n自动 · 按原生成规则\n普通猎犬\n中立猎犬\n高智能猎犬\n召唤\n● 肢团\nclump\n自动 · 按原生成规则\n普通肢团\n高智能肢团\n召唤\n● 死亡飞蛾\ndeathmoth\n自动 · 按原生成规则\n雄性\n雌性\n幼虫\n禁卫级\n召唤\n● 运输车\ncarrier\n标准形态\n召唤\n● 管道蠕虫\npipeworm\n标准形态\n召唤\n● 尸鼠\ncorpserat\n自动 · 按原生成规则\n常见尸鼠\n无毛尸鼠\n旅馆尸鼠\n水豚尸鼠\n罗特尼斯尸鼠\n召唤\n● Ferren\nferren\n标准形态\n召唤\n● 鹉主杰瑞\njerry\n标准形态\n召唤\n● 模仿者\nmimicry\n标准形态\n召唤\n● 小小\ntiny\n标准形态\n召唤\n● 7 层之物\nthething\n标准形态\n召唤\n● 牧蛇\nwrangler\n自动 · 按原生成规则\n雄性牧蛇\n雌性牧蛇\n牧蛇幼体\n召唤\n● 迷彩爬行者\ncamocrawler\n标准形态\n召唤\n● 微光向导\nlightguide\n标准形态\n召唤\n● 受眷鸟\ncurabitur\n标准形态\n召唤\n● 悲尸\nwretch\n自动 · 按原生成规则\n蹒跚型\n疾行型\n有智型\n突变型\n召唤\n● 观察者\nwatcher\n标准形态\n召唤\n● 挺进者\nstrider\n标准形态\n召唤\n● 残缺者\nmangled\n标准形态\n召唤\n● 土壤蠕虫\nsoilworm\n标准形态\n召唤\n● 派对客 =)\npartygoer\n标准形态\n召唤\n● 窗户\nwindowent\n标准形态\n召唤\n每类一只 · 环绕召唤"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

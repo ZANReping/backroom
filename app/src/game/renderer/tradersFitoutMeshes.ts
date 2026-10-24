@@ -8,6 +8,7 @@ import type {Structure} from '../core/types'
 import type {TradersAssets} from './tradersMeshes'
 import type {TradersModel} from '../content/tradersFitout'
 import {l1WorldUV} from './l1Materials'
+import {tradersSignAspect} from '../content/tradersSigns'
 
 /** Small authored objects: closed silhouettes, real thickness and shared scanned PBR. */
 class Parts{
@@ -18,7 +19,8 @@ class Parts{
  box(x:number,y:number,z:number,w:number,h:number,d:number,surface:string,color:string,round=0){const g=round?new RoundedBoxGeometry(w,h,d,1,Math.min(round,w/4,h/4,d/4)):new THREE.BoxGeometry(w,h,d);g.translate(x,y,z);this.add(g,surface,color)}
  cylinder(x:number,y:number,z:number,r:number,h:number,surface:string,color:string,r2=r){const g=new THREE.CylinderGeometry(r,r2,h,12);g.translate(x,y,z);this.add(g,surface,color)}
  rod(a:THREE.Vector3,b:THREE.Vector3,r:number,surface:string,color:string){const delta=b.clone().sub(a),g=new THREE.CylinderGeometry(r,r,delta.length(),8);g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),delta.normalize()));g.translate((a.x+b.x)/2,(a.y+b.y)/2,(a.z+b.z)/2);this.add(g,surface,color)}
- label(text:string,x:number,y:number,z:number,w:number,h:number,angle=0){const g=this.assets.labelGeometry(text,w,h);g.rotateY(angle);g.translate(x,y,z);const mat=this.assets.material('label','#ffffff',false),a=this.buckets.get(mat)??[];a.push(g);this.buckets.set(mat,a)}
+ label(text:string,x:number,y:number,z:number,w:number,h:number,angle=0){const {geometry:g,material:mat}=this.assets.labelPart(text,w,h);g.rotateY(angle);g.translate(x,y,z);const a=this.buckets.get(mat)??[];a.push(g);this.buckets.set(mat,a)}
+ sign(key:string,x:number,y:number,z:number,w:number,h:number,angle=0){const g=this.assets.signGeometry(key,w,h);g.rotateY(angle);g.translate(x,y,z);const mat=this.assets.material('sign','#ffffff',false),a=this.buckets.get(mat)??[];a.push(g);this.buckets.set(mat,a)}
  print(tile:number,x:number,y:number,z:number,w:number,h:number,angle=0){const g=new THREE.PlaneGeometry(w,h);g.rotateY(angle);g.translate(x,y,z);const uv=g.getAttribute('uv');for(let i=0;i<uv.count;i++)uv.setXY(i,(tile%4*256+8+uv.getX(i)*240)/1024,1-(Math.floor(tile/4)*256+8+(1-uv.getY(i))*240)/1024);this.add(g,'dressingprint','#ffffff',false)}
  finish(root:THREE.Group){for(const [material,parts] of this.buckets){const g=mergeGeometries(parts);for(const part of parts)part.dispose();if(!g)throw Error('Fit-out material layout mismatch');const m=new THREE.Mesh(g,material);m.castShadow=m.receiveShadow=true;root.add(m)}this.buckets.clear()}
 }
@@ -76,10 +78,16 @@ export function buildTradersFitout(s:Structure,assets:TradersAssets){
   break}
  case 'planter':plant(p,s.w);break
  case 'directory':{
+  if(String(s.data?.tradersId).match(/west\.directory|court\.directory/)){
+   // Freestanding US mall directory totem: one AI-generated directory face per totem (front and back).
+   const key=String(s.data?.tradersId).includes('court')?'dir_court':'dir_west',H=2.2,W=H*tradersSignAspect(key)
+   p.box(0,.04,0,W+.24,.08,.5,'steel',dark,.018);p.box(0,1.25,0,W+.12,2.4,.16,'paint','#1d2328',.03);p.box(0,2.49,0,W+.16,.06,.2,'steel',steel)
+   for(const side of [-1,1])p.sign(key,0,1.27,side*.083,W,H,side<0?Math.PI:0)
+   break}
   p.box(0,.035,0,s.w*.8,.07,.65,'steel',dark,.018);p.box(0,1.12,0,s.w*.88,2.15,.16,'paint','#3f504c',.025)
-  p.box(0,1.2,.092,s.w*.78,1.75,.022,'paint','#e0ddce');p.label(label,0,1.92,.11,s.w*.76,.28)
-  if(s.w>2){p.label('北步行街 / NORTH MALL',0,1.48,.11,s.w*.72,.25);p.label('交易保险库 / TRADERS VAULT',0,1.04,.11,s.w*.72,.28);p.label('货物交接 / DISPATCH',0,.61,.11,s.w*.72,.25)}
-  else{screen(p,0,1.31,.15,.67);p.box(0,.87,.13,.65,.12,.3,'steel',dark);p.box(0,.72,.175,.20,.035,.01,'rubber','#16241f')}
+  p.box(0,1.2,.092,s.w*.78,1.75,.022,'paint','#e0ddce')
+  if(label==='取号 · 等候叫号')p.sign('dir_tickets',0,1.9,.105,s.w*.76,.36);else p.label(label,0,1.92,.11,s.w*.76,.28)
+  screen(p,0,1.31,.15,.67);p.box(0,.87,.13,.65,.12,.3,'steel',dark);p.box(0,.72,.175,.20,.035,.01,'rubber','#16241f')
   break}
  case 'queue':{
   for(const x of [-s.w/2,s.w/2])for(const z of [-s.h/2,s.h/2]){p.cylinder(x,.025,z,.16,.05,'steel',steel);p.cylinder(x,.49,z,.028,.92,'steel',steel);p.cylinder(x,.96,z,.048,.08,'steel',dark)}

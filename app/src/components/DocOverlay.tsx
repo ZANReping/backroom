@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { DOCS } from '@/game/content/docs'
 import { audio } from '@/game/core/audio'
 import ManilaLetter from './ManilaLetter'
+import MissingNotice from './MissingNotice'
+import ForumPage from './ForumPage'
 
 const SERIF = "'SimSun','Songti SC',serif"
 
@@ -19,7 +21,46 @@ export default function DocOverlay({ docId, onClose }: { docId: string; onClose:
       // v29b：移动端改为正常点按关闭——touchend 直触（不再依赖 iOS 合成 click，避免误变长按判定）
       onTouchEnd={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      {doc.style === 'foundation' ? <ManilaLetter doc={doc} onClose={onClose}/> : doc.style === 'note' ? (
+      {doc.id === 'foyer_forum' ? (
+        /* 前厅：本地社区论坛（自拟品牌 borderline，社区论坛版式：见 ForumPage.tsx） */
+        <ForumPage url={doc.url} onClose={onClose} />
+      ) : doc.style === 'web' ? (
+        /* 前厅：电脑屏幕上的网页（浏览器外框 + 地址栏；新闻站/论坛帖，虚构域名） */
+        <div
+          className="anim-slideUp relative flex max-h-[86dvh] w-full max-w-[760px] flex-col overflow-hidden rounded-md"
+          style={{ background: '#fbfbfa', border: '1px solid #3a3d44', boxShadow: '0 14px 46px rgba(0,0,0,0.8), 0 0 0 6px #17191d' }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex shrink-0 items-center gap-2 px-3 py-2" style={{ background: '#2a2d33' }}>
+            <span className="inline-block h-[10px] w-[10px] rounded-full" style={{ background: '#e0605a' }} />
+            <span className="inline-block h-[10px] w-[10px] rounded-full" style={{ background: '#e6b84f' }} />
+            <span className="inline-block h-[10px] w-[10px] rounded-full" style={{ background: '#5fb66b' }} />
+            <div className="ml-2 flex-1 truncate rounded px-3 py-[3px] font-mono2 text-[12px]" style={{ background: '#1b1d21', color: '#aab0ba' }}>🔒 {doc.url ?? 'about:blank'}</div>
+          </div>
+          <div className="overflow-y-auto px-7 py-5" style={{ fontFamily: '-apple-system,"Segoe UI","PingFang SC","Noto Sans CJK SC",sans-serif' }}>
+            <div className="mb-1 text-[12px]" style={{ color: '#8a8f98' }}>{doc.no}</div>
+            <h2 className="mb-4" style={{ color: '#16181c', fontSize: 21, fontWeight: 700, lineHeight: 1.35 }}>{doc.title}</h2>
+            {doc.body.map((sec, i) => (
+              <section key={i} className="mb-4 rounded" style={{ borderLeft: '3px solid #2f6fd6', background: i % 2 ? '#f2f4f7' : 'transparent', padding: '6px 12px' }}>
+                <h3 style={{ color: '#2f6fd6', fontSize: 13, fontWeight: 700 }}>{sec.head}</h3>
+                {sec.paras.map((para, j) => (
+                  <p key={j} className="mt-1" style={{ color: '#2b2e33', fontSize: 14, lineHeight: 1.8 }}>{para}</p>
+                ))}
+              </section>
+            ))}
+          </div>
+          <div className="shrink-0 border-t px-6 py-2 text-right" style={{ borderColor: '#dde0e5', background: '#f2f3f5' }}>
+            <button
+              className="font-mono2 px-4 py-1 text-[12px]"
+              style={{ color: '#4a4f57', border: '1px solid #c8ccd3', background: '#fff' }}
+              onClick={() => { audio.uiTick(); onClose() }}
+              onTouchStart={() => { audio.uiTick(); onClose() }}
+            >
+              离开屏幕（Esc）
+            </button>
+          </div>
+        </div>
+      ) : doc.style === 'missing' ? <MissingNotice doc={doc} onClose={onClose}/> : doc.style === 'foundation' ? <ManilaLetter doc={doc} onClose={onClose}/> : doc.style === 'note' ? (
         /* 手写纸条风格：泛黄横线纸 + 斜体，无红头/落款（v34：L1 迎新纸条） */
         <div
           className="anim-slideUp relative flex max-h-[86dvh] w-full max-w-[620px] flex-col overflow-hidden rounded-sm"

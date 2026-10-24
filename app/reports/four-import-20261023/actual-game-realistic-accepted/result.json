@@ -1,0 +1,945 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 11720,
+  "cdp": 11721,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\four-import-20261023\\actual-game-realistic-accepted\\qa-1792754441326-61616",
+    "--remote-debugging-port=11721",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 57916,
+    "server": 60156
+  },
+  "appBootMs": 9363.336,
+  "entryMs": 2379.6918000000005,
+  "firstPlayableMs": 16584.9378,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 79.5,
+        "y": 79.5,
+        "z": 0
+      },
+      "entities": 0,
+      "memory": {
+        "geometries": 475,
+        "textures": 67
+      },
+      "calls": 1,
+      "checks": 0
+    }
+  },
+  "vending": {
+    "level": 4,
+    "player": {
+      "x": 79.5,
+      "y": 79.7,
+      "z": 0
+    },
+    "entities": 7,
+    "memory": {
+      "geometries": 576,
+      "textures": 86
+    },
+    "calls": 1,
+    "checks": 3,
+    "stock": [
+      1,
+      1,
+      3,
+      2,
+      3,
+      2,
+      1,
+      1
+    ],
+    "brand": "kopi"
+  },
+  "vendDispense": {
+    "level": 4,
+    "player": {
+      "x": 79.5,
+      "y": 79.7,
+      "z": 0
+    },
+    "entities": 7,
+    "memory": {
+      "geometries": 689,
+      "textures": 100
+    },
+    "calls": 1,
+    "checks": 5,
+    "product": "coffee",
+    "bin": null,
+    "stock": [
+      0,
+      1,
+      3,
+      2,
+      3,
+      2,
+      1,
+      1
+    ]
+  },
+  "e36": {
+    "level": 4,
+    "player": {
+      "x": 79.5,
+      "y": 80,
+      "z": 0
+    },
+    "entities": 8,
+    "memory": {
+      "geometries": 678,
+      "textures": 93
+    },
+    "calls": 1,
+    "checks": 7,
+    "mode": "emerge",
+    "bodyY": 0.5475857901499406
+  },
+  "facelings": {
+    "level": 4,
+    "player": {
+      "x": 79.5,
+      "y": 80.5,
+      "z": 0
+    },
+    "entities": 10,
+    "memory": {
+      "geometries": 649,
+      "textures": 125
+    },
+    "calls": 1,
+    "checks": 9,
+    "heights": [
+      1.0101290761329054,
+      1.7836685962419139,
+      1.6034247005695954
+    ]
+  },
+  "soothe": {
+    "level": 4,
+    "player": {
+      "x": 78.45,
+      "y": 78.6,
+      "z": 0
+    },
+    "entities": 8,
+    "memory": {
+      "geometries": 760,
+      "textures": 130
+    },
+    "calls": 1,
+    "checks": 10,
+    "mode": "soothed"
+  },
+  "windowL2": {
+    "level": 2,
+    "player": {
+      "x": 82.5,
+      "y": 66.86,
+      "z": 0
+    },
+    "entities": 1,
+    "memory": {
+      "geometries": 557,
+      "textures": 182
+    },
+    "calls": 1,
+    "checks": 14,
+    "style": "l2",
+    "mount": {
+      "wx": 82.5,
+      "wy": 0.06,
+      "yaw": 0,
+      "nx": 0,
+      "ny": 1
+    },
+    "diag": {
+      "origin": [
+        0,
+        -64
+      ],
+      "host": {
+        "kind": "windowtrap",
+        "x": 82,
+        "y": 64,
+        "w": 1,
+        "h": 1,
+        "solid": false,
+        "data": {
+          "sid": 33554433
+        }
+      },
+      "ent": {
+        "x": 82.5,
+        "y": 64.31,
+        "hidden": false,
+        "pending": false,
+        "win": {
+          "key": "2:330:0",
+          "style": "l2",
+          "wx": 82.5,
+          "wy": 0.06,
+          "yaw": 0,
+          "nx": 0,
+          "ny": 1,
+          "reg": {
+            "life": "occupied",
+            "sil": 0.8494888666666667,
+            "lifeT": 0,
+            "seed": 3
+          },
+          "mode": "lure",
+          "modeT": 1,
+          "cd": 0,
+          "lineT": 2,
+          "stripT": 1,
+          "dragD0": 1,
+          "prey": null
+        }
+      },
+      "root": {
+        "p": [
+          82.5,
+          0,
+          64.06
+        ],
+        "world": [
+          82.5,
+          0,
+          64.06
+        ],
+        "visible": true,
+        "scale": [
+          1.015,
+          1.015,
+          1.015
+        ],
+        "rot": [
+          0,
+          0,
+          0,
+          "XYZ"
+        ]
+      },
+      "pane": {
+        "p": [
+          82.5,
+          1.47175,
+          64.07218
+        ],
+        "visible": true,
+        "side": 0,
+        "clip": [
+          -3.946525545182088e-15,
+          0.04033688022721044,
+          0.9657679866899245
+        ],
+        "uniforms": {
+          "sil": 0.9694888666666667,
+          "vanish": 0,
+          "bright": 1
+        }
+      },
+      "camera": {
+        "p": [
+          82.5,
+          1.5538966660190088,
+          66.86
+        ],
+        "rot": [
+          -0.058755822715722814,
+          0,
+          0,
+          "YXZ"
+        ]
+      },
+      "hits": [
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 2.737750267837534,
+          "p": [
+            82.49999999999999,
+            1.4732603675034504,
+            64.12343750000001
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 2.770752085614509,
+          "p": [
+            82.49999999999999,
+            1.472288348813111,
+            64.09045
+          ],
+          "entity": false
+        },
+        {
+          "name": "scenery",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 2.789030015460217,
+          "p": [
+            82.49999999999999,
+            1.47175,
+            64.07218
+          ],
+          "entity": true
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 2.7912109616596457,
+          "p": [
+            82.5,
+            1.4716857635242155,
+            64.07000000000001
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 2.8092187743155153,
+          "p": [
+            82.5,
+            1.4711553706048943,
+            64.052
+          ],
+          "entity": false
+        },
+        {
+          "name": "l9-static-merged",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 2.861241344210254,
+          "p": [
+            82.5,
+            1.4696231243935216,
+            64
+          ],
+          "entity": false
+        },
+        {
+          "name": "l9-static-merged",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 3.8616753806474056,
+          "p": [
+            82.5,
+            1.4401568510978966,
+            63
+          ],
+          "entity": false
+        }
+      ]
+    }
+  },
+  "windowL4": {
+    "level": 4,
+    "player": {
+      "x": 78.5,
+      "y": 69,
+      "z": 0
+    },
+    "entities": 1,
+    "memory": {
+      "geometries": 652,
+      "textures": 111
+    },
+    "calls": 1,
+    "checks": 18,
+    "style": "l4",
+    "mount": {
+      "wx": 14.5,
+      "wy": 2.2,
+      "yaw": 6.283185307179586,
+      "nx": -2.4492935982947064e-16,
+      "ny": 1
+    },
+    "diag": {
+      "origin": [
+        -64,
+        -64
+      ],
+      "host": {
+        "kind": "glasswin",
+        "x": 78,
+        "y": 66,
+        "w": 1,
+        "h": 1,
+        "solid": true,
+        "data": {
+          "l4": 1,
+          "deg": 180,
+          "rain": 1,
+          "coast": 1,
+          "l4Facade": 1,
+          "mullion": 0,
+          "revealLeft": 1,
+          "revealRight": 0,
+          "windowId": "0:0:n:2",
+          "sid": 3922584764
+        }
+      },
+      "ent": {
+        "x": 78.5,
+        "y": 66.45,
+        "hidden": false,
+        "pending": false,
+        "win": {
+          "key": "4:58:9",
+          "style": "l4",
+          "wx": 14.5,
+          "wy": 2.2,
+          "yaw": 6.283185307179586,
+          "nx": -2.4492935982947064e-16,
+          "ny": 1,
+          "reg": {
+            "life": "occupied",
+            "sil": 0.8495109999999993,
+            "lifeT": 0,
+            "seed": 3
+          },
+          "mode": "lure",
+          "modeT": 1,
+          "cd": 0,
+          "lineT": 2,
+          "stripT": 1,
+          "dragD0": 1,
+          "prey": null
+        }
+      },
+      "root": {
+        "p": [
+          78.5,
+          0,
+          66.2
+        ],
+        "world": [
+          78.5,
+          0,
+          66.2
+        ],
+        "visible": true,
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "rot": [
+          0,
+          6.283185307179586,
+          0,
+          "XYZ"
+        ]
+      },
+      "pane": {
+        "p": [
+          78.5,
+          1.755,
+          66.212
+        ],
+        "visible": true,
+        "side": 0,
+        "clip": [
+          0,
+          0.01629340439804276,
+          0.965857036628477
+        ],
+        "uniforms": {
+          "sil": 0.9695109999999993,
+          "vanish": 0,
+          "bright": 1
+        }
+      },
+      "camera": {
+        "p": [
+          78.5,
+          1.557858792661146,
+          69
+        ],
+        "rot": [
+          0.05875582271572272,
+          0,
+          0,
+          "YXZ"
+        ]
+      },
+      "hits": [
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 2.746841448867109,
+          "p": [
+            78.5,
+            1.7516058903558542,
+            66.2599999986589
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 2.776916353882392,
+          "p": [
+            78.5,
+            1.753727208847884,
+            66.23
+          ],
+          "entity": false
+        },
+        {
+          "name": "scenery",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 2.794961297698235,
+          "p": [
+            78.5,
+            1.755,
+            66.212
+          ],
+          "entity": true
+        },
+        {
+          "name": "window-host-instances",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 2.8972153674458085,
+          "p": [
+            78.5,
+            1.762212440036987,
+            66.11000061035156
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 3.007490635973714,
+          "p": [
+            78.5,
+            1.769990651347144,
+            66
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 3.007490635973714,
+          "p": [
+            78.5,
+            1.769990651347144,
+            66
+          ],
+          "entity": false
+        },
+        {
+          "name": "window-host-instances",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 4.120262783159525,
+          "p": [
+            78.5,
+            1.8484794822193003,
+            64.88999938964844
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 19.028152702030464,
+          "p": [
+            78.5,
+            2.9000000953674316,
+            50.01923995264259
+          ],
+          "entity": false
+        }
+      ]
+    }
+  },
+  "windowL4Vanish": {
+    "level": 4,
+    "player": {
+      "x": 78.5,
+      "y": 69,
+      "z": 0
+    },
+    "entities": 0,
+    "memory": {
+      "geometries": 844,
+      "textures": 111
+    },
+    "calls": 1,
+    "checks": 24
+  },
+  "windowL601": {
+    "level": 12,
+    "player": {
+      "x": 31.5,
+      "y": 58.14,
+      "z": 0
+    },
+    "entities": 1,
+    "memory": {
+      "geometries": 723,
+      "textures": 91
+    },
+    "calls": 1,
+    "checks": 28,
+    "style": "l601",
+    "mount": {
+      "wx": 31.5,
+      "wy": 60.94,
+      "yaw": 3.141592653589793,
+      "nx": 1.2246467991473532e-16,
+      "ny": -1
+    },
+    "diag": {
+      "origin": [
+        null,
+        null
+      ],
+      "host": {
+        "kind": "libwindow",
+        "x": 31,
+        "y": 60,
+        "w": 1,
+        "h": 1,
+        "solid": false,
+        "data": {
+          "winDir": 2
+        }
+      },
+      "ent": {
+        "x": 31.5,
+        "y": 60.69,
+        "hidden": false,
+        "pending": false,
+        "win": {
+          "key": "12:126:244",
+          "style": "l601",
+          "wx": 31.5,
+          "wy": 60.94,
+          "yaw": 3.141592653589793,
+          "nx": 1.2246467991473532e-16,
+          "ny": -1,
+          "reg": {
+            "life": "occupied",
+            "sil": 0.8496222000000015,
+            "lifeT": 0,
+            "seed": 3
+          },
+          "mode": "lure",
+          "modeT": 1,
+          "cd": 0,
+          "lineT": 2,
+          "stripT": 1,
+          "dragD0": 1,
+          "prey": null
+        }
+      },
+      "root": {
+        "p": [
+          31.5,
+          0,
+          60.94
+        ],
+        "world": [
+          31.5,
+          0,
+          60.94
+        ],
+        "visible": true,
+        "scale": [
+          1.015,
+          1.015,
+          1.015
+        ],
+        "rot": [
+          0,
+          3.141592653589793,
+          0,
+          "XYZ"
+        ]
+      },
+      "pane": {
+        "p": [
+          31.5,
+          1.8066999999999998,
+          60.92782
+        ],
+        "visible": true,
+        "side": 0,
+        "clip": [
+          0,
+          0.043313641641082645,
+          0.9658961099645529
+        ],
+        "uniforms": {
+          "sil": 0.9696222000000015,
+          "vanish": 0,
+          "bright": 1
+        }
+      },
+      "camera": {
+        "p": [
+          31.5,
+          1.5545132852932049,
+          58.14
+        ],
+        "rot": [
+          0.05875582271572272,
+          -3.141592653589793,
+          0,
+          "YXZ"
+        ]
+      },
+      "hits": [
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 2.727353502721674,
+          "p": [
+            31.5,
+            1.8002268949656843,
+            60.85626249667257
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 2.748677719441937,
+          "p": [
+            31.5,
+            1.8021480431624788,
+            60.877499996721745
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 2.7808585888572668,
+          "p": [
+            31.5,
+            1.8050472924085152,
+            60.909549999999996
+          ],
+          "entity": false
+        },
+        {
+          "name": "scenery",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 2.7992031886725526,
+          "p": [
+            31.5,
+            1.8066999999999995,
+            60.92782
+          ],
+          "entity": true
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 2.8013920900188785,
+          "p": [
+            31.5,
+            1.8068972032046764,
+            60.93
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshBasicMaterial",
+          "d": 2.8194655873738395,
+          "p": [
+            31.5,
+            1.8085254865460407,
+            60.948
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 2.8716779130659473,
+          "p": [
+            31.5,
+            1.8132294161988711,
+            61
+          ],
+          "entity": false
+        }
+      ]
+    }
+  },
+  "windowReach": {
+    "level": 12,
+    "player": {
+      "x": 31.5,
+      "y": 58.14,
+      "z": 0
+    },
+    "entities": 1,
+    "memory": {
+      "geometries": 741,
+      "textures": 91
+    },
+    "calls": 1,
+    "checks": 29
+  },
+  "windowVanish": {
+    "level": 12,
+    "player": {
+      "x": 31.5,
+      "y": 58.14,
+      "z": 0
+    },
+    "entities": 0,
+    "memory": {
+      "geometries": 718,
+      "textures": 91
+    },
+    "calls": 1,
+    "checks": 34
+  },
+  "npcIdle": {
+    "level": 101,
+    "player": {
+      "x": 60.800000000000004,
+      "y": 10.5,
+      "z": 0
+    },
+    "entities": 0,
+    "memory": {
+      "geometries": 2579,
+      "textures": 114
+    },
+    "calls": 1,
+    "checks": 37,
+    "npc": "alpha_melody",
+    "act": "watch"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Repeated vending/window retirements keep GPU geometry stable after warmup\",\"lineNumber\":21,\"columnNumber\":19,\"scriptId\":\"699\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"ok\",\"scriptId\":\"699\",\"url\":\"http://127.0.0.1:11720/verifier/four-import-game.ts\",\"lineNumber\":20,\"columnNumber\":18},{\"functionName\":\"modelChurn\",\"scriptId\":\"699\",\"url\":\"http://127.0.0.1:11720/verifier/four-import-game.ts\",\"lineNumber\":307,\"columnNumber\":4}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Repeated vending/window retirements keep GPU geometry stable after warmup\\n    at ok (http://127.0.0.1:11720/verifier/four-import-game.ts:21:19)\\n    at Object.modelChurn (http://127.0.0.1:11720/verifier/four-import-game.ts:308:5)\",\"objectId\":\"2033767628237334662.2.4\"}}",
+  "partial": {
+    "checks": [
+      "Original developer placement creates vending structure",
+      "Actual structure uses new vending model",
+      "Real overlay shows eight slots",
+      "Vending overlay leaves actual game running",
+      "Real overlay take button adds selected product once",
+      "Actual E36 uses shared remake rig",
+      "Attacking E36 starts emergence animation",
+      "Actual child mesh is shorter than adult",
+      "All ages retain animated humanoid rigs",
+      "Holding special input soothes a visible child",
+      "Generated Level 2 has a safely approachable window",
+      "Window entity attaches to an existing generated window",
+      "Occupied window scenery is visible in the actual scene",
+      "Entity uses layer-specific window model",
+      "Generated Level 4 has a safely approachable window",
+      "Window entity attaches to an existing generated window",
+      "Occupied window scenery is visible in the actual scene",
+      "Entity uses layer-specific window model",
+      "Expired window removes its ordinary host model to expose the real wall",
+      "Expired host window hides its ordinary frame and glass",
+      "Window disappearance retains the existing world geometry",
+      "Expired L4 window becomes a solid matching facade wall",
+      "Vanished entity GPU model is retired",
+      "Expired window cannot still offer its old interaction",
+      "Generated Level 12 has a safely approachable window",
+      "Window entity attaches to an existing generated window",
+      "Occupied window scenery is visible in the actual scene",
+      "Entity uses layer-specific window model",
+      "Window reach clip exposes its articulated arm in the game",
+      "Expired window removes its ordinary host model to expose the real wall",
+      "Expired host window hides its ordinary frame and glass",
+      "Window disappearance retains the existing world geometry",
+      "Vanished entity GPU model is retired",
+      "Expired window cannot still offer its old interaction",
+      "Alpha retains its assigned residents",
+      "Alpha NPC remains within assigned local duty range",
+      "Actual duty NPC has subtle idle motion",
+      "Generated Level 4 has a safely approachable window",
+      "Window entity attaches to an existing generated window",
+      "Occupied window scenery is visible in the actual scene",
+      "Entity uses layer-specific window model"
+    ],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 78.5,
+        "y": 69,
+        "z": 0
+      },
+      "entities": 0,
+      "memory": {
+        "geometries": 1260,
+        "textures": 163
+      },
+      "calls": 1,
+      "checks": 41
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 8199.900000000373
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 4\n废弃办公室\nB4\n磁带\n0/6\n空旷区\n100%\nSurvival Difficulty: Class 1 · 杏仁水全后室最富集 · 实体几乎绝迹\n入口：办公走廊尽头\n出口线索：电梯井在等两枚保险丝。\n某扇没被涂黑的窗户后面，似乎有什么在回望你。你移开了视线。\n咖啡\n1\n2\n3\n4\n5\n6\n7\nE 眺望 窗外\n空格\n跳跃\nC\n蹲伏\nF\n手电\n左Alt\n取出主手\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  }
+}

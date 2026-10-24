@@ -6,8 +6,12 @@ import {enableRuntimeStructCollisionIndex} from './mapgen'
 import type {LevelDef,Structure,LightSource} from '../core/types'
 import type {NpcState,NpcDef} from '../content/npcs'
 import {NPCS} from '../content/npcs'
+import {TRADERS_MARKET_HOMES,TRADERS_MARKET_PEOPLE} from '../content/tradersMarket'
+import {TRADERS_SHOP_HOMES,TRADERS_SHOP_PEOPLE,tradersShopAt,tradersShopLights} from '../content/tradersShops'
 import {canOccupy} from '../core/player'
 import {createTradersResident} from '../content/tradersPeople'
+import {ferrenCageStructures,FERREN_CAGE} from '../content/ferrenCage'
+import {makeEntity} from '../entities'
 import {tradersFurnishingsForChunk} from '../content/tradersFurnishings'
 import {TRADERS_BLUEPRINT,TRADERS_BOUNDS,TRADERS_MAP_SIZE,TRADERS_LAYOUT_VERSION,TRADERS_FIXED_PEOPLE,TRADERS_ENTRIES,TRADERS_SPAWN,TRADERS_ROOMS,TRADERS_ZONES,tradersContains,tradersIntersects,tradersWallStructures,tradersShopFrontStructures,tradersDoorStructures,tradersServiceStructures,tradersCeilingAt,tradersZoneAt,type TradersRect} from '../content/tradersLayout'
 
@@ -31,6 +35,8 @@ const unit=(seed:number,i:number,salt=0)=>hash(seed^salt,i+1)/4294967296
 
 export function tradersHomes(seed:number):TradersHome[]{
  const a:TradersHome[]=TRADERS_FIXED_PEOPLE.map(p=>({...p}))
+ for(const h of TRADERS_MARKET_HOMES)a.push({...h})
+ for(const h of TRADERS_SHOP_HOMES)a.push({...h})
  for(const d of TRADERS_DUTIES){const slot=Number(d.id.split('_').at(-1));a.push({id:d.id,slot,x:d.x,y:d.y,facing:d.facing})}
  // Appearance is seeded, while job/seat geometry remains authored.
  void seed
@@ -55,11 +61,12 @@ export function createTradersMap(def:LevelDef,seed:number):GameMap{
  })
  m.zones!.sort((a,b)=>(a.x1!-a.x0!)*(a.y1!-a.y0!)-(b.x1!-b.x0!)*(b.y1!-b.y0!))
  m.settlement={blueprint:TRADERS_BLUEPRINT,heights,roomIndex,roofIndex}
- const base=[...tradersWallStructures(),...tradersShopFrontStructures(),...tradersArchPosts(),...tradersHallPosts(),...tradersDoorStructures(),...tradersServiceStructures()]
+ const base=[...tradersWallStructures(),...tradersShopFrontStructures(),...tradersArchPosts(),...tradersHallPosts(),...tradersDoorStructures(),...tradersServiceStructures(),...ferrenCageStructures()] // [ferren] 迎新与路线中心的小雪貂笼（围栏/窝/食盆）
  m.structures=base.slice()
  m.exits=TRADERS_ENTRIES.map(e=>({x:e.x-.5,y:e.y-.5,discovered:true,def:{kind:'unlockeddoor',name:e.name,dest:'back',anim:'bloom'}}))
  m.traders={version:4,seed:seed>>>0,chunks:new Map(),base,states:{},homes:tradersHomes(seed>>>0),residents:new Map(),definitions:new Map(),savedResidents:{},revision:0,created:0,peakChunks:0,maxCpuMs:0,fitout:1,duties:new Map(TRADERS_DUTIES.map(d=>[d.id,d])),lastNpcAt:-Infinity,lastNpcX:Infinity,lastNpcY:Infinity,pendingNearNpcs:false}
  enableRuntimeStructCollisionIndex(m)
+ m.entities.push(makeEntity('ferren',FERREN_CAGE.spawn.x,FERREN_CAGE.spawn.y)) // [ferren] 只有 1 只，只住这里（ferrenAI 接管）
  void def
  return m
 }
@@ -70,13 +77,14 @@ export function tradersLightsForChunk(cx:number,cy:number):LightSource[]{
  const b=tradersChunkBounds(cx,cy),lights:LightSource[]=[]
  const push=(x:number,y:number,z:number,color:string,r=6)=>lights.push({x,y,r,color,fixZ:z,keep:1,gen:1,flickerSeed:hash(Math.round(x*10),Math.round(y*10)),intensityMul:.75})
  for(let y=Math.ceil(b.y/8)*8+4;y<b.y+32;y+=8)for(let x=Math.ceil(b.x/8)*8+4;x<b.x+32;x+=8){
-  if(!tradersContains(TRADERS_BOUNDS,x,y)||TRADERS_ROOMS.some(r=>r.w<12&&r.h<12&&tradersContains(r,x,y)))continue
+  if(!tradersContains(TRADERS_BOUNDS,x,y)||TRADERS_ROOMS.some(r=>r.w<12&&r.h<12&&tradersContains(r,x,y))||[[0,0],[.8,0],[-.8,0],[0,.8],[0,-.8]].some(([dx,dy])=>tradersShopAt(x+dx,y+dy)))continue
   push(x,y,tradersCeilingAt(x,y)-.16,tradersZoneAt(x,y)?.kind==='street'?'#f2dfbb':'#e7e9df',7)
  }
  for(const r of TRADERS_ROOMS)if(r.w<12&&r.h<12){
   const x=r.x+r.w/2,y=r.y+r.h/2
   if(tradersContains(b,x,y))push(x,y,r.height-.14,r.storage==='cold'?'#dce8ec':'#e5e6dc',4.8)
  }
+ lights.push(...tradersShopLights(b))
  lightCache.set(key,lights);if(lightCache.size>160)lightCache.delete(lightCache.keys().next().value!)
  return lights
 }
@@ -154,7 +162,7 @@ export function syncTradersResidents(eng:Engine,force=false){
   if(!n){
    if(created>=2){if(d<=24)w.pendingNearNpcs=true;continue}
    const duty=w.duties.get(h.id),pos=duty?.seatHeight?{x:h.x,y:h.y}:safeHome(m,h);if(!pos)continue
-   const def=h.slot===undefined?{...NPCS[h.id],wanderRadius:.6}:createTradersResident(h.slot,w.seed).def
+   const def=h.slot===undefined?(TRADERS_MARKET_PEOPLE[h.id]??TRADERS_SHOP_PEOPLE[h.id]?{...(TRADERS_MARKET_PEOPLE[h.id]??TRADERS_SHOP_PEOPLE[h.id])}:{...NPCS[h.id],wanderRadius:.6}):createTradersResident(h.slot,w.seed).def
    if(!def.id)continue
    w.definitions.set(h.id,def);created++
    n={id:h.id,def,...pos,facing:h.facing,homeX:pos.x,homeY:pos.y,homeFacing:h.facing,tx:pos.x,ty:pos.y,moveT:1+unit(w.seed,h.slot??200)*4,bubbleText:'',bubbleT:0,floor:0}

@@ -28,13 +28,12 @@ export const L601: LevelDef = {
   containerBias: 0.35,
   entities: [
     { type: 'partygoer', w: 20, min: 2, max: 4 }, // 派对客：同批 2–4 只聚成一群（mapgen.placePartyPack，附带蛋糕/海报/大红旗诱饵）
-    { type: 'windowent', w: 8, min: 1, max: 2 },
   ],
   items: [
     { type: 'endnote', w: 18 },
   ],
   itemCount: [9, 13],
-  structures: ['libshelf', 'endletters', 'homedoor', 'table', 'sconce', 'corpse', 'crate', 'locker'],
+  structures: ['libshelf', 'libwindow', 'endletters', 'homedoor', 'table', 'sconce', 'corpse', 'crate', 'locker'],
   exits: [
     // 假结局：你家的前门。走进去，你会「回家」——然后在图书馆里醒来。
     { kind: 'homedoor', name: '你家的前门', dest: 12, anim: 'bloom', cutIn: 'step' },

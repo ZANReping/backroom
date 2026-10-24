@@ -1,0 +1,64 @@
+{
+  "archive": "backroom-firearms-adshands.zip",
+  "sha256": "16c5b1b054191b1f0c36a20c380356fb4ec84a4f1ad2bb24755a20e5d31d4550",
+  "files": [
+    {
+      "path": "app/src/proto/firearmsProto.ts",
+      "before": "68802197a3932a6fbb151b476b7672a30aedcad19ec72db68f95b5ce6645bbaf",
+      "after": "fc9d65186a61cb8d4e6448ccf747f8f07a074bbc3e69575ac10e87614eede45c"
+    },
+    {
+      "path": "app/src/game/renderer/firearmAnim.ts",
+      "before": "8493bcb20c1278c0605e471cc39cf777f8b7916a26ed28920210aa31414b70a2",
+      "after": "52cb054d2c8f687aae25d8ee58f1744bbff876076a331824bac87fcad7e35b5a"
+    },
+    {
+      "path": "app/src/game/renderer/firearmGuns.ts",
+      "before": "6ac73988750fb1c9d4076b8f25e91cad0c25f295d5a9dddb6fb6e0ed495204e0",
+      "after": "b8622efef66a4b595bc877946e79a3b116f4b2fa062195ee9d9acf533861d8b7"
+    },
+    {
+      "path": "app/src/game/renderer/firearmMesh.ts",
+      "before": "2ae473d04862defaea5fed7ac2912ae08981a9e8da4b6b66ad67a6c9c931c841",
+      "after": "342c8971e6e4cdaede4750f89d0af26d76b412f69ef730a6ffdc8abb9c8a1c07"
+    },
+    {
+      "path": "app/src/game/renderer/firearmView.ts",
+      "before": "9a4c6ba1e7057c3f83e81f38a802d1b704a8fba0f8d991da033ceb33f39f45d5",
+      "after": "8a172173b0957872ab50b8cb8d9edc7512a77fe1119246677e0eb96cd4431a6a"
+    },
+    {
+      "path": "app/src/game/renderer/retroViewHand.ts",
+      "before": "fda660e4d8d715cc79e915c3bc97b4cec50fde8d9b25d01775e5dae09329fdc0",
+      "after": "f4f92eb2450414d4919ab95ac9b12f0a9a1457c101c955885f488acfbf35d9a8"
+    }
+  ],
+  "additionalUpdatedFiles": [
+    {
+      "path": "app/scripts/check-retro-hands.ts",
+      "sha256": "595801bd20431a4ff0d1bc6ecfc7e49e95825eaee8b8aed2797170614e2fa521"
+    },
+    {
+      "path": "app/scripts/check-firearms.ts",
+      "sha256": "c3d9d556d1538f2c23a3d975936c2ae2d4c25591d3e8d3c4f92a8c2e2fd15137"
+    },
+    {
+      "path": "app/scripts/check-firearm-resources.ts",
+      "sha256": "50ab3d6f6cf100542941992c43db0c3387c4978073f41c78ecca980d0da2d516"
+    },
+    {
+      "path": "app/FIREARMS.md",
+      "sha256": "3711e6ad3e22728e6b056b28b59ea62f546a446f02b4ac432992a8899d4fd0fc"
+    },
+    {
+      "path": "info.md",
+      "sha256": "e8a9ec592973bda4a2160ad5c4bb77a48a65e16e87a10dd628e0f6089bfa1177"
+    }
+  ],
+  "source": {
+    "gripBase": "3e4a942",
+    "head": "8848701",
+    "upstreamBase": "8b9a720",
+    "method": "three-way merge of cumulative overlay; no full patch applied"
+  }
+}

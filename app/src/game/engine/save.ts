@@ -16,6 +16,7 @@ import { captureL11, type L11WorldSave } from './l11State'
 import { dullerSafePosition } from './dullerAI'
 import { sittingSafePosition } from './seating'
 import { migrateL11Snapshot, needsL11Migration } from './l11Migration'
+import { captureFerren } from './ferrenAI'
 const l11BackupBlockedSeeds=new Set<number>()
 
 // ===== v29a：存档/读档 =====
@@ -74,6 +75,7 @@ export interface SaveSnapshot {
   jerryTamed?: boolean // v45：鹉主已被杏仁水驯服（教化不再积累）
   jerryAgreed?: string[] // v45：已对其「认同杰瑞」的信众 NPC id（引路选项按此显示；v49 起每局至多一名——见 jerryOath）
   jerryOath?: boolean // v49：本局已宣誓认同杰瑞（+10 每局仅首次；之后任何信众处认同选项不再出现）
+  ferren?: import('./ferrenAI').FerrenSave // [ferren] Entity 92：作息时间轴（累计秒）/ 本段睡眠是否已盖被子 / 摸摸好感计数与冷却
   homelyApplied?: boolean // v55：家常酒店入住申请已提交（L5 据点 111 准入）
   radio?: { mode: 'follow' | 'fixed'; fixed: string | null; perLevel: Record<number, string> } // v56：电台配置（随层级变化/固定音乐 + 单层覆盖）
   heardSongs?: string[] // v56：已收听曲目 id（电台可选前提；乐手演奏解锁摇滚曲目）
@@ -187,6 +189,7 @@ export function snapshot(eng: Engine): SaveSnapshot {
     jerryTamed: eng.jerryTamed,
     jerryAgreed: [...eng.jerryAgreed],
     jerryOath: eng.jerryOath,
+    ferren: captureFerren(eng), // [ferren] 作息时间轴
     homelyApplied: eng.homelyApplied, // v55：家常酒店入住申请（L5 据点 111 准入）
     radio: eng.radio, // v56：电台配置
     heardSongs: [...eng.heardSongs], // v56：已收听曲目

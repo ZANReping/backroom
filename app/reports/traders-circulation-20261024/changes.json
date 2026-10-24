@@ -1,0 +1,141 @@
+{
+  "date": "2026-10-24",
+  "root": "E:/ZAN/backroom",
+  "scope": "app and root info.md",
+  "files": [
+    {
+      "path": "app/src/game/content/tradersLayout.ts",
+      "beforeSha256": "733b66744fd98d8fcdc5d89eb554780cda9acc735af2e5edcdfe68d32316c3eb",
+      "afterSha256": "45d2463427390946c8c4ba984ad63ed71748a0352a709c9f259a8e2d05024e2f",
+      "modified": true
+    },
+    {
+      "path": "app/src/game/content/tradersFurnishings.ts",
+      "beforeSha256": "0c77e17266ad276153187f8c524c1351dcd10a23ef2a3cb041d5d24c2541d45a",
+      "afterSha256": "0bdc9e6c8992542f48b6ef471dbca3b88d04dbb18d92ad0cdb5962526f359f00",
+      "modified": true
+    },
+    {
+      "path": "app/src/game/content/tradersRibs.ts",
+      "beforeSha256": "96ba455cb02f6c0e619369ffb353277d0dbcd1ab50d8f8f3a2f687661fe69f77",
+      "afterSha256": "8b05c37daa4f0c74e647476736495b04e06304ab1093bc58c707fea97ce4d34e",
+      "modified": true
+    },
+    {
+      "path": "app/src/game/renderer/tradersArchitectureDetails.ts",
+      "beforeSha256": "a78ef4af10a52c26c3d2860356c359d36493329fb1ed28500e3c6a609014769c",
+      "afterSha256": "f0e0c3fa29010c482ab22f412b7451d70859f23a6b8eadb0e5f465d171667de0",
+      "modified": true
+    },
+    {
+      "path": "app/src/game/renderer/tradersVisibility.ts",
+      "beforeSha256": "d56cbefe7a61f94f70f5ff4ffb1c6b0fcbd915c748bb612c5574ef69d62a51e4",
+      "afterSha256": "08a223582f4df99fff22dd9311491d02a2d91cb2bcab5d5e389db1d9b8a0389f",
+      "modified": true
+    },
+    {
+      "path": "app/src/game/renderer/tradersMeshes.ts",
+      "beforeSha256": "646e69b00e21715049de18639b63e379bad62e6058c8cbea6c71fa062d45d7cf",
+      "afterSha256": "2ed646c2af4c8402bacc46184779bf14e87f0cc027b38140a74a915be0c5dbfd",
+      "modified": true
+    },
+    {
+      "path": "app/src/game/content/tradersFitout.ts",
+      "beforeSha256": "e58be9d8b26c42821308f858170d17dcf0a5dcd84f88997af332e4325a66685d",
+      "afterSha256": "e58be9d8b26c42821308f858170d17dcf0a5dcd84f88997af332e4325a66685d",
+      "modified": false
+    },
+    {
+      "path": "app/src/game/content/tradersDressing.ts",
+      "beforeSha256": "78af326b2b128e2763712f02162ccbd52d7ff3c86ac9ce1822656a9583229d8c",
+      "afterSha256": "78af326b2b128e2763712f02162ccbd52d7ff3c86ac9ce1822656a9583229d8c",
+      "modified": false
+    },
+    {
+      "path": "app/TRADERS-KEEP-REMAKE.md",
+      "beforeSha256": "a2b52385088bdc2e1ab89e775818039d37c17826cff453465394ae7d3b076cd3",
+      "afterSha256": "7d76165cb343fd8d0a6ebb148a015ad8f830c20ff021fb9d40e1a44d4ac3b8ee",
+      "modified": true
+    },
+    {
+      "path": "info.md",
+      "beforeSha256": "e8a9ec592973bda4a2160ad5c4bb77a48a65e16e87a10dd628e0f6089bfa1177",
+      "afterSha256": "0fe715e1c1b3609097e6f039332b118796bdccb27f6fed2bcbbbe55b32c23e9a",
+      "modified": true
+    },
+    {
+      "path": "app/package.json",
+      "afterSha256": "18d0256646115481708cc51a1a279706cc5ccef85add0cd77c913357a17345d4",
+      "note": "No pre-task snapshot retained for this file."
+    },
+    {
+      "path": "app/scripts/check-traders-circulation.ts",
+      "afterSha256": "b3cc5d8f1189594844ded4406f4dc242008f89009888b1c95cbd1f6bc962fae0",
+      "note": "No pre-task snapshot retained for this file."
+    }
+  ],
+  "validation": {
+    "build": {
+      "ok": true,
+      "exitCode": 0,
+      "log": "build-final.log",
+      "seconds": 30.85
+    },
+    "runs": [
+      {
+        "directory": "trim-realistic-final",
+        "ok": true,
+        "checks": 42,
+        "screenshots": 27,
+        "browserErrors": [],
+        "networkErrors": [],
+        "cleanup": {
+          "browserExit": "SIGTERM",
+          "serverExit": "SIGTERM",
+          "profileRemoved": true
+        }
+      },
+      {
+        "directory": "trim-classic-final",
+        "ok": true,
+        "checks": 42,
+        "screenshots": 27,
+        "browserErrors": [],
+        "networkErrors": [],
+        "cleanup": {
+          "browserExit": "SIGTERM",
+          "serverExit": "SIGTERM",
+          "profileRemoved": true
+        }
+      }
+    ],
+    "regressions": [
+      "traders-circulation",
+      "traders-keep",
+      "traders-fitout",
+      "traders-dressing",
+      "traders-visibility",
+      "traders-gates",
+      "traders-shops",
+      "traders-market"
+    ]
+  },
+  "preserved": {
+    "bounds": [
+      420,
+      276
+    ],
+    "vaults": 128,
+    "shops": 28,
+    "anchors": 4,
+    "tables": 64,
+    "emptyMarketStalls": 9,
+    "layoutVersion": 4,
+    "saveVersion": 1
+  },
+  "limitations": [
+    "Grid path lengths are four-neighbor 0.5 m audit results, not precise smooth walking distance.",
+    "No full-level frame-time stress retest or Android hardware validation in this change.",
+    "Existing build font, PostCSS and chunk-size warnings remain."
+  ]
+}

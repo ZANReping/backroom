@@ -2,7 +2,7 @@
 // 自 engine.ts 拆分，逻辑逐语句搬运。
 import {updateTradersDuty} from './tradersDuty'
 import { bandOfPlayerZ, bandOfZ, floorHeight, structBlocksPoint, walkableAt } from '../world/mapgen'
-import { NPCS, JERRY_PREACH_LINES, JERRY_CHANT_LINES } from '../content/npcs'
+import { NPCS, JERRY_PREACH_LINES, JERRY_CHANT_LINES, type NpcState } from '../content/npcs'
 import { OUTPOSTS } from '../content/outposts'
 import { FACTIONS, genQuest, genBntgQuest, genArianeQuest, genEl3aQuest, genJerryQuest, type QuestDef, type QuestFaction } from '../content/factions'
 import { recordEntityEncounter, loadSeen, type Entity } from '../entities'
@@ -20,6 +20,7 @@ import { ALPHA_PLACEMENT_CLEARANCES } from '../content/alphaBlueprint'
 import { canOccupy } from '../core/player'
 import { HUMANOID_WINDUP, HUMANOID_RECOVERY } from '../core/humanoidMelee'
 import {updateAlphaDuty} from './alphaNpc'
+import { npcIdleControl, npcIdleDecide, npcIdleTick } from './npcIdle'
 import { jerryInteractBox, updateJerryPlayer, updateFollower, updateBluebird, addIndoctrination, jerryTamed } from './jerryAI'
 
 // ---- v45：信众领地判定（HUD 声望显示，仿衔尾段 ouroboros）+ 教化诵咏 + 接触冷却 ----
@@ -40,6 +41,31 @@ export function updateJerry(eng: Engine, dt: number) {
   if (eng.jerryContactCd > 0) eng.jerryContactCd = Math.max(0, eng.jerryContactCd - dt)
   // 重制：木僵/残响/理智上限/击晕/飞石/辛克莱伏击/诱导标记（jerryAI）
   updateJerryPlayer(eng, dt)
+}
+
+/** 路线行走：在 def.route 路点间往返（端点驻足 1–3 s），被玩家挡住时原地等待。 */
+function updateRouteWalker(eng: Engine, n: NpcState, dt: number, walkOk: (x: number, y: number) => boolean) {
+  const route = n.def.route!, p = eng.player
+  n.routeI ??= 1; n.routeDir ??= 1
+  if ((n.routePause ?? 0) > 0) { n.routePause! -= dt; n.tx = n.x; n.ty = n.y; return }
+  const [gx, gy] = route[n.routeI]
+  const dx = gx - n.x, dy = gy - n.y, d = Math.hypot(dx, dy)
+  if (d < 0.12) {
+    const next = n.routeI + n.routeDir
+    if (next < 0 || next >= route.length) { n.routeDir = n.routeDir > 0 ? -1 : 1; n.routePause = 1 + Math.random() * 2 }
+    n.routeI = Math.max(0, Math.min(route.length - 1, n.routeI + n.routeDir))
+    n.tx = n.x; n.ty = n.y
+    return
+  }
+  const ux = dx / d, uy = dy / d
+  // 玩家在前方 0.9 m 内：停下（面朝前方）
+  const px = p.x - n.x, py = p.y - n.y
+  if (Math.hypot(px, py) < 0.9 && px * ux + py * uy > 0) { n.tx = n.x; n.ty = n.y; n.facing = Math.atan2(uy, ux); return }
+  const sp = Math.min(d, (n.def.routeSpeed ?? 1.1) * dt)
+  const nx = n.x + ux * sp, ny = n.y + uy * sp
+  if (walkOk(nx, ny)) { n.x = nx; n.y = ny } else { n.routeDir = n.routeDir > 0 ? -1 : 1; n.routeI = Math.max(0, Math.min(route.length - 1, n.routeI + n.routeDir)) }
+  n.tx = gx; n.ty = gy // 渲染层据此播步态
+  n.facing = Math.atan2(uy, ux)
 }
 
 /** NPC 主循环（原 step「---- v35：NPC ----」内联段，逐语句搬运） */
@@ -79,6 +105,12 @@ export function updateNpcs(eng: Engine, dt: number) {
     }
     // v39：死亡动画计时（尸体由渲染层倒地/下沉，计时归零后在循环尾移除）
     if (n.dead) { n.deathT = (n.deathT ?? 0) - dt; continue }
+    // 前厅路人使用独立路线；驻足者不参加据点坐靠/聊天选点，避免离开其街景岗位。
+    if (n.def.ambient) {
+      if (n.def.route && n.def.route.length >= 2) updateRouteWalker(eng, n, dt, walkOk)
+      else { n.tx = n.x; n.ty = n.y }
+      continue
+    }
     // v45：杰瑞的信众敌意规则（全团体通用）——jerry 声望 ≤ -10 转敌对，恢复后放下敌意；
     // 重制（jerryAI.updateFollower）：中立时从不主动接触新人、只远远看着；敌对时投石索远程投石、近身打倒，
     // 血量见底时击晕拖走（不杀人）；击晕后有一段休战。青鸟神父在 L274 周期讲道，杰瑞站上他的肩头。
@@ -149,9 +181,12 @@ export function updateNpcs(eng: Engine, dt: number) {
       if (n.homeFacing !== undefined) n.facing = n.homeFacing
       continue
     }
+    // 待机行为（npcIdle）：坐长椅/靠墙/闲聊模式接管移动；站立小动作与玩家注视在移动之后结算
+    if (npcIdleControl(eng, n, dt, walkOk)) { npcIdleTick(eng, n, dt, walkOk); continue }
     n.moveT -= dt
     if (n.moveT <= 0) {
-      if (Math.random() < 0.3 && n.def.idle.length > 0) { // 驻足自语
+      if (npcIdleDecide(eng, n, walkOk)) { if (n.moveT <= 0) n.moveT = 0.5 }
+      else if (Math.random() < 0.3 && n.def.idle.length > 0) { // 驻足自语
         n.bubbleText = n.def.idle[Math.floor(Math.random() * n.def.idle.length)]
         n.bubbleT = 3
         n.moveT = 4 + Math.random() * 5
@@ -172,6 +207,7 @@ export function updateNpcs(eng: Engine, dt: number) {
       else { n.tx = n.homeX; n.ty = n.homeY } // 受阻回岗位
       n.facing = Math.atan2(ndy, ndx)
     }
+    npcIdleTick(eng, n, dt, walkOk)
   }
   // v39：尸体清理（引擎列表与所属 chunk 一并移除，防止窗口重缝合/重访时复活）
   if (eng.npcs.some((n) => n.dead && (n.deathT ?? 0) <= 0)) {

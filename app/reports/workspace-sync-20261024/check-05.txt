@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:foyer-entry
+> esbuild scripts/check-foyer-entry.ts --bundle --platform=node --format=esm --outfile=.cache/check-foyer-entry.mjs && node .cache/check-foyer-entry.mjs
+
+
+  .cache\check-foyer-entry.mjs  5.2mb
+
+Done in 215ms
+{"ok":true,"checks":85,"initialEye":1.27,"ceilings":12,"maxFlightZ":4.476666666666666}

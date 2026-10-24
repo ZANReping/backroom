@@ -30,8 +30,8 @@ export const ENTITY_FORMS: Readonly<Record<string, readonly EntitySubform[]>> = 
     form('hound-ambusher', '高智能猎犬', 'Level 3 的伏击个体，外观沿用普通猎犬。', '伏击与快速追击；被直视时僵住。', { houndKind: 'ambusher' }),
   ],
   faceling: [
-    form('faceling-common', '普通无面灵', '随机衣着与肤色，脸部没有五官。', '保持原有中立行为，被攻击后反击。', { passive: true, l3face: false, tool: false }),
-    form('faceling-anomaly', '敌意无面灵', 'Level 3 的异常形态，五官位置和数量错乱。', '对玩家保持敌意。', { passive: false, l3face: true }),
+    form('faceling-common', '普通种', '与人类高度相似，分幼年 / 成年 / 老年；衣着模仿所处环境的职业。脸部没有五官。', '中立：会招手、点头、指路；幼体会哭闹，可安抚；伤害幼体会激怒附近成体。', { passive: true, l3face: false, tool: false }),
+    form('faceling-anomaly', '进化种（易怒）', 'Level 3 的进化个体：早期只长出独眼、独耳，晚期长出两只小眼、连在一起的鼻孔、没有嘴唇的嘴和扁平的耳朵；部分男性长胡须。', '易怒分支：对流浪者抱有敌意，暴起前先暴怒；约四成持石锤。', { passive: false, l3face: true }),
   ],
   skinstealer: [
     form('skinstealer-skinned', '人皮伪装', '披着人皮，以随机人物外观出现。', '伪装结束或受伤后显露真身，继续原有行为循环。', { skinPhase: 'skinned' }, true),

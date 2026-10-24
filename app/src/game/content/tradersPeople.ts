@@ -5,7 +5,8 @@ import { RNG } from '../core/rng'
 export const TRADERS_RESIDENT_COUNT = 154
 export type TradersRole = 'visitor' | 'clerk' | 'porter' | 'guard' | 'office' | 'resident'
 
-const SURNAME_POOL = ['陈', '周', '林', '赵', '吴', '何', '沈', '顾', '陆', '苏', '叶', '韩', '白', '方', '许', '唐', '罗', '梁', '温', '邱', '秦', '江', '石', '尹', '钟', '萧', '梅', '严', '魏', '冯', '杜', '程']
+// v-market: BNTG is an American trade house; staff surnames follow its Western naming (no Chinese surname suffixes).
+const SURNAME_POOL = ['卡特', '摩尔', '布朗', '米勒', '戴维斯', '加西亚', '威尔逊', '安德森', '泰勒', '托马斯', '杰克逊', '怀特', '哈里斯', '马丁', '汤普森', '罗宾逊', '克拉克', '刘易斯', '沃克', '霍尔', '艾伦', '帕克', '库珀', '赖特', '洛佩兹', '希尔', '斯科特', '格林', '亚当斯', '贝克', '尼尔森', '坎贝尔']
 const ROLE_RANGES: readonly [TradersRole, number][] = [
   ['visitor', 72], ['clerk', 16], ['porter', 24], ['guard', 16], ['office', 10], ['resident', 16],
 ]

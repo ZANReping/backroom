@@ -3,6 +3,8 @@ import type {Structure} from '../core/types'
 import {DressingParts,DRESSING_COLORS as C} from './tradersDressingParts'
 import {buildTradersWallFixture} from './tradersWallFixtures'
 import {buildTradersLivingProp} from './tradersLivingProps'
+import {buildTradersMarketProp} from './tradersMarketMeshes'
+import {buildTradersShopProp} from './tradersShopMeshes'
 import {tradersLocalStructure,type DressingKind} from '../content/tradersDressingShapes'
 import type {TradersAssets} from './tradersMeshes'
 export function buildTradersDressing(source:Structure,assets:TradersAssets){
@@ -13,7 +15,7 @@ export function buildTradersDressing(source:Structure,assets:TradersAssets){
  const cabinet=(hh:number)=>{p.box(0,hh/2,0,w,hh,d,'wood',C.wood,.012);p.box(0,hh+.025,0,w+.025,.05,d+.025,'steel',C.steel,.01);for(const x of [-w*.3,0,w*.3]){p.box(x,hh/2,d/2+.005,.012,hh-.12,.008,'rubber',C.dark);p.box(x+w*.11,hh*.65,d/2+.018,.14,.02,.025,'steel',C.steel)}}
  const screen=(x:number,y:number,z:number,ww=.52,face=1)=>{p.box(x,y,z,ww,.34,.05,'rubber',C.dark,.012);p.print(5,x,y,z+face*.029,ww-.045,.28,face<0?Math.PI:0);p.box(x,y-.25,z,.035,.21,.04,'steel',C.steel);p.box(x,y-.35,z,.22,.02,.16,'steel',C.steel)}
  try{
- if(!buildTradersWallFixture(kind,p,w,d,v)&&!buildTradersLivingProp(kind,p,w,d,v))switch(kind){
+ if(!buildTradersShopProp(kind,p,w,d,s)&&!buildTradersMarketProp(kind,p,w,d,s)&&!buildTradersWallFixture(kind,p,w,d,v)&&!buildTradersLivingProp(kind,p,w,d,v))switch(kind){
  case 'officescreen':{
   p.box(0,.78,0,w,1.0,.065,'fabric',C.green,.015);for(const x of [-w*.38,w*.38]){p.box(x,.15,0,.04,.3,.04,'steel',C.steel);p.box(x,.025,0,.34,.045,d,'steel',C.steel)}p.box(0,1.29,0,w+.02,.025,.075,'steel',C.steel);break}
  case 'storageRack':{

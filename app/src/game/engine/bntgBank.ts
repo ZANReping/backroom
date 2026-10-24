@@ -96,8 +96,10 @@ export function bntgBuy(eng:Engine,npcId:string,item:string,mode:BntgPaymentMode
  const cost=bntgPrice(eng,stock.price),payment=bntgPaymentPlan(eng,cost,mode)
  if(!payment)return fail(mode==='credits'?'信用点不足。':mode==='cash'?'随身压印币不足。':'信用点与随身压印币合计不足。')
  const staged=stageInventory(eng)
- if(!remove(staged,'presses',payment.cash)||!addItem(staged,item))return fail('背包没有可用空间；本次购买未扣款。')
- return commit(eng,staged,'purchase',-payment.credit,-payment.cash,'购买 '+itemName(item)+'：信用点 '+payment.credit+'，压印币 '+payment.cash+'。')
+ if(!remove(staged,'presses',payment.cash))return fail('背包没有可用空间；本次购买未扣款。')
+ const qty=Math.max(1,stock.qty??1)
+ for(let i=0;i<qty;i++)if(!addItem(staged,item))return fail('背包没有可用空间；本次购买未扣款。')
+ return commit(eng,staged,'purchase',-payment.credit,-payment.cash,'购买 '+itemName(item)+(qty>1?' ×'+qty:'')+'：信用点 '+payment.credit+'，压印币 '+payment.cash+'。')
 }
 export function bntgBarter(eng:Engine,npcId:string,index:number,mode:BntgPaymentMode='auto'):BankResult{
  const def=merchant(eng,npcId),deal=Number.isSafeInteger(index)&&index>=0?def?.barter?.[index]:undefined

@@ -1,4 +1,10 @@
 import {ensureTradersAt} from './world/tradersWorld'
+import { beginFoyerRun, updateFoyer, enterFoyer } from './engine/foyer'
+import { applyFoyerLanding, landingActive, updateFoyerLanding, resetFoyerPresentation } from './engine/foyerLanding'
+import { phoneState, updatePhone, togglePhoneTorch, type PhoneState } from './engine/phone'
+import type { TutorialDirector } from './engine/tutorial'
+import type { HudKey } from './engine/hud'
+import { FOYER_ID } from './world/foyerLayout'
 import { heldMelee, updateMeleeInput, normalizeMeleeInventory, type MeleePending } from './engine/melee'
 import { newSwimState, findClimbOut, type SwimState, type SwimMode } from './engine/swim'
 import * as careerSystem from './engine/career'
@@ -20,12 +26,16 @@ import { createIntegrator, type MoveIntegrator } from './core/player'
 import { look } from './core/renderer3d'
 import { freshJerryRun, jerryInputLock, type JerryRunState } from './engine/jerryAI'
 import { armsInputLock, armsPlayerTick, freshArmsRun, type ArmsRunState } from './engine/armsAI'
+import { freshWinRun, type WinRunState } from './engine/windowAI'
+import { freshVendRun, stepVending, type VendRunState, type VendTarget } from './engine/vendingAI'
+import { freshFerrenRun, restoreFerren, stepFerrenWorld, type FerrenRunState } from './engine/ferrenAI'
 import { freshNgRun, nguithrInputLock, nguithrPlayerTick, updateNguithrEntity, type NguithrRunState } from './engine/nguithrAI'
 import type { ExitDef, FloorBand, LightSource, Structure } from './core/types'
 import { audio } from './core/audio'
 import { ROCK_SONG_IDS, musicName, setRadioCfg } from './core/midi'
 import { seedString } from './core/rng'
 import { type NpcState, type NpcDef } from './content/npcs'
+import { newGunRun, heldGun, gunTrigger, updateFirearms, gunHolsterLock, type GunRun, type GunFx } from './engine/firearms'
 import type { ItemUseAnim } from './content/items'
 import { OUTPOSTS } from './content/outposts'
 import { REP_START, type QuestDef, type QuestFaction } from './content/factions'
@@ -58,7 +68,7 @@ export type { SaveSnapshot, SaveSlotId, SlotInfo } from './engine/save'
 export type { Difficulty } from './engine/shared'
 export { EFFECTS } from './engine/effects'
 
-export interface InvSlot { type: string; count: number; tag?: number; dur?: number; blood?: number } // dur：近战武器单件耐久（缺省=满；0=残件）；blood：刃上血污 0..1 // tag：来源层级标签（迁跃浆果=发现它的层级；不同标签不堆叠）
+export interface InvSlot { type: string; count: number; tag?: number; dur?: number; blood?: number; mag?: string[]; ammoSel?: string; stage?: number; cyl?: number } // mag/ammoSel：枪械弹仓（每格弹种 / 'spent' / ''）与选定弹种；stage：前装进度；cyl：转轮当前膛 // dur：近战武器单件耐久（缺省=满；0=残件）；blood：刃上血污 0..1 // tag：来源层级标签（迁跃浆果=发现它的层级；不同标签不堆叠）
 // 装备槽位标识：hotbar/backpack 为背包格；offhand/body/gloves/pocket 为装备位（主手=快捷栏选中项，不是独立槽位）
 export type SlotWhere = 'hotbar' | 'backpack' | 'offhand' | 'body' | 'gloves' | 'head' | 'pocket'
 export interface SlotRef { w: SlotWhere; i: number }
@@ -82,7 +92,7 @@ export interface Projectile {
   water?: boolean
 }
 export interface HudEvent {
-  kind: 'bank' | 'faction' | 'facility' | 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'floorchange' | 'dead' | 'victory' | 'levelchange' | 'lootpanel' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'radioheard' | 'mpevent'
+  kind: 'vending' | 'bank' | 'faction' | 'facility' | 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'floorchange' | 'dead' | 'victory' | 'levelchange' | 'lootpanel' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'radioheard' | 'mpevent'
   cutIn?: string
   dest?: number | 'random' | 'win'
   text?: string
@@ -95,6 +105,14 @@ export interface HudEvent {
 
 export interface PlayerState {
   x: number; y: number; facing: number
+  /** 序章「前厅」剧情状态（随存档）；缺省=旧存档/跳过前厅，视为已完成。 */
+  prologue?: { step: string; flags: Record<string, boolean>; open?: Record<string, number>; landingItems?: InvSlot[] }
+  /** HUD 逐步解锁（前厅）；缺省=全部解锁（旧存档/跳过前厅）。 */
+  hudUnlocks?: Partial<Record<HudKey, boolean>>
+  /** 手机（前厅起随身）：电量/手电/笔记（engine/phone.ts）。缺省=没有手机。 */
+  phone?: PhoneState
+  /** 前厅时钟：自 23:40 起经过的游戏秒数。 */
+  prologueClock?: number
   // v7 数据契约：z 轴高度系统
   z: number // 脚底高度（米，随地面高度档/坡道/跳跃变化）
   vz: number // 垂直速度（重力积分）
@@ -132,6 +150,8 @@ export interface InputState {
   attack: boolean
   /** 攻击键是否仍按着（近战蓄力用；触屏/键鼠松开时清零） */
   attackHeld?: boolean
+  /** 枪械：右键贴腮瞄准（按住） */
+  aimHeld?: boolean
   interact: boolean
   toggleLight: boolean
   jump: boolean // v7：跳跃（桌面空格 / 移动端按钮，边沿触发由引擎消费）
@@ -163,6 +183,8 @@ export class Engine {
   handsStowed = false
   // 主手检视只驱动第一人称模型姿态，不参与移动、攻击、交互或物品使用判定。
   inspectHeld = false
+  specialPressed = false // 锁存点按：触屏轻点或一帧内按下/松开也执行一次。
+  specialHeld = false // [window] 特殊交互键按住中（engine/special.ts：情境动作，目前是窗户旁的「默念」）
   // v29a：存档/读档状态
   mapSeed = 0 // 当前层级地图生成种子（loadLevel 记录，读档恢复同一张图用）
   mapFirstVisit = true // 当前地图生成时的 firstVisit 标记
@@ -188,6 +210,9 @@ export class Engine {
   explored: Uint8Array = new Uint8Array(0)
   visible: Uint8Array = new Uint8Array(0)
   fakes: { x: number; y: number; t: number }[] = [] // 理智幻影
+  /** 枪械：玩家动作状态（engine/firearms.ts）与渲染层特效队列 */
+  gun: GunRun = newGunRun()
+  gunFx: GunFx[] = []
   particles: { x: number; y: number; vx: number; vy: number; t: number; life: number; color: string; size: number; z?: number; vz?: number; opacity?: number }[] = []
   // v13：液体状态
   l7fx: L7Fx = newL7Fx() // v66：L7 涌浪/致幻/重力交界区事件状态
@@ -210,7 +235,28 @@ export class Engine {
   stepAcc = 0
   // v12：interactTarget 携带目标引用（结构/物品/出口），HUD 提示与 doInteract 执行
   // 共用 scanInteract 的同一选择结果，杜绝「提示普通门却触发相邻上锁门」的目标漂移。
-  interactTarget: { kind: string; label: string; s?: Structure; it?: GameMap['items'][number]; e?: GameMap['exits'][number]; npc?: NpcState; ent?: Entity; vmBack?: boolean } | null = null
+  interactTarget: { kind: string; label: string; s?: Structure; it?: GameMap['items'][number]; e?: GameMap['exits'][number]; npc?: NpcState; ent?: Entity; vmBack?: boolean; foyerId?: string } | null = null
+  /** 前厅（序章）运行时：可开关部件状态（engine/foyer.ts）。 */
+  foyer?: import('./engine/foyer').FoyerRuntime
+  /** 前厅教程（TutorialDirector；离开前厅后为 null）。 */
+  tutorial: TutorialDirector | null = null
+  /** 设置「始终显示全部 HUD」（App 同步；只影响显示，不改写解锁记录）。 */
+  hudShowAll = false
+  /** HUD 区块首次解锁的时间戳（performance.now；浮现动画用，不入存档）。 */
+  hudRevealAt: Partial<Record<HudKey, number>> = {}
+  /** 手机屏幕点亮中（手机界面打开）：额外耗电。 */
+  phoneScreenOn = false
+  /** 相机快门闪白计时（秒）。 */
+  photoFlashT = 0
+  /** 照片缩略图（note id → dataURL；不入存档）。 */
+  phoneThumbs = new Map<number, string>()
+  /** 相机快门待截取（App 在渲染后同一任务内回调）。 */
+  pendingPhoto: ((canvas: HTMLCanvasElement) => void) | null = null
+  /** 教程事件标记：写入 player.prologue.flags['ev:<id>']（前厅进行中才记录）。 */
+  markTutorial(id: string) {
+    const pr = this.player.prologue
+    if (pr && pr.step !== 'done') pr.flags['ev:' + id] = true
+  }
   seating: SittingState | null = null
   // 开发者模式（noAttackCooldown=true 时仅绕过攻击间隔；体力消耗仍保留，便于单独调试战斗节奏）
   devEnabled = false
@@ -349,9 +395,9 @@ export class Engine {
   // ===== v32：新物品机制状态 =====
   /** @deprecated 近战重制后耐久按单件记录（InvSlot.dur）；保留字段只为兼容旧代码读取，恒为 0 */
   axeDur = 0
-  squirtTank: 'none' | 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid' = 'none' // 滋水枪储罐液体（单一种类）
+  squirtTank: 'none' | 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid' | 'memoryjuice' | 'laughrepellent' = 'none' // 滋水枪储罐液体（单一种类）
   // R 短按快速装填使用的液体；长按轮盘选中液体后更新。清水无需背包物品，因此作为初始回退。
-  squirtQuickLiquid: 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid' = 'water'
+  squirtQuickLiquid: 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid' | 'memoryjuice' | 'laughrepellent' = 'water'
   // v51：Object 5 糖果效果计时器
   candyAddictT = 0 // 糖瘾：吃糖后 60s 内需再吃，否则理智 -10
   silverTongueT = 0 // 银舌头：交易 95 折（秒）
@@ -364,6 +410,10 @@ export class Engine {
   thingBreathPingT = 0 // [thing] 下一次口臭气味的倒计时
   thingMeatCd = 0 // [thing] 两块彼物之肉之间的割肉冷却
   manmadeT = 0 // v51：人制品效应剩余秒数（5 分钟：拒食他物/治疗减半/恒显饥饿特效/体力恢复减半消耗加倍/受伤 -10%）
+  ferrenRun: FerrenRunState = freshFerrenRun() // [ferren] Entity 92：作息时钟（写存档 ferren）/ 摸摸冷却 / 被子 / 切行闪白
+  vendRun: VendRunState = freshVendRun() // [vending] 售货机：成瘾 / 受害者 / 普通机运行时状态（只在内存，不写存档）
+  vendUi: VendTarget | null = null // [vending] 交互界面当前对着的售货机
+  winRun: WinRunState = freshWinRun() // [window] 窗户 Entity 2：登记表 / 被抓 / 默念 / 黑屏（只在内存）
   armsRun: ArmsRunState = freshArmsRun() // 手臂重制：被抓/挣扎/管道黑屏/吐出坠落（只在内存，不写存档）
   webbedT = 0 // v51：缠丝麻痹剩余秒数（视野模糊 + 移动迟缓；现仅死亡飞蛾守卫使用）
   ngRun: NguithrRunState = freshNgRun() // Nguithr'xurh 重制：玩家轻度/重度镇静与挣脱（只在内存，不写存档）
@@ -483,19 +533,22 @@ export class Engine {
     this.emit({ kind: 'msg', text, msgKind: kind })
   }
 
-  newRun(seed: number, difficulty: Difficulty, slot: save.SaveSlotId = 'slot1', forceFresh = false) {
+  newRun(seed: number, difficulty: Difficulty, slot: save.SaveSlotId = 'slot1', forceFresh = false, startLevel = 0) {
     if(this.map?.traders)this.map=null // A fresh run must not recapture the previous Traders world.
+    this.tutorial = null; this.foyer = undefined; resetFoyerPresentation(); this.specialPressed = false
+    this.hudRevealAt = {}; this.phoneScreenOn = false; this.phoneThumbs.clear()
     this.seed = seed
     this.difficulty = difficulty
     this.saveSlot = slot
     this.player = this.freshPlayer()
+    this.gun = newGunRun(); this.gunFx.length = 0; this.input.aimHeld = false
     this.over = false; this.victory = false; this.transition = null
     this.usingItem = null
     this.attackAnimT = 0
     this.attackAnimDur = 0.35
     this.attackCooldownT = 0
     this.attackCooldownDur = 0
-    this.inspectHeld = false
+    this.inspectHeld = false; this.specialHeld = false
     this.handsStowed = false
     this.squirtTank = 'none'
     this.squirtAmmo = 0
@@ -565,6 +618,7 @@ export class Engine {
       // v49：恢复宣誓标记；旧档无此字段时按「已认同过任一信众」迁移（每局仅首次认同有效）
       this.jerryOath = snap.jerryOath ?? ((snap.jerryAgreed ?? []).length > 0)
       this.homelyApplied = snap.homelyApplied ?? false // v55：家常酒店入住申请
+      this.ferrenRun = restoreFerren(snap.ferren) // [ferren] 作息时间轴
       // v56：恢复电台配置与收听记录（旧档缺省=随层级变化/空）
       this.radio = snap.radio ?? { mode: 'follow', fixed: null, perLevel: {} }
       this.radio.perLevel = this.radio.perLevel ?? {}
@@ -587,6 +641,7 @@ export class Engine {
         equip: { ...fresh.equip, ...(snap.player.equip ?? {}), pockets: snap.player.equip?.pockets ?? fresh.equip.pockets },
       }
       this.player.level = snap.level
+      if (snap.level === FOYER_ID) enterFoyer(this, false)
       normalizeMeleeInventory(this)
       // v59：旧版据点布局的坐标落在已移除的小房间/墙体中，统一迁移到新布局的安全出生点。
       // 布局版本 2 保留世界坐标恢复及既有安全校正逻辑。
@@ -617,10 +672,25 @@ export class Engine {
       else if (placement === 'legacy-settlement-spawn') this.msg('旧版据点布局已迁移至新的安全接待点。', 'system')
       else if (placement === 'legacy-spawn') this.msg('旧版无限层存档缺少世界坐标，已移至本层安全入口。', 'system')
       else if (placement !== 'exact') this.msg('原存档落点已被地形占用，已移至附近安全位置。', 'system')
-      this.msg(`读档成功——回到 ${levelLabel(snap.level)}。`, 'system')
+      // 中断发生在前厅坠落的黑场：队列仍属于存档，恢复时只散落一次。
+      if (snap.level === FOYER_ID && this.player.prologue?.landingItems) {
+        this.loadLevel(0); applyFoyerLanding(this); this.persist()
+      }
+      this.msg(`读档成功——回到 ${levelLabel(this.player.level)}。`, 'system')
+      return
+    }
+    if (startLevel === FOYER_ID) {
+      // 序章「前厅」：从玩家的家开始（不播摔落爬起；HUD 逐步解锁）
+      this.loadLevel(FOYER_ID)
+      beginFoyerRun(this)
+      this.persist()
       return
     }
     this.loadLevel(0)
+    // Fresh L0 start with the prologue skipped: the same carried essentials, no random consumable.
+    this.addItem('phone'); this.addItem('bottledwater'); this.addItem('snackbar'); this.addItem('snackbar')
+    const ph = phoneState(this.player)
+    ph.docked = false; ph.cracked = true; ph.noSignal = true; ph.torch = false
     if (this.mpSpawnSlot !== null) level.applyMpSpawn(this, this.mpSpawnSlot) // v58：联机槽位出生 + 全槽位物资
     this.introT = 3.2 // 开场：摔到 L0 地面后缓慢爬起
     this.msg(`你坠入了后室。种子 ${seedString(seed)}`, 'system')
@@ -639,7 +709,7 @@ export class Engine {
   persist() { save.persist(this) }
 
   // ---------- 层级切换与出口（engine/level.ts）----------
-  loadLevel(id: number, restore?: { mapSeed: number; firstVisit: boolean }, preparedMapSeed?: number) { level.loadLevel(this, id, restore, preparedMapSeed) }
+  loadLevel(id: number, restore?: { mapSeed: number; firstVisit: boolean }, preparedMapSeed?: number) { this.gun = newGunRun(); this.gunFx.length = 0; this.input.aimHeld = false; level.loadLevel(this, id, restore, preparedMapSeed) }
   /** v39：无限层级 NPC 同步——从已加载 LiveChunk 收集活体 NPC（窗口平移后重收集） */
   syncInfNpcs() { level.syncInfNpcs(this) }
   updateInfiniteWindow(prepared?:ReadonlyMap<string,import('./world/infiniteRegistry').GenChunk>) { level.updateInfiniteWindow(this,prepared) }
@@ -721,16 +791,19 @@ export class Engine {
   attack() { combat.attack(this) }
   toggleHands() {
     if (!this.map || this.over) return
+    if (gunHolsterLock(this)) return
+    this.gun.autoStowed = false
+    this.input.aimHeld = false
     this.handsStowed = !this.handsStowed
     this.input.attack = false
-    this.inspectHeld = false
+    this.inspectHeld = false; this.specialHeld = false
     this.usingItem = null // 中断未完成的使用动作，不消耗物品。
     this.attackAnimT = 0 // 仅取消姿势；保留实际攻击冷却，防止反复收放绕过间隔。
     this.msg(this.handsStowed ? '已收起主手，可继续交互。' : '已取出主手。', 'system')
   }
   throwHeld(type: string) { combat.throwHeld(this, type) }
   /** 往滋水枪储罐装入 1 瓶液体（3 份喷射量；储罐只能装一种液体，清水无需对应物品） */
-  loadSquirt(liquid: 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid'): boolean { return combat.loadSquirt(this, liquid) }
+  loadSquirt(liquid: 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid' | 'memoryjuice' | 'laughrepellent'): boolean { return combat.loadSquirt(this, liquid) }
   /** 清空储罐（把残液倒掉，换液体免喷完） */
   clearSquirt() { combat.clearSquirt(this) }
   stanleyTeleport() { combat.stanleyTeleport(this) }
@@ -809,6 +882,7 @@ export class Engine {
   countItem(type: string): number { return inventory.countItem(this, type) }
   consumeItem(type: string): boolean { return inventory.consumeItem(this, type) }
   useSlot(where: SlotWhere, i: number): boolean { return inventory.useSlot(this, where, i) }
+  unpackSaltBox(where: SlotWhere, i: number): boolean { return inventory.unpackSaltBox(this, where, i) }
   updateItemUse(dt: number) { inventory.updateItemUse(this, dt) }
   drawChalk() { inventory.drawChalk(this) }
   quickUse() { inventory.quickUse(this) }
@@ -900,8 +974,9 @@ export class Engine {
     const dm = DIFF[this.difficulty]
     // v51：糖果效果计时器（EFFECTS 注册表 pre 组：糖瘾/银舌头/枪糖/巧克力冷却——与原内联顺序一致）
     runEffectTicks(this, dt, 'pre')
-    // v51：人制品售货机——看过背面后，玩家背对它（视线锥外且 10m 内）即活化追击；受到攻击也会活化
-    this.updateVendingMachines()
+    // [vending] 售货机：普通机出货片段 / 成瘾 / 界面有效性（E36 本体在实体循环 updateVm36）
+    stepVending(this, dt)
+    stepFerrenWorld(this, dt) // [ferren] Entity 92：作息时钟 / 冷却 / 闪白 / X 交互
     // v51：人制品效应计时（5 分钟）+ Nguithr'xurh 镇静剂麻痹计时（EFFECTS 注册表 post 组）
     runEffectTicks(this, dt, 'post')
     // Three.js 相机前方在游戏平面中为 (-sin(yaw), -cos(yaw))；atan2 的参数必须是 (dy, dx)。
@@ -936,6 +1011,7 @@ export class Engine {
             if (p.hp <= 0) { this.die('坠亡'); return }
           }
           this.loadLevel(dest, undefined, t.mapSeed)
+          applyFoyerLanding(this) // 前厅 M4：Level 0 着陆散落（仅从前厅坠落时有待散落物）
           this.emit({ kind: 'transition', anim: 'intro' })
         }
       }
@@ -961,6 +1037,10 @@ export class Engine {
 
     // ---- 生存消耗（engine/survival.ts；返回 true=本帧已死亡）----
     if (this.updateSurvival(dt, dm, mag)) return
+    updatePhone(this, dt)
+    if (this.photoFlashT > 0) this.photoFlashT = Math.max(0, this.photoFlashT - dt)
+    if (p.level === FOYER_ID) updateFoyer(this, dt)
+    else if (landingActive(this)) updateFoyerLanding(this, dt)
 
     // ---- 攻击 ----
     if (this.hitStopT > 0) this.hitStopT = Math.max(0, this.hitStopT - dt)
@@ -970,20 +1050,26 @@ export class Engine {
       this.input.attack = false
       const mh = heldMelee(this)
       if (mh && !introLock && !this.usingItem && !this.handsStowed && !jerryInputLock(this)) this.meleePress = { t: 0, slot: mh } // 近战：松开时决定普攻/重击
+      else if (heldGun(this)) { if (!introLock) gunTrigger(this) } // 枪械：击发 / 装填中=中断
       else if (!introLock && !this.usingItem) this.attack()
     }
     updateMeleeInput(this, dt, introLock)
+    updateFirearms(this, dt)
     this.updateProjectiles(dt)
     if (this.input.toggleLight) {
       this.input.toggleLight = false
       // v32：头灯（头饰栏）与手电筒（副手）共用开关与电池
       const beamKind = p.equip.offhand?.type === 'flashlight' ? '手电筒' : p.equip.head?.type === 'headlamp' ? '头灯' : null
-      if (!beamKind) {
+      if (p.equip.offhand?.type === 'phone') {
+        // 副手是手机：F 开关手机手电（独立电量）
+        if (togglePhoneTorch(this)) { this.markTutorial('light_toggle'); this.msg(`手机手电：${p.phone?.torch ? '开' : '关'}`, 'system') }
+      } else if (!beamKind) {
         this.msg('没有手电筒或头灯。手电筒装在【副手】，头灯装在【头饰】。', 'system')
       } else if (p.battery > 0 || p.flashlight) {
         p.flashlight = !p.flashlight
         audio.uiTick()
         this.msg(`${beamKind}：${p.flashlight ? '开' : '关'}`, 'system')
+        this.markTutorial('light_toggle')
       }
     }
 

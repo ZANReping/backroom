@@ -148,7 +148,7 @@ const L2_RAND_STRUCT: Record<string, RandMark> = { // infiniteL2.ts（房间家�
 }
 const L2_RAND_ITEM: Record<string, RandMark> = { '*:tape': 0.08, '*:firesalt': 0.18 }
 const L2_RAND_ENTITY: Record<string, RandMark> = {
-  '*:dryshrimp': 0.25, '*:nguithr': 0.04, '*:pipeworm': 0.05, '*:vendingmachine': 0.1, '*:faceling': 0.4, // 卧室无面灵
+  '*:dryshrimp': 0.25, '*:nguithr': 0.04, '*:pipeworm': 0, '*:vendingmachine': 0.1, '*:faceling': 0.4, // 卧室无面灵
 }
 const L3_RAND_STRUCT: Record<string, RandMark> = { // infiniteL3.ts（布局决定性强 → 默认非随机，仅列出概率摆放物）
   '*:bigpainting': 0.25, '*:rattrap': 0.09, '*:landmark': 0.03, '*:statue': 0.22, // 栏后女像
@@ -290,7 +290,7 @@ const L2_RULES: SpawnRule[] = [ // infiniteL2.ts（l2VariantOf / genL2ChunkRaw�
   { key: 'infiniteL2.windowtrap.chance', value: 0.1, note: '廊道尽头陷阱窗概率' },
   { key: 'infiniteL2.entity.tidy.chance', value: 0.12, note: '实体每 chunk 概率（整洁段；晦暗 0.2 / 肮脏 0.28 / 扭曲 0.26）' },
   { key: 'infiniteL2.smiler.replace', value: 0.3, note: '非整洁段笑魇替代池中一次抽取的概率（落点必须无灯）' },
-  { key: 'infiniteL2.pipeworm.chance', value: 0.05, note: '管道蠕虫拟态（肮脏/扭曲段）每 chunk 概率' },
+  { key: 'infiniteL2.pipeworm.chance', value: 0, note: '管道蠕虫自然生成已停用；保留管道装饰与 RNG 占位以维持地图确定性' },
   { key: 'infiniteL2.faceling.bedroom.chance', value: 0.4, note: '卧室无面灵概率（无面灵仅卧室生成）' },
   { key: 'infiniteL2.vendingmachine.chance', value: 0.1, note: '人制品售货机（三面墙死胡同）每 chunk 概率' },
   { key: 'infiniteL2.dryshrimp.chance', value: 0.25, note: '旱虾（湿地 1~2 只）每 chunk 概率' },
@@ -434,3 +434,4 @@ export function extractLayouts(): LayoutEntry[] {
   for (const p of PREFABS) out.push(extractPrefab(p))
   return out
 }
+

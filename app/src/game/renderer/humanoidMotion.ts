@@ -1,5 +1,8 @@
 import * as THREE from 'three'
 import type { RetroNpc } from './retroNpc'
+import { applyFacelingAge, applyFacelingGesture, type FacelingGesture } from './facelingAnim'
+import type { FacelingAge } from '../entities/facelingTraits'
+import { applyIdleUpper, idleStance, type IdleFrame, type IdleStance } from './npcIdlePose'
 
 export interface HumanoidFrame {
   /** Simulation time and absolute world coordinates, unaffected by chunk rebasing. */
@@ -11,7 +14,12 @@ export interface HumanoidFrame {
   work?: 'shopkeeper' | 'office'
   /** Keep a special work/music pose in charge of the upper body. */
   special?: boolean
+  /** v90 无面灵：年龄档（站姿/步态）与当前动作（片段内时间 gestureT，混合权重 gestureW） */
+  age?: FacelingAge
+  gesture?: FacelingGesture; gestureT?: number; gestureW?: number
   ground?: (x: number, y: number) => number
+  /** NPC 待机层（重心转移/呼吸/视线/小动作/靠墙/闲聊）；缺省时保持原有站姿 */
+  idle?: IdleFrame
 }
 
 interface Foot {
@@ -61,6 +69,8 @@ export class HumanoidMotion {
   private q2 = new THREE.Quaternion()
   private axis = new THREE.Vector3()
   private euler = new THREE.Euler()
+  private idleSt: IdleStance | null = null
+  private idleK = 0
 
   constructor(rig: RetroNpc) {
     this.rig = rig
@@ -89,7 +99,9 @@ export class HumanoidMotion {
 
   private landing(f: HumanoidFrame, i: number, forward: number, out: THREE.Vector3) {
     const s = this.rig.group.scale.y * (f.scale ?? 1)
-    const side = this.rig.bones[i ? 'thighR' : 'thighL'].position.x * s
+    const st = this.idleSt, bx = this.rig.bones[i ? 'thighR' : 'thighL'].position.x
+    const side = (bx + (st ? Math.sign(bx) * st.lat[i] * this.idleK : 0)) * s
+    if (st) forward += st.fwd[i] * this.idleK * s
     out.set(f.x + Math.cos(f.facing) * forward + Math.sin(f.facing) * side,
       f.z, f.y + Math.sin(f.facing) * forward - Math.cos(f.facing) * side)
     const ground = f.ground?.(out.x, out.z)
@@ -121,6 +133,9 @@ export class HumanoidMotion {
       for (let i = 0; i < 2; i++) { this.feet[i].phase = (this.phase + i * .5) % 1; this.feet[i].swing = false }
     }
     this.stillT = moved ? 0 : this.stillT + dt
+    // 待机站姿：只在站定后生效（行走落脚不受影响）；换重心由下方「单脚挪步」自然完成
+    this.idleK = f.idle && !moved && f.attack === undefined ? Math.min(1, this.idleK + dt / .5) : 0
+    this.idleSt = f.idle && this.idleK > 0 ? idleStance(f.idle, f.time) : null
     if (moved) this.settling = -1
     this.speed += (velocity - this.speed) * (1 - Math.exp(-dt * (moved ? 12 : 18)))
     this.stride = clamp(.72 + this.speed / s * .24, .74, 1.28) * s
@@ -175,6 +190,10 @@ export class HumanoidMotion {
     }
     b.hips.position.y -= Math.min(.15, .001 * motion + reach * reach * .7)
     b.hips.position.x += wave * .008 * motion
+    if (this.idleSt) {
+      const k = ease(this.idleK)
+      b.hips.position.x += this.idleSt.hipX * k; b.hips.position.y += this.idleSt.hipY * k; b.hips.position.z += this.idleSt.hipZ * k
+    }
     // Hip lowering maintains reach while ankle orientation keeps the soles level during stance.
     for (let i = 0; i < 2; i++) this.legIK(f, i, s)
     const br = Math.sin(f.time * 1.65)
@@ -191,13 +210,21 @@ export class HumanoidMotion {
       fore.rotation.x = -.12 - run * .65 - Math.max(0, -wave * sign) * motion * .16
     }
     // Occupational gestures belong to indoor residents, not every faceling walking down a street.
-    if (f.work && motion < .15 && f.attack === undefined) {
+    if (f.manner === 'faceling') {
+      applyFacelingAge(this.rig, f.age, motion, f.time)
+      // 职业动作由动作层接管：白领敲键盘、店员收银（停下来时才做）
+      const work = !f.gesture && f.work && motion < .15 && f.attack === undefined ? (f.work === 'office' ? 'type' : 'cashier') : undefined
+      if (f.gesture) applyFacelingGesture(this.rig, f.gesture, f.gestureT ?? f.time, f.gestureW ?? 1)
+      else if (work) applyFacelingGesture(this.rig, work, f.time, 1 - motion / .15)
+    } else if (f.work && motion < .15 && f.attack === undefined) {
       const k = 1 - motion / .15
       b.upperArmL.rotation.x -= k * .45; b.upperArmR.rotation.x -= k * .35
       b.foreArmL.rotation.x -= k * (.55 + Math.sin(f.time * 2.2) * .035)
       b.foreArmR.rotation.x -= k * (.5 + Math.sin(f.time * 2.2 + 1.8) * .035)
       b.head.rotation.x += .08 * k
     }
+    if (f.idle && !f.special && f.attack === undefined)
+      applyIdleUpper(this.rig, f.idle, { time: f.time, x: f.x, y: f.y, z: f.z, facing: f.facing, scale: s }, Math.max(motion, 1 - ease(Math.min(1, this.stillT / .45))), this.idleSt ?? undefined)
     if (f.attack !== undefined && !f.special) this.attack(clamp(f.attack, 0, 1), !!f.tool)
     this.last = { time: f.time, x: f.x, y: f.y, z: f.z }
   }

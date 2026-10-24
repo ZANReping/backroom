@@ -1,0 +1,136 @@
+{
+  "seed": 424243,
+  "mode": "realistic",
+  "port": 11494,
+  "cdp": 11495,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:11494/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 24 Oct 2026 06:32:32 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 287,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 11494,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 77834.571816,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.259,
+        "sendEnd": 0.299,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 72.031,
+        "receiveHeadersEnd": 72.16
+      },
+      "responseTime": 1792823552751.285,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\foyer-entry-20261024\\realistic-accepted\\qa-1792823538759-47584",
+    "--remote-debugging-port=11495",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 6972,
+    "server": 71476
+  },
+  "appBootMs": 13223.488800000001,
+  "emptyTitle": {
+    "level": 0,
+    "title": "后 室",
+    "subtitle": "BACKROOMS : DESCENT",
+    "body": true,
+    "canvasOwned": true
+  },
+  "entryMs": 9396.314599999998,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 900,
+    "pos": [
+      5.25,
+      5.75,
+      0
+    ],
+    "ceiling": 2.8,
+    "seat": {
+      "phase": "seated",
+      "blend": 1,
+      "pid": "desk_chair",
+      "anchor": {
+        "x": 5.25,
+        "y": 5.75,
+        "z": 0.5,
+        "yaw": 4.71238898038469,
+        "index": 0,
+        "label": "电脑椅",
+        "relaxed": false,
+        "floor": 0
+      },
+      "eye": 1.27
+    },
+    "camera": [
+      4.99,
+      1.2777264469987673,
+      5.75
+    ],
+    "yaw": 7.853981633974483,
+    "pitch": -0.12,
+    "body": {
+      "visible": true,
+      "model": true,
+      "hip": -1.4373636476158311,
+      "knee": 1.312811559890132
+    }
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught\",\"lineNumber\":0,\"columnNumber\":23,\"scriptId\":\"750\",\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"SyntaxError\",\"description\":\"SyntaxError: missing ) after argument list\",\"objectId\":\"8396090258672695037.2.2\"}}",
+  "bootstrap": {
+    "text": "01/22\n移动鼠标，环顾四周\nE 使用 电脑\n开发者模式\n🛠 开发者模式 · DEV\n▾\n召唤\n状态\n传送\n世界\n信息\n实体\n物品\n装饰物\n搜索实体 / 变种\n自然生成层级\n全部层级\n当前层级\nLevel 0 · 教学关卡\nLevel 1 · 宜居地带\nLevel 2 · 废弃公共带\nLevel 3 · 电站\nLevel 4 · 废弃办公室\nLevel 5 · 恐怖酒店\nLevel 6 · 熄灯\nLevel 7 · 深海恐惧\nLevel 8 · 洞穴系统\nLevel 9 · 郊区\nLevel 10 · 丰裕\nLevel 11 · 不夜城\nLevel 601 · 终末\n其他 / 无自然生成\n39 类实体\n49 个子变种 / 初始状态\n\n在前方 3 米的安全位置召唤。\n\n● 笑魇\nsmiler\n自动 · 按原生成规则\n普通笑魇\n幽影笑魇\n饥饿笑魇\n犬形笑魇\n巨笑魇\n召唤\n● 手臂\narms\n标准形态\n召唤\n● 爆酸者\nburster\n标准形态\n召唤\n● 电弧体\narcwraith\n标准形态\n召唤\n● 人制品售货机\nvendingmachine\n标准形态\n召唤\n● Nguithr'xurh\nnguithr\n标准形态\n召唤\n● 疫疾\nmalady\n标准形态\n召唤\n● 活化的人制品售货机\nvmad\n标准形态\n召唤\n● 钝人\nduller\n标准形态\n召唤\n● 窃皮者\nskinstealer\n自动 · 按原生成规则\n人皮伪装（初始状态）\n温顺真身（初始状态）\n饥饿真身（初始状态）\n召唤\n● 无面灵\nfaceling\n自动 · 按原生成规则\n普通种\n进化种（易怒）\n召唤\n● 复印机幽灵\ncopierwraith\n标准形态\n召唤\n● 久坐者\nseated\n标准形态\n召唤\n● 侍者\nbellhop\n标准形态\n召唤\n● 镜中人\nmirrorself\n标准形态\n召唤\n● 旱虾\ndryshrimp\n标准形态\n召唤\n● 蛛形纲\narachnid\n自动 · 按原生成规则\n洞穴狼蛛\n织网蛛\n跳蛛\n盲眼洞蛛\n群居幼蛛潮\n长脚盲蛛\n水蛛\n极巨蛛\n寡妇毒蛛\n再生蛛\n不死蛛\n抗火蛛\n无氧蛛\n洞蝎\n鞭蝎\n吸附蜱\n螨群\n食草型\n召唤\n● 猎犬\nhound\n自动 · 按原生成规则\n普通猎犬\n中立猎犬\n高智能猎犬\n召唤\n● 肢团\nclump\n自动 · 按原生成规则\n普通肢团\n高智能肢团\n召唤\n● 死亡飞蛾\ndeathmoth\n自动 · 按原生成规则\n雄性\n雌性\n幼虫\n禁卫级\n召唤\n● 运输车\ncarrier\n标准形态\n召唤\n● 管道蠕虫\npipeworm\n标准形态\n召唤\n● 尸鼠\ncorpserat\n自动 · 按原生成规则\n常见尸鼠\n无毛尸鼠\n旅馆尸鼠\n水豚尸鼠\n罗特尼斯尸鼠\n召唤\n● Ferren\nferren\n标准形态\n召唤\n● 鹉主杰瑞\njerry\n标准形态\n召唤\n● 模仿者\nmimicry\n标准形态\n召唤\n● 小小\ntiny\n标准形态\n召唤\n● 7 层之物\nthething\n标准形态\n召唤\n● 牧蛇\nwrangler\n自动 · 按原生成规则\n雄性牧蛇\n雌性牧蛇\n牧蛇幼体\n召唤\n● 迷彩爬行者\ncamocrawler\n标准形态\n召唤\n● 微光向导\nlightguide\n标准形态\n召唤\n● 受眷鸟\ncurabitur\n标准形态\n召唤\n● 悲尸\nwretch\n自动 · 按原生成规则\n蹒跚型\n疾行型\n有智型\n突变型\n召唤\n● 观察者\nwatcher\n标准形态\n召唤\n● 挺进者\nstrider\n标准形态\n召唤\n● 残缺者\nmangled\n标准形态\n召唤\n● 土壤蠕虫\nsoilworm\n标准形态\n召唤\n● 派对客 =)\npartygoer\n标准形态\n召唤\n● 窗户\nwindowent\n标准形态\n召唤\n每类一只 · 环绕召唤"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

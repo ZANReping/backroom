@@ -1,0 +1,448 @@
+{
+  "seed": 424243,
+  "mode": "realistic",
+  "port": 1261,
+  "cdp": 1262,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:1261/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 24 Oct 2026 03:55:57 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 273,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 1261,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 68442.266361,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.192,
+        "sendEnd": 0.224,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 48.551,
+        "receiveHeadersEnd": 48.676
+      },
+      "responseTime": 1792814157377.038,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    },
+    {
+      "url": "http://127.0.0.1:1261/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 24 Oct 2026 03:56:12 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 273,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 1261,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 68457.568099,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 1.013,
+        "sendEnd": 1.076,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 11.914,
+        "receiveHeadersEnd": 12.192
+      },
+      "responseTime": 1792814172642.139,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\foyer-v2-20261024\\realistic\\qa-1792814139180-61912",
+    "--remote-debugging-port=1262",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 43248,
+    "server": 46128
+  },
+  "appBootMs": 11505.456000000002,
+  "entryMs": 7764.3254000000015,
+  "v2Initial": {
+    "warm": {
+      "ms": 1725,
+      "programs": 51,
+      "textures": 112,
+      "npcs": 7
+    },
+    "indoor": true,
+    "homeVisible": true,
+    "streetVisible": false,
+    "npcs": [
+      {
+        "id": "foyer_ped_0",
+        "x": 42.14050000000052,
+        "y": 47.2,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_1",
+        "x": 87.7980200000011,
+        "y": 58.45,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_2",
+        "x": 51,
+        "y": 58.75,
+        "route": false
+      },
+      {
+        "id": "foyer_ped_3",
+        "x": 119.96926000000013,
+        "y": 47.4,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_4",
+        "x": 45.626780000000046,
+        "y": 29.6,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_5",
+        "x": 87.4,
+        "y": 58.9,
+        "route": false
+      },
+      {
+        "id": "foyer_ped_6",
+        "x": 101.2876000000007,
+        "y": 57.9,
+        "route": true
+      }
+    ],
+    "models": [
+      {
+        "id": "foyer_ped_4",
+        "visible": false,
+        "position": [
+          44,
+          0,
+          29.6
+        ]
+      },
+      {
+        "id": "foyer_ped_0",
+        "visible": false,
+        "position": [
+          40,
+          0,
+          47.2
+        ]
+      },
+      {
+        "id": "foyer_ped_2",
+        "visible": false,
+        "position": [
+          51,
+          0,
+          58.75
+        ]
+      },
+      {
+        "id": "foyer_ped_1",
+        "visible": false,
+        "position": [
+          86,
+          0,
+          58.45
+        ]
+      },
+      {
+        "id": "foyer_ped_5",
+        "visible": false,
+        "position": [
+          87.4,
+          0,
+          58.9
+        ]
+      },
+      {
+        "id": "foyer_ped_6",
+        "visible": false,
+        "position": [
+          103,
+          0,
+          57.9
+        ]
+      },
+      {
+        "id": "foyer_ped_3",
+        "visible": false,
+        "position": [
+          118,
+          0,
+          47.4
+        ]
+      }
+    ],
+    "programs": 142,
+    "flags": {
+      "flash_drawer": true
+    }
+  },
+  "pickupTransforms": [
+    {
+      "id": "backpack",
+      "pos": [
+        4.72,
+        0.08,
+        8.26
+      ],
+      "box": [
+        0.3623113863310339,
+        0.48300000026822093,
+        0.28677455672172236
+      ]
+    },
+    {
+      "id": "water",
+      "pos": [
+        16.42,
+        0.98,
+        4.8
+      ],
+      "box": [
+        0.14242437037317757,
+        0.21200000013411047,
+        0.06964873974500208
+      ]
+    },
+    {
+      "id": "snack",
+      "pos": [
+        16.72,
+        1.4,
+        4.8
+      ],
+      "box": [
+        0.1509538828468031,
+        0.044499999880790675,
+        0.09154833911710814
+      ]
+    }
+  ],
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "seed": 424243,
+    "level": 900,
+    "paused": false,
+    "pos": [
+      5.25,
+      5.75,
+      0
+    ],
+    "prologue": {
+      "step": "act0",
+      "flags": {
+        "flash_drawer": true
+      }
+    },
+    "unlock": {},
+    "phone": {
+      "battery": 39.88826000000011,
+      "torch": false,
+      "docked": true,
+      "notes": [],
+      "photos": 0,
+      "nextId": 1
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 704,
+      "textures": 232
+    },
+    "geometries": 704
+  },
+  "aim-computer": {
+    "id": "computer",
+    "pos": [
+      5.1,
+      5.75
+    ],
+    "crouch": false,
+    "target": "使用 电脑"
+  },
+  "forum": {
+    "home": true,
+    "theme": true,
+    "detail": true,
+    "fold": true,
+    "back": true
+  },
+  "aim-phone_dock": {
+    "id": "phone_dock",
+    "pos": [
+      5.4,
+      6.27
+    ],
+    "crouch": false,
+    "target": "拿起 手机"
+  },
+  "phoneUnpaused": true,
+  "aim-wardrobe": {
+    "id": "wardrobe",
+    "pos": [
+      4.99,
+      7.790000000000001
+    ],
+    "crouch": false,
+    "target": "打开 衣柜"
+  },
+  "aim-pick_backpack": {
+    "id": "pick_backpack",
+    "pos": [
+      4.72,
+      7.41
+    ],
+    "crouch": false,
+    "target": "拿起 背包"
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught\",\"lineNumber\":44,\"columnNumber\":6,\"scriptId\":\"739\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"aim\",\"scriptId\":\"739\",\"url\":\"http://127.0.0.1:1261/verifier/ferren-foyer-game.ts\",\"lineNumber\":44,\"columnNumber\":12},{\"functionName\":\"\",\"scriptId\":\"765\",\"url\":\"\",\"lineNumber\":0,\"columnNumber\":9}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: cannot aim nightstand got {\\\"kind\\\":\\\"sit\\\",\\\"label\\\":\\\"坐下\\\",\\\"s\\\":{\\\"kind\\\":\\\"foyerprop\\\",\\\"x\\\":4.95,\\\"y\\\":5.45,\\\"w\\\":0.5999999999999996,\\\"h\\\":0.5999999999999996,\\\"solid\\\":false,\\\"data\\\":{\\\"foyer\\\":\\\"seat\\\",\\\"pid\\\":\\\"desk_chair\\\",\\\"top\\\":0.5}}}\\n    at Object.aim (http://127.0.0.1:1261/verifier/ferren-foyer-game.ts:45:13)\\n    at <anonymous>:1:10\",\"objectId\":\"-1691142648945860354.2.2\"}}",
+  "partial": {
+    "seed": 424243,
+    "level": 900,
+    "paused": false,
+    "pos": [
+      5.66418070123307,
+      4.824025148547635,
+      0
+    ],
+    "prologue": {
+      "step": "act1",
+      "flags": {
+        "flash_drawer": true,
+        "read_news": true,
+        "last_forum": true,
+        "read_forum": true,
+        "got_phone": true,
+        "ev:phone_open": true,
+        "ev:look": true,
+        "tut:look": true,
+        "tut:news": true,
+        "tut:forum": true,
+        "tut:phone": true,
+        "tut:phone_open": true,
+        "got_backpack": true,
+        "tut:backpack": true
+      },
+      "open": {
+        "wardrobe": 1
+      }
+    },
+    "unlock": {
+      "clock": true,
+      "quest": true,
+      "log": true,
+      "minimap": true,
+      "battery": true,
+      "hotbar": true,
+      "inventory": true
+    },
+    "phone": {
+      "battery": 41.04467640000029,
+      "torch": false,
+      "docked": false,
+      "notes": [
+        {
+          "id": 2,
+          "kind": "note",
+          "title": "待办",
+          "text": "明早 9:00 交报告。牛奶没了。",
+          "time": "23:40"
+        },
+        {
+          "id": 1,
+          "kind": "note",
+          "title": "论坛帖 · 巷子",
+          "text": "本地论坛「边界线」：有人说附近一条巷子能「卡进」后室。出来的人说，要集齐六张磁带，送进 Level 11 的档案馆。——多半是编的。",
+          "time": "23:40"
+        }
+      ],
+      "photos": 0,
+      "nextId": 3
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 724,
+      "textures": 235
+    },
+    "geometries": 724
+  },
+  "bootstrap": {
+    "text": "FOYER\n前厅\n23:40\n卧室\n41%\n任务 · 准备出门\n■\n看看本地论坛的帖子\n■\n带上手机\n■\n从衣柜拿背包\n□\n找到手电筒（床头柜？）\n□\n冰箱：水和零食\n□\n出门，去那条巷子\n拿起手机（电量 41%）——装在【副手】。\n背上背包。快捷栏与背包界面已就绪。\n07/22\n手电不在桌上……也许在床头柜抽屉里：[E] 拉开抽屉\n+ 背包\nHUD · 快捷栏 / 背包界面\n1\n2\n3\n4\n5\n6\n7\nE 关上 衣柜\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

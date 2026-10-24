@@ -1,0 +1,345 @@
+{
+  "seed": 424243,
+  "mode": "realistic",
+  "port": 3967,
+  "cdp": 3968,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:3967/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 24 Oct 2026 05:02:16 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 314,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 3967,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 72418.293656,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.847,
+        "sendEnd": 0.935,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 16.875,
+        "receiveHeadersEnd": 17.03
+      },
+      "responseTime": 1792818136417.969,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\foyer-fixes-20261024\\transition-debug\\qa-1792818114517-59640",
+    "--remote-debugging-port=3968",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 69212,
+    "server": 44528
+  },
+  "appBootMs": 20201.0038,
+  "entryMs": 12130.086799999997,
+  "v2Initial": {
+    "warm": {
+      "ms": 2760,
+      "programs": 51,
+      "textures": 113,
+      "npcs": 7
+    },
+    "indoor": true,
+    "homeVisible": true,
+    "streetVisible": false,
+    "npcs": [
+      {
+        "id": "foyer_ped_0",
+        "x": 42.067625000000014,
+        "y": 47.2,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_1",
+        "x": 87.73680500000013,
+        "y": 58.45,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_2",
+        "x": 51,
+        "y": 58.75,
+        "route": false
+      },
+      {
+        "id": "foyer_ped_3",
+        "x": 119.90221500000018,
+        "y": 47.4,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_4",
+        "x": 45.571394999999804,
+        "y": 29.6,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_5",
+        "x": 87.4,
+        "y": 58.9,
+        "route": false
+      },
+      {
+        "id": "foyer_ped_6",
+        "x": 101.34590000000074,
+        "y": 57.9,
+        "route": true
+      }
+    ],
+    "models": [
+      {
+        "id": "foyer_ped_4",
+        "visible": false,
+        "position": [
+          44,
+          0,
+          29.6
+        ]
+      },
+      {
+        "id": "foyer_ped_0",
+        "visible": false,
+        "position": [
+          40,
+          0,
+          47.2
+        ]
+      },
+      {
+        "id": "foyer_ped_2",
+        "visible": false,
+        "position": [
+          51,
+          0,
+          58.75
+        ]
+      },
+      {
+        "id": "foyer_ped_1",
+        "visible": false,
+        "position": [
+          86,
+          0,
+          58.45
+        ]
+      },
+      {
+        "id": "foyer_ped_5",
+        "visible": false,
+        "position": [
+          87.4,
+          0,
+          58.9
+        ]
+      },
+      {
+        "id": "foyer_ped_6",
+        "visible": false,
+        "position": [
+          103,
+          0,
+          57.9
+        ]
+      },
+      {
+        "id": "foyer_ped_3",
+        "visible": false,
+        "position": [
+          118,
+          0,
+          47.4
+        ]
+      }
+    ],
+    "programs": 142,
+    "flags": {
+      "flash_drawer": true
+    }
+  },
+  "pickupTransforms": [
+    {
+      "id": "backpack",
+      "pos": [
+        4.72,
+        0.08,
+        8.54
+      ],
+      "box": [
+        0.3623113863310339,
+        0.48300000026822093,
+        0.28677455672172236
+      ]
+    },
+    {
+      "id": "water",
+      "pos": [
+        16.42,
+        0.98,
+        4.57
+      ],
+      "box": [
+        0.14242437037317757,
+        0.21200000013411047,
+        0.06964873974500208
+      ]
+    },
+    {
+      "id": "snack",
+      "pos": [
+        16.72,
+        1.4,
+        4.57
+      ],
+      "box": [
+        0.1509538828468031,
+        0.044499999880790675,
+        0.09154833911710814
+      ]
+    }
+  ],
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "seed": 424243,
+    "level": 900,
+    "paused": false,
+    "pos": [
+      5.25,
+      5.75,
+      0
+    ],
+    "prologue": {
+      "step": "act0",
+      "flags": {
+        "flash_drawer": true
+      }
+    },
+    "unlock": {},
+    "phone": {
+      "battery": 39.83776999999949,
+      "torch": false,
+      "docked": true,
+      "notes": [],
+      "photos": 0,
+      "nextId": 1
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 713,
+      "textures": 232
+    },
+    "geometries": 713
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught\",\"lineNumber\":0,\"columnNumber\":23,\"scriptId\":\"764\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"\",\"scriptId\":\"764\",\"url\":\"\",\"lineNumber\":0,\"columnNumber\":23},{\"functionName\":\"\",\"scriptId\":\"764\",\"url\":\"\",\"lineNumber\":0,\"columnNumber\":244}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"DOMException\",\"description\":\"SyntaxError: Failed to execute 'querySelector' on 'Document': '[data-rb-mode=3d] canvas' is not a valid selector.\\n    at <anonymous>:1:24\\n    at <anonymous>:1:245\",\"objectId\":\"-3099261339796650068.2.2\",\"preview\":{\"type\":\"object\",\"subtype\":\"error\",\"description\":\"SyntaxError: Failed to execute 'querySelector' on 'Document': '[data-rb-mode=3d] canvas' is not a valid selector.\\n    at <anonymous>:1:24\\n    at <anonymous>:1:245\",\"overflow\":false,\"properties\":[{\"name\":\"stack\",\"type\":\"string\",\"value\":\"SyntaxError: Failed to execute 'querySelector' on …\\n    at <anonymous>:1:24\\n    at <anonymous>:1:245\"},{\"name\":\"code\",\"type\":\"number\",\"value\":\"12\"},{\"name\":\"name\",\"type\":\"string\",\"value\":\"SyntaxError\"},{\"name\":\"message\",\"type\":\"string\",\"value\":\"Failed to execute 'querySelector' on 'Document': '[data-rb-mode=3d] canvas' is not a valid selector.\"}]}}}",
+  "partial": {
+    "seed": 424243,
+    "level": 900,
+    "paused": true,
+    "pos": [
+      65,
+      37,
+      0
+    ],
+    "prologue": {
+      "step": "done",
+      "flags": {
+        "flash_drawer": true,
+        "ev:look": true,
+        "tut:look": true,
+        "act4": true,
+        "outside": true,
+        "said_outside": true,
+        "dup1": true,
+        "said_dup1": true,
+        "loop1": true,
+        "loop2": true,
+        "said_home_dark": true,
+        "fell": true,
+        "landing": true,
+        "l0_phone": true,
+        "l0_pack": true,
+        "l0_flash": true,
+        "l0_water": true,
+        "l0_snack": true
+      },
+      "landingItems": []
+    },
+    "unlock": {},
+    "phone": {
+      "battery": 44.998639999998204,
+      "torch": false,
+      "docked": true,
+      "notes": [],
+      "photos": 0,
+      "nextId": 1
+    },
+    "transition": {
+      "anim": "realitybreak",
+      "t": 0,
+      "dest": 0,
+      "fallDamage": 6,
+      "startedAt": 48097.70000000298,
+      "preparing": true,
+      "mapSeed": 424243,
+      "prepared": true
+    },
+    "resources": {
+      "geometries": 710,
+      "textures": 225
+    },
+    "geometries": 710
+  },
+  "bootstrap": {
+    "text": "开发者模式\n🛠 开发者模式 · DEV\n▴\n[空格] 跳过"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

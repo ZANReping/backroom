@@ -1,0 +1,340 @@
+{
+  "run": "qa-1792852806938-30864",
+  "label": "trim-realistic-final",
+  "mode": "realistic",
+  "port": 2213,
+  "cdp": 2214,
+  "profile": "E:\\ZAN\\backroom\\app\\reports\\traders-circulation-20261024\\trim-realistic-final\\qa-1792852806938-30864",
+  "levels": [
+    102
+  ],
+  "cases": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\traders-circulation-20261024\\trim-realistic-final\\qa-1792852806938-30864",
+    "--remote-debugging-port=2214",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.86",
+    "revision": "@804d6b05f089b27af8342622a36558c49401a1d4",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.25"
+  },
+  "pids": {
+    "server": 77532,
+    "browser": 76472
+  },
+  "circulation": {
+    "checks": [
+      "safe start bank_west",
+      "new passage can be walked through bank_west",
+      "passage can be walked in reverse bank_west",
+      "safe start bank_south",
+      "new passage can be walked through bank_south",
+      "passage can be walked in reverse bank_south",
+      "safe start food_east",
+      "new passage can be walked through food_east",
+      "passage can be walked in reverse food_east",
+      "safe start food_south",
+      "new passage can be walked through food_south",
+      "passage can be walked in reverse food_south",
+      "safe start market_north",
+      "new passage can be walked through market_north",
+      "passage can be walked in reverse market_north",
+      "safe start visitor_north",
+      "new passage can be walked through visitor_north",
+      "passage can be walked in reverse visitor_north",
+      "safe start sorting_north",
+      "new passage can be walked through sorting_north",
+      "passage can be walked in reverse sorting_north",
+      "safe start secondary_west",
+      "new passage can be walked through secondary_west",
+      "passage can be walked in reverse secondary_west",
+      "safe start guard_monitor",
+      "new passage can be walked through guard_monitor",
+      "passage can be walked in reverse guard_monitor",
+      "safe start office_meeting",
+      "new passage can be walked through office_meeting",
+      "passage can be walked in reverse office_meeting",
+      "safe start dorm_north",
+      "new passage can be walked through dorm_north",
+      "passage can be walked in reverse dorm_north",
+      "safe start west_through",
+      "new passage can be walked through west_through",
+      "passage can be walked in reverse west_through",
+      "safe start east_through",
+      "new passage can be walked through east_through",
+      "passage can be walked in reverse east_through",
+      "close-up safe position bank_west",
+      "close-up safe position office_meeting",
+      "normal map preview retains streaming rather than building the whole world"
+    ],
+    "screenshots": [
+      "10-bank_west",
+      "11-bank_west-back",
+      "10-bank_south",
+      "11-bank_south-back",
+      "10-food_east",
+      "11-food_east-back",
+      "10-food_south",
+      "11-food_south-back",
+      "10-market_north",
+      "11-market_north-back",
+      "10-visitor_north",
+      "11-visitor_north-back",
+      "10-sorting_north",
+      "11-sorting_north-back",
+      "10-secondary_west",
+      "11-secondary_west-back",
+      "10-guard_monitor",
+      "11-guard_monitor-back",
+      "10-office_meeting",
+      "11-office_meeting-back",
+      "10-dorm_north",
+      "11-dorm_north-back",
+      "10-west_through",
+      "10-east_through",
+      "12-bank_west-trim-close",
+      "12-office_meeting-trim-close",
+      "20-map-overview"
+    ],
+    "passages": [
+      {
+        "id": "bank_west",
+        "start": {
+          "x": 73.2,
+          "y": 101.5
+        },
+        "end": {
+          "x": 77.53500000000041,
+          "y": 101.5
+        },
+        "crossed": true,
+        "back": {
+          "x": 74.05000000000008,
+          "y": 101.5
+        }
+      },
+      {
+        "id": "bank_south",
+        "start": {
+          "x": 117,
+          "y": 103.2
+        },
+        "end": {
+          "x": 117,
+          "y": 107.50666666666707
+        },
+        "crossed": true,
+        "back": {
+          "x": 117,
+          "y": 103.93666666666674
+        }
+      },
+      {
+        "id": "food_east",
+        "start": {
+          "x": 349.2,
+          "y": 97
+        },
+        "end": {
+          "x": 353.6483333333293,
+          "y": 97
+        },
+        "crossed": true,
+        "back": {
+          "x": 350.13499999999914,
+          "y": 97
+        }
+      },
+      {
+        "id": "food_south",
+        "start": {
+          "x": 340,
+          "y": 103.2
+        },
+        "end": {
+          "x": 340,
+          "y": 107.56333333333374
+        },
+        "crossed": true,
+        "back": {
+          "x": 340,
+          "y": 103.99333333333341
+        }
+      },
+      {
+        "id": "market_north",
+        "start": {
+          "x": 112,
+          "y": 122.4
+        },
+        "end": {
+          "x": 112,
+          "y": 126.6500000000004
+        },
+        "crossed": true,
+        "back": {
+          "x": 112,
+          "y": 123.1083333333334
+        }
+      },
+      {
+        "id": "visitor_north",
+        "start": {
+          "x": 337,
+          "y": 133.2
+        },
+        "end": {
+          "x": 337,
+          "y": 137.5350000000004
+        },
+        "crossed": true,
+        "back": {
+          "x": 337,
+          "y": 133.96500000000006
+        }
+      },
+      {
+        "id": "sorting_north",
+        "start": {
+          "x": 227,
+          "y": 142.79999999999998
+        },
+        "end": {
+          "x": 227,
+          "y": 147.07833333333372
+        },
+        "crossed": true,
+        "back": {
+          "x": 227,
+          "y": 144.13166666666677
+        }
+      },
+      {
+        "id": "secondary_west",
+        "start": {
+          "x": 181.2,
+          "y": 242.2
+        },
+        "end": {
+          "x": 186.07333333333378,
+          "y": 242.2
+        },
+        "crossed": true,
+        "back": {
+          "x": 182.58833333333345,
+          "y": 242.2
+        }
+      },
+      {
+        "id": "guard_monitor",
+        "start": {
+          "x": 335.5,
+          "y": 239.39999999999998
+        },
+        "end": {
+          "x": 335.5,
+          "y": 244.27333333333377
+        },
+        "crossed": true,
+        "back": {
+          "x": 335.5,
+          "y": 240.7600000000001
+        }
+      },
+      {
+        "id": "office_meeting",
+        "start": {
+          "x": 365,
+          "y": 239.39999999999998
+        },
+        "end": {
+          "x": 365,
+          "y": 244.24500000000043
+        },
+        "crossed": true,
+        "back": {
+          "x": 365,
+          "y": 240.78833333333344
+        }
+      },
+      {
+        "id": "dorm_north",
+        "start": {
+          "x": 402,
+          "y": 207.6
+        },
+        "end": {
+          "x": 402,
+          "y": 212.10500000000042
+        },
+        "crossed": true,
+        "back": {
+          "x": 402,
+          "y": 208.59166666666675
+        }
+      },
+      {
+        "id": "west_through",
+        "start": {
+          "x": 73.2,
+          "y": 109
+        },
+        "end": {
+          "x": 77.50666666666707,
+          "y": 109
+        },
+        "crossed": true,
+        "back": {
+          "x": 73.93666666666674,
+          "y": 109
+        }
+      },
+      {
+        "id": "east_through",
+        "start": {
+          "x": 349.2,
+          "y": 109
+        },
+        "end": {
+          "x": 354.1299999999955,
+          "y": 109
+        },
+        "crossed": true,
+        "back": {
+          "x": 350.53166666666544,
+          "y": 109
+        }
+      }
+    ],
+    "baseline": false,
+    "final": {
+      "chunks": 28,
+      "npcs": 21,
+      "memory": {
+        "geometries": 657,
+        "textures": 162
+      }
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": []
+}

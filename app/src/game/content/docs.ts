@@ -7,8 +7,9 @@ export interface DocDef {
   title: string // 文档标题
   no: string // 文档编号（如 3/7）
   body: DocSection[]
-  style?: 'note' | 'book' | 'foundation' // 基金会欢迎信有独立白纸排版
+  style?: 'note' | 'book' | 'foundation' | 'web' | 'missing' // 基金会欢迎信有独立白纸排版
   font?: 'zhimangxing' // v53b：手书字体覆盖（L3 画作笔记残页用志莽行）
+  url?: string // 前厅：web 风格文档的地址栏（虚构域名）
   image?: string // v57t：book 风格页内配图（远程 URL；加载失败自动隐藏）
 }
 
@@ -27,6 +28,59 @@ const L3_NOTES: string[] = [
 ]
 
 export const DOCS: Record<string, DocDef> = {
+  // 前厅（序章）：卧室电脑——本地新闻站的失踪报道 + 都市传说论坛帖（P1 第 0 幕；网页样式见 DocOverlay web）
+  foyer_news: {
+    id: 'foyer_news',
+    title: '都市晨讯 · 本月第七起：夜归青年在老城区失联',
+    no: '23:12 更新',
+    style: 'web',
+    url: 'citymorning.example/local/missing-07',
+    body: [
+      { head: '记者 林舟', paras: [
+        '警方证实，19 岁的陈某最后出现在第六大街与旧仓路之间的一条后巷。家属称她出门前说要“去看看那条巷子”，此后手机在 23:58 断开信号。',
+        '这是本月同一片区第七起类似报告。七名失联者互不相识，但所有人的手机都在午夜前后同时离线；附近便利店的监控在那一刻只录到一片泛黄的雪花噪点。',
+        '警方呼吁市民夜间不要进入无照明巷道，如有线索请拨打热线。',
+      ] },
+      { head: '相关报道', paras: [
+        '便利店店员：“他进巷子以后，屏幕就只剩黄色了。”',
+        '失联者家属自发张贴寻人启事，楼道和公交站都能看见。',
+      ] },
+    ],
+  },
+  foyer_forum: {
+    id: 'foyer_forum',
+    title: '边界线论坛 · 都市传说版 —— 【整理】旧仓路后巷到底是什么（附“出来”的方法）',
+    no: '楼主 noclip_0 · 回复 214',
+    style: 'web',
+    url: 'borderline-forum.example/b/legends',
+    body: [
+      { head: '1L  noclip_0', paras: [
+        '新闻里那七个人我认识其中一个的朋友。说一下我知道的：旧仓路那条没名字的后巷，墙角有一块颜色不对的地方。午夜前后贴着墙走，会“卡”进去——像游戏里穿模一样。',
+        '进去以后是一片无边无际的黄色房间，荧光灯一直在嗡嗡响。圈子里叫它“后室”，那一层叫 Level 0。',
+      ] },
+      { head: '2L  noclip_0', paras: [
+        '重点来了：有人出来过。她说出口不是门，是“档案”。你要在里面找到六盘录像带，带到一座叫 Level 11 的城市，交给那里的公共档案馆。档案馆收齐六盘，门才会开。',
+        '所以如果你真要去：带手电、带水、带吃的、手机充满电。别一个人去。——我知道你们不会听。',
+      ] },
+      { head: '57L  匿名用户', paras: ['又是这种帖子。去年也有人说某个地铁站能卡进去，结果呢？'] },
+      { head: '213L  cassette_six', paras: ['我今晚就去。如果明天我没回帖，你们就知道是真的了。'] },
+    ],
+  },
+  // 前厅 M3：街上的寻人启事（公交站/电线杆/便利店门上，内容按张数在消息栏补充）
+  foyer_missing: {
+    id: 'foyer_missing',
+    title: '寻人启事 · MISSING',
+    no: '复印件 · 被雨水泡皱',
+    style: 'missing',
+    body: [
+      { head: '寻人启事', paras: [
+        '照片被雨水泡得发白，只看得清一件浅色外套。',
+        '「10 月 14 日晚 23 点后在第六大街附近失联。手机最后定位在旧仓路一带。如有线索，请联系家属。」',
+        '下面用圆珠笔补了一行小字：「不要去那条巷子找她。」',
+        '启事边缘还有更早的几张，层层叠叠贴在一起。最底下那张的日期，是好几年前。',
+      ] },
+    ],
+  },
   // 首次进入 Level 1 时出生点旁的纸条（wikidot Level 1：探险者总署附在杏仁水瓶上的留言）
   welcome_note: {
     id: 'welcome_note',

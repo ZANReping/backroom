@@ -5,6 +5,8 @@ import { buildRefinedItemMesh } from './refinedItemMesh'
 import { buildFlashlightMesh } from './flashlightMesh'
 import { buildDetailedItemMesh } from './detailItemsMesh'
 import { buildSquirtGunMesh } from './squirtGunMesh'
+import { buildFirearmMesh } from './firearmMesh'
+import { isGun } from '../content/firearms'
 import { buildMeleeMesh, type MeleeType } from './meleeMesh'
 import { MELEE_HOLD, meleePose } from './meleeAnim'
 import { buildRetroHand, heldHandPose, FLASH_HAND_POSE, SWIM_LEFT_HAND_POSE, KAZOO_HELD, type RetroHand } from './retroViewHand'
@@ -17,7 +19,7 @@ export function vmat(color: string | number) {
   return new THREE.MeshLambertMaterial({ color })
 }
 
-export interface ViewmodelParts { right: RetroHand; left: RetroHand; flashlight: THREE.Group }
+export interface ViewmodelParts { right: RetroHand; left: RetroHand; flashlight: THREE.Group; phone: THREE.Group }
 export function buildViewmodel(vm: THREE.Group, vmFlash: THREE.Group, camera: THREE.Camera): ViewmodelParts {
   // v71：右手 = 复古低模手（指节分段包住把手 + 前臂 + 袖管），握法随手持物切换（heldHandPose），位于屏幕右下
   const right = buildRetroHand()
@@ -31,6 +33,10 @@ export function buildViewmodel(vm: THREE.Group, vmFlash: THREE.Group, camera: TH
   flashlight.scale.setScalar(0.9)
   flashlight.position.z = 0.015
   vmFlash.add(flashlight)
+  // 前厅：副手手机（竖握，屏幕朝向镜头）
+  const phone = buildPhoneViewMesh()
+  phone.visible = false
+  vmFlash.add(phone)
   const left = buildRetroHand({ left: true })
   left.setPose(FLASH_HAND_POSE, flashlight) // v72：手指按手电真实网格接触求解
   vmFlash.add(left.group)
@@ -39,7 +45,67 @@ export function buildViewmodel(vm: THREE.Group, vmFlash: THREE.Group, camera: TH
   // Reuse the contact/pose caches before the first entry into water.
   right.preparePose(heldHandPose('__swim'), null)
   left.preparePose(SWIM_LEFT_HAND_POSE, null)
-  return { right, left, flashlight }
+  return { right, left, flashlight, phone }
+}
+
+/** 手持手机模型：黑色机身 + 自发光屏幕（锁屏时钟样式）+ 摄像头。原点≈握点。 */
+export function buildPhoneViewMesh(): THREE.Group {
+  const g = new THREE.Group()
+  g.name = 'vm-phone'
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.074, 0.152, 0.009), new THREE.MeshLambertMaterial({ color: '#16171a' }))
+  g.add(body)
+  const cv = document.createElement('canvas'); cv.width = 64; cv.height = 128
+  const x = cv.getContext('2d')
+  if (x) {
+    const gr = x.createLinearGradient(0, 0, 0, 128); gr.addColorStop(0, '#2d4466'); gr.addColorStop(1, '#0e131b')
+    x.fillStyle = gr; x.fillRect(0, 0, 64, 128)
+    x.fillStyle = '#e9edf2'; x.font = '300 18px sans-serif'; x.textAlign = 'center'; x.fillText('23:40', 32, 40)
+    x.fillStyle = 'rgba(255,255,255,.18)'; for (let i = 0; i < 4; i++) x.fillRect(8 + i * 13, 96, 10, 10)
+  }
+  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.068, 0.144), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }))
+  screen.position.z = 0.0047; screen.name = 'vm-phone-screen'
+  g.add(screen)
+  const cam = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.003, 10), new THREE.MeshLambertMaterial({ color: '#08090a' }))
+  cam.rotation.x = Math.PI / 2; cam.position.set(-0.022, 0.06, -0.006)
+  g.add(cam)
+  const led = new THREE.Mesh(new THREE.CircleGeometry(0.004, 10), new THREE.MeshBasicMaterial({ color: '#fff7e0' }))
+  led.position.set(-0.008, 0.06, -0.0052); led.rotation.y = Math.PI; led.name = 'vm-phone-torch'
+  g.add(led)
+  g.position.set(0.02, 0.06, 0.02)
+  g.rotation.set(-0.25, 0.32, 0.05)
+  return g
+}
+
+/** 前厅 M4：坠入 Level 0 后第一人称手机屏幕碎裂 + 「无信号」（只在状态变化时重绘一次屏幕贴图）。 */
+export function setPhoneViewCracked(g: THREE.Group, cracked: boolean) {
+  if (g.userData.cracked === cracked) return
+  g.userData.cracked = cracked
+  const scr = g.getObjectByName('vm-phone-screen') as THREE.Mesh | undefined
+  const mat = scr?.material as THREE.MeshBasicMaterial | undefined
+  const tex = mat?.map as THREE.CanvasTexture | undefined
+  const cv = tex?.image as HTMLCanvasElement | undefined
+  const x = cv?.getContext('2d')
+  if (!tex || !cv || !x) return
+  const gr = x.createLinearGradient(0, 0, 0, 128); gr.addColorStop(0, '#2d4466'); gr.addColorStop(1, '#0e131b')
+  x.fillStyle = gr; x.fillRect(0, 0, 64, 128)
+  x.fillStyle = '#e9edf2'; x.font = '300 18px sans-serif'; x.textAlign = 'center'; x.fillText('23:40', 32, 40)
+  x.fillStyle = 'rgba(255,255,255,.18)'; for (let i = 0; i < 4; i++) x.fillRect(8 + i * 13, 96, 10, 10)
+  if (cracked) {
+    x.fillStyle = '#ff5566'; x.font = '9px sans-serif'; x.fillText('无信号', 32, 14)
+    let s = 7
+    const r = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296 }
+    const ix = 46, iy = 100
+    x.lineCap = 'round'
+    for (let i = 0; i < 11; i++) {
+      let px = ix, py = iy, a = (i / 11) * Math.PI * 2 + r() * 0.4
+      x.beginPath(); x.moveTo(px, py)
+      for (let k = 0; k < 6; k++) { a += (r() - 0.5) * 0.6; px += Math.cos(a) * (6 + r() * 12); py += Math.sin(a) * (6 + r() * 12); x.lineTo(px, py) }
+      x.strokeStyle = 'rgba(0,0,0,.55)'; x.lineWidth = 1.6; x.stroke()
+      x.strokeStyle = 'rgba(235,242,250,.85)'; x.lineWidth = 0.7; x.stroke()
+    }
+  }
+  tex.needsUpdate = true
 }
 
 /** 手部（vm 节点）动作姿势：走路摆动 / 使用物品 / 攻击 / 搜索。纯函数，renderer 与预览页共用（v71 抽出，数值未改）。 */
@@ -153,6 +219,13 @@ export function buildHeldItem(type: string): THREE.Group {
     g.add(w)
     g.userData.meleeRig = w.userData.meleeRig
     g.userData.meleeMesh = w
+    return g
+  }
+  if (isGun(base)) {
+    // The animated view uses the firearm rig, not the rotated ground-item model.
+    const rig = buildFirearmMesh(base)
+    g.add(rig.root)
+    g.userData.gunRig = rig
     return g
   }
   switch (type) {

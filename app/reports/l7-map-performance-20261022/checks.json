@@ -1,0 +1,174 @@
+{
+  "pass": 36,
+  "fail": 0,
+  "panels": [
+    {
+      "size": 80,
+      "cold": {
+        "layers": {
+          "hits": 0,
+          "builds": 1,
+          "perEngineLimit": 6
+        },
+        "contours": {
+          "builds": 16,
+          "hits": 32,
+          "entries": 16,
+          "limit": 192
+        },
+        "terrain": {
+          "cells": 25,
+          "limit": 384
+        }
+      },
+      "warm": {
+        "layers": {
+          "hits": 1,
+          "builds": 1,
+          "perEngineLimit": 6
+        },
+        "contours": {
+          "builds": 16,
+          "hits": 32,
+          "entries": 16,
+          "limit": 192
+        },
+        "terrain": {
+          "cells": 25,
+          "limit": 384
+        }
+      },
+      "stats": {
+        "maxDepth": 227.2654037475586,
+        "band": "午夜带",
+        "contours": 962,
+        "known": 6400,
+        "missing": 0,
+        "labels": []
+      }
+    },
+    {
+      "size": 120,
+      "cold": {
+        "layers": {
+          "hits": 0,
+          "builds": 1,
+          "perEngineLimit": 6
+        },
+        "contours": {
+          "builds": 25,
+          "hits": 50,
+          "entries": 25,
+          "limit": 192
+        },
+        "terrain": {
+          "cells": 25,
+          "limit": 384
+        }
+      },
+      "warm": {
+        "layers": {
+          "hits": 1,
+          "builds": 1,
+          "perEngineLimit": 6
+        },
+        "contours": {
+          "builds": 25,
+          "hits": 50,
+          "entries": 25,
+          "limit": 192
+        },
+        "terrain": {
+          "cells": 25,
+          "limit": 384
+        }
+      },
+      "stats": {
+        "maxDepth": 240.1204833984375,
+        "band": "深渊",
+        "contours": 9138,
+        "known": 14400,
+        "missing": 0,
+        "labels": [
+          "有光带 · 最深 23m",
+          "微光带 · 最深 89m",
+          "深渊 · 最深 240m",
+          "200m",
+          "150m",
+          "100m",
+          "50m",
+          "230m"
+        ]
+      }
+    }
+  ],
+  "progress": [
+    0,
+    1
+  ],
+  "resumedProgress": [
+    1,
+    16
+  ],
+  "teleports": [
+    {
+      "target": {
+        "x": -10.5,
+        "y": 15.5,
+        "floor": 1
+      },
+      "success": true,
+      "world": {
+        "x": -10.5,
+        "y": 15.5,
+        "z": -8.364363174438477
+      },
+      "ground": -8.384363174438477
+    },
+    {
+      "target": {
+        "x": 64.5,
+        "y": 15.5,
+        "floor": 0
+      },
+      "success": true,
+      "world": {
+        "x": 64.5,
+        "y": 15.5,
+        "z": -145.10667846679686
+      },
+      "ground": -145.12667846679688
+    },
+    {
+      "target": {
+        "x": -340.5,
+        "y": -240.5,
+        "floor": 1
+      },
+      "success": true,
+      "world": {
+        "x": -340.5,
+        "y": -240.5,
+        "z": -118.09668395996094
+      },
+      "ground": -118.11668395996094
+    }
+  ],
+  "cache": {
+    "layers": {
+      "hits": 4,
+      "builds": 45,
+      "perEngineLimit": 6
+    },
+    "contours": {
+      "builds": 226,
+      "hits": 1550,
+      "entries": 192,
+      "limit": 192
+    },
+    "terrain": {
+      "cells": 16,
+      "limit": 384
+    }
+  }
+}

@@ -1,0 +1,204 @@
+{
+  "date": "2026-10-24",
+  "archiveSha256": "B6BEFFF3F9948A745A6B6C3D2E839B9AEBC42CE484DE55D41E1373B7EDC0BCC0",
+  "seed": 424243,
+  "viewport": [
+    1920,
+    1080
+  ],
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "results": {
+    "realistic": {
+      "ok": true,
+      "entryMs": 9151.048199999997,
+      "warm": {
+        "ms": 1965,
+        "programs": 51,
+        "textures": 112,
+        "npcs": 7
+      },
+      "doorwayProgramDelta": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    "classic": {
+      "ok": true,
+      "entryMs": 7401.120199999998,
+      "warm": {
+        "ms": 1539,
+        "programs": 47,
+        "textures": 112,
+        "npcs": 7
+      },
+      "doorwayProgramDelta": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    }
+  },
+  "checks": [
+    {
+      "name": "check:foyer-v2",
+      "exit": 0,
+      "ms": 17324.0274
+    },
+    {
+      "name": "check:ferren-foyer-integration",
+      "exit": 0,
+      "ms": 2166.6988999999994
+    },
+    {
+      "name": "check:seating",
+      "exit": 0,
+      "ms": 714.7157000000007
+    },
+    {
+      "name": "check:npc-idle",
+      "exit": 0,
+      "ms": 1299.6898
+    },
+    {
+      "name": "check:l1-interactions",
+      "exit": 0,
+      "ms": 1513.3896999999997
+    },
+    {
+      "name": "check:refined-items",
+      "exit": 0,
+      "ms": 1871.5519999999997
+    },
+    {
+      "name": "check:firearms",
+      "exit": 0,
+      "ms": 4325.280200000001
+    },
+    {
+      "name": "check:four-import",
+      "exit": 0,
+      "ms": 1332.788800000002
+    },
+    {
+      "name": "check:item-batches",
+      "exit": 0,
+      "ms": 594.9736999999986
+    },
+    {
+      "name": "check:texture-images",
+      "exit": 0,
+      "ms": 5595.936500000003
+    },
+    {
+      "name": "check:model-warmup",
+      "exit": 0,
+      "ms": 602.0172999999995
+    },
+    {
+      "name": "build",
+      "exit": 0,
+      "ms": 76191.47839999999
+    }
+  ],
+  "performance": [
+    {
+      "mode": "真实",
+      "scene": "卧室",
+      "median": 4.19999999999709,
+      "p95": 12.5,
+      "calls": 130,
+      "triangles": 48097,
+      "geometries": [
+        798,
+        798,
+        798,
+        798,
+        798
+      ],
+      "textures": [
+        237,
+        237,
+        237,
+        237,
+        237
+      ]
+    },
+    {
+      "mode": "真实",
+      "scene": "街道",
+      "median": 4.19999999999709,
+      "p95": 8.400000000008731,
+      "calls": 280,
+      "triangles": 39949,
+      "geometries": [
+        799,
+        799,
+        799,
+        799,
+        799
+      ],
+      "textures": [
+        245,
+        245,
+        245,
+        245,
+        245
+      ]
+    },
+    {
+      "mode": "经典",
+      "scene": "卧室",
+      "median": 4.19999999999709,
+      "p95": 4.30000000000291,
+      "calls": 116,
+      "triangles": 48083,
+      "geometries": [
+        791,
+        791,
+        791,
+        791,
+        791
+      ],
+      "textures": [
+        220,
+        220,
+        220,
+        220,
+        220
+      ]
+    },
+    {
+      "mode": "经典",
+      "scene": "街道",
+      "median": 4.19999999999709,
+      "p95": 8.400000000001455,
+      "calls": 266,
+      "triangles": 39935,
+      "geometries": [
+        792,
+        792,
+        792,
+        792,
+        792
+      ],
+      "textures": [
+        228,
+        228,
+        228,
+        228,
+        228
+      ]
+    }
+  ],
+  "limits": [
+    "Windows headless native GPU only; no Android device or audio listening test",
+    "No repeated full-prologue resource leak stress test",
+    "No forced WebGL-failure test for the 2D transition fallback"
+  ]
+}

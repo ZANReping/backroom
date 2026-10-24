@@ -10,7 +10,7 @@ import type { FloorBand } from '../core/types'
 import { canOccupy, PLAYER_RADIUS } from '../core/player'
 import { WALL_H } from '../renderer/shared'
 import { look } from '../core/renderer3d'
-import { recordEntityEncounter, ENTITIES, type Entity } from '../entities'
+import { recordEntityEncounter, type Entity } from '../entities'
 import { chunkKey, CS } from '../world/infinite'
 import { audio } from '../core/audio'
 import type { Engine } from '../engine'
@@ -32,28 +32,15 @@ import { updateCurabitur, curabiturPostStep } from './curabiturAI' // [L8-curabi
 import { updateShrimp, devourShrimp } from './shrimpAI'
 import { beginSmilerFrame, flushSmilerSpawns, smilerHear, updateSmiler } from './smilerAI'
 import { beginL11FacelingFrame,updateL11Faceling,canPlaceL11Faceling } from './l11FacelingAI'
+import { updateFaceling } from './facelingAI'
 import { tinyHear, updateTiny } from './tinyAI'
+import { updateWindowEntity } from './windowAI'
+import { updateVm36 } from './vendingAI'
+import { updateFerren } from './ferrenAI'
 import { thingHear, updateThing, THINGM } from './thingAI'
 
-// v51：人制品售货机——看过背面后，玩家背对它（视线锥外且 10m 内）即活化追击；受到攻击也会活化
-// （原 step 内联段，逐语句搬运；位于糖果计时器 pre 组与人制品/麻痹 post 组之间）
-export function updateVendingMachines(eng: Engine) {
-  const p = eng.player, m = eng.map!
-  // v51：人制品售货机——看过背面后，玩家背对它（视线锥外且 10m 内）即活化追击；受到攻击也会活化
-  for (const e of m.entities) {
-    if (e.dead || e.def.type !== 'vendingmachine') continue
-    const d = Math.hypot(e.x - p.x, e.y - p.y)
-    const provoked = e.hp < e.def.hp // 受到攻击
-    const turnedBack = !!e.activated && d <= 10 && eng.viewAngle(e.x, e.y) > 1.7 // 看过背面后背对它
-    if (provoked || turnedBack) {
-      e.activated = false
-      e.def = ENTITIES.vmad
-      e.state = 'chase'; e.stateT = 0; e.targetX = p.x; e.targetY = p.y
-      audio.aggro()
-      eng.msg('背后传来白骨摩擦地面的声响——人制品售货机站起来了。', 'damage')
-    }
-  }
-}
+// [vending] 旧版「看过背面后背对它即活化」已取消（背面是安全的辨认方式）；活化只由攻击触发，见 vendingAI
+export function updateVendingMachines(_eng: Engine) {}
 export function isLit(eng: Engine, x: number, y: number): boolean {
   if (eng.levelDef.noFlashlight) return false
   const m = eng.map!
@@ -251,6 +238,9 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     const def = e.def
     if (e.targetEnt?.dead) e.targetEnt = undefined
     if (def.type === 'tiny' && updateTiny(eng, e, dt, d)) continue
+    if (def.type === 'vendingmachine' || def.type === 'vmad') { updateVm36(eng, e, dt, d); continue } // [vending] Entity 36：出货/补货/活化/劈砍/归位（vendingAI）
+    if (def.type === 'ferren') { updateFerren(eng, e, dt); continue } // [ferren] Entity 92：作息 / 切行 / 交互（ferrenAI），不走通用游荡
+    if (def.type === 'windowent') { updateWindowEntity(eng, e, dt); continue } // [window] 窗户 Entity 2：诱引/伸手/拖拽/新生/衰亡（windowAI）
     if (def.type === 'lightguide') { updateLightguide(eng, e, dt, d); continue } // [L8-lightguide] 微光向导专属 AI（带路/警示/守巢/逃离）
     if (def.aquatic) updateAquaticDepth(eng, e, dt)
     if (def.type === 'thething' && updateThing(eng, e, dt, d, lightOn, lightOn && d < THINGM.LIGHT_D && Math.abs(e.z - p.z) < THINGM.LIGHT_Z && lookingAt(eng, e))) continue
@@ -549,6 +539,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
       }
     }
 
+    if(updateFaceling(eng,e,dt))break generic // v90 无面灵：哭闹/安抚/抱腿/牵手/暴怒前摇接管移动；其余只叠手势
     if(updateL11Faceling(eng,e,dt))break generic
     switch (e.state) {
       case 'idle':
@@ -709,23 +700,7 @@ export function wanderTarget(eng: Engine, e: Entity) {
   const band = entityBand(m, e)
   const l9StreetBound = eng.levelDef.id === 9
     && (e.def.type === 'watcher' || e.def.type === 'strider' || e.def.type === 'mangled')
-  // Ferren（雪貂笼宠物）：小半径就近游荡 + 直线路径可走校验——不再隔着笼墙选点往墙上蹭；
-  // 偶尔趴下歇一会儿（宠物漫游节奏）
-  if (e.def.type === 'ferren') {
-    if (Math.random() < 0.3) { e.state = 'idle'; e.stateT = 1.2 + Math.random() * 2.2; e.targetX = e.x; e.targetY = e.y; return }
-    for (let t = 0; t < 12; t++) {
-      const a = Math.random() * Math.PI * 2, r = 1 + Math.random() * 1.8
-      const tx = e.x + Math.cos(a) * r, ty = e.y + Math.sin(a) * r
-      let clear = true
-      for (let k = 1; k <= 4 && clear; k++) {
-        const sx = e.x + (tx - e.x) * (k / 4), sy = e.y + (ty - e.y) * (k / 4)
-        if (!canOccupy(m, sx, sy, 0.2, { z: e.z, band })) clear = false
-      }
-      if (clear) { e.targetX = tx; e.targetY = ty; e.stateT = 3; return }
-    }
-    e.state = 'idle'; e.stateT = 1.5; e.targetX = e.x; e.targetY = e.y
-    return
-  }
+  // [ferren] Ferren 由 ferrenAI.updateFerren 接管（作息状态机），不再走这里的小半径游荡
   for (let t = 0; t < 20; t++) {
     const a = Math.random() * Math.PI * 2
     const tx = e.x + Math.cos(a) * 5, ty = e.y + Math.sin(a) * 5

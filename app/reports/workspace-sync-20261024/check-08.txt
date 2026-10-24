@@ -1,0 +1,18 @@
+
+> my-app@0.0.0 check:traders-circulation
+> esbuild scripts/check-traders-circulation.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-traders-circulation.mjs && node .cache/check-traders-circulation.mjs
+
+
+  .cache\check-traders-circulation.mjs  2.4mb
+
+Done in 78ms
+{
+  "ok": true,
+  "openings": 11,
+  "publicLanes": 2,
+  "collisionSamples": 3216,
+  "closedVaults": 128,
+  "tables": 64,
+  "emptyStalls": 9,
+  "oldPartitionRecovery": 3
+}

@@ -1,0 +1,228 @@
+{
+  "date": "2026-10-23",
+  "seed": 424243,
+  "viewport": [
+    1920,
+    1080
+  ],
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "actualGame": {
+    "realistic": {
+      "ok": true,
+      "entryMs": 5131.357699999997,
+      "ferrenEntryMs": 7260.223199999993,
+      "skip": true
+    },
+    "classic": {
+      "ok": true,
+      "entryMs": 6151.383100000003,
+      "ferrenEntryMs": 4210.722200000004,
+      "skip": false,
+      "touchSimulation": true
+    }
+  },
+  "meshBudget": {
+    "items": 69,
+    "maxTriangles": 1108,
+    "maxBatches": 3,
+    "checks": 2672
+  },
+  "runtimeErrors": 0,
+  "cleanup": {
+    "realistic": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    },
+    "classic": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  "finalChecks": [
+    {
+      "name": "check:ferren",
+      "exit": 0,
+      "ms": 2350.2455
+    },
+    {
+      "name": "check:refined-items",
+      "exit": 0,
+      "ms": 2014.5149000000001
+    },
+    {
+      "name": "check:ferren-foyer-integration",
+      "exit": 0,
+      "ms": 1721.277
+    },
+    {
+      "name": "check:pipeworm-disabled",
+      "exit": 0,
+      "ms": 1441.1628
+    },
+    {
+      "name": "check:four-import",
+      "exit": 0,
+      "ms": 2222.853100000001
+    },
+    {
+      "name": "check:market-items",
+      "exit": 0,
+      "ms": 1527.7849000000006
+    },
+    {
+      "name": "check:firearms",
+      "exit": 0,
+      "ms": 4972.670699999999
+    },
+    {
+      "name": "check:swim-integration",
+      "exit": 0,
+      "ms": 1306.1816
+    },
+    {
+      "name": "check:l7-map-cache",
+      "exit": 0,
+      "ms": 3225.6219999999994
+    },
+    {
+      "name": "check:item-batches",
+      "exit": 0,
+      "ms": 704.5067999999992
+    },
+    {
+      "name": "check:texture-images",
+      "exit": 0,
+      "ms": 5715.4568
+    },
+    {
+      "name": "check:model-warmup",
+      "exit": 0,
+      "ms": 655.3690000000024
+    },
+    {
+      "name": "build",
+      "exit": 0,
+      "ms": 51751.985700000005
+    }
+  ],
+  "resourceObservation": {
+    "realistic": {
+      "homeBench": {
+        "geometries": [
+          781,
+          781,
+          781,
+          781,
+          781
+        ],
+        "textures": [
+          208,
+          208,
+          208,
+          208,
+          208
+        ],
+        "stableWithinSample": true,
+        "longTermStabilityVerified": false
+      },
+      "streetBench": {
+        "geometries": [
+          781,
+          781,
+          781,
+          781,
+          781
+        ],
+        "textures": [
+          208,
+          208,
+          208,
+          208,
+          208
+        ],
+        "stableWithinSample": true,
+        "longTermStabilityVerified": false
+      },
+      "ferrenBench": {
+        "geometries": [
+          892,
+          1009,
+          1029,
+          1029,
+          1113
+        ],
+        "textures": [
+          108,
+          108,
+          108,
+          108,
+          108
+        ],
+        "stableWithinSample": false,
+        "longTermStabilityVerified": false
+      }
+    },
+    "classic": {
+      "homeBench": {
+        "geometries": [
+          774,
+          774,
+          774,
+          774,
+          774
+        ],
+        "textures": [
+          191,
+          191,
+          191,
+          191,
+          191
+        ],
+        "stableWithinSample": true,
+        "longTermStabilityVerified": false
+      },
+      "streetBench": {
+        "geometries": [
+          774,
+          774,
+          774,
+          774,
+          774
+        ],
+        "textures": [
+          191,
+          191,
+          191,
+          191,
+          191
+        ],
+        "stableWithinSample": true,
+        "longTermStabilityVerified": false
+      },
+      "ferrenBench": {
+        "geometries": [
+          899,
+          989,
+          1022,
+          1059,
+          1075
+        ],
+        "textures": [
+          79,
+          79,
+          79,
+          79,
+          79
+        ],
+        "stableWithinSample": false,
+        "longTermStabilityVerified": false
+      }
+    },
+    "note": "前厅卧室与街区五轮资源数不变；Ferren 场景采样中几何资源仍增长，包含周围据点后台准备，未据此判定资源长期稳定或泄漏。"
+  }
+}

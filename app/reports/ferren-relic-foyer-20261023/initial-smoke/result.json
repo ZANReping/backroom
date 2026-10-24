@@ -1,0 +1,232 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 2934,
+  "cdp": 2935,
+  "errors": [
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "QA_STOP: document selector mismatch; actual computer news opened successfully"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792759553224.321,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "743",
+            "url": "",
+            "lineNumber": 0,
+            "columnNumber": 8
+          }
+        ]
+      }
+    }
+  ],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:2934/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Fri, 23 Oct 2026 12:44:06 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 143,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 2934,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 13724.639405,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.652,
+        "sendEnd": 0.706,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 52.21,
+        "receiveHeadersEnd": 52.362
+      },
+      "responseTime": 1792759446924.205,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    },
+    {
+      "url": "http://127.0.0.1:2934/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Fri, 23 Oct 2026 12:44:19 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 256,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 2934,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 13736.947945,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.661,
+        "sendEnd": 0.737,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 12.352,
+        "receiveHeadersEnd": 12.638
+      },
+      "responseTime": 1792759459192.886,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\ferren-relic-foyer-20261023\\initial-smoke\\qa-1792759433314-20232",
+    "--remote-debugging-port=2935",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 11996,
+    "server": 34156
+  },
+  "appBootMs": 11108.069599999999,
+  "entryMs": 4746.011399999999,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 900,
+    "paused": false,
+    "pos": [
+      5.25,
+      5.75,
+      0
+    ],
+    "prologue": {
+      "step": "act0",
+      "flags": {
+        "flash_drawer": true
+      }
+    },
+    "unlock": {},
+    "phone": {
+      "battery": 39.77364000000015,
+      "torch": false,
+      "docked": true,
+      "notes": [],
+      "photos": 0,
+      "nextId": 1
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 744,
+      "textures": 208
+    },
+    "geometries": 744
+  },
+  "aim-computer": {
+    "id": "computer",
+    "pos": [
+      5.1,
+      5.75
+    ],
+    "crouch": false,
+    "target": "使用 电脑"
+  },
+  "ok": false,
+  "failure": "Error: Runtime/module error at computer document",
+  "partial": {
+    "level": 900,
+    "paused": true,
+    "pos": [
+      5.1,
+      5.75,
+      0
+    ],
+    "prologue": {
+      "step": "act0",
+      "flags": {
+        "flash_drawer": true,
+        "read_news": true,
+        "last_forum": false
+      }
+    },
+    "unlock": {},
+    "phone": {
+      "battery": 40.24565000000021,
+      "torch": false,
+      "docked": true,
+      "notes": [],
+      "photos": 0,
+      "nextId": 1
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 744,
+      "textures": 208
+    },
+    "geometries": 744
+  },
+  "bootstrap": {
+    "text": "01/22\n移动鼠标，环顾四周\nE 使用 电脑\n开发者模式\n🛠 开发者模式 · DEV\n▴\n🔒 citymorning.example/local/missing-07\n23:12 更新\n都市晨讯 · 本月第七起：夜归青年在老城区失联\n记者 林舟\n\n警方证实，19 岁的陈某最后出现在第六大街与旧仓路之间的一条后巷。家属称她出门前说要“去看看那条巷子”，此后手机在 23:58 断开信号。\n\n这是本月同一片区第七起类似报告。七名失联者互不相识，但所有人的手机都在午夜前后同时离线；附近便利店的监控在那一刻只录到一片泛黄的雪花噪点。\n\n警方呼吁市民夜间不要进入无照明巷道，如有线索请拨打热线。\n\n相关报道\n\n便利店店员：“他进巷子以后，屏幕就只剩黄色了。”\n\n失联者家属自发张贴寻人启事，楼道和公交站都能看见。\n\n离开屏幕（Esc）"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

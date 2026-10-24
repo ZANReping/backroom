@@ -13,7 +13,11 @@ import {l0FlickerTime} from './l0Flicker'
 const fakeSky=new THREE.ShaderMaterial({
   side:THREE.DoubleSide,
   uniforms:{time:l0FlickerTime},fog:false,
-  vertexShader:`varying vec3 wp;void main(){vec4 w=modelMatrix*vec4(position,1.);wp=w.xyz;gl_Position=projectionMatrix*viewMatrix*w;}`,
+  vertexShader:`varying vec3 wp;void main(){vec4 local=vec4(position,1.);
+#ifdef USE_INSTANCING
+local=instanceMatrix*local;
+#endif
+vec4 w=modelMatrix*local;wp=w.xyz;gl_Position=projectionMatrix*viewMatrix*w;}`,
   fragmentShader:`uniform float time;varying vec3 wp;
     float h(vec2 v){return fract(sin(dot(v,vec2(127.1,311.7)))*43758.5453);}
     float n(vec2 v){vec2 i=floor(v),f=fract(v);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+1.),f.x),f.y);}
@@ -84,6 +88,12 @@ function label(g:THREE.Group,text:string,x:number,y:number,z:number,w=.55,h=.17)
   let mat=labelMaterials.get(text)
   if(!mat){const cv=document.createElement('canvas');cv.width=512;cv.height=128;const c=cv.getContext('2d')!;c.fillStyle='#62685f';c.fillRect(0,0,512,128);c.fillStyle='#e0ded0';c.font='44px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(text,256,66);const map=new THREE.CanvasTexture(cv);map.colorSpace=THREE.SRGBColorSpace;mat=new THREE.MeshBasicMaterial({map});labelMaterials.set(text,mat)}
   const plate=new THREE.Mesh(new THREE.PlaneGeometry(w,h),mat);plate.position.set(x,y,z);g.add(plate)
+}
+/** An expired facade window closes with the same solid plaster wall as its neighbours. */
+export function buildL4ClosedWindow(s:Structure):THREE.Group {
+  const g=new THREE.Group();g.rotation.y=Number(s.data?.deg??0)*Math.PI/180
+  part(g,1,2.9,1,0,1.45,0,'wall')
+  return g
 }
 export function buildL4Structure(s:Structure):THREE.Group|null {
   const g=new THREE.Group(),kind=s.kind

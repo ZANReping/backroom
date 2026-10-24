@@ -4,8 +4,11 @@ import type { Engine } from '@/game/engine'
 import { look } from '@/game/core/renderer3d'
 import { audio } from '@/game/core/audio'
 import type { GameSettings } from './SettingsModal'
+import { GUNS, isGun, type AmmoType } from '../game/content/firearms'
+import { gunReload, gunSelectAmmo } from '../game/engine/firearms'
 import { IconFlashlight, IconBackpack, IconSprint, IconInteract, IconAttack, IconPause, IconJump, IconCrouch, IconQuickUse, IconWheelUp, IconWheelDown, IconHolster } from './icons'
 import { CONTROL_SIZES, clampLayoutItem, type TouchControlId, type TouchLayoutMap } from './LayoutEditor'
+import { specialAction } from '@/game/engine/special' // [window] 情境「特殊交互」按钮（如窗户旁的「默念」）
 
 interface Props {
   engine: Engine
@@ -124,10 +127,24 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
   }
   // v29b：快捷使用——与 PC 右键（quickuse 绑定）相同的快捷使用/装备逻辑
   const quickUse = () => { if (!engine.handsStowed) engine.quickUse() }
+  // 枪械：快捷使用键改为按住瞄准；另加装填键（长按 = 轮换弹种并立刻换上）
+  const gunHeld = !engine.handsStowed && isGun(engine.player.hotbar[engine.player.selected]?.type)
+  const reloadPress = useRef(0)
+  const cycleGunAmmo = () => {
+    const s = engine.player.hotbar[engine.player.selected]
+    if (!s || !isGun(s.type)) return
+    const have = GUNS[s.type].ammo.filter((a) => engine.countItem(a) > 0)
+    if (!have.length) { engine.msg('身上没有能用的弹。', 'system'); return }
+    const cur = have.indexOf(s.ammoSel as AmmoType)
+    gunSelectAmmo(engine, have[(cur + 1) % have.length])
+  }
   const handsStowed = !!engine.handsStowed
   const holster = (e: React.TouchEvent) => { e.stopPropagation(); engine.toggleHands() }
 
   const interact = engine.getInteract()
+  const special = specialAction(engine)
+  useEffect(() => { if (!special && engine.specialHeld) engine.specialHeld = false }, [special, engine])
+  useEffect(() => () => { engine.specialHeld = false; engine.input.aimHeld = false; window.clearTimeout(reloadPress.current); reloadPress.current = 0 }, [engine])
   const attackUnavailable = handsStowed && !interact
   const holsterContent = <><IconHolster width={18} height={18} /><span className="text-[10px] leading-tight">{handsStowed ? '取出' : '收起'}</span></>
   // v7：跳跃/蹲伏输入（游戏层契约字段，防御性写入，字段不存在也只是无害的额外属性）
@@ -221,9 +238,21 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
           />
         </div>
       )}
+      {/* [window] 特殊交互：只在有可用情境动作时出现，按住生效（窗户旁 = 默念）；放在攻击键簇正上方 */}
+      {special && (
+        <button data-touch-id="special" aria-label={special.label + (special.hold ? '（按住）' : '')}
+          className="absolute flex flex-col items-center justify-center rounded-full active:scale-90"
+          style={{ ...btnBase, width: 64, height: 64, borderColor: 'var(--amber)', color: engine.specialHeld ? 'var(--bg, #000)' : 'var(--amber)', background: engine.specialHeld ? 'var(--amber)' : btnBase.background,
+            bottom: landscape ? 'calc(env(safe-area-inset-bottom) + 210px)' : 'calc(env(safe-area-inset-bottom) + 270px)',
+            [settings.leftHanded ? 'left' : 'right']: `calc(env(safe-area-inset-${settings.leftHanded ? 'left' : 'right'}) + 22px)` }}
+          onTouchStart={(e) => { e.stopPropagation(); engine.specialPressed = true; engine.specialHeld = true }}
+          onTouchEnd={(e) => { e.stopPropagation(); engine.specialHeld = false }}
+          onTouchCancel={(e) => { e.stopPropagation(); engine.specialHeld = false }}
+        ><span className="text-[15px] font-bold leading-tight">{special.label}</span>{special.hold && <span className="text-[9px] leading-tight opacity-80">按住</span>}</button>
+      )}
       {/* 自定义布局：固定位置按钮 */}
       {fixedBtn('backpack', CONTROL_SIZES.backpack, {}, (e) => { e.stopPropagation(); onInventory() }, undefined, <IconBackpack width={22} height={22} />)}
-      {fixedBtn('flashlight', CONTROL_SIZES.flashlight, { color: engine.player.flashlight ? 'var(--amber)' : 'var(--text-dim)' }, (e) => { e.stopPropagation(); engine.input.toggleLight = true }, undefined, <IconFlashlight width={22} height={22} />)}
+      {fixedBtn('flashlight', CONTROL_SIZES.flashlight, { color: engine.player.flashlight || engine.player.phone?.torch ? 'var(--amber)' : 'var(--text-dim)' }, (e) => { e.stopPropagation(); engine.input.toggleLight = true }, undefined, <IconFlashlight width={22} height={22} />)}
       {fixedBtn('sprint', CONTROL_SIZES.sprint, { color: sprintHold ? 'var(--stamina)' : 'var(--text)' }, (e) => { e.stopPropagation(); setSprintHold(true) }, (e) => { e.stopPropagation(); setSprintHold(false) }, <IconSprint width={22} height={22} />)}
       {fixedBtn(
         'attack', CONTROL_SIZES.attack,
@@ -279,14 +308,28 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
           <IconWheelDown width={22} height={22} />
         </button>
         <button
-          aria-label="快捷使用（等同于 PC 右键）"
+          aria-label={gunHeld ? '瞄准（按住）' : '快捷使用（等同于 PC 右键）'}
           className="tc-quickuse flex items-center justify-center rounded-full active:scale-90"
           aria-disabled={handsStowed}
           style={{ ...btnBase, width: 56, height: 56, borderColor: 'var(--amber)', color: handsStowed ? 'var(--text-dim)' : 'var(--amber)', opacity: handsStowed ? 0.5 : 1 }}
-          onTouchStart={(e) => { e.stopPropagation(); quickUse() }}
+          onTouchStart={(e) => { e.stopPropagation(); if (gunHeld) engine.input.aimHeld = true; else quickUse() }}
+          onTouchEnd={(e) => { e.stopPropagation(); engine.input.aimHeld = false }}
+          onTouchCancel={() => { engine.input.aimHeld = false }}
         >
-          <IconQuickUse width={24} height={24} />
+          {gunHeld ? <span className="font-mono2 text-[12px]">瞄准</span> : <IconQuickUse width={24} height={24} />}
         </button>
+        {gunHeld && (
+          <button
+            aria-label="装填（长按换弹种）"
+            className="tc-reload flex items-center justify-center rounded-full active:scale-90"
+            style={{ ...btnBase, width: 48, height: 48, color: 'var(--text)' }}
+            onTouchStart={(e) => { e.stopPropagation(); reloadPress.current = window.setTimeout(() => { reloadPress.current = 0; cycleGunAmmo() }, 450) }}
+            onTouchEnd={(e) => { e.stopPropagation(); if (reloadPress.current) { window.clearTimeout(reloadPress.current); reloadPress.current = 0; gunReload(engine) } }}
+            onTouchCancel={() => { window.clearTimeout(reloadPress.current); reloadPress.current = 0 }}
+          >
+            <span className="font-mono2 text-[12px]">装填</span>
+          </button>
+        )}
       </div>
       {!isCustom('holster') && (
         <button data-touch-id="holster" aria-label={handsStowed ? '取出主手' : '收起主手'} aria-pressed={handsStowed}
@@ -311,32 +354,32 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
             const common = { ...btnBase, position: 'absolute' as const, width: size, height: size, left: 38 + dx - size / 2, top: 38 + dy - size / 2 }
             const label = { jump: '跳', sprint: '冲刺', crouch: '蹲', flashlight: '手电', backpack: '背包' }[id]
             if (id === 'jump') return (
-              <button key={id} aria-label={deepSwimming ? '上浮（按住）' : '跳跃'} data-label={deepSwimming ? '上浮' : label} className="tc-btn pointer-events-auto flex items-center justify-center rounded-full active:scale-90" style={common}
+              <button key={id} data-touch-id={id} aria-label={deepSwimming ? '上浮（按住）' : '跳跃'} data-label={deepSwimming ? '上浮' : label} className="tc-btn pointer-events-auto flex items-center justify-center rounded-full active:scale-90" style={common}
                 onTouchStart={(e) => { e.stopPropagation(); setJump(true) }} onTouchEnd={(e) => { e.stopPropagation(); setJump(false) }} onTouchCancel={(e) => { e.stopPropagation(); setJump(false) }}>
                 <IconJump width={24} height={24} />
               </button>
             )
             if (id === 'sprint') return (
-              <button key={id} aria-label="冲刺（按住）" data-label={label} className={`tc-btn pointer-events-auto flex items-center justify-center rounded-full active:scale-90 ${sprintHold ? 'is-on' : ''}`} style={{ ...common, color: sprintHold ? 'var(--stamina)' : 'var(--text)', borderColor: sprintHold ? 'var(--stamina)' : 'var(--panel-edge)' }}
+              <button key={id} data-touch-id={id} aria-label="冲刺（按住）" data-label={label} className={`tc-btn pointer-events-auto flex items-center justify-center rounded-full active:scale-90 ${sprintHold ? 'is-on' : ''}`} style={{ ...common, color: sprintHold ? 'var(--stamina)' : 'var(--text)', borderColor: sprintHold ? 'var(--stamina)' : 'var(--panel-edge)' }}
                 onTouchStart={(e) => { e.stopPropagation(); setSprintHold(true) }} onTouchEnd={(e) => { e.stopPropagation(); setSprintHold(false) }} onTouchCancel={(e) => { e.stopPropagation(); setSprintHold(false) }}>
                 <IconSprint width={22} height={22} />
               </button>
             )
             if (id === 'crouch') return (
-              <button key={id} aria-label={flightActive || deepSwimming ? (deepSwimming && !flightActive ? '下潜（按住）' : '下降（按住）') : '蹲伏（切换）'} data-label={flightActive || deepSwimming ? (deepSwimming && !flightActive ? '下潜' : '下降') : label} className={`tc-btn pointer-events-auto flex items-center justify-center rounded-full active:scale-90 ${crouchOn ? 'is-on' : ''}`}
+              <button key={id} data-touch-id={id} aria-label={flightActive || deepSwimming ? (deepSwimming && !flightActive ? '下潜（按住）' : '下降（按住）') : '蹲伏（切换）'} data-label={flightActive || deepSwimming ? (deepSwimming && !flightActive ? '下潜' : '下降') : label} className={`tc-btn pointer-events-auto flex items-center justify-center rounded-full active:scale-90 ${crouchOn ? 'is-on' : ''}`}
                 style={{ ...common, color: crouchOn ? 'var(--amber)' : 'var(--text)', borderColor: crouchOn ? 'var(--amber)' : 'var(--panel-edge)', boxShadow: crouchOn ? 'inset 0 0 8px color-mix(in srgb, var(--amber) 50%, transparent)' : 'none' }}
                 onTouchStart={crouchStart} onTouchEnd={crouchEnd} onTouchCancel={crouchEnd}>
                 <IconCrouch width={24} height={24} />
               </button>
             )
             if (id === 'flashlight') return (
-              <button key={id} aria-label="手电筒" data-label={label} className={`tc-btn tc-btn--sm pointer-events-auto flex items-center justify-center rounded-full active:scale-90 ${engine.player.flashlight ? 'is-on' : ''}`} style={{ ...common, color: engine.player.flashlight ? 'var(--amber)' : 'var(--text-dim)' }}
+              <button key={id} data-touch-id={id} aria-label="手电筒" data-label={label} className={`tc-btn tc-btn--sm pointer-events-auto flex items-center justify-center rounded-full active:scale-90 ${engine.player.flashlight || engine.player.phone?.torch ? 'is-on' : ''}`} style={{ ...common, color: engine.player.flashlight || engine.player.phone?.torch ? 'var(--amber)' : 'var(--text-dim)' }}
                 onTouchStart={(e) => { e.stopPropagation(); engine.input.toggleLight = true }}>
                 <IconFlashlight width={20} height={20} />
               </button>
             )
             return (
-              <button key={id} aria-label="背包" data-label={label} className="tc-btn tc-btn--sm pointer-events-auto flex items-center justify-center rounded-full active:scale-90" style={common}
+              <button key={id} data-touch-id={id} aria-label="背包" data-label={label} className="tc-btn tc-btn--sm pointer-events-auto flex items-center justify-center rounded-full active:scale-90" style={common}
                 onTouchStart={(e) => { e.stopPropagation(); onInventory() }}>
                 <IconBackpack width={20} height={20} />
               </button>
@@ -381,7 +424,7 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
           {!isCustom('flashlight') && (
             <button
               className="flex items-center justify-center rounded-full active:scale-90"
-              style={{ ...btnBase, width: 56, height: 56, color: engine.player.flashlight ? 'var(--amber)' : 'var(--text-dim)', ...(landscape ? { transform: 'translate(-96px, -8px)' } : {}) }}
+              style={{ ...btnBase, width: 56, height: 56, color: engine.player.flashlight || engine.player.phone?.torch ? 'var(--amber)' : 'var(--text-dim)', ...(landscape ? { transform: 'translate(-96px, -8px)' } : {}) }}
               onTouchStart={(e) => { e.stopPropagation(); engine.input.toggleLight = true }}
             >
               <IconFlashlight width={22} height={22} />

@@ -37,8 +37,10 @@ import { CONTAINER_KINDS } from '../decorations/containers'
 import { l3AngelCollision } from './l3AngelCollision'
 import { generationObstacles } from './generationObstacles'
 import { l1CrateCollider } from './l1Crate'
+import { FOYER_ID, foyerColliders, foyerCeilingAt } from './foyerLayout'
 
 export interface GameMap {
+  foyer?: boolean // Authored prologue ceilings (home, landing, lobby and store).
   traders?: import("./tradersWorld").TradersRuntime
   settlement?: import('../content/settlementTypes').SettlementMapData
   l1Architecture?: boolean // Derived Level 1 capability, regenerated on load (no save schema change).
@@ -593,6 +595,7 @@ const modelCollidersFor = (s: Structure): ColliderBox[] | null => {
 // - sphboiler 球罐：砖石基座 1.7×1.7 + 球罐 r0.85 @顶 ~2.2m → 盒 ±0.85；球顶不可站
 export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
   if(s.kind==='crate'&&s.data?.l1Crate)return[l1CrateCollider(s)]
+  if(s.kind==='foyerprop')return foyerColliders(s)
   if(s.kind==='l11subway')return l11MetroColliders(s)
   if(isL11DecorKind(s.kind))return l11PropColliders(s)
   if(s.data?.l1Static){
@@ -1054,6 +1057,7 @@ export function l11HeadCeilingAt(m:GameMap,x:number,y:number,feetBefore:number,h
 // ================= v26：天花板碰撞 + 悬挂物依附 =================
 // 瓦片是否有天花板（室内地板即有顶；室外/虚空/边界无顶）
 export function hasCeiling(m: GameMap, tx: number, ty: number): boolean {
+  if (m.foyer) return Number.isFinite(foyerCeilingAt(m, tx + .5, ty + .5))
   if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return false
   const i = ty * m.w + tx
   return m.tiles[i] === 1 && m.outdoor[i] !== 1
@@ -1140,6 +1144,7 @@ export function ceilingSteps(m: GameMap, wallH: number): CeilStep[] {
 // v46：楼梯坡道格=楼梯口上空（无楼板——坡道上段 up=1 是「上层可站」标记而非有楼板），
 // 顶高取上层天花（此前误取楼板底 2.65，坡道中段起跳被看不见的「楼板」拦截——多层交界处无法跳跃）
 export function ceilingHeightAt(m: GameMap, x: number, y: number, wallH: number, band: FloorBand = 0): number {
+  if (m.foyer) return foyerCeilingAt(m, x, y)
   // L11 uses actual slabs/roofs/canopies and stair holes, not 1m ceiling tiles.
   if(l11MapSpace(m,x,y,band))return band>=0||l11MetroRamp(x+m.inf!.ox,y+m.inf!.oy,m.inf!.seed)!==null?Infinity:L11_METRO_CEILING
   const tx = Math.floor(x), ty = Math.floor(y)
@@ -1873,6 +1878,7 @@ function genOnce(def: LevelDef, seed: number): GameMap {
   // Authored blueprints already contain every floor, room, fixture and exit. Generic BFS
   // uses closed-door edge footprints and would incorrectly fill controlled interiors.
   if (m.settlement) return m
+  if (def.id === FOYER_ID) return m // 前厅：手工布局已完整（隔墙/门/灯/出口），跳过通用管线
   if (def.gen === 'outpost') appendLegacyStations(m)
   // ---- 预制结构（固定房间/区域，按层级概率植入；只向墙区开洞，不破坏既有通路）----
   placePrefabs(m, rng, def.id, def.skipPrefabs)

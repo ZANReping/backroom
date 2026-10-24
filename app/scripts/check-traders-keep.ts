@@ -1,3 +1,5 @@
+import {TRADERS_SHOP_HOMES} from '../src/game/content/tradersShops'
+import {TRADERS_MARKET_HOMES} from '../src/game/content/tradersMarket'
 import assert from 'node:assert/strict'
 import {performance} from 'node:perf_hooks'
 import {createTradersMap,generateTradersChunk,streamTradersWorld,ensureTradersAt,syncTradersResidents,captureTradersWorld,restoreTradersWorld,tradersHomes} from '../src/game/world/tradersWorld'
@@ -18,7 +20,7 @@ assert.equal(TRADERS_VAULT_CELLS.length,128);assert.equal(TRADERS_DOORS.length,1
 assert.equal(TRADERS_ROOMS.filter(r=>r.kind==='shop').length,28)
 assert.equal(TRADERS_ROOMS.filter(r=>r.kind==='anchor').length,4)
 assert.equal(m.traders!.chunks.size,0);assert.equal(m.npcs!.length,0)
-assert.equal(m.traders!.homes.length,160);assert.equal(new Set(m.traders!.homes.map(h=>h.id)).size,160)
+assert.equal(m.traders!.homes.length,160+TRADERS_MARKET_HOMES.length+TRADERS_SHOP_HOMES.length);assert.equal(new Set(m.traders!.homes.map(h=>h.id)).size,160+TRADERS_MARKET_HOMES.length+TRADERS_SHOP_HOMES.length)
 assert.deepEqual(tradersHomes(424242),tradersHomes(424242));assert.deepEqual(tradersHomes(424242),tradersHomes(123),'authored duty and seat anchors are stable across appearance seeds')
 assert.deepEqual(createTradersResident(99,424242),createTradersResident(99,424242))
 for(let i=0;i<154;i++){const {def:n}=createTradersResident(i,424242);assert(!n.trade&&!n.barter&&!n.warehouse,'no new shops via crowd NPCs')}
@@ -96,4 +98,4 @@ const a=tradersIrradiance(31.999,.02,109,0,1,0),bake=tradersIrradiance(32.001,.0
 assert.equal(m.traders!.chunks.size,beforeChunks,'baking does not load neighbours')
 assert(!tradersStaticVisibility(10,1,20,10,1,3),'outer wall blocks light')
 ensureTradersAt(restored,TRADERS_SPAWN.x,TRADERS_SPAWN.y,6)
-console.log(JSON.stringify({ok:true,elapsedMs:performance.now()-start,walkableConnectedCells:seen.size,rooms:TRADERS_ROOMS.length,cells:128,shops:28,anchors:4,props:all.length,tables:all.filter(s=>s.data?.tradersProp==='cafe_table').length,homes:160,maxActive:32,peakChunks:m.traders!.peakChunks,cpuChunkMaxMs:m.traders!.maxCpuMs},null,2))
+console.log(JSON.stringify({ok:true,elapsedMs:performance.now()-start,walkableConnectedCells:seen.size,rooms:TRADERS_ROOMS.length,cells:128,shops:28,anchors:4,props:all.length,tables:all.filter(s=>s.data?.tradersProp==='cafe_table').length,homes:160+TRADERS_MARKET_HOMES.length+TRADERS_SHOP_HOMES.length,maxActive:32,peakChunks:m.traders!.peakChunks,cpuChunkMaxMs:m.traders!.maxCpuMs},null,2))

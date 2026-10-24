@@ -1,3 +1,5 @@
+import {l7ChartReader,l7ContourCacheStats,clearL7ContourCache} from './l7ChartContours'
+import {l7ChartRetentionStats} from '../world/l7ChartCache'
 import type {Engine} from '../engine'
 import type {DevMapPreview} from '../engine/devMap'
 import {l7CabinTileAt,l7ZoneOfDepth} from '../world/infiniteL7'
@@ -36,11 +38,11 @@ export function l7DeepestTile(center:number,n:number,e:number,s:number,w:number,
   (center+n+e+ne)/4,(center+e+s+se)/4,(center+s+w+sw)/4,(center+w+n+nw)/4)
 }
 
-export function drawL7Map(g:CanvasRenderingContext2D,eng:Engine,v:L7MapView):L7MapStats{
+function paintL7Map(g:CanvasRenderingContext2D,eng:Engine,v:L7MapView,reader:ReturnType<typeof l7ChartReader>):L7MapStats{
  const stats:L7MapStats={maxDepth:null,band:null,contours:0,known:0,missing:0,labels:[]}
  const m=eng.map,inf=m?.inf;if(!m||!inf)return stats
  const scale=v.scale,ox=inf.ox,oy=inf.oy,reveal=!!(eng.devEnabled&&eng.dev.mapReveal)
- const areas=new Map((v.preview?.cells??[]).map(c=>[`${c.cx},${c.cy}`,c]))
+
  // World-indexed 1 m fields are shared by fills, contours and band labels.
  // Live records always win over cached previews. No procedural generation or
  // Three.js work is performed while painting either map.
@@ -55,8 +57,7 @@ export function drawL7Map(g:CanvasRenderingContext2D,eng:Engine,v:L7MapView):L7M
  }
  for(let y=0;y<bh;y++)for(let x=0;x<bw;x++){
   const lx=bx+x,ly=by+y,wx=lx+ox,wy=ly+oy,i=y*bw+x
-  if(lx>=0&&ly>=0&&lx<m.w&&ly<m.h){const j=ly*m.w+lx;depth[i]=m.liquid[j]===1?m.seaFloor[j]:-(m.elev[j]===2?1.2:0);land[i]=m.liquid[j]===0?1:0}
-  else {const cx=Math.floor(wx/32),cy=Math.floor(wy/32),a=areas.get(`${cx},${cy}`),j=(wy-cy*32)*32+wx-cx*32;if(a?.seaFloor&&a.liquid){depth[i]=a.liquid[j]===1?a.seaFloor[j]:-(a.elev[j]===2?1.2:0);land[i]=a.liquid[j]===0?1:0}}
+  depth[i]=reader.depth(wx,wy);land[i]=reader.land(wx,wy)?1:0
  }
  const at=(x:number,y:number)=>depth[(y-by)*bw+x-bx]
  const deepest=(x:number,y:number)=>l7DeepestTile(at(x,y),at(x,y-1),at(x+1,y),at(x,y+1),at(x-1,y),at(x+1,y-1),at(x+1,y+1),at(x-1,y+1),at(x-1,y-1))
@@ -89,23 +90,20 @@ export function drawL7Map(g:CanvasRenderingContext2D,eng:Engine,v:L7MapView):L7M
   }
  }
  if(stats.maxDepth!==null)stats.band=L7_MAP_BANDS.find(b=>b.id===l7ZoneOfDepth(stats.maxDepth!))!.name
- // Surface vertices on integer world coordinates average the four tile
- // centres around them, matching the seabed's half-metre mesh lattice.
- const node=(x:number,y:number)=>(at(x-1,y-1)+at(x,y-1)+at(x,y)+at(x-1,y))/4
- const step=v.mini||scale<3?2:1,interval=v.mini?20:10,major=v.mini?100:50
- const contourLabels=new Map<number,{x:number;y:number}>()
+ // Derived contour geometry is world anchored and shared by both maps.
+ const step=v.mini||scale<3?2:1
+ const contourLabels=new Map<number,{x:number;y:number;cx:number;cy:number}>()
  for(const kind of ['minor','major','band'] as const){
   g.beginPath()
-  for(let y=Math.floor(y0/step)*step;y<y1;y+=step)for(let x=Math.floor(x0/step)*step;x<x1;x+=step){
-   const a=node(x,y),b=node(x+step,y),c=node(x+step,y+step),d=node(x,y+step),lo=Math.min(a,b,c,d),hi=Math.max(a,b,c,d)
-   if(!Number.isFinite(lo)||!Number.isFinite(hi)||hi<=0)continue
-   const levels=kind==='band'?[24,90,230]:Array.from({length:Math.max(0,Math.floor(hi/interval)-Math.floor(Math.max(0,lo)/interval))},(_,i)=>(Math.floor(Math.max(0,lo)/interval)+i+1)*interval)
-   for(const level of levels){
-    if(level<=lo||level>hi||kind!=='band'&&((level%major===0)!==(kind==='major')))continue
-    for(const seg of l7ContourSegments(a,b,c,d,level)){
-     const sx=(x+seg[0]*step)*scale,sy=(y+seg[1]*step)*scale,ex=(x+seg[2]*step)*scale,ey=(y+seg[3]*step)*scale
-     g.moveTo(sx,sy);g.lineTo(ex,ey);stats.contours++
-     if(!v.mini&&kind!=='minor'&&!contourLabels.has(level)&&x>x0+5&&x<x1-5&&y>y0+6&&y<y1-5&&isKnown(x,y))contourLabels.set(level,{x:(sx+ex)/2,y:(sy+ey)/2})
+  for(let cy=Math.floor((y0+oy)/32);cy<=Math.floor((y1+oy-1)/32);cy++)for(let cx=Math.floor((x0+ox)/32);cx<=Math.floor((x1+ox-1)/32);cx++){
+   const lines=reader.lines(cx,cy,step,l7ContourSegments)[kind]
+   for(let i=0;i<lines.length;i+=7){
+    const x=cx*32+lines[i+5]-ox,y=cy*32+lines[i+6]-oy,level=lines[i+4]
+    if(x<Math.floor(x0/step)*step||x>=x1||y<Math.floor(y0/step)*step||y>=y1)continue
+    const sx=(cx*32+lines[i]-ox)*scale,sy=(cy*32+lines[i+1]-oy)*scale,ex=(cx*32+lines[i+2]-ox)*scale,ey=(cy*32+lines[i+3]-oy)*scale
+    g.moveTo(sx,sy);g.lineTo(ex,ey);stats.contours++
+    if(!v.mini&&kind!=='minor'&&x>x0+5&&x<x1-5&&y>y0+6&&y<y1-5&&isKnown(x,y)){
+     const old=contourLabels.get(level);if(!old||y<old.cy||y===old.cy&&x<old.cx)contourLabels.set(level,{x:(sx+ex)/2,y:(sy+ey)/2,cx:x,cy:y})
     }
    }
   }
@@ -144,6 +142,40 @@ export function drawL7Map(g:CanvasRenderingContext2D,eng:Engine,v:L7MapView):L7M
   g.fillStyle=cabin===2?'#aab7b4':'#58696c';g.fillRect(x*scale,y*scale,scale,scale)
  }
  g.restore()
+ return stats
+}
+
+type Layer={key:string;canvas:HTMLCanvasElement;stats:L7MapStats}
+let layers=new WeakMap<Engine,Layer[]>(),layerHits=0,layerBuilds=0
+export function l7MapCacheStats(eng?:Engine){return{layers:{hits:layerHits,builds:layerBuilds,current:eng?layers.get(eng)?.length??0:undefined,perEngineLimit:6},contours:l7ContourCacheStats(),terrain:l7ChartRetentionStats()}}
+export function clearL7MapRenderCache(){layers=new WeakMap();layerHits=layerBuilds=0;clearL7ContourCache()}
+/** Terrain/fog/labels are independent of heading, markers and item animation.
+ * Keep a small world-coordinate raster LRU; sub-metre camera motion only blits. */
+export function drawL7Map(g:CanvasRenderingContext2D,eng:Engine,v:L7MapView):L7MapStats{
+ const m=eng.map,inf=m?.inf
+ if(!m||!inf)return{maxDepth:null,band:null,contours:0,known:0,missing:0,labels:[]}
+ const scale=v.scale,ox=inf.ox,oy=inf.oy,x0=Math.floor(v.x0),y0=Math.floor(v.y0),x1=Math.ceil(v.x1),y1=Math.ceil(v.y1)
+ if(!Number.isFinite(x0+y0+x1+y1+scale)||scale<=0||x1<=x0||y1<=y0||x1-x0>520||y1-y0>520)return{maxDepth:null,band:null,contours:0,known:0,missing:0,labels:[]}
+ const reader=l7ChartReader(eng,v.preview),reveal=!!(eng.devEnabled&&eng.dev.mapReveal)
+ let hash=2166136261,count=0
+ if(!reveal)for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){
+  let ex=0;if(x>=0&&y>=0&&x<m.w&&y<m.h)ex=eng.explored[y*m.w+x]
+  else{const wx=x+ox,wy=y+oy,cx=Math.floor(wx/32),cy=Math.floor(wy/32);ex=inf.explored.get(`${cx},${cy}`)?.[(wy-cy*32)*32+wx-cx*32]??0}
+  hash=Math.imul(hash^(ex?1:0),16777619);if(ex)count++
+ }
+ if(!reveal&&count===0)return{maxDepth:null,band:null,contours:0,known:0,missing:0,labels:[]}
+ const key=[inf.seed,x0+ox,y0+oy,x1+ox,y1+oy,scale,!!v.mini,reveal?'all':hash+':'+count,reader.key(x0+ox,y0+oy,x1+ox,y1+oy)].join('/')
+ let cache=layers.get(eng);if(!cache){cache=[];layers.set(eng,cache)}
+ const index=cache.findIndex(a=>a.key===key);let layer:Layer
+ if(index>=0){layer=cache.splice(index,1)[0];layerHits++}
+ else{
+  const canvas=document.createElement('canvas');canvas.width=Math.ceil((x1-x0)*scale);canvas.height=Math.ceil((y1-y0)*scale)
+  const context=canvas.getContext('2d')!;context.translate(-x0*scale,-y0*scale)
+  layer={key,canvas,stats:paintL7Map(context,eng,{...v,x0,y0,x1,y1},reader)};layerBuilds++
+ }
+ cache.push(layer);while(cache.length>6){const old=cache.shift()!;old.canvas.width=old.canvas.height=0}
+ g.save();g.beginPath();g.rect(v.x0*scale,v.y0*scale,(v.x1-v.x0)*scale,(v.y1-v.y0)*scale);g.clip();g.drawImage(layer.canvas,x0*scale,y0*scale);g.restore()
+ const stats={...layer.stats,labels:[...layer.stats.labels]}
  // A compact summary reports only charted terrain, never undiscovered depths.
  if(stats.maxDepth!==null){
   g.save();g.font=`${v.mini?8:11}px sans-serif`;g.textAlign='left';g.textBaseline='top'

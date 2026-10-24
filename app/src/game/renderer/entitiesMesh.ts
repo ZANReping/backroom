@@ -15,6 +15,7 @@ import { buildWranglerEntity } from './wranglerRender'
 import { buildTinyMesh } from './tinyMesh'
 import { buildThingMesh } from './thingMesh'
 import { planFacelingFace } from './facelingFace'
+import { facelingAge, FACELING_AGE_HEIGHT } from '../entities/facelingTraits'
 import { buildMothMesh } from './mothMeshes'
 import { buildLightguideEntityMesh } from './lightguideRender' // [L8-lightguide]
 import { buildCurabiturEntityMesh } from './curabiturRender' // [L8-curabitur]
@@ -31,6 +32,7 @@ import {buildNguithrNest} from './nguithrMesh'
 import { buildShrimpMesh } from './shrimpMesh'
 import { buildPartygoerMesh } from './partygoerMesh'
 import {buildJerryMesh} from './jerryMesh'
+import { buildFerrenMesh } from './ferrenMesh' // [ferren]
 import { buildNWMesh } from './watchRender'
 import { ENTITIES } from '../entities'
 import { box, cyl, glow, litMaterial, mulberry } from './shared'
@@ -38,6 +40,9 @@ import { buildAvatarModel, fitLegacyAttachments } from './retroAvatar'
 import { randomAvatar } from '../core/avatar'
 import { buildCamoEntity } from './camoRender' // [L8-camo]
 import { buildArachnidEntityMesh } from './arachnidRender' // [L8-arachnid]
+import { buildWindowEntity } from './windowMesh' // [window]
+import { buildVendingMachineJob } from './vendingMesh' // [vending]
+import { vendingSeedOfEntity } from '../content/vendingLayout'
 
 // ---------- 实体低模（骨骼式分组：四肢/头独立 pivot，可程序化动画）----------
 // 朝向约定：模型正面 = +X（updateEntities 用 rotation.y = -e.facing 对齐移动/玩家方向）。
@@ -49,6 +54,10 @@ type PartMap = Record<string, THREE.Object3D>
 // v53：实体建模变体（L3 高智能实体：无面灵错位面部器官/石器工具、尸鼠水豚形态；seed=实体 id，保证重建一致）
 // ratMorph：尸鼠按层级固定形态——L2 灰白廊道种群 / L3 水豚（capybara 优先）/ L5 酒店正装（小西装+领结）/ 其余层级深褐（旧档「死亡鼠」）
 export interface EntityMeshOpts {
+  /** [window] 窗户 Entity 2：窗型 / 生命阶段 / 种子 */
+  windowStyle?: import('./windowMesh').WindowStyle
+  windowLife?: 'occupied' | 'newborn' | 'dying' | 'gone'
+  windowSeed?: number
   arms?: {count:number;seed:number}
   nguithr?: {scale:number;seed:number;sacs:readonly unknown[]}
   partygoerColor?: import('../entities/partygoerLook').PartygoerColor
@@ -56,8 +65,12 @@ export interface EntityMeshOpts {
   partygoerBalloonArm?: 0 | 1
   mothForm?: import('../entities/types').MothForm
   l3face?: boolean; tool?: boolean; capybara?: boolean
+  facelingAge?: import('../entities/facelingTraits').FacelingAge
+  facelingRole?: import('../entities/facelingTraits').FacelingRole
   ratMorph?: import('../engine/ratAI').RatMorph; seed?: number
   ceilingCrawler?: boolean
+  /** [vending] Entity 36 被打坏后撬开了后部暗格（露出三具艾里克尸体） */
+  vmOpened?: boolean
   arachnidMorph?: 'spider' | 'scorpion' | 'tick' | 'mite'
   arachnidBreed?: number
   herbivore?: boolean
@@ -162,12 +175,32 @@ export function buildNguithrEntityMesh(scale = 1, count = 4, seed = 16): THREE.G
   const nest=buildNguithrNest(count,seed);grp.add(nest);grp.userData.ngNest=nest
   return grp
 }
+/** [window] 本客户端的「观察者种子」：同一扇窗，不同的人看到不同的风景（联机各端各自随机） */
+const WINDOW_VIEWER = Math.floor(Math.random() * 4)
+function buildWindowEntityMesh(opts?: EntityMeshOpts): THREE.Group {
+  const life = opts?.windowLife ?? 'occupied', seed = opts?.windowSeed ?? 1
+  const g = buildWindowEntity({ style: opts?.windowStyle ?? 'l601', state: life === 'newborn' ? 'newborn' : life === 'dying' || life === 'gone' ? 'dying' : 'occupied', seed, viewerSeed: (seed + WINDOW_VIEWER) % 4 })
+  g.userData.winLife = life
+  return g
+}
+
+export function* buildVendingEntityJob(type: string, opts?: EntityMeshOpts): Generator<void, THREE.Group, unknown> {
+  const vm = yield* buildVendingMachineJob({ variant: 'e36', seed: vendingSeedOfEntity(opts?.seed ?? 3), dismantled: !!opts?.vmOpened })
+  const root = new THREE.Group(); vm.rotation.y = Math.PI / 2; root.add(vm)
+  root.userData.entityType = type; root.userData.parts = {}; root.userData.vending = vm.userData.vending
+  root.userData.vmRoot = vm; root.userData.vmOpened = !!opts?.vmOpened
+  return root
+}
+
 export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Group {
+  if (type === 'vendingmachine' || type === 'vmad') { const job = buildVendingEntityJob(type, opts); let step = job.next(); while (!step.done) step = job.next(); return step.value }
   if (type === 'curabitur') return buildCurabiturEntityMesh(opts)
   if (type === 'lightguide') return buildLightguideEntityMesh(opts?.seed ?? 0)
   if(type==='burster')return buildBursterEntity(opts?.seed??0)
+  if (type === 'windowent') return buildWindowEntityMesh(opts) // [window] 重制窗户 Entity 2（windowMesh；动画 windowAnim，摆位 windowRender）
   if (type === 'arms') return buildArmsEntityMesh(opts?.arms?.count,opts?.arms?.seed) // 手臂重制：风口 + 1–3 条蒙皮长臂（armsMesh），动画由 renderer.updateArmsMesh 按 AI 状态驱动
   if(type==='jerry')return buildJerryMesh()
+  if (type === 'ferren') return buildFerrenMesh() // [ferren] 重制 Ferren（Entity 92，貂色雪貂）
   if (type === 'nguithr') return buildNguithrEntityMesh(opts?.nguithr?.scale,opts?.nguithr?.sacs.length,opts?.nguithr?.seed) // 重制 Nguithr'xurh：避日目蒙皮模型（58 骨，3 次绘制）+ 程序化动画；巢由渲染层按 AI 的巢种子补建
   if (type === 'watcher' || type === 'strider' || type === 'mangled') return buildNWMesh(type) // 重制邻里守望 / 残缺者（WATCH-REMAKE.md）
   if (type === 'partygoer') return buildPartygoerMesh(opts?.seed ?? 0, { color: opts?.partygoerColor, intern: opts?.partygoerIntern, balloonArm: opts?.partygoerBalloonArm })
@@ -282,7 +315,27 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       // v68：复古人物模型的无面版本（脸面只采样皮肤、鼻梁削平，眼镜/胡须不生成）
       const faceSeed = opts?.seed ?? Math.floor(Math.random() * 1e6)
       const avatarSeed = faceSeed + 101
-      const pm = buildAvatarModel(randomAvatar(mulberry(avatarSeed)), { seed: avatarSeed, faceless: true, faceAnomaly: opts?.l3face ? faceSeed : undefined })
+      // v90（Entity 9 重制）：年龄档（幼年 / 成年 / 老年）+ 模仿的职业衣着；进化种（L3）长出胡须
+      const evolved = !!opts?.l3face
+      const age = opts?.facelingAge ?? facelingAge(faceSeed, evolved)
+      const fr = mulberry(faceSeed * 7 + 3)
+      const cfg = randomAvatar(mulberry(avatarSeed))
+      const role = opts?.facelingRole
+      if (role === 'office') { cfg.topStyle = 1; cfg.top = ['#d8d4c8', '#b9c4cf', '#e2ddd2'][Math.floor(fr() * 3)]; cfg.pantsStyle = 0; cfg.pants = '#2a2d33'; cfg.shoes = 0 }
+      else if (role === 'shopkeeper') { cfg.topStyle = 0; cfg.top = ['#6a3a3a', '#2e4a5e', '#3a5a4a'][Math.floor(fr() * 3)]; cfg.pantsStyle = 0; cfg.shoes = 1 }
+      if (age === 'child') { cfg.glasses = 0; if (cfg.topStyle === 7) cfg.topStyle = 0 }
+      if (evolved && cfg.gender === 0 && age !== 'child') { const p = planFacelingFace(faceSeed); if (p.hairy > 0.45) cfg.beard = [3, 3, 2, 6, 5][Math.floor(fr() * 5)] }
+      if (age === 'elder') { cfg.hairColor = ['#9a9a9e', '#c4c2bc', '#dedcd6'][Math.floor(fr() * 3)]; if (fr() < 0.3) cfg.hair = 3 }
+      const pm = buildAvatarModel(cfg, { seed: avatarSeed, faceless: true, faceAnomaly: evolved ? faceSeed : undefined, badge: role === 'shopkeeper' ? '#d8c24a' : undefined,
+        specPatch: (sp) => {
+          if (age === 'child') {
+            sp.height *= FACELING_AGE_HEIGHT.child; sp.head = [sp.head[0] * 1.24, sp.head[1] * 1.2, sp.head[2] * 1.22]
+            sp.shoulder *= 0.86; sp.waist *= 0.94; sp.hip *= 0.9; sp.limb *= 0.94; sp.belly = 0; sp.beard = 0; sp.neckAdj = (sp.neckAdj ?? 0) - 0.03
+          } else if (age === 'elder') {
+            sp.height *= FACELING_AGE_HEIGHT.elder; sp.belly = (sp.belly ?? 0) + 0.015; sp.waist *= 1.04; sp.shoulder *= 0.97
+          }
+        } })
+      grp.userData.facelingAge = age
       grp.userData.retroUpdate = pm.userData.retroUpdate
       const pmParts = pm.userData.parts as Record<string, THREE.Object3D>
       // 注册骨骼部件（步态/待机敲键动画沿用现有驱动）
@@ -303,25 +356,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       grp.add(pm)
       break
     }
-    case 'ferren': { // Ferren（Entity 92）：无害雪貂吉祥物——奶油色细长身，深棕面罩/四肢/尾尖
-      const cream = '#d8cbb0', dark = '#4a3428', pink = '#c98a7a'
-      tag(box(0.2, 0.16, 0.56, cream, 0, 0.18, 0), 'torso') // 细长身体
-      const hd = box(0.18, 0.16, 0.2, cream, 0, 0.26, 0.36) // 头（正面 +z）
-      tag(hd, 'head')
-      hd.add(box(0.19, 0.09, 0.1, dark, 0, -0.01, 0.05)) // 面罩
-      hd.add(box(0.05, 0.03, 0.04, pink, 0, -0.04, 0.1)) // 粉鼻
-      hd.add(box(0.05, 0.05, 0.02, cream, -0.06, 0.1, 0.02)) // 耳（左）
-      hd.add(box(0.05, 0.05, 0.02, cream, 0.06, 0.1, 0.02)) // 耳（右）
-      face(glow(0.03, 0.03, 0.02, '#1c1a18', -0.045, 0.28, 0.47))
-      face(glow(0.03, 0.03, 0.02, '#1c1a18', 0.045, 0.28, 0.47))
-      grp.add(box(0.1, 0.09, 0.3, cream, 0, 0.22, -0.4)) // 尾（微翘）
-      grp.add(box(0.11, 0.1, 0.14, dark, 0, 0.26, -0.58)) // 尾尖深棕
-      joint(0.06, 0.14, 0.06, dark, -0.07, 0.16, 0.18, 'armL')
-      joint(0.06, 0.14, 0.06, dark, 0.07, 0.16, 0.18, 'armR')
-      joint(0.06, 0.14, 0.06, dark, -0.07, 0.16, -0.18, 'legL')
-      joint(0.06, 0.14, 0.06, dark, 0.07, 0.16, -0.18, 'legR')
-      break
-    }
+    // [ferren] Ferren（Entity 92）：已在函数开头交给 ferrenMesh.buildFerrenMesh（旧方块雪貂移除）
     // 鹉主杰瑞（Entity 7）：已在函数开头交给 jerryMesh.buildJerryMesh（旧方块小鹦鹉移除，见 JERRY-REMAKE.md）
     // v61：'smiler' 已在函数开头交给 smilerMesh.buildSmilerMesh（旧版方块模型移除）
     // 手臂（Entité 15-FR）：已在函数开头交给 armsMesh/armsAnim（旧方块长臂移除，见 ARMS-REMAKE.md）
@@ -404,35 +439,6 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       tag(sheet, 'sheet'); grp.add(sheet)
       break
     }
-    case 'vendingmachine': case 'vmad': { // 人制品售货机（Entity 36）：前厅品牌售货机；活化后底部长出骷髅手腿
-      const mad = type === 'vmad'
-      const bodyC = mad ? '#5a3a3a' : '#4a5a66', trimC = '#2a3038'
-      // 机身（1.8m 高柜体）
-      grp.add(box(0.8, 1.8, 0.6, bodyC, 0, 0.9, 0))
-      grp.add(box(0.82, 0.06, 0.62, trimC, 0, 1.78, 0)) // 顶檐
-      // 正面展示窗（字母数字格，发光产品格）
-      grp.add(box(0.6, 0.9, 0.04, '#1a2028', -0.06, 1.15, 0.29))
-      for (let r = 0; r < 3; r++)
-        for (let c2 = 0; c2 < 3; c2++)
-          grp.add(glow(0.1, 0.1, 0.02, ['#c9a03a', '#8fd98f', '#c94a3a'][(r + c2) % 3], -0.24 + c2 * 0.18, 0.9 + r * 0.28, 0.32))
-      // 取货口 + 按键区
-      grp.add(box(0.5, 0.16, 0.06, trimC, -0.05, 0.35, 0.3))
-      grp.add(box(0.12, 0.2, 0.03, '#c9cdd4', 0.3, 1.3, 0.3))
-      grp.add(box(0.06, 0.06, 0.03, '#c94a3a', 0.3, 1.16, 0.3))
-      // 骷髅手腿（活化才显示）：四只白骨手臂撑地
-      const legs = new THREE.Group()
-      for (const [lx, lz, rz] of [[-0.28, 0.2, 0.35], [0.28, 0.2, -0.35], [-0.28, -0.2, 0.3], [0.28, -0.2, -0.3]] as const) {
-        const upper = box(0.05, 0.55, 0.05, '#d8d4c4', lx, 0.28, lz)
-        upper.rotation.z = rz * 0.4
-        legs.add(upper)
-        const fore = box(0.04, 0.3, 0.04, '#c9c4b4', lx + rz * 0.12, 0.08, lz)
-        fore.rotation.z = rz * 0.9
-        legs.add(fore)
-        for (let f = 0; f < 3; f++) legs.add(box(0.015, 0.09, 0.015, '#d8d4c4', lx + rz * 0.2 - 0.02 + f * 0.02, 0.01, lz + 0.02))
-      }
-      legs.visible = mad
-      tag(legs, 'skLegs')
-      break }
     case 'seated': { // 久坐者：瘫坐办公椅（坐姿腿 + 扶手 + 五星椅脚）
       // 修复 v15：v14 的 torso/head 从未挂入场景（只剩一把空椅 + 悬浮四肢）；
       // 小腿悬空离地 0.11 无脚；手臂下垂整根穿过扶手。
@@ -1100,57 +1106,6 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       for (let i = 0; i < 6; i++) { // 前端一圈小口器
         const a = (i / 6) * Math.PI * 2
         sw.add(face(box(0.07, 0.055, 0.055, '#d8c9a8', 0.23, 0.35 + Math.sin(a) * 0.16, Math.cos(a) * 0.16)))
-      }
-      break
-    }
-    case 'windowent': { // 窗户（Entity 2）：木框窗 + 十字窗棂 + 半透明玻璃；玻璃后是一个纯黑、
-      //                  边缘弥散的人形剪影——极长的手、很小的躯干、畸形的腿。（固定不动）
-      const wood = '#6a5a44', wood2 = '#57492f'
-      const fw = 1.12, fh = 1.6, fy = 0.6 + fh / 2
-      grp.add(box(fw, 0.1, 0.14, wood, 0, fy + fh / 2, 0)) // 上框
-      grp.add(box(fw, 0.13, 0.17, wood2, 0, fy - fh / 2, 0)) // 窗台
-      grp.add(box(0.1, fh, 0.14, wood, -fw / 2 + 0.05, fy, 0)) // 侧框
-      grp.add(box(0.1, fh, 0.14, wood, fw / 2 - 0.05, fy, 0))
-      grp.add(box(0.05, fh - 0.12, 0.11, wood2, 0, fy, 0.015)) // 竖窗棂
-      grp.add(box(fw - 0.12, 0.05, 0.11, wood2, 0, fy, 0.015)) // 横窗棂
-      grp.add(box(0.08, 0.62, 0.1, wood2, -fw / 2 + 0.06, 0.3, 0)) // 落地支柱
-      grp.add(box(0.08, 0.62, 0.1, wood2, fw / 2 - 0.06, 0.3, 0))
-      const glass = new THREE.Mesh(new THREE.BoxGeometry(fw - 0.14, fh - 0.08, 0.02),
-        new THREE.MeshLambertMaterial({ color: '#8fa2a8', transparent: true, opacity: 0.34 }))
-      glass.position.set(0, fy, 0.07)
-      face(glass); grp.add(glass)
-      for (const gx of [-0.26, 0.26]) { // 玻璃反光（左右对称，稳住面部质心在 +Z）
-        const hl = new THREE.Mesh(new THREE.BoxGeometry(0.11, fh - 0.36, 0.01), emat('#cfe0e6', 0.22, 0.5))
-        hl.position.set(gx, fy + 0.04, 0.076)
-        hl.rotation.z = 0.12
-        face(hl); grp.add(hl)
-      }
-      const sil = new THREE.Group() // 深色人形剪影（玻璃之后）
-      sil.position.set(0, fy - 0.12, -0.03)
-      const smat = new THREE.MeshLambertMaterial({ color: '#07070a' })
-      const sm = (w: number, h: number, d: number, x: number, y: number, rz: number) => {
-        const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), smat)
-        m.position.set(x, y, 0)
-        m.rotation.z = rz
-        sil.add(m)
-        return m
-      }
-      face(sm(0.17, 0.2, 0.1, 0, 0.5, 0)) // 头
-      sm(0.19, 0.28, 0.1, 0, 0.26, 0) // 很小的躯干
-      sm(0.06, 0.72, 0.07, -0.16, 0.06, 0.12) // 极长的手（垂到踝下）
-      sm(0.06, 0.72, 0.07, 0.16, 0.06, -0.12)
-      sm(0.07, 0.16, 0.07, -0.2, -0.32, 0.3) // 长手的掌
-      sm(0.07, 0.16, 0.07, 0.2, -0.32, -0.3)
-      sm(0.08, 0.28, 0.08, -0.07, -0.02, -0.4) // 畸形的腿（外翻弯折）
-      sm(0.08, 0.28, 0.08, 0.07, -0.02, 0.5)
-      sm(0.07, 0.3, 0.07, -0.16, -0.28, 0.35)
-      sm(0.07, 0.3, 0.07, 0.16, -0.3, -0.2)
-      tag(sil, 'torso')
-      const haze = new THREE.MeshLambertMaterial({ color: '#0c0c10', transparent: true, opacity: 0.4 })
-      for (const [hw, hh, hy] of [[0.5, 0.5, 0.34], [0.34, 0.34, 0.5], [0.44, 0.4, 0.0]]) { // 边缘弥散
-        const m = new THREE.Mesh(new THREE.BoxGeometry(hw, hh, 0.04), haze)
-        m.position.set(0, hy, -0.01)
-        sil.add(m)
       }
       break
     }

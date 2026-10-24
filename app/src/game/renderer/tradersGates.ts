@@ -13,7 +13,6 @@ export function* buildTradersGate(entry:TradersEntry,assets:TradersAssets):Gener
   const px=x+lx*cos+lz*sin,pz=z-lx*sin+lz*cos
   b.box(px-a/2,y,pz-d/2,a,hh,d,surface,color,true,angle)
  }
- const label=(text:string,lx:number,y:number,lz:number,ww:number,hh:number)=>b.label(text,x+lx*cos+lz*sin,y,z-lx*sin+lz*cos,ww,hh,angle)
  let complete=false
  const steel='#8e9991',paint='#3f514b',rubber='#303b35',glass='#91a49c'
  try{
@@ -57,10 +56,11 @@ export function* buildTradersGate(entry:TradersEntry,assets:TradersAssets):Gener
   // Signage is at the actual doorway, on its inward-facing side.
   box(0,3.52,.10,4.58,.73,.15,'paint','#30483e')
   box(0,3.50,.18,4.72,.045,.055,'brass','#a99b70')
-  label(entry.sign,0,3.99,.185,4.23,.28)
-  label('返回 LEVEL 1',0,3.69,.185,3.20,.23)
-  // Low-energy green marker is unanimated and uses the existing atlas material.
-  label('应急出口 / EXIT',0,3.29,.17,1.34,.16)
+  // v-market: one AI wayfinding board per gate (English first, Chinese second line) + a US-style EXIT lightbox.
+  const sign=(key:string,lx:number,y:number,lz:number,ww:number,hh:number)=>b.sign(key,x+lx*cos+lz*sin,y,z-lx*sin+lz*cos,ww,hh,angle)
+  sign('gate_'+entry.id,0,3.885,.18,4.5,.66)
+  box(0,3.31,.14,.56,.2,.09,'paint','#e9e7e1')
+  sign('exit_'+entry.id,0,3.41,.188,.52,.19)
   yield* b.finish(root)
   complete=true;return root
  }finally{b.dispose();if(!complete){root.traverse(o=>{if((o as THREE.Mesh).isMesh)(o as THREE.Mesh).geometry.dispose()});root.clear()}}

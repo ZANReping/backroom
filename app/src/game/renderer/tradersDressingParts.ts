@@ -3,6 +3,7 @@ import {RoundedBoxGeometry} from 'three/examples/jsm/geometries/RoundedBoxGeomet
 import {mergeGeometries} from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import {l1WorldUV} from './l1Materials'
 import type {TradersAssets} from './tradersMeshes'
+import {TRADERS_SHOP_UV} from '../content/tradersShops'
 export const DRESSING_COLORS={steel:'#8f9996',dark:'#26332f',wood:'#a58e6b',paper:'#ddd7c4',cream:'#c8c5b5',green:'#536b5f',red:'#984a3d',brass:'#a39062'} as const
 /** Local geometry collector. Each print uses the same padded offline atlas UVs. */
 export class DressingParts{
@@ -11,7 +12,7 @@ export class DressingParts{
  constructor(assets:TradersAssets){this.assets=assets}
  add(g:THREE.BufferGeometry,surface:string,color:string,uv=true){
   if(g.index){const next=g.toNonIndexed();g.dispose();g=next}
-  if(uv)l1WorldUV(g,0,0,surface==='wood'?.7:surface==='fabric'?1.5:.6)
+  if(uv)l1WorldUV(g,0,0,TRADERS_SHOP_UV[surface]??(surface==='wood'?.7:surface==='fabric'?1.5:.6))
   surface=surface==='metal'?'steel':surface==='plastic'?'paint':surface==='cork'?'fabric':surface
   const m=this.assets.material(surface,color),a=this.buckets.get(m)??[];a.push(g);this.buckets.set(m,a)
  }

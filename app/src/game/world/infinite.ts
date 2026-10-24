@@ -282,6 +282,7 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
     }
     if (e.arachnidVariant || e.arachnidNest || e.arachnidMother) ent.def = { ...ent.def, ...(e.arachnidVariant ? { arachnidVariant: e.arachnidVariant } : {}), ...(e.arachnidNest ? { arachnidNest: e.arachnidNest } : {}), ...(e.arachnidMother ? { arachnidMother: true } : {}) } // [L8-arachnid]
     if (e.human) ent.disguised = 'human'
+    if (e.fcAge) ent.fcAge = e.fcAge
     if (e.facing !== undefined) ent.facing = e.facing // v51：人制品售货机等生成时指定朝向
     return ent
   }).filter((e) => {
@@ -424,7 +425,7 @@ export function snapshotChunkState(m: GameMap, c: LiveChunk):ChunkDynState {
     const d = s.data
     if (d) {
       const dyn: Record<string, number | string | boolean | string[]> = {}
-      for (const k of ['open', 'locked', 'opened', 'triggered', 'readHint', 'loreIdx', 'on', 'car', 'carZ', 'searched', 'deployed', 'forced', 'water'] as const) {
+      for (const k of ['open', 'locked', 'opened', 'triggered', 'readHint', 'loreIdx', 'on', 'car', 'carZ', 'searched', 'deployed', 'forced', 'water', 'jammed', 'jamSlot', 'jamFreed', 'vendingSeed'] as const) {
         const v = d[k]
         if (typeof v === 'number' || typeof v === 'string' || typeof v === 'boolean') dyn[k] = v
       }
@@ -527,11 +528,10 @@ export function generateInfinite(def: LevelDef, seed: number, firstVisit = true)
         for (let i = -r; i <= r; i++)
           if (!spawnBlocked(spx + i, spy + j)) { m.spawn = { x: spx + i, y: spy + j }; break outer }
   }
-  // 开局物资散落（玩家一无所有：绷带 + 杏仁水 + 手电筒 + 随机消耗品，散在出生点周围）
+  // 开局物资散落（玩家一无所有：绷带 + 杏仁水 + 手电筒，散在出生点周围）
   // v29：仅 Level 0 首次到层（firstVisit）刷新——重访不再重复生成；Level 1 起不再发放
   if (firstVisit && def.id === 0) {
-    const rng0 = new RNG(h32(seed, 0x5eed))
-    placeL0StarterSupplies(m,rng0.pick(['bandage','canned','battery','glowstick','coffee']))
+    placeL0StarterSupplies(m)
   }
   // v34：首次进入 Level 1——出生点旁放「致新流浪者的纸条」+ 一瓶杏仁水
   // （wikidot Level 1：探险者总署把纸条附在特别制作的杏仁水瓶上；查看纸条即收录图鉴「文档」）

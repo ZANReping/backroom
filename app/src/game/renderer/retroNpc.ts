@@ -727,6 +727,10 @@ export function buildRetroFigure(P: RetroSpec, meta: RetroNpcMeta, tex: RetroNpc
     const kind = fplan ? fplan.ears[s > 0 ? 0 : 1] : 'normal'
     if (kind === 'none' || kind === 'hole') continue // 没长 / 只有耳孔（耳孔在无面灵器官段里画）
     const k = kind === 'tiny' ? 0.5 : 1 // 发育不全的小肉芽
+    if (kind === 'flat') { // v90 进化种：扁平贴头的耳廓（几乎没有外翻）
+      geoInto(new THREE.OctahedronGeometry(1, 0), MAT.skin, SKINC, hw, TRS([s * 0.0735 * hW, headY + 0.47 * HH, -0.01], [0.0062, 0.027, 0.017]), sk)
+      continue
+    }
     geoInto(new THREE.OctahedronGeometry(1, 0), MAT.skin, SKINC, hw, TRS([s * (0.077 - (1 - k) * 0.006) * hW, headY + 0.47 * HH, -0.012], [0.013 * (0.6 + 0.4 * k), 0.03 * k, 0.019 * k]), sk)
   }
 
@@ -1233,7 +1237,7 @@ export function buildRetroFigure(P: RetroSpec, meta: RetroNpcMeta, tex: RetroNpc
   // 每款胡子 = 脸上 (t 高度, x 横向) 的厚度场：中间厚、边缘渐薄到贴皮，所以轮廓是软的、贴脸的；
   // 下巴底面沿颌下收向脖子；嘴部留空。胡茬（及大胡子边缘的过渡带）用皮肤材质 + 顶点色压暗做「青皮」。
   // 0 无 1 山羊胡 2 络腮胡 3 胡茬 4 八字胡 5 连鬓胡 6 下颌胡 7 长须 8 铅笔胡
-  if (P.beard && !P.faceless) {
+  if (P.beard && (!P.faceless || P.faceAnomaly !== undefined)) { // v90：进化种开始长出面部毛发
     part = 'beard'
     const bs = P.beard
     // 脸面上的点：t ∈ [T_CHIN, 0.94]，x ∈ [-1.5, 1.5]（|x| > 1 往耳前的侧脸延伸）；t < T_CHIN 为下巴底面
@@ -1435,6 +1439,14 @@ export function buildRetroFigure(P: RetroSpec, meta: RetroNpcMeta, tex: RetroNpc
       if (o.kind === 'eye') {
         const R = (o.form === 'real' ? 0.0125 : 0.0115) * os
         if (o.form === 'real') realEye(S, R, ox0, o.milky)
+        else if (o.form === 'small') {
+          // v90 进化种：小而原始的眼球，嵌在没有眉毛和睫毛的浅眼窝里（眼周发红，易受感染）
+          disc(S, [
+            { r: [R * 1.9, R * 1.5], h: 0.0004, c: C.skin }, { r: [R * 1.42, R * 1.1], h: 0.0026, c: C.fold },
+            { r: [R * 1.16, R * 0.9], h: 0.0018, c: mul(C.raw, [1.25, 1.1, 1.1]) },
+          ], MAT.skin, 10, { h: 0.0012, c: C.dark })
+          eyeball((a, b, h) => S(a, b, h * 0.75), R * 0.9, ox0, o.milky, o.gaze[0] * R * 0.08, o.gaze[1] * R * 0.06)
+        }
         else if (o.form === 'ball') { socket(S, R); eyeball(S, R, ox0, o.milky) }
         else if (o.form === 'pit') {
           disc(S, [
@@ -1456,7 +1468,16 @@ export function buildRetroFigure(P: RetroSpec, meta: RetroNpcMeta, tex: RetroNpc
         }
       } else if (o.kind === 'nose') {
         const s = os
-        if (o.form === 'nostrils') { pit(S, 0.0028 * s, 0.0021 * s, -0.0052 * s, 0); pit(S, 0.0025 * s, 0.0023 * s, 0.0055 * s, 0.0006) }
+        if (o.form === 'merged') {
+          // v90 进化种：低平鼻梁，鼻尖下两个鼻孔连成一道横口
+          disc(S, [
+            { r: [0.0115 * s, 0.0165 * s], h: 0.0004, c: C.skin, o: [0, 0.002 * s] }, { r: [0.0078 * s, 0.0122 * s], h: 0.0036 * s, c: C.skin, o: [0, 0.001 * s] },
+            { r: [0.0062 * s, 0.0066 * s], h: 0.0088 * s, c: C.skin, o: [0, -0.0035 * s] },
+          ], MAT.skin, 8, { h: 0.0098 * s, c: C.fold, o: [0, -0.0055 * s] })
+          disc(S, [
+            { r: [0.0078 * s, 0.003 * s], h: 0.0046 * s, c: C.fold, o: [0, -0.0104 * s] }, { r: [0.0064 * s, 0.002 * s], h: 0.0036 * s, c: C.dark, o: [0, -0.0105 * s] },
+          ], MAT.skin, 10, { h: 0.0008, c: C.void, o: [0, -0.01 * s] })
+        } else if (o.form === 'nostrils') { pit(S, 0.0028 * s, 0.0021 * s, -0.0052 * s, 0); pit(S, 0.0025 * s, 0.0023 * s, 0.0055 * s, 0.0006) }
         else if (o.form === 'slit') pit(S, 0.0013 * s, 0.0068 * s, 0, 0, 0.0032)
         else {
           // 鼻：楔形隆起，尖端偏向 -b（flipped 旋转 π，鼻孔朝上）；real 贴该个体脸照里的鼻子，肉鼻只是皮肤
@@ -1475,7 +1496,26 @@ export function buildRetroFigure(P: RetroSpec, meta: RetroNpcMeta, tex: RetroNpc
         }
       } else if (o.kind === 'mouth') {
         const s = os
-        if (o.form === 'seam') {
+        if (o.form === 'agape') {
+          // v90 进化种：没有嘴唇，下颚发育不全合不拢——一圈牙龈色的口沿，里面是向下垂开的黑洞
+          const rx = 0.0225 * s, ry = 0.0135 * s
+          disc(S, [
+            { r: [rx * 1.25, ry * 1.4], h: 0.0004, c: C.skin, o: [0, -ry * 0.1] }, { r: [rx, ry], h: 0.0034, c: mul(C.raw, [1.2, 1.1, 1.1]), o: [0, -ry * 0.18] },
+            { r: [rx * 0.86, ry * 0.82], h: 0.0028, c: C.raw, o: [0, -ry * 0.24] }, { r: [rx * 0.7, ry * 0.64], h: 0.002, c: C.dark, o: [0, -ry * 0.3] },
+          ], MAT.skin, 12, { h: 0.0015, c: C.void, o: [0, -ry * 0.36] })
+          const n = o.teeth
+          for (let k = 0; k < n; k++) {
+            const up = k % 2 === 0, f = (k + 0.5) / n
+            const a = (f * 2 - 1) * rx * 0.6 + Math.sin(k * 7.3) * 0.001
+            const b = up ? ry * 0.52 : -ry * 0.95
+            const tw = 0.0026 * s * (0.8 + 0.4 * Math.abs(Math.sin(k * 5.7))), th = 0.0032 * s * (0.75 + 0.5 * Math.abs(Math.cos(k * 4.3)))
+            const p = S(a, b, 0.0026)
+            const m4 = new THREE.Matrix4().makeBasis(F.U, F.V, new THREE.Vector3(...F.n0))
+            m4.multiply(new THREE.Matrix4().makeRotationZ(Math.sin(k * 9.1) * 0.25)).scale(new THREE.Vector3(tw, th, 0.0024))
+            m4.setPosition(p[0], p[1], p[2])
+            geoInto(new THREE.BoxGeometry(1, 1, 1), MAT.solid, mul(TOOTH, [0.95 - 0.08 * (k % 3), 0.92 - 0.1 * (k % 3), 0.85 - 0.12 * (k % 3)]), hw, m4, [0.5, 0.5])
+          }
+        } else if (o.form === 'seam') {
           disc(S, [
             { r: [0.026 * s, 0.0105 * s], h: 0.0005, c: C.skin }, { r: [0.0215 * s, 0.0066 * s], h: 0.0034, c: C.fold },
             { r: [0.0185 * s, 0.0009 * s], h: 0.0028, c: C.lip },
@@ -1530,6 +1570,11 @@ export function buildRetroFigure(P: RetroSpec, meta: RetroNpcMeta, tex: RetroNpc
     }
     // 两侧耳位：只有耳孔 / 发育不全的小肉芽（正常/缺失在上面的耳朵循环里处理）
     fplan.ears.forEach((kind, i) => {
+      if (kind === 'flat') { // 扁耳的耳道口：被耵聍堵住的一团黄褐
+        const F = at(0.465, i === 0 ? 1.36 : -1.36, 0)
+        disc(F.S, [{ r: [0.0026, 0.0036], h: 0.0062, c: C.fold }, { r: [0.0018, 0.0026], h: 0.0066, c: [0.52, 0.38, 0.16] }], MAT.skin, 8, { h: 0.007, c: [0.6, 0.45, 0.2] })
+        return
+      }
       if (kind !== 'hole') return
       const F = at(0.47, i === 0 ? 1.38 : -1.38, 0)
       pit(F.S, 0.0028, 0.0042, 0, 0, 0.003)

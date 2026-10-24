@@ -1,0 +1,308 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 9392,
+  "cdp": 9393,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\four-import-20261023\\actual-game-realistic-4\\qa-1792748224897-47580",
+    "--remote-debugging-port=9393",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 46960,
+    "server": 30072
+  },
+  "appBootMs": 12138.7434,
+  "entryMs": 2844.356200000002,
+  "firstPlayableMs": 20534.6463,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 79.5,
+        "y": 79.5,
+        "z": 0
+      },
+      "entities": 0,
+      "memory": {
+        "geometries": 446,
+        "textures": 67
+      },
+      "calls": 1,
+      "checks": 0
+    }
+  },
+  "vending": {
+    "level": 4,
+    "player": {
+      "x": 79.5,
+      "y": 79.7,
+      "z": 0
+    },
+    "entities": 7,
+    "memory": {
+      "geometries": 547,
+      "textures": 86
+    },
+    "calls": 1,
+    "checks": 3,
+    "stock": [
+      1,
+      1,
+      3,
+      2,
+      3,
+      2,
+      1,
+      1
+    ],
+    "brand": "kopi"
+  },
+  "vendDispense": {
+    "level": 4,
+    "player": {
+      "x": 79.5,
+      "y": 79.7,
+      "z": 0
+    },
+    "entities": 7,
+    "memory": {
+      "geometries": 626,
+      "textures": 95
+    },
+    "calls": 1,
+    "checks": 5,
+    "product": "coffee",
+    "bin": null,
+    "stock": [
+      0,
+      1,
+      3,
+      2,
+      3,
+      2,
+      1,
+      1
+    ]
+  },
+  "e36": {
+    "level": 4,
+    "player": {
+      "x": 79.5,
+      "y": 80,
+      "z": 0
+    },
+    "entities": 8,
+    "memory": {
+      "geometries": 637,
+      "textures": 93
+    },
+    "calls": 1,
+    "checks": 7,
+    "mode": "emerge",
+    "bodyY": 0.49456515868449613
+  },
+  "facelings": {
+    "level": 4,
+    "player": {
+      "x": 79.5,
+      "y": 80.5,
+      "z": 0
+    },
+    "entities": 10,
+    "memory": {
+      "geometries": 580,
+      "textures": 125
+    },
+    "calls": 1,
+    "checks": 9,
+    "heights": [
+      1.0100919163952846,
+      1.7836694244706621,
+      1.6034371450275118
+    ]
+  },
+  "soothe": {
+    "level": 4,
+    "player": {
+      "x": 78.45,
+      "y": 78.6,
+      "z": 0
+    },
+    "entities": 8,
+    "memory": {
+      "geometries": 651,
+      "textures": 130
+    },
+    "calls": 1,
+    "checks": 10,
+    "mode": "soothed"
+  },
+  "windowL2": {
+    "level": 2,
+    "player": {
+      "x": 82.5,
+      "y": 66.86,
+      "z": 0
+    },
+    "entities": 1,
+    "memory": {
+      "geometries": 250,
+      "textures": 171
+    },
+    "calls": 1,
+    "checks": 13,
+    "style": "l2",
+    "mount": {
+      "wx": 82.5,
+      "wy": 0.06,
+      "yaw": 0,
+      "nx": 0,
+      "ny": 1
+    }
+  },
+  "windowL4": {
+    "level": 4,
+    "player": {
+      "x": 78.5,
+      "y": 69,
+      "z": 0
+    },
+    "entities": 1,
+    "memory": {
+      "geometries": 617,
+      "textures": 102
+    },
+    "calls": 1,
+    "checks": 16,
+    "style": "l4",
+    "mount": {
+      "wx": 14.5,
+      "wy": 2.2,
+      "yaw": 6.283185307179586,
+      "nx": -2.4492935982947064e-16,
+      "ny": 1
+    }
+  },
+  "windowL601": {
+    "level": 12,
+    "player": {
+      "x": 31.5,
+      "y": 58.14,
+      "z": 0
+    },
+    "entities": 1,
+    "memory": {
+      "geometries": 723,
+      "textures": 89
+    },
+    "calls": 1,
+    "checks": 19,
+    "style": "l601",
+    "mount": {
+      "wx": 31.5,
+      "wy": 60.94,
+      "yaw": 3.141592653589793,
+      "nx": 1.2246467991473532e-16,
+      "ny": -1
+    }
+  },
+  "windowVanish": {
+    "level": 12,
+    "player": {
+      "x": 31.5,
+      "y": 58.14,
+      "z": 0
+    },
+    "entities": 0,
+    "memory": {
+      "geometries": 101,
+      "textures": 67
+    },
+    "calls": 1,
+    "checks": 21
+  },
+  "npcIdle": {
+    "level": 101,
+    "player": {
+      "x": 60.800000000000004,
+      "y": 10.5,
+      "z": 0
+    },
+    "entities": 0,
+    "memory": {
+      "geometries": 2590,
+      "textures": 112
+    },
+    "calls": 1,
+    "checks": 24,
+    "npc": "alpha_melody",
+    "act": "watch"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  },
+  "summary": {
+    "checks": [
+      "Original developer placement creates vending structure",
+      "Actual structure uses new vending model",
+      "Real overlay shows eight slots",
+      "Vending overlay leaves actual game running",
+      "Real overlay take button adds selected product once",
+      "Actual E36 uses shared remake rig",
+      "Attacking E36 starts emergence animation",
+      "Actual child mesh is shorter than adult",
+      "All ages retain animated humanoid rigs",
+      "Holding special input soothes a visible child",
+      "Generated Level 2 has a safely approachable window",
+      "Window entity attaches to an existing generated window",
+      "Entity uses layer-specific window model",
+      "Generated Level 4 has a safely approachable window",
+      "Window entity attaches to an existing generated window",
+      "Entity uses layer-specific window model",
+      "Generated Level 12 has a safely approachable window",
+      "Window entity attaches to an existing generated window",
+      "Entity uses layer-specific window model",
+      "Expired window removes its ordinary host model to expose the real wall",
+      "Vanished entity GPU model is retired",
+      "Alpha retains its assigned residents",
+      "Alpha NPC remains within assigned local duty range",
+      "Actual duty NPC has subtle idle motion"
+    ],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 79.5,
+        "y": 79.5,
+        "z": 0
+      },
+      "entities": 7,
+      "memory": {
+        "geometries": 498,
+        "textures": 120
+      },
+      "calls": 1,
+      "checks": 24
+    }
+  },
+  "ok": true
+}

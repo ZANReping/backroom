@@ -137,6 +137,12 @@ export class GameAudio {
     }
   }
 
+  /** 外部合成音效（RealityBreak 过场等）：取音频上下文与音效/环境总线；无音频环境返回 null。 */
+  fxNodes(): { ctx: AudioContext; sfx: GainNode; amb: GainNode } | null {
+    this.ensure()
+    return this.ctx && this.sfx && this.ambient ? { ctx: this.ctx, sfx: this.sfx, amb: this.ambient } : null
+  }
+
   resume() {
     this.ensure()
     if (this.ctx?.state === 'suspended') void this.ctx.resume()
@@ -571,6 +577,22 @@ export class GameAudio {
     breath(t, 0.55 + 0.25 * k, 0.12 + 0.2 * k, 700)
     if (k > 0.5) { breath(t + 0.9, 0.3, 0.08 * k, 900); breath(t + 1.4, 0.28, 0.06 * k, 900) }
   }
+  // v90 无面灵幼体哭闹：没有嘴的脸里闷出来的抽噎——两三声上滑的呜咽（锯齿波低通 + 颤音）+ 换气声
+  facelingCry(vol = 1) {
+    if (!this.ctx || !this.sfx) return
+    const ctx = this.ctx, t = ctx.currentTime, out = this.sfx
+    const sob = (t0: number, dur: number, f0: number, v: number) => {
+      const o = ctx.createOscillator(), lp = ctx.createBiquadFilter(), g = ctx.createGain(), lfo = ctx.createOscillator(), lg = ctx.createGain()
+      o.type = 'sawtooth'; o.frequency.setValueAtTime(f0, t0); o.frequency.linearRampToValueAtTime(f0 * 1.35, t0 + dur * 0.45); o.frequency.linearRampToValueAtTime(f0 * 0.8, t0 + dur)
+      lfo.frequency.value = 7.5; lg.gain.value = f0 * 0.04; lfo.connect(lg).connect(o.frequency)
+      lp.type = 'lowpass'; lp.frequency.value = 820; lp.Q.value = 3 // 闷在脸皮下面
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.09 * v, t0 + dur * 0.2); g.gain.exponentialRampToValueAtTime(0.001, t0 + dur)
+      o.connect(lp).connect(g).connect(out); o.start(t0); lfo.start(t0); o.stop(t0 + dur + 0.02); lfo.stop(t0 + dur + 0.02)
+    }
+    const n = 2 + Math.floor(Math.random() * 2), base = 360 + Math.random() * 80
+    for (let i = 0; i < n; i++) sob(t + i * 0.55, 0.42 + Math.random() * 0.15, base * (1 + i * 0.06), vol)
+    this.gasp(0.35 * vol)
+  }
   // [swim] 划水：水面是水花声，水下是闷的推水声；vol 按速度
   swimStroke(underwater: boolean, vol = 1) {
     if (!this.ctx || !this.sfx || vol <= 0.01) return
@@ -996,6 +1018,68 @@ export class GameAudio {
       g2.gain.setValueAtTime(0.16, t); g2.gain.exponentialRampToValueAtTime(0.001, t + 0.3)
       n.connect(f).connect(g2).connect(this.sfx); n.start(t); n.stop(t + 0.32)
     }
+  }
+
+  // ---------- 枪械（鎏金兵械库）：全部现场合成，无采样 ----------
+  /** 一段带包络的滤波噪声 */
+  private gunNoise(t: number, type: BiquadFilterType, freq: number, q: number, peak: number, attack: number, decay: number, dest?: AudioNode) {
+    const ctx = this.ctx!, n = this.noiseSrc(), f = ctx.createBiquadFilter(), g = ctx.createGain()
+    f.type = type; f.frequency.setValueAtTime(freq, t); f.Q.value = q
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(peak, t + attack); g.gain.exponentialRampToValueAtTime(0.0001, t + attack + decay)
+    n.connect(f).connect(g).connect(dest ?? this.sfx!); n.start(t, Math.random() * 0.8); n.stop(t + attack + decay + 0.05)
+    return f
+  }
+  private gunTone(t: number, f0: number, f1: number, peak: number, dur: number, type: OscillatorType = 'sine') {
+    const ctx = this.ctx!, o = ctx.createOscillator(), g = ctx.createGain()
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur)
+    g.gain.setValueAtTime(peak, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur)
+    o.connect(g).connect(this.sfx!); o.start(t); o.stop(t + dur + 0.02)
+  }
+  /** 枪声。room：1 = 室内（长回响），0.35 = 室外（干、短） */
+  gunshot(kind: string, room = 1) {
+    if (!this.ctx || !this.sfx) return
+    const t = this.ctx.currentTime + 0.005
+    const big = kind === 'dbshotgun' || kind === 'musket' ? 1 : kind === 'trapdoor' ? 0.95 : kind === 'revolver' ? 0.78 : 0.82
+    this.gunNoise(t, 'highpass', 1800, 0.7, 0.55 * big, 0.002, 0.05) // 枪口激波：极短的爆裂
+    const body = this.gunNoise(t, 'lowpass', 2400, 0.9, 0.62 * big, 0.003, 0.32) // 主体：宽带爆音，低通迅速收窄
+    body.frequency.exponentialRampToValueAtTime(380, t + 0.3)
+    this.gunTone(t, 92, 31, 0.5 * big, 0.28) // 胸腔里的那一下闷击
+    this.gunTone(t, 180, 60, 0.18 * big, 0.12, 'triangle')
+    // 回响：几次低通延迟 + 长尾（后室的空房间让枪声滚很远）
+    const tail = this.gunNoise(t + 0.03, 'lowpass', 900, 0.6, 0.16 * room, 0.04, 0.9 + room * 1.1)
+    tail.frequency.exponentialRampToValueAtTime(220, t + 1.4 + room)
+    for (const [dl, k] of [[0.11, 0.3], [0.23, 0.18], [0.41, 0.1]] as const) this.gunNoise(t + dl * (0.6 + room * 0.6), 'bandpass', 700, 0.8, 0.22 * k * room, 0.004, 0.25)
+  }
+  /** 机械声：折枪 / 合枪 / 抽壳 / 装弹 / 空击 */
+  gunMech(kind: 'breakOpen' | 'breakClose' | 'eject' | 'insert' | 'dry' | 'blockOpen' | 'blockClose' | 'gate' | 'gateClose' | 'halfcock' | 'cock' | 'paper' | 'ram' | 'leverDown' | 'leverUp') {
+    if (!this.ctx || !this.sfx) return
+    const t = this.ctx.currentTime
+    const click = (dt: number, f: number, p: number, d = 0.035) => { this.gunNoise(t + dt, 'bandpass', f, 6, p, 0.001, d); this.gunTone(t + dt, f * 0.9, f * 0.7, p * 0.35, d, 'square') }
+    switch (kind) {
+      case 'breakOpen': click(0, 2600, 0.16); click(0.07, 1500, 0.1, 0.06); this.gunNoise(t + 0.09, 'bandpass', 900, 2, 0.05, 0.02, 0.18); break // 开合杠杆 → 枪管铰链下折
+      case 'breakClose': this.gunNoise(t, 'bandpass', 700, 1.5, 0.05, 0.03, 0.08); click(0.1, 1900, 0.22, 0.05); this.gunTone(t + 0.1, 220, 120, 0.12, 0.09); break // 合枪：铰链 → 闭锁「咔」
+      case 'eject': click(0, 3200, 0.12, 0.025); this.gunNoise(t + 0.01, 'bandpass', 1300, 3, 0.07, 0.005, 0.07); click(0.42, 2400, 0.05, 0.02); click(0.55, 2900, 0.035, 0.02); break // 抽壳器弹出 + 弹壳落地
+      case 'insert': this.gunNoise(t, 'bandpass', 1100, 2.5, 0.06, 0.02, 0.07); click(0.06, 900, 0.07, 0.04); break // 纸壳擦着膛壁滑进去
+      case 'dry': click(0, 3400, 0.18, 0.03); break // 撞针落空
+      case 'blockOpen': click(0, 2200, 0.14); click(0.12, 1700, 0.12, 0.05); this.gunNoise(t + 0.14, 'bandpass', 800, 2, 0.05, 0.02, 0.12); break // 击锤半击发 → 活门掀起
+      case 'blockClose': this.gunNoise(t, 'bandpass', 900, 2, 0.05, 0.02, 0.06); click(0.08, 1800, 0.2, 0.05); click(0.26, 2600, 0.16); break // 压下活门 → 击锤全击发
+      case 'gate': click(0, 2800, 0.1, 0.025); this.gunNoise(t + 0.02, 'bandpass', 1400, 3, 0.04, 0.005, 0.05); break // 装弹口 / 装弹门的弹簧片
+      case 'gateClose': click(0, 2400, 0.12, 0.03); break
+      case 'halfcock': click(0, 3000, 0.12, 0.02); click(0.06, 2600, 0.1, 0.02); break // 击锤半击发两声「咔咔」
+      case 'cock': click(0, 3100, 0.14, 0.02); click(0.07, 2500, 0.16, 0.025); click(0.12, 2100, 0.12, 0.02); break // 击锤扳到全击发三声
+      case 'paper': this.gunNoise(t, 'highpass', 2600, 1, 0.05, 0.01, 0.12); this.gunNoise(t + 0.15, 'bandpass', 1800, 1.5, 0.03, 0.02, 0.1); break // 纸包撕开 / 揉搓
+      case 'ram': for (const d of [0, 0.32, 0.64]) { this.gunNoise(t + d, 'bandpass', 700, 3, 0.07, 0.01, 0.12); click(d + 0.1, 1500, 0.06, 0.04) } break // 通条在膛里一下下压实
+      case 'leverDown': this.gunNoise(t, 'bandpass', 1200, 2, 0.06, 0.01, 0.06); click(0.03, 2100, 0.14, 0.035); break // 拉杆下压：枪机后退
+      case 'leverUp': click(0, 1800, 0.16, 0.04); this.gunTone(t, 260, 140, 0.06, 0.05); break // 拉杆回位闭锁
+    }
+  }
+  /** 爆团弹：体内的闷爆 + 湿裂声 */
+  gunBurst() {
+    if (!this.ctx || !this.sfx) return
+    const t = this.ctx.currentTime
+    this.gunTone(t, 70, 28, 0.42, 0.35)
+    const f = this.gunNoise(t, 'lowpass', 600, 1.2, 0.35, 0.004, 0.4); f.frequency.exponentialRampToValueAtTime(140, t + 0.35)
+    this.gunNoise(t + 0.02, 'bandpass', 1500, 1.5, 0.12, 0.003, 0.18)
   }
 
   // 胃部咕噜声（饥饿）

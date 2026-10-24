@@ -1,3 +1,5 @@
+import { GunHud } from './GunHud'
+import { isGun } from '../game/content/firearms'
 import {drawL7Map} from '@/game/content/l7Map'
 import {drawL23Map} from '@/game/content/l23Map'
 // 游戏 HUD（桌面 + 移动端自适应）
@@ -50,6 +52,15 @@ import { jerryOverlay, jerryLureMarks } from '@/game/engine/jerryAI'
 import ArachnidHud from './arachnidHud' // [L8-arachnid]
 import { armsOverlay, armsStruggleTap } from '@/game/engine/armsAI'
 import { nguithrOverlay } from '@/game/engine/nguithrAI'
+import { windowOverlay } from '@/game/engine/windowAI' // [window]
+import { specialAction } from '@/game/engine/special' // [window] 特殊交互键
+import { ferrenOverlay } from '@/game/engine/ferrenAI' // [ferren] 切行闪白 / 作息提示
+import { hudAllowed, hudRevealing, type HudKey } from '@/game/engine/hud'
+import { foyerQuest } from '@/game/engine/foyer'
+import { landingQuest } from '@/game/engine/foyerLanding'
+import { foyerFadeView } from '@/game/engine/foyerStreet'
+import { clockText, carriesPhone } from '@/game/engine/phone'
+import { FOYER_ID } from '@/game/world/foyerLayout'
 
 // 现象图标映射（phenomena.ts 中 def.icon → 具体 SVG 组件）
 const PHEN_ICON = { isolation: IconIsolation, plant: IconPlant, flicker: IconStamina } as const
@@ -68,6 +79,8 @@ interface Props {
   onInventory: () => void
   onSelectSlot: (i: number) => void
   onUseSlot: (i: number) => void
+  /** 打开手机界面（副手装着手机时）。 */
+  onPhone?: () => void
 }
 
 function Bar({ color, value, icon, label, compact, critical }: { color: string; value: number; icon: React.ReactNode; label: string; compact: boolean; critical?: boolean }) {
@@ -321,6 +334,7 @@ function LegacyMinimap({ engine, size }: { engine: Engine; size: number }) {
     }
     // NPC：软绿点（据点居民位置；v46：多层按 NPC 所在楼层带过滤——夹楼居民在上层视图显示）
     for (const n of engine.npcs) {
+      if (n.def.ambient) continue // 前厅街景路人不标点
       if ((m.floors ?? 1) > 1 && (n.floor ?? 0) !== pBand) continue
       g.fillStyle = '#7ac97a'
       g.beginPath(); g.arc(n.x * s, n.y * s, 2 * k, 0, 7); g.fill()
@@ -346,8 +360,23 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
     : <LegacyMinimap engine={engine} size={size} />
 }
 
-export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, onPause, onInventory, onSelectSlot, onUseSlot }: Props) {
+export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, onPause, onInventory, onSelectSlot, onUseSlot, onPhone }: Props) {
   const p = engine.player
+  // HUD 权限（前厅逐步解锁；缺省全开；设置「始终显示全部 HUD」覆盖）+ 首次解锁的胶片刻度浮现动画
+  const H = (k: HudKey) => hudAllowed(p, k, engine.hudShowAll)
+  const perfNow = performance.now()
+  const rv = (k: HudKey) => (hudRevealing(engine, k, perfNow) && !engine.hudShowAll ? ' hud-reveal' : '')
+  const inFoyer = p.level === FOYER_ID
+  const tut = engine.tutorial?.current ? engine.tutorial.view(engine, isMobile) : null
+  const fq = H('quest') ? (foyerQuest(engine) ?? landingQuest(engine)) : null
+  const phoneOn = !!p.phone && carriesPhone(p)
+  const tutSide = engine.tutorial ? engine.tutorial.sideViews(engine, isMobile) : []
+  const tutTouch = [...(tut?.touch ?? []), ...tutSide.flatMap((v) => v.touch)].join(' ')
+  useEffect(() => {
+    if (tutTouch) document.body.dataset.tutTouch = tutTouch
+    else delete document.body.dataset.tutTouch
+    return () => { delete document.body.dataset.tutTouch }
+  }, [tutTouch])
   const def = engine.levelDef
   const swim = engine.swimInfo()
   // v40：据点是主层级的子层级——顶部信息栏的层级号显示主层级（如 Alpha 基地显示 LEVEL 1 而非 LEVEL 101）
@@ -456,11 +485,13 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
 
   const vitals = (
     <div className={`flex flex-col gap-1 ${isMobile ? 'w-[120px] max-md:landscape:w-auto max-md:landscape:flex-row max-md:landscape:gap-2.5' : 'w-[200px]'}`}>
-      <Bar color="var(--blood)" value={p.hp} icon={<IconHP width={14} height={14} />} label="HP" compact={isMobile} critical={p.hp <= 30} />
+      {H('hp') && <div className={rv('hp').trim() || undefined}><Bar color="var(--blood)" value={p.hp} icon={<IconHP width={14} height={14} />} label="HP" compact={isMobile} critical={p.hp <= 30} /></div>}
+      {H('status') && <div className={`flex flex-col gap-1 ${isMobile ? 'max-md:landscape:flex-row max-md:landscape:gap-2.5' : ''}${rv('status')}`}>
       <Bar color="var(--stamina)" value={p.stamina} icon={<IconStamina width={14} height={14} />} label="体力" compact={isMobile} critical={p.stamina <= 5} />
       <Bar color="var(--hunger)" value={p.hunger} icon={<IconHunger width={14} height={14} />} label="饥饿" compact={isMobile} critical={p.hunger <= 25} />
       <Bar color="var(--thirst)" value={p.thirst} icon={<IconThirst width={14} height={14} />} label="口渴" compact={isMobile} critical={p.thirst <= 25} />
       <Bar color="var(--sanity)" value={p.sanity} icon={<IconSanity width={14} height={14} />} label="理智" compact={isMobile} critical={p.sanity <= 20} />
+      </div>}
     </div>
   )
 
@@ -500,9 +531,15 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
             <>
               <ItemGlyph type={s.type} count={s.count} />
               {s.count > 1 && <span className="font-mono2 absolute bottom-0 right-0.5 text-[9px]" style={{ color: 'var(--amber)' }}>{s.count}</span>}
+              {ITEMS[s.type]?.charges && (() => { // 批发市场 v2：医疗箱剩余次数条
+                const max = ITEMS[s.type].charges!, left = Math.max(0, Math.min(max, s.dur ?? max)), k = left / max
+                return <span role="meter" aria-label="剩余使用次数" aria-valuemin={0} aria-valuemax={max} aria-valuenow={left} className="absolute bottom-0.5 left-1 right-1 h-[3px]" style={{ background: 'rgba(0,0,0,.45)' }}>
+                  <span className="block h-full" style={{ width: `${k * 100}%`, background: k <= .25 ? '#c0392b' : '#e8e2d2' }} />
+                </span>
+              })()}
               {isMelee(s.type) && (() => { // 近战重制：耐久条（≤25% 变红，残件灰）
                 const k = slotDur(s) / slotMaxDur(s)
-                return <span className="absolute bottom-0.5 left-1 right-1 h-[3px]" style={{ background: 'rgba(0,0,0,.45)' }}>
+                return <span role="meter" aria-label="剩余耐久" aria-valuemin={0} aria-valuemax={slotMaxDur(s)} aria-valuenow={slotDur(s)} className="absolute bottom-0.5 left-1 right-1 h-[3px]" style={{ background: 'rgba(0,0,0,.45)' }}>
                   <span className="block h-full" style={{ width: `${Math.max(k > 0 ? 6 : 100, k * 100)}%`, background: k <= 0 ? '#5a5650' : k <= .25 ? '#c0392b' : k <= .5 ? '#d9a13a' : '#8fbf6a' }} />
                 </span>
               })()}
@@ -518,7 +555,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
     <div className="game-hud pointer-events-none fixed inset-0 z-30" style={{ padding: 'calc(env(safe-area-inset-top) + 8px) calc(env(safe-area-inset-right) + 8px) calc(env(safe-area-inset-bottom) + 8px) calc(env(safe-area-inset-left) + 8px)' }}>
       {/* 左上：状态 + 当前现象 */}
       <div className="hud-vitals-cluster absolute left-3 top-3 flex flex-col items-start gap-1.5">
-        <div className="hud-panel pointer-events-auto p-2">
+        {(H('hp') || H('status') || swim || engine.swim.bendsT > 0) && <div className="hud-panel pointer-events-auto p-2">
           {vitals}
           {swim && (
             <div className="mt-2 border-t pt-1.5" style={{ borderColor: 'var(--panel-edge)' }}>
@@ -573,7 +610,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
                   : ['平静——四周暂无实体', 'var(--text-dim)']
             return <div className="font-mono2 mt-1.5 border-t pt-1.5 text-[10px]" style={{ color: c, borderColor: 'var(--panel-edge)' }}>◈ 福友玉：{txt}</div>
           })()}
-        </div>
+        </div>}
         {phenomena.length > 0 && (
           <div className="hud-panel pointer-events-auto flex flex-col gap-1 px-2 py-1.5">
             {phenomena.map((d) => {
@@ -612,29 +649,29 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
         className={`hud-location-cluster ${isMobile ? 'absolute top-3 text-center' : 'absolute left-1/2 top-3 -translate-x-1/2 text-center'}`}
         style={isMobile ? { left: landscape ? 378 : 156, right: landscape ? 118 : 110, pointerEvents: 'none' } : undefined}
       >
-        <div className={`hud-panel hud-loc font-mono2 inline-block max-w-full truncate px-3 py-1 text-[11px]`} style={{ color: 'var(--text-dim)' }}>
+        {(!inFoyer || H('clock') || H('quest')) && <div className={`hud-panel hud-loc font-mono2 inline-block max-w-full truncate px-3 py-1 text-[11px]${inFoyer ? rv('clock') : ''}`} style={{ color: 'var(--text-dim)' }}>
           {isMobile
             ? (
               <span className={`hud-loc-mobile${titleTheme !== 'default' ? ' level-title-themed' : ''}`} data-title-theme={titleTheme}>
-                <span className="hud-loc-level level-title__eyebrow" style={{ color: 'var(--title-accent, inherit)' }}>L{dispId}</span>{' '}
-                <span className="hud-loc-name level-title__name" style={{ color: 'var(--title-ink, inherit)' }}>{def.name}</span>{floorText ? ` · ${floorText}` : ''} · 磁带 {p.tapes}/{WIN_TAPES}
+                <span className="hud-loc-level level-title__eyebrow" style={{ color: 'var(--title-accent, inherit)' }}>{def.id === 900 ? '前厅' : `L${dispId}`}</span>{' '}
+                <span className="hud-loc-name level-title__name" style={{ color: 'var(--title-ink, inherit)' }}>{def.name}</span>{floorText ? ` · ${floorText}` : ''}{inFoyer ? (H('clock') ? ` · ${clockText(engine)}` : '') : ` · 磁带 ${p.tapes}/${WIN_TAPES}`}
               </span>
             )
             : (
               <span className={`hud-loc-row${titleTheme !== 'default' ? ' level-title-themed' : ''}`} data-title-theme={titleTheme}>
-                <span className="hud-loc-level level-title__eyebrow" style={{ color: 'var(--title-accent, inherit)' }}>LEVEL {dispId}</span>
+                <span className="hud-loc-level level-title__eyebrow" style={{ color: 'var(--title-accent, inherit)' }}>{def.id === 900 ? 'FOYER' : `LEVEL ${dispId}`}</span>
                 <span className="hud-loc-name level-title__name" style={{ color: 'var(--title-ink, inherit)' }}>{def.name}</span>
-                <span className="hud-loc-meta">B{dispId}{floorText ? ` · ${floorText}` : ''}</span>
-                <span className="hud-loc-tapes" title={`磁带 ${p.tapes}/${WIN_TAPES}`}>
+                <span className="hud-loc-meta" data-hud-clock={inFoyer ? '' : undefined}>{inFoyer ? (H('clock') ? clockText(engine) : '') : `B${dispId}`}{floorText ? ` · ${floorText}` : ''}</span>
+                {!inFoyer && <span className="hud-loc-tapes" title={`磁带 ${p.tapes}/${WIN_TAPES}`}>
                   磁带
                   {Array.from({ length: WIN_TAPES }, (_, i) => <i key={i} className={i < p.tapes ? 'on' : ''} />)}
                   <b>{p.tapes}/{WIN_TAPES}</b>
-                </span>
+                </span>}
               </span>
             )}
-        </div>
-        {isMobile && (
-          <div className="pointer-events-none mx-auto mt-1 max-h-[3.6em] space-y-0.5 overflow-hidden" style={{ maxWidth: '100%' }}>
+        </div>}
+        {isMobile && H('log') && (
+          <div className={`pointer-events-none mx-auto mt-1 max-h-[3.6em] space-y-0.5 overflow-hidden${rv('log')}`} style={{ maxWidth: '100%' }}>
             {log.slice(-2).map((l) => (
               <div key={l.id} className="hud-log-line font-mono2 truncate text-[11px]" style={{ color: l.kind === 'loot' ? 'var(--amber)' : l.kind === 'damage' ? 'var(--blood)' : l.kind === 'lore' ? 'var(--sanity)' : 'var(--text-dim)', opacity: Math.min(1, (now - l.t) / 4000 > 1 ? 0.4 : 1), textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}>
                 {l.text}
@@ -649,9 +686,9 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
         {isMobile ? (
           <>
             {/* 横屏：折叠小地图，点击展开大地图浮层（竖屏保持现状） */}
-            {landscape && (
+            {landscape && H('minimap') && (
               <button
-                className="hud-panel pointer-events-auto p-1"
+                className={`hud-panel pointer-events-auto p-1${rv('minimap')}`}
                 aria-label="展开地图"
                 onClick={() => { audio.uiTick(); setMapOpen(true) }}
               >
@@ -659,54 +696,90 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
               </button>
             )}
             <div className="flex gap-2">
-              <button className="hud-panel pointer-events-auto flex h-11 w-11 items-center justify-center" style={{ color: 'var(--text)' }} onClick={onInventory}><IconMap width={20} height={20} /></button>
+              {phoneOn && onPhone && <button data-touch-id="phone" aria-label="手机" className="hud-panel pointer-events-auto flex h-11 w-11 items-center justify-center" style={{ color: 'var(--text)' }} onClick={onPhone}><PhoneGlyph /></button>}
+              {H('inventory') && <button data-touch-id="backpack-top" className={`hud-panel pointer-events-auto flex h-11 w-11 items-center justify-center${rv('inventory')}`} style={{ color: 'var(--text)' }} onClick={onInventory}><IconMap width={20} height={20} /></button>}
               <button className="hud-panel pointer-events-auto flex h-11 w-11 items-center justify-center" style={{ color: 'var(--text)' }} onClick={onPause}><IconPause width={20} height={20} /></button>
             </div>
           </>
         ) : (
-          <div className="hud-panel pointer-events-auto p-1.5"><Minimap engine={engine} size={140} /></div>
+          H('minimap') ? <div className={`hud-panel pointer-events-auto p-1.5${rv('minimap')}`}><Minimap engine={engine} size={140} /></div> : null
         )}
         {/* 当前区域名（区段/变种房间/据点区域） */}
-        {areaName && (
+        {areaName && H('minimap') && (
           <div className="hud-panel font-mono2 px-2 py-0.5 text-[10px]" style={{ color: 'var(--amber)' }}>{areaName}</div>
         )}
-        <div className="hud-panel flex items-center gap-2 px-2 py-1">
+        {H('battery') && <div className={`hud-panel flex items-center gap-2 px-2 py-1${rv('battery')}`}>
           {/* 蹲伏状态提示（防御性读取 v7 字段） */}
           {((p as unknown as { crouching?: boolean }).crouching || (engine.input as unknown as { crouch?: boolean }).crouch) && (
             <span style={{ color: 'var(--amber)', width: 14, height: 14 }} title="蹲伏中"><IconCrouch width={14} height={14} /></span>
           )}
+          {(!inFoyer || !!engine.player.prologue?.flags.got_flashlight || p.equip.offhand?.type === 'flashlight') && <>
           <span style={{ color: p.battery <= 15 ? 'var(--blood)' : 'var(--amber)', width: 14, height: 14 }}><IconBattery width={14} height={14} /></span>
           <span className={`hud-battery ${p.battery <= 15 ? 'is-low' : ''}`} aria-hidden><i style={{ width: `${Math.max(0, Math.min(100, p.battery))}%` }} /></span>
           <span className="font-mono2 text-[10px]" style={{ color: p.battery <= 15 ? 'var(--blood)' : 'var(--text-dim)' }}>{Math.round(p.battery)}%</span>
+          </>}
+          {/* 手机电量（独立电池；放在充电座上时显示充电中） */}
+          {p.phone && (phoneOn || p.phone.docked) && (inFoyer ? !!engine.player.prologue?.flags.got_phone : true) && (
+            <span className="hud-phone-batt font-mono2 flex items-center gap-1 text-[10px]" data-hud-phone-battery style={{ color: p.phone.battery <= 15 ? 'var(--blood)' : 'var(--text-dim)' }} title="手机电量">
+              <PhoneGlyph size={13} />
+              <span className={`hud-battery ${p.phone.battery <= 15 ? 'is-low' : ''}`} aria-hidden><i style={{ width: `${Math.max(0, Math.min(100, p.phone.battery))}%` }} /></span>
+              {Math.round(p.phone.battery)}%{p.phone.docked ? ' ⚡' : ''}{p.phone.torch ? ' ☀' : ''}
+            </span>
+          )}
           {/* 噪音指示 */}
           <span className="flex items-end gap-[2px]">
             {[0.33, 0.66, 1].map((th, i) => (
               <span key={i} className="w-[3px] rounded-sm" style={{ height: 4 + i * 3, background: engine.noise > th ? 'var(--blood)' : 'var(--panel-edge)' }} />
             ))}
           </span>
-        </div>
-        <MegQuestTracker engine={engine} mobileLandscape={isMobile && landscape} />
+        </div>}
+        {H('quest') && <MegQuestTracker engine={engine} mobileLandscape={isMobile && landscape} />}
+        {fq && (
+          <div className={`hud-panel hud-foyer-quest font-mono2 px-2.5 py-1.5 text-[11px]${rv('quest')}`} data-foyer-quest style={{ maxWidth: isMobile ? 190 : 230 }}>
+            <div className="mb-0.5 text-[10px] tracking-widest" style={{ color: 'var(--amber)' }}>任务 · {fq.title}</div>
+            {fq.items.map((it, i) => (
+              <div key={i} className="flex items-start gap-1.5" style={{ color: it.done ? 'var(--text-dim)' : 'var(--text)', textDecoration: it.done ? 'line-through' : 'none', opacity: it.done ? 0.6 : 1 }}>
+                <span>{it.done ? '■' : '□'}</span><span>{it.text}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* 左下：消息日志（桌面；开发者面板展开时右移让位，v10） */}
-      {!isMobile && (
-        <div className="pointer-events-none absolute bottom-3 max-w-[320px] space-y-0.5" style={{ left: devMode ? 384 : 12 }}>
+      {!isMobile && H('log') && (
+        <div className="pointer-events-none absolute bottom-3 max-w-[320px] space-y-0.5" style={{ left: devMode ? 384 : 12 }}><div className={rv('log').trim() || undefined}>
           {log.slice(-4).map((l) => (
             <div key={l.id} className="hud-log-line font-mono2 truncate text-[12px]" style={{ color: l.kind === 'loot' ? 'var(--amber)' : l.kind === 'damage' ? 'var(--blood)' : l.kind === 'lore' ? 'var(--sanity)' : 'var(--text-dim)', opacity: now - l.t > 4000 ? 0.4 : 1, textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}>
               {l.text}
             </div>
           ))}
-        </div>
+        </div></div>
       )}
 
       {/* 底部中央：快捷栏 + 拾取提示 */}
       <div className={`hud-hotbar-cluster absolute left-1/2 -translate-x-1/2 ${isMobile ? 'bottom-[8px] max-md:landscape:bottom-2' : 'bottom-3'} flex flex-col items-center gap-2`}>
+        {/* 旁支提示（如手机低电量）：独立小提示，不占主线纸带、无序号 */}
+        {tutSide.map((v) => (
+          <div key={v.id} className="hud-tutorial-side font-mono2" data-tutorial-side={v.id} role="status">
+            <span className="hud-tutorial-side__dot" aria-hidden>!</span>
+            <span>{v.text}</span>
+          </div>
+        ))}
+        {/* 教程纸带（TutorialDirector；不弹窗，跟随自定义键位/移动端控件） */}
+        {tut && (
+          <div key={tut.id} className="hud-tutorial-strip font-mono2" data-tutorial-step={tut.id} role="status">
+            <span className="hud-tutorial-strip__no">{String(tut.index).padStart(2, '0')}/{String(tut.total).padStart(2, '0')}</span>
+            <span className="hud-tutorial-strip__text">{tut.text}</span>
+          </div>
+        )}
         <div className="relative h-6">
           {toasts.map((t) => (
             <div key={t.id} className="anim-toast font-mono2 whitespace-nowrap text-[12px]" style={{ color: 'var(--amber)' }}>{t.text}</div>
           ))}
         </div>
-        <div className="pointer-events-auto">{hotbar}</div>
+        {H('hotbar') && <GunHud engine={engine} />}
+        {H('hotbar') && <div className={`pointer-events-auto${rv('hotbar')}`}>{hotbar}</div>}
       </div>
 
       {/* 右下：情境提示（桌面） */}
@@ -718,17 +791,17 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
             </div>
           )}
           {/* 2026-10 UI：按键提示改为可换行的键帽列表并限宽，不再横跨半屏压住快捷栏 */}
-          <div className="hud-panel hud-keyhints font-mono2 text-[11px]" style={{ color: 'var(--text-dim)' }}>
+          {H('hotbar') && <div className="hud-panel hud-keyhints font-mono2 text-[11px]" style={{ color: 'var(--text-dim)' }}>
             {([
-              ...(!engine.handsStowed ? [['attack', '攻击']] : []),
+              ...(!engine.handsStowed ? [['attack', isGun(p.hotbar[p.selected]?.type) ? '开火' : '攻击']] : []),
               ['jump', '跳跃'], ['crouch', '蹲伏'], ['flashlight', '手电'],
-              ...(!engine.handsStowed ? [['quickuse', '使用'], ['quickdrop', '丢弃'], ['inspect', '检视']] : []),
+              ...(!engine.handsStowed ? (isGun(p.hotbar[p.selected]?.type) ? [['quickuse', '瞄准（按住）'], ['reload', '装填 / 选弹（按住）'], ['quickdrop', '丢弃']] : [['quickuse', '使用'], ['quickdrop', '丢弃'], ['inspect', '检视']]) : []),
               ['holster', engine.handsStowed ? '取出主手' : '收起主手'],
               ...(!engine.handsStowed && p.hotbar[p.selected]?.type === 'squirtgun' ? [['reload', '装填/轮盘']] : []),
             ] as [string, string][]).map(([k, t]) => (
               <span key={k} className="hud-keyhint"><kbd>{bindLabelFor(k)}</kbd>{t}</span>
             ))}
-          </div>
+          </div>}
         </div>
       )}
       {isMobile && interact && (
@@ -737,6 +810,9 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
         </div>
       )}
 
+      {/* 手机相机快门闪白 */}
+      {engine.photoFlashT > 0 && <div className="pointer-events-none fixed inset-0 z-[45]" style={{ background: '#fff', opacity: Math.min(0.85, engine.photoFlashT / 0.35 * 0.85) }} />}
+      {(() => { const fd = inFoyer ? foyerFadeView(engine) : null; return fd ? <div data-foyer-fade className="pointer-events-none fixed inset-0 z-[46] flex items-center justify-center" style={{ background: `rgba(0,0,0,${fd.k})` }}><span className="text-sm tracking-[0.3em] text-neutral-300" style={{ opacity: fd.k }}>{fd.text}</span></div> : null })()}
       {/* v57o：水下视野额外蓝绿晕影（与渲染层雾/低通叠加） */}
       {swim?.submerged && (
         <div className="pointer-events-none fixed inset-0 z-[31]" style={{ boxShadow: 'inset 0 0 140px 34px rgba(13,74,110,0.32)' }} />
@@ -835,6 +911,33 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
       {p.flashJamT > 0 && (
         <div className="hud-panel font-mono2 absolute left-1/2 top-14 -translate-x-1/2 px-3 py-1 text-[11px]" style={{ color: 'var(--sanity)' }}>⚡ 手电瘫痪 {p.flashJamT.toFixed(1)}s</div>
       )}
+      {/* [window] 窗户 Entity 2：诱引暖晕 / 被抓（近战砍手臂挣脱，倒计时条）/ 默念三句 / 被拖入的白屏 / 特殊交互提示 */}
+      {(() => {
+        const wo = windowOverlay(engine)
+        const sa = specialAction(engine)
+        return <>
+          {wo.lure > 0.02 && <div data-window-lure={wo.lure.toFixed(2)} className="pointer-events-none fixed inset-0 z-[30]" style={{ background: `radial-gradient(ellipse at center, rgba(255,220,170,0) 40%, rgba(255,214,160,${(0.32 * wo.lure).toFixed(3)}) 100%)` }} />}
+          {wo.black > 0.01 && <div data-window-black={wo.black.toFixed(2)} className="pointer-events-none fixed inset-0 z-[34]" style={{ background: '#f2efe8', opacity: Math.min(1, wo.black) }} />}
+          {wo.grabbed && <>
+            <div className="pointer-events-none fixed inset-0 z-[31]" style={{ background: 'radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(10,10,14,0.6) 100%)' }} />
+            <div data-window-grab className="pointer-events-none fixed inset-x-0 top-[60%] z-[35] text-center text-[15px]" style={{ color: 'rgba(240,226,200,0.92)', textShadow: '0 1px 6px #000' }}>
+              {isMobile ? '窗户里的手臂把你往里拖！对准窗户按「攻击」砍它' : `窗户里的手臂把你往里拖！对准窗户按【${bindLabelFor('attack')}】砍它`}
+            </div>
+            <div className="pointer-events-none fixed left-1/2 top-[65%] z-[35] h-[7px] w-[220px] -translate-x-1/2 overflow-hidden rounded-sm" style={{ background: 'rgba(0,0,0,0.55)', border: '1px solid rgba(220,200,170,0.35)' }}><div style={{ width: `${(100 * wo.left / wo.dragT).toFixed(1)}%`, height: '100%', background: 'rgba(214,150,96,0.9)' }} /></div>
+          </>}
+          {wo.murmur && <div data-window-murmur className="pointer-events-none fixed inset-x-0 top-[70%] z-[33] text-center text-[16px] italic" style={{ color: 'rgba(236,232,220,0.92)', textShadow: '0 1px 6px #000', letterSpacing: '0.08em' }}>「{wo.line}」</div>}
+          {!wo.murmur && !wo.grabbed && wo.hint && <div className="pointer-events-none fixed inset-x-0 top-[70%] z-[33] text-center text-[13px]" style={{ color: 'rgba(230,226,200,0.8)', textShadow: '0 1px 6px #000' }}>{wo.hint.replace('【特殊交互】', isMobile ? '「' + (sa?.label ?? '默念') + '」按钮' : '【' + bindLabelFor('special') + '】')}</div>}
+          {!isMobile && sa && !wo.murmur && !wo.grabbed && <div data-special-prompt={sa.id} className="hud-panel pointer-events-none fixed left-1/2 top-[76%] z-[33] -translate-x-1/2 px-3 py-1 text-[12px]" style={{ color: 'var(--text)' }}>【{bindLabelFor('special')}】{sa.hold ? '按住 ' : ''}{sa.label}<span style={{ color: 'var(--text-dim)' }}> · {sa.hint}</span></div>}
+        </>
+      })()}
+      {/* [ferren] Ferren（Entity 92）：切行带人的闪白 + 走近时的作息提示（他此刻在做什么） */}
+      {(() => {
+        const fo = ferrenOverlay(engine)
+        return <>
+          {fo.flash > 0.01 && <div data-ferren-flash={fo.flash.toFixed(2)} className="pointer-events-none fixed inset-0 z-[34]" style={{ background: '#f7f6ff', opacity: Math.min(1, fo.flash) }} />}
+          {fo.hint && <div data-ferren-hint className="pointer-events-none fixed inset-x-0 top-[66%] z-[33] text-center text-[13px]" style={{ color: 'rgba(236,230,206,0.86)', textShadow: '0 1px 6px #000' }}>{fo.hint}</div>}
+        </>
+      })()}
       {/* 手臂（Entité 15-FR）：被拖进风口的黑屏 / 被抓时的挣扎提示（按设备区分，桌面键位取自自定义绑定）/ 挣脱提示 */}
       {(() => {
         const ao = armsOverlay(engine)
@@ -1229,7 +1332,7 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
               <>
                 <DevSection label="状态控制（调整后自动解除锁定）">
                   <div className="mb-1 flex gap-1">
-                    <DevBtn active={engine.dev.statLock} onClick={() => { engine.dev.statLock = !engine.dev.statLock }} title="开启后每帧锁满全部状态（默认开发者行为）">
+                    <DevBtn active={engine.dev.statLock} onClick={() => { engine.dev.statLock = !engine.dev.statLock }} title="开启后每帧锁满生存状态和手机电量（默认开发者行为）">
                       状态锁定{engine.dev.statLock ? '：开' : '：关'}
                     </DevBtn>
                     <DevBtn onClick={() => engine.devFillStats()}>全部补满</DevBtn>
@@ -1531,6 +1634,8 @@ const GLYPH_COLOR: Record<string, string> = {
   cashew: '#c9a05a',
   knife: '#c9cdd4', axe: '#d96a3a', headlamp: '#f0d060', nightvision: '#78b886', notebook: '#8a6a4a',
   fuyouyu: '#788f59', squirtgun: '#4ac9e8', warpberry: '#b06ae0', royalration: '#e8c93d',
+  leverrifle: '#b48a3c', revolver: '#3a3d42', musket: '#9ea2a4', trapdoor: '#2a3038', cart_4440: '#c9a45a', cart_paper: '#d8ccb0', cart_4570: '#c9a45a',
+  dbshotgun: '#6e3c24', shell_buck: '#a8322a', shell_bird: '#3f6a3a', shell_clump: '#d4a62a', // 鎏金兵械库
   // ===== v38：Tom 的餐馆菜肴 =====
   tomatosoup: '#d95a3a', gardensalad: '#7ac97a', garlicbread: '#d9a85a', pasta: '#e8b93c',
   meatstew: '#c96a4a', pizza: '#e08a4a', lasagna: '#d9a03d', tomsspecial: '#c95a4a',
@@ -1562,6 +1667,9 @@ const PIXEL_ICON: Record<string, true> = {
   dryshrimp: true, friedshrimp: true, // v50 旱虾 / 酥炸旱虾
   liveshrimp: true, // v81 活旱虾
   bento: true, // v83 自制便当（Object 70）
+  memoryjuice: true, laughrepellent: true, babelbalm: true, outdoorkit: true, traumakit: true, saltbox: true, // 批发市场 v2
+  dbshotgun: true, shell_buck: true, shell_bird: true, shell_clump: true, // 鎏金兵械库
+  leverrifle: true, revolver: true, musket: true, trapdoor: true, cart_4440: true, cart_paper: true, cart_4570: true,
   ratmeat: true, // v79 尸鼠肉
   firesalt: true, liquidpain: true, // v50 火盐晶体 / 液态痛苦
   // v51：Object 5 糖果（散装 + 袋装）
@@ -1574,6 +1682,9 @@ const PIXEL_ICON: Record<string, true> = {
   velvetcake: true,
   jerryflyer: true, fakelog: true,
   sedgland: true, // Nguithr'xurh 镇静腺（gen-item-icons.py draw_sedgland）
+  acidcallus: true, ashpile: true, // 2026-10-23：酸性胼胝 / 一捧细灰
+  curabiturgel: true, curabiturspore: true, curabiturrepellent: true, // 2026-10-23：受眷鸟三件
+  phone: true, bottledwater: true, snackbar: true, foyerpack: true, // 前厅随身物品（gen-item-icons.py draw_phone 等，打磨轮）
 }
 // v14：网络素材贴图图标（game-icons.net，CC BY 3.0，见 public/textures/icons/SOURCES.md）；
 // 不在表内或加载失败的物品回退手绘 SVG。
@@ -1645,6 +1756,7 @@ export function ItemGlyph({ type, size = 24, count }: { type: string; size?: num
       case 'cap': return <><rect x="6" y="10" width="12" height="9" rx="1" {...s} /><path d="M9 10V4m6 6V4M9 14h6" {...s} /></>
       case 'coffee': return <><rect x="7" y="5" width="10" height="14" rx="2" {...s} /><path d="M7 9h10M9 13c1 1.5 5 1.5 6 0" {...s} /></>
       case 'stapler': return <path d="M3 15h18v4H3zM3 15V9l12-3 6 3v6" {...s} />
+      case 'phone': return <><rect x="7" y="2.5" width="10" height="19" rx="2" {...s} /><path d="M10.5 5h3" {...s} /><circle cx="12" cy="18.5" r="0.9" {...f} /></>
       case 'card': return <><rect x="3" y="6" width="18" height="12" rx="1.5" {...s} /><rect x="5.5" y="9" width="5" height="3.5" {...s} /><path d="M14 9h5m-5 3h5" {...s} /></>
       case 'skeleton': return <><circle cx="8" cy="7" r="3.5" {...s} /><path d="M10.5 9.5 19 18m-3 0 2-2m-5-1 2-2" {...s} /></>
       case 'silver': return <path d="M8 3v7a2 2 0 0 0 4 0V3m-2 0v18m6-15c0 4-1 5-1 5v10" {...s} />
@@ -1714,6 +1826,17 @@ export function ItemGlyph({ type, size = 24, count }: { type: string; size?: num
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" style={{ color }}>
       {inner}
+    </svg>
+  )
+}
+
+/** 手机图标（HUD 电量行 / 移动端手机按钮）。 */
+export function PhoneGlyph({ size = 20 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden style={{ display: 'inline-block' }}>
+      <rect x="7" y="2.5" width="10" height="19" rx="2" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M10.5 5h3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <circle cx="12" cy="18.5" r="0.9" fill="currentColor" />
     </svg>
   )
 }

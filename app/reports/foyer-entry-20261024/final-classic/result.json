@@ -1,0 +1,693 @@
+{
+  "seed": 424243,
+  "mode": "classic",
+  "port": 10316,
+  "cdp": 10317,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:10316/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 24 Oct 2026 06:38:42 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 283,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 10316,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 78204.792389,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.25,
+        "sendEnd": 0.313,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 71.11,
+        "receiveHeadersEnd": 71.23
+      },
+      "responseTime": 1792823922970.937,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    },
+    {
+      "url": "http://127.0.0.1:10316/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 24 Oct 2026 06:38:59 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 129,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 10316,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 78220.932592,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.512,
+        "sendEnd": 0.546,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 10.367,
+        "receiveHeadersEnd": 10.54
+      },
+      "responseTime": 1792823939050.396,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    },
+    {
+      "url": "http://127.0.0.1:10316/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 24 Oct 2026 06:39:35 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 5195,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 10316,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 78257.328074,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.611,
+        "sendEnd": 0.645,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 9.503,
+        "receiveHeadersEnd": 9.669
+      },
+      "responseTime": 1792823975445.015,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\foyer-entry-20261024\\final-classic\\qa-1792823908151-18768",
+    "--remote-debugging-port=10317",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 63980,
+    "server": 73048
+  },
+  "appBootMs": 12956.911,
+  "emptyTitle": {
+    "level": 0,
+    "title": "后 室",
+    "subtitle": "BACKROOMS : DESCENT",
+    "body": true,
+    "canvasOwned": true
+  },
+  "entryMs": 8268.8233,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 900,
+    "pos": [
+      5.25,
+      5.75,
+      0
+    ],
+    "ceiling": 2.8,
+    "seat": {
+      "phase": "seated",
+      "blend": 1,
+      "pid": "desk_chair",
+      "anchor": {
+        "x": 5.25,
+        "y": 5.75,
+        "z": 0.5,
+        "yaw": 4.71238898038469,
+        "index": 0,
+        "label": "电脑椅",
+        "relaxed": false,
+        "floor": 0
+      },
+      "eye": 1.27
+    },
+    "camera": [
+      4.99,
+      1.2645442480551032,
+      5.75
+    ],
+    "yaw": 7.853981633974483,
+    "pitch": -0.12,
+    "body": {
+      "visible": true,
+      "model": true,
+      "hip": -1.4373636476158311,
+      "knee": 1.312811559890132
+    }
+  },
+  "openingTarget": "使用 电脑",
+  "standing": {
+    "level": 900,
+    "pos": [
+      5.25,
+      6.4,
+      0
+    ],
+    "ceiling": 2.8,
+    "seat": null,
+    "camera": [
+      5.25,
+      1.5458153236088144,
+      6.4
+    ],
+    "yaw": 7.853981633974483,
+    "pitch": -0.12,
+    "body": {
+      "visible": false,
+      "model": true,
+      "hip": -0.12523242415595856,
+      "knee": 0.22169063389170462
+    }
+  },
+  "jump": {
+    "maxZ": 1.0999999999999999,
+    "maxEye": 2.64205024006227,
+    "maxHead": 2.8,
+    "end": {
+      "level": 900,
+      "pos": [
+        10.4,
+        9.5,
+        0
+      ],
+      "ceiling": 2.8,
+      "seat": null,
+      "camera": [
+        10.4,
+        1.5575925665057413,
+        9.5
+      ],
+      "yaw": -0.4,
+      "pitch": 0.8,
+      "body": {
+        "visible": false,
+        "model": true,
+        "hip": -0.12523242415595856,
+        "knee": 0.22169063389170462
+      }
+    }
+  },
+  "flight": [
+    {
+      "at": {
+        "name": "bedroom",
+        "x": 5.8,
+        "y": 7.3,
+        "z": 0,
+        "height": 2.8
+      },
+      "maxZ": 1.0766666666666664,
+      "maxEye": 2.6298417362145585,
+      "maxHead": 2.7766666666666664,
+      "end": {
+        "level": 900,
+        "pos": [
+          5.8,
+          7.3,
+          1.0766666666666664
+        ],
+        "ceiling": 2.8,
+        "seat": null,
+        "camera": [
+          5.8,
+          2.6188202829039113,
+          7.3
+        ],
+        "yaw": -0.4,
+        "pitch": 0.8,
+        "body": {
+          "visible": false,
+          "model": true,
+          "hip": -0.12523242415595856,
+          "knee": 0.22169063389170462
+        }
+      }
+    },
+    {
+      "at": {
+        "name": "bathroom",
+        "x": 10.6,
+        "y": 6.7,
+        "z": 0,
+        "height": 2.8
+      },
+      "maxZ": 1.0766666666666664,
+      "maxEye": 2.6346666116646342,
+      "maxHead": 2.7766666666666664,
+      "end": {
+        "level": 900,
+        "pos": [
+          10.6,
+          6.7,
+          1.0766666666666664
+        ],
+        "ceiling": 2.8,
+        "seat": null,
+        "camera": [
+          10.6,
+          2.6345607661458432,
+          6.7
+        ],
+        "yaw": -0.4,
+        "pitch": 0.8,
+        "body": {
+          "visible": false,
+          "model": true,
+          "hip": -0.12523242415595856,
+          "knee": 0.22169063389170462
+        }
+      }
+    },
+    {
+      "at": {
+        "name": "kitchen",
+        "x": 14.3,
+        "y": 6.2,
+        "z": 0,
+        "height": 2.8
+      },
+      "maxZ": 1.0766666666666664,
+      "maxEye": 2.630321848615031,
+      "maxHead": 2.7766666666666664,
+      "end": {
+        "level": 900,
+        "pos": [
+          14.3,
+          6.2,
+          1.0766666666666664
+        ],
+        "ceiling": 2.8,
+        "seat": null,
+        "camera": [
+          14.3,
+          2.618742610936202,
+          6.2
+        ],
+        "yaw": -0.4,
+        "pitch": 0.8,
+        "body": {
+          "visible": false,
+          "model": true,
+          "hip": -0.12523242415595856,
+          "knee": 0.22169063389170462
+        }
+      }
+    },
+    {
+      "at": {
+        "name": "living",
+        "x": 10.4,
+        "y": 9.5,
+        "z": 0,
+        "height": 2.8
+      },
+      "maxZ": 1.0766666666666664,
+      "maxEye": 2.634666612099638,
+      "maxHead": 2.7766666666666664,
+      "end": {
+        "level": 900,
+        "pos": [
+          10.4,
+          9.5,
+          1.0766666666666664
+        ],
+        "ceiling": 2.8,
+        "seat": null,
+        "camera": [
+          10.4,
+          2.6346230199593856,
+          9.5
+        ],
+        "yaw": -0.4,
+        "pitch": 0.8,
+        "body": {
+          "visible": false,
+          "model": true,
+          "hip": -0.12523242415595856,
+          "knee": 0.22169063389170462
+        }
+      }
+    },
+    {
+      "at": {
+        "name": "entry",
+        "x": 7.5,
+        "y": 12.5,
+        "z": 0,
+        "height": 2.8
+      },
+      "maxZ": 1.0766666666666664,
+      "maxEye": 2.628836653733085,
+      "maxHead": 2.7766666666666664,
+      "end": {
+        "level": 900,
+        "pos": [
+          7.5,
+          12.5,
+          1.0766666666666664
+        ],
+        "ceiling": 2.8,
+        "seat": null,
+        "camera": [
+          7.5,
+          2.619097068594813,
+          12.5
+        ],
+        "yaw": -0.4,
+        "pitch": 0.8,
+        "body": {
+          "visible": false,
+          "model": true,
+          "hip": -0.12523242415595856,
+          "knee": 0.22169063389170462
+        }
+      }
+    },
+    {
+      "at": {
+        "name": "landing",
+        "x": 6,
+        "y": 16,
+        "z": 0,
+        "height": 2.8
+      },
+      "maxZ": 1.0766666666666664,
+      "maxEye": 2.634666612532914,
+      "maxHead": 2.7766666666666664,
+      "end": {
+        "level": 900,
+        "pos": [
+          6,
+          16,
+          1.0766666666666664
+        ],
+        "ceiling": 2.8,
+        "seat": null,
+        "camera": [
+          6,
+          2.634298591617643,
+          16
+        ],
+        "yaw": -0.4,
+        "pitch": 0.8,
+        "body": {
+          "visible": false,
+          "model": true,
+          "hip": -0.12523242415595856,
+          "knee": 0.22169063389170462
+        }
+      }
+    },
+    {
+      "at": {
+        "name": "lobby",
+        "x": 40,
+        "y": 11,
+        "z": 0,
+        "height": 3
+      },
+      "maxZ": 1.2749999999999997,
+      "maxEye": 2.8329999520003306,
+      "maxHead": 2.9749999999999996,
+      "end": {
+        "level": 900,
+        "pos": [
+          40,
+          11,
+          1.2749999999999997
+        ],
+        "ceiling": 3,
+        "seat": null,
+        "camera": [
+          40,
+          2.8308276199730855,
+          11
+        ],
+        "yaw": -0.4,
+        "pitch": 0.8,
+        "body": {
+          "visible": false,
+          "model": true,
+          "hip": -0.12523242415595856,
+          "knee": 0.22169063389170462
+        }
+      }
+    },
+    {
+      "at": {
+        "name": "stairs",
+        "x": 34.8,
+        "y": 11,
+        "z": 1.2,
+        "height": 4.6
+      },
+      "maxZ": 2.8999999999999995,
+      "maxEye": 4.4461594043879025,
+      "maxHead": 4.6,
+      "end": {
+        "level": 900,
+        "pos": [
+          34.8,
+          11,
+          2.8999999999999995
+        ],
+        "ceiling": 4.6,
+        "seat": null,
+        "camera": [
+          34.8,
+          4.444172420291059,
+          11
+        ],
+        "yaw": -0.4,
+        "pitch": 0.8,
+        "body": {
+          "visible": false,
+          "model": true,
+          "hip": -0.12523242415595856,
+          "knee": 0.22169063389170462
+        }
+      }
+    },
+    {
+      "at": {
+        "name": "store",
+        "x": 77,
+        "y": 64,
+        "z": 0,
+        "height": 3.1
+      },
+      "maxZ": 1.388333333333333,
+      "maxEye": 2.9463332857399775,
+      "maxHead": 3.088333333333333,
+      "end": {
+        "level": 900,
+        "pos": [
+          77,
+          64,
+          1.388333333333333
+        ],
+        "ceiling": 3.1,
+        "seat": null,
+        "camera": [
+          77,
+          2.942791170567849,
+          64
+        ],
+        "yaw": -0.4,
+        "pitch": 0.8,
+        "body": {
+          "visible": false,
+          "model": true,
+          "hip": -0.12523242415595856,
+          "knee": 0.22169063389170462
+        }
+      }
+    }
+  ],
+  "outdoor": {
+    "level": 900,
+    "pos": [
+      82,
+      54,
+      4.759999999999999
+    ],
+    "ceiling": null,
+    "seat": null,
+    "camera": [
+      82,
+      6.305994184467725,
+      54
+    ],
+    "yaw": -0.4,
+    "pitch": 0.8,
+    "body": {
+      "visible": false,
+      "model": true,
+      "hip": -0.12523242415595856,
+      "knee": 0.22169063389170462
+    }
+  },
+  "savedTitle": {
+    "level": 900,
+    "title": "前 厅",
+    "subtitle": "FRONTROOMS : PROLOGUE",
+    "body": true,
+    "canvasOwned": true
+  },
+  "glitchTitles": [
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅",
+    "前 厅"
+  ],
+  "mobileTitle": {
+    "level": 900,
+    "title": "前 厅",
+    "subtitle": "FRONTROOMS : PROLOGUE",
+    "body": false,
+    "canvasOwned": true
+  },
+  "reloadedTitle": {
+    "level": 900,
+    "title": "前 厅",
+    "subtitle": "FRONTROOMS : PROLOGUE",
+    "body": true,
+    "canvasOwned": true
+  },
+  "resumed": {
+    "level": 900,
+    "pos": [
+      5.8,
+      7.3,
+      0
+    ],
+    "ceiling": 2.8,
+    "seat": null,
+    "camera": [
+      5.8,
+      1.5543544591561134,
+      7.3
+    ],
+    "yaw": 0,
+    "pitch": 0,
+    "body": {
+      "visible": false,
+      "model": false
+    }
+  },
+  "backroomTitle": {
+    "level": 0,
+    "title": "后 室",
+    "subtitle": "BACKROOMS : DESCENT",
+    "body": true,
+    "canvasOwned": true
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

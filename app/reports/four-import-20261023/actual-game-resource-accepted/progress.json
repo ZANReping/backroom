@@ -1,0 +1,690 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 1507,
+  "cdp": 1508,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\four-import-20261023\\actual-game-resource-accepted\\qa-1792755024225-23708",
+    "--remote-debugging-port=1508",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 51576,
+    "server": 63212
+  },
+  "appBootMs": 11510.317700000001,
+  "entryMs": 4520.930100000001,
+  "firstPlayableMs": 23672.3216,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 79.5,
+        "y": 79.5,
+        "z": 0
+      },
+      "entities": 0,
+      "memory": {
+        "geometries": 475,
+        "textures": 67
+      },
+      "calls": 1,
+      "checks": 0
+    }
+  },
+  "modelChurn": {
+    "samples": [
+      {
+        "shown": {
+          "geometries": 1080,
+          "textures": 120
+        },
+        "retired": {
+          "geometries": 1008,
+          "textures": 120
+        }
+      },
+      {
+        "shown": {
+          "geometries": 1084,
+          "textures": 121
+        },
+        "retired": {
+          "geometries": 1008,
+          "textures": 121
+        }
+      },
+      {
+        "shown": {
+          "geometries": 1083,
+          "textures": 121
+        },
+        "retired": {
+          "geometries": 1008,
+          "textures": 121
+        }
+      },
+      {
+        "shown": {
+          "geometries": 1082,
+          "textures": 121
+        },
+        "retired": {
+          "geometries": 1008,
+          "textures": 121
+        }
+      }
+    ],
+    "frameSample": {
+      "frames": [
+        {
+          "ms": 66.59999999999854,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 54.200000000004366,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 45.89999999999418,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 33.200000000004366,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 45.900000000001455,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 45.799999999995634,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 41.700000000004366,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 37.5,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 54.19999999999709,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 45.80000000000291,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 29.099999999998545,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 54.299999999995634,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 45.80000000000291,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 33.19999999999709,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 50.10000000000582,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 33.299999999995634,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 33.400000000001455,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 29.19999999999709,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 41.60000000000582,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 33.299999999995634,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 25,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 37.5,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 33.400000000001455,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 29.099999999998545,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 33.400000000001455,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 29.099999999998545,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 33.30000000000291,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 37.599999999998545,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 29.19999999999709,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 33.30000000000291,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 33.30000000000291,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 25,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 33.299999999995634,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 29.200000000004366,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 25,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 37.5,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 41.599999999998545,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 45.900000000001455,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 29.099999999998545,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 46.099999999998545,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 33.099999999998545,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 45.900000000001455,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 29.099999999998545,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 33.30000000000291,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 33.299999999995634,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 29.200000000004366,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 41.799999999995634,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 24.900000000001455,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 37.5,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 50,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 50,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 41.599999999998545,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 54.30000000000291,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 58.30000000000291,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 54.099999999998545,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 58.400000000001455,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 58.299999999995634,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 58.30000000000291,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 54.19999999999709,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 54.200000000004366,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 54.19999999999709,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 58.19999999999709,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 50,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 58.400000000001455,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 41.599999999998545,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 54.200000000004366,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 45.799999999995634,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 50.10000000000582,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 45.799999999995634,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 41.700000000004366,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 37.5,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 37.39999999999418,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 29.200000000004366,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 41.69999999999709,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 37.5,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 45.80000000000291,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 41.599999999998545,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 41.69999999999709,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 54.200000000004366,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 54.19999999999709,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 37.5,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 54.200000000004366,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 49.89999999999418,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 45.900000000001455,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 50,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 45.80000000000291,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 41.69999999999709,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 37.400000000001455,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 50.099999999998545,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 45.80000000000291,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 45.799999999995634,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 33.400000000001455,
+          "calls": 1297,
+          "triangles": 740269
+        },
+        {
+          "ms": 20.80000000000291,
+          "calls": 836,
+          "triangles": 446689
+        },
+        {
+          "ms": 8.299999999995634,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 20.900000000001455,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 16.599999999998545,
+          "calls": 836,
+          "triangles": 446689
+        },
+        {
+          "ms": 12.60000000000582,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 16.599999999998545,
+          "calls": 836,
+          "triangles": 446689
+        },
+        {
+          "ms": 8.299999999995634,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 20.900000000001455,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 16.599999999998545,
+          "calls": 836,
+          "triangles": 446689
+        },
+        {
+          "ms": 12.5,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 20.900000000001455,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 24.900000000001455,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 20.900000000001455,
+          "calls": 836,
+          "triangles": 446689
+        },
+        {
+          "ms": 12.5,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 16.69999999999709,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 20.80000000000291,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 20.799999999995634,
+          "calls": 836,
+          "triangles": 446689
+        },
+        {
+          "ms": 8.400000000001455,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 29.099999999998545,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 20.80000000000291,
+          "calls": 1070,
+          "triangles": 593989
+        },
+        {
+          "ms": 20.900000000001455,
+          "calls": 1063,
+          "triangles": 592969
+        },
+        {
+          "ms": 25,
+          "calls": 836,
+          "triangles": 446689
+        },
+        {
+          "ms": 12.5,
+          "calls": 1070,
+          "triangles": 593989
+        }
+      ],
+      "medianMs": 37.5,
+      "p95Ms": 58.299999999995634
+    },
+    "level": 4,
+    "player": {
+      "x": 78.5,
+      "y": 69,
+      "z": 0
+    },
+    "entities": 0,
+    "memory": {
+      "geometries": 1008,
+      "textures": 121
+    },
+    "calls": 0,
+    "checks": 6
+  }
+}

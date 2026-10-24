@@ -1,0 +1,198 @@
+{
+  "date": "2026-10-23",
+  "project": "E:/ZAN/backroom/app",
+  "checks": [
+    {
+      "date": "2026-10-23T19:15:56.4308906+08:00",
+      "command": "npm run check:window",
+      "exitCode": 0,
+      "status": "passed",
+      "log": "reports\\four-import-20261023\\final-checks\\check_window.log"
+    },
+    {
+      "date": "2026-10-23T19:15:58.3221792+08:00",
+      "command": "npm run check:faceling",
+      "exitCode": 0,
+      "status": "passed",
+      "log": "reports\\four-import-20261023\\final-checks\\check_faceling.log"
+    },
+    {
+      "date": "2026-10-23T19:15:59.7734825+08:00",
+      "command": "npm run check:vending",
+      "exitCode": 0,
+      "status": "passed",
+      "log": "reports\\four-import-20261023\\final-checks\\check_vending.log"
+    },
+    {
+      "date": "2026-10-23T19:16:01.242745+08:00",
+      "command": "npm run check:npc-idle",
+      "exitCode": 0,
+      "status": "passed",
+      "log": "reports\\four-import-20261023\\final-checks\\check_npc-idle.log"
+    },
+    {
+      "date": "2026-10-23T19:16:02.6401553+08:00",
+      "command": "npm run check:four-import",
+      "exitCode": 0,
+      "status": "passed",
+      "log": "reports\\four-import-20261023\\final-checks\\check_four-import.log"
+    },
+    {
+      "date": "2026-10-23T19:16:42.0831921+08:00",
+      "command": "npm run build",
+      "exitCode": 0,
+      "status": "passed",
+      "log": "reports\\four-import-20261023\\final-checks\\build.log"
+    }
+  ],
+  "integrationChecks": 626,
+  "actualGame": [
+    {
+      "mode": "realistic",
+      "ok": true,
+      "checks": 35,
+      "record": "actual-game-realistic-final/result.json"
+    },
+    {
+      "mode": "classic",
+      "ok": true,
+      "checks": 37,
+      "record": "actual-game-classic-accepted/result.json"
+    },
+    {
+      "mode": "realistic-final-window",
+      "ok": true,
+      "checks": 10,
+      "record": "l4-frame-budgeted/result.json"
+    }
+  ],
+  "resource": {
+    "ok": true,
+    "samples": [
+      {
+        "shown": {
+          "geometries": 1080,
+          "textures": 120
+        },
+        "retired": {
+          "geometries": 1008,
+          "textures": 120
+        }
+      },
+      {
+        "shown": {
+          "geometries": 1084,
+          "textures": 121
+        },
+        "retired": {
+          "geometries": 1008,
+          "textures": 121
+        }
+      },
+      {
+        "shown": {
+          "geometries": 1083,
+          "textures": 121
+        },
+        "retired": {
+          "geometries": 1008,
+          "textures": 121
+        }
+      },
+      {
+        "shown": {
+          "geometries": 1082,
+          "textures": 121
+        },
+        "retired": {
+          "geometries": 1008,
+          "textures": 121
+        }
+      }
+    ],
+    "record": "actual-game-resource-accepted/result.json"
+  },
+  "frameObservation": {
+    "seed": 424242,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "samples": 150,
+    "scene": {
+      "level": 4,
+      "x": 78.5,
+      "y": 69,
+      "target": [
+        78.5,
+        66.45,
+        1.75
+      ]
+    },
+    "before": {
+      "medianMs": 8.299999999995634,
+      "p95Ms": 12.39999999999418
+    },
+    "initialImport": {
+      "medianMs": 16.69999999999709,
+      "p95Ms": 29.099999999998545
+    },
+    "final": {
+      "medianMs": 12.5,
+      "p95Ms": 16.700000000004366
+    },
+    "note": "前基线仅对renderer.ts/structures.ts使用导入前备份的只读覆盖，其他依赖保持当前版本；单个固定视角观测，不代表全层或Android性能。"
+  },
+  "errors": [
+    {
+      "count": 0,
+      "failedRequests": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "count": 0,
+      "failedRequests": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "count": 0,
+      "failedRequests": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "count": 0,
+      "failedRequests": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "count": 0,
+      "failedRequests": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    }
+  ],
+  "limitations": [
+    "Android真机未验收",
+    "帧采样为有限固定视角，不宣称全层60FPS或导入零性能成本",
+    "普通售货库存按附件设计保留在运行时，卡货标记和机器种子按区块保存"
+  ]
+}

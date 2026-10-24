@@ -1689,3 +1689,54 @@ textarea:focus-visible {
   .end-card { padding: 16px; }
   .end-card h1 { font-size: 40px; }
 }
+
+/* ===== 前厅：HUD 权限浮现（胶片刻度）/ 教程纸带 / 触控高亮 ===== */
+.hud-reveal { position: relative; animation: hudFilmReveal 1.15s steps(14, end) both; }
+.hud-reveal::after {
+  content: ''; position: absolute; inset: -3px; pointer-events: none; z-index: 2;
+  background:
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--amber) 80%, transparent) 0 1px, transparent 1px 8px),
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--amber) 30%, transparent) 50%, transparent);
+  background-size: auto, 40% 100%; background-repeat: repeat, no-repeat;
+  mix-blend-mode: screen; animation: hudFilmTicks 1.9s ease-out both;
+}
+@keyframes hudFilmReveal {
+  0% { opacity: 0; clip-path: inset(0 100% 0 0); filter: brightness(2.4) contrast(1.5) saturate(0.2); }
+  30% { opacity: 1; clip-path: inset(0 55% 0 0); }
+  62% { clip-path: inset(0 0 0 0); filter: brightness(1.7) contrast(1.2) saturate(0.6); }
+  100% { opacity: 1; clip-path: inset(0 0 0 0); filter: none; }
+}
+@keyframes hudFilmTicks {
+  0% { opacity: 0.95; background-position: -14px 0, -40% 0; }
+  65% { opacity: 0.55; background-position: 0 0, 140% 0; }
+  100% { opacity: 0; background-position: 0 0, 140% 0; }
+}
+.hud-tutorial-strip {
+  pointer-events: none; display: flex; align-items: baseline; gap: 10px; max-width: min(640px, 86vw);
+  padding: 6px 16px 7px; font-size: 13px; line-height: 1.35; color: #2b2418;
+  background: linear-gradient(180deg, #efe6cf, #e3d7b8); box-shadow: 0 2px 10px rgba(0,0,0,.55);
+  clip-path: polygon(0 8%, 3% 0, 97% 4%, 100% 0, 99% 92%, 96% 100%, 4% 96%, 0 100%);
+  transform: rotate(-0.4deg); animation: tutStripIn .45s ease-out both;
+}
+.hud-tutorial-side {
+  pointer-events: none; display: flex; align-items: center; gap: 7px; max-width: min(460px, 80vw);
+  padding: 3px 10px 3px 4px; font-size: 11px; line-height: 1.3; color: #f3dfb0;
+  background: rgba(20, 16, 10, .78); border: 1px solid rgba(242, 201, 76, .45); border-radius: 3px;
+  box-shadow: 0 1px 6px rgba(0,0,0,.5); animation: tutStripIn .35s ease-out both;
+}
+.hud-tutorial-side__dot {
+  display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; flex: none;
+  border-radius: 2px; background: #e2a23a; color: #1d1a12; font-weight: 700; font-size: 10px;
+}
+.hud-tutorial-strip__no { font-size: 10px; letter-spacing: .12em; color: #8a6a2a; white-space: nowrap; }
+.hud-tutorial-strip__text { white-space: normal; }
+@keyframes tutStripIn { 0% { opacity: 0; transform: translateY(8px) rotate(-0.4deg); } 100% { opacity: 1; transform: translateY(0) rotate(-0.4deg); } }
+@keyframes tutTouchPulse { 0%, 100% { box-shadow: 0 0 0 2px var(--amber), 0 0 6px var(--amber); } 50% { box-shadow: 0 0 0 4px var(--amber), 0 0 22px var(--amber); } }
+body[data-tut-touch~="attack"] [data-touch-id="attack"],
+body[data-tut-touch~="crouch"] [data-touch-id="crouch"],
+body[data-tut-touch~="jump"] [data-touch-id="jump"],
+body[data-tut-touch~="sprint"] [data-touch-id="sprint"],
+body[data-tut-touch~="flashlight"] [data-touch-id="flashlight"],
+body[data-tut-touch~="backpack"] [data-touch-id="backpack"],
+body[data-tut-touch~="backpack"] [data-touch-id="backpack-top"],
+body[data-tut-touch~="phone"] [data-touch-id="phone"] { animation: tutTouchPulse 1.1s ease-in-out infinite; border-color: var(--amber) !important; }

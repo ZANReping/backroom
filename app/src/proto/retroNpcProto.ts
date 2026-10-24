@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { buildRetroNpc, loadRetroNpcTextures, RETRO_NPC_IDS, type RetroNpc, type RetroNpcId } from '../game/renderer/retroNpc'
 import { buildPlayerModel } from '../game/renderer/playerModel'
 import { NPCS, npcAvatar } from '../game/content/npcs'
+import { TRADERS_SHOP_PEOPLE } from '../game/content/tradersShops'
 import { buildAvatarModel, retroModelReady } from '../game/renderer/retroAvatar'
 import { buildCharacterModel } from '../game/renderer/characterModel'
 import { applyNpcGear } from '../game/renderer/npcGear'
@@ -45,9 +46,16 @@ function bake(npc: RetroNpc, root?: THREE.Object3D): THREE.Object3D {
   const s = new THREE.Mesh(g, m.material); s.scale.copy(npc.group.scale)
   const holder = new THREE.Group(); holder.add(s)
   const inv = top.matrixWorld.clone().invert()
-  m.traverse((o) => {
+  ;(q.get('gear') === '1' ? top : m).traverse((o) => {
     const mm = o as THREE.Mesh
     if (!mm.isMesh || o === m) return
+    const sk = o as THREE.SkinnedMesh
+    if (sk.isSkinnedMesh) { // fitted gear shares the character skeleton: CPU-skin it as well
+      sk.skeleton.update(); const sp = sk.geometry.getAttribute('position'), o2 = new Float32Array(sp.count * 3), w = new THREE.Vector3()
+      for (let i = 0; i < sp.count; i++) { w.fromBufferAttribute(sp, i); sk.applyBoneTransform(i, w); o2.set([w.x, w.y, w.z], i * 3) }
+      const gg = sk.geometry.clone(); gg.setAttribute('position', new THREE.BufferAttribute(o2, 3)); gg.deleteAttribute('skinIndex'); gg.deleteAttribute('skinWeight'); gg.computeVertexNormals()
+      const c = new THREE.Mesh(gg, sk.material); c.matrixAutoUpdate = false; c.matrix.copy(inv.clone().multiply(sk.matrixWorld)); holder.add(c); return
+    }
     const c = new THREE.Mesh(mm.geometry, mm.material)
     c.matrixAutoUpdate = false; c.matrix.copy(inv.clone().multiply(mm.matrixWorld)); holder.add(c)
   })
@@ -237,7 +245,7 @@ async function main() {
     const ids = (q.get('ids') ?? 'kat,tom,aiko,kowalski').split(',')
     cam.position.set(0, 1.5, 10.2); cam.lookAt(0, 0.95, 0); cam.updateMatrixWorld()
     for (let i = 0; i < ids.length; i++) {
-      const id = ids[i], def = NPCS[id], x = (i - (ids.length - 1) / 2) * (q.get('close') === '1' ? 0.62 : 9.2 / ids.length)
+      const id = ids[i], def = NPCS[id] ?? TRADERS_SHOP_PEOPLE[id], x = (i - (ids.length - 1) / 2) * (q.get('close') === '1' ? 0.62 : 9.2 / ids.length)
       if (!def) continue
       if (q.get('old') !== '0') placeOldCfg(npcAvatar(def), x - 0.36, 0, 0.15, id)
       const mdl = buildCharacterModel(npcAvatar(def), { npcId: id, npcDef: def, driven: q.get('walk') === '1' })
@@ -303,7 +311,9 @@ async function main() {
     const labs: [number, string][] = []
     for (let i = 0; i < n; i++) {
       const x = (i - (n - 1) / 2) * sp
-      const g = buildEntityMesh('faceling', { l3face: !q.get('plain'), seed: s0 + i * 17 } as any)
+      const AGES = ['child', 'adult', 'elder', 'adult'] as const, ROLES = [undefined, 'office', undefined, 'shopkeeper'] as const
+      const mix = !!q.get('mix')
+      const g = buildEntityMesh('faceling', { l3face: !q.get('plain'), seed: s0 + i * 17, facelingAge: mix ? AGES[i % 4] : (q.get('age') || undefined), facelingRole: mix ? ROLES[i % 4] : (q.get('role') || undefined) } as any)
       let av: THREE.Object3D | undefined
       g.traverse((o) => { if (!av && o.userData.retro) av = o })
       const npc = (av as THREE.Object3D).userData.retro as RetroNpc
@@ -313,13 +323,14 @@ async function main() {
       obj.position.set(x, 0, 0); obj.rotation.y = close ? yq * (i % 2 ? -1 : 1) : yq; scene.add(obj)
       obj.updateMatrixWorld(true)
       top = Math.max(top, new THREE.Box3().setFromObject(obj).max.y)
-      const fp = (av as THREE.Object3D).userData.facePlan as { label?: string } | undefined
-      labs.push([x, `<span class="s">#${s0 + i * 17}${fp?.label ? '<br>' + fp.label : ''}</span>`])
+      const fp = (g.userData.facePlan ?? (av as THREE.Object3D).userData.facePlan) as { label?: string } | undefined
+      const ag = { child: '幼年', adult: '成年', elder: '老年' }[g.userData.facelingAge as string] ?? ''
+      labs.push([x, `<span class="s">#${s0 + i * 17} ${ag}${fp?.label ? '<br>' + fp.label : ''}</span>`])
     }
     const hy = top - 0.17
     cam.fov = Number(q.get('fov') ?? (close ? 5.6 : 20)); cam.updateProjectionMatrix()
     cam.position.set(0, close ? hy + 0.04 : 1.4, close ? 11 : 8); cam.lookAt(0, close ? hy : 0.95, 0); cam.updateMatrixWorld()
-    for (const [x, h] of labs) label(x, close ? hy - 0.15 : 0.04, close ? 0 : 0.8, h)
+    for (const [x, h] of labs) label(x, close ? hy - 0.26 : 0.04, close ? 0 : 0.8, h)
   } else if (mode === 'shades') {
     // 墨镜特写：正面 / 3/4 / 侧面 / 3/4 背光，四种肤色发型
     cam.fov = 11; cam.updateProjectionMatrix(); cam.position.set(0, 1.64, 6.4); cam.lookAt(0, 1.62, 0); cam.updateMatrixWorld()

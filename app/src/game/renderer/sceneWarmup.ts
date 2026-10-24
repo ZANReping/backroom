@@ -147,13 +147,20 @@ export function* uploadSceneJob(
       // compileAsync covers surface programs, but Three creates depth programs
       // only in a shadow pass. Prepare the actual casters in the same zero-range
       // batches; never clear unrelated sunlight/point-light shadow maps.
-      if (shadowLight && renderer.shadowMap.enabled) {
+      // A caster whose shadow map does not exist yet is bound to Three's plain
+      // emptyCubeTexture/emptyTexture fallback; on a samplerCubeShadow that is a
+      // GL_INVALID_OPERATION (texture format vs sampler type) on every warmup
+      // draw. Allocate those maps in the same (empty) shadow pass instead.
+      const unmapped = renderer.shadowMap.enabled
+        ? lights.filter(object => (object as THREE.SpotLight).castShadow && (object as THREE.SpotLight).shadow && !(object as THREE.SpotLight).shadow.map)
+        : []
+      if ((shadowLight || unmapped.length) && renderer.shadowMap.enabled) {
         for (const object of lights) {
           const light = object as THREE.SpotLight
           if (!light.shadow || shadowStates.has(light.shadow)) continue
-          shadowStates.set(light.shadow, { auto: light.shadow.autoUpdate, needs: light.shadow.needsUpdate })
+          shadowStates.set(light.shadow, { auto: light.shadow.autoUpdate, needs: light.shadow.needsUpdate || unmapped.includes(light) })
           light.shadow.autoUpdate = false
-          light.shadow.needsUpdate = light === shadowLight
+          light.shadow.needsUpdate = light === shadowLight || unmapped.includes(light)
         }
         renderer.shadowMap.autoUpdate = false; renderer.shadowMap.needsUpdate = true
       } else {

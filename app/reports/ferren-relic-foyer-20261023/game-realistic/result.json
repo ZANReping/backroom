@@ -1,0 +1,269 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 10342,
+  "cdp": 10343,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:10342/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Fri, 23 Oct 2026 13:05:51 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 278,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 10342,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 15029.241974,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.184,
+        "sendEnd": 0.211,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 50.758,
+        "receiveHeadersEnd": 50.842
+      },
+      "responseTime": 1792760751525.322,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    },
+    {
+      "url": "http://127.0.0.1:10342/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Fri, 23 Oct 2026 13:06:04 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 120,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 10342,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 15041.863401,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.524,
+        "sendEnd": 0.576,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 10.205,
+        "receiveHeadersEnd": 10.481
+      },
+      "responseTime": 1792760764106.196,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\ferren-relic-foyer-20261023\\game-realistic\\qa-1792760739105-46952",
+    "--remote-debugging-port=10343",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 75456,
+    "server": 29656
+  },
+  "appBootMs": 11450.431499999999,
+  "entryMs": 5192.9692,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 900,
+    "paused": false,
+    "pos": [
+      5.25,
+      5.75,
+      0
+    ],
+    "prologue": {
+      "step": "act0",
+      "flags": {
+        "flash_drawer": true
+      }
+    },
+    "unlock": {},
+    "phone": {
+      "battery": 39.81060000000011,
+      "torch": false,
+      "docked": true,
+      "notes": [],
+      "photos": 0,
+      "nextId": 1
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 744,
+      "textures": 208
+    },
+    "geometries": 744
+  },
+  "aim-computer": {
+    "id": "computer",
+    "pos": [
+      5.1,
+      5.75
+    ],
+    "crouch": false,
+    "target": "使用 电脑"
+  },
+  "aim-phone_dock": {
+    "id": "phone_dock",
+    "pos": [
+      5.4,
+      6.27
+    ],
+    "crouch": false,
+    "target": "拿起 手机"
+  },
+  "phoneUnpaused": true,
+  "aim-wardrobe": {
+    "id": "wardrobe",
+    "pos": [
+      6.37581929876693,
+      8.065974851452365
+    ],
+    "crouch": false,
+    "target": "打开 衣柜"
+  },
+  "aim-pick_backpack": {
+    "id": "pick_backpack",
+    "pos": [
+      5.321040764008565,
+      7.658959235991434
+    ],
+    "crouch": false,
+    "target": "拿起 背包"
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught\",\"lineNumber\":39,\"columnNumber\":6,\"scriptId\":\"735\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"aim\",\"scriptId\":\"735\",\"url\":\"http://127.0.0.1:10342/verifier/ferren-foyer-game.ts\",\"lineNumber\":39,\"columnNumber\":12},{\"functionName\":\"\",\"scriptId\":\"748\",\"url\":\"\",\"lineNumber\":0,\"columnNumber\":9}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: cannot aim nightstand got null\\n    at Object.aim (http://127.0.0.1:10342/verifier/ferren-foyer-game.ts:40:13)\\n    at <anonymous>:1:10\",\"objectId\":\"-4225613134817472756.2.2\"}}",
+  "partial": {
+    "level": 900,
+    "paused": false,
+    "pos": [
+      5.74418070123307,
+      4.844025148547635,
+      0
+    ],
+    "prologue": {
+      "step": "act1",
+      "flags": {
+        "flash_drawer": true,
+        "read_news": true,
+        "last_forum": false,
+        "got_phone": true,
+        "ev:phone_open": true,
+        "got_backpack": true,
+        "ev:look": true,
+        "tut:look": true,
+        "tut:news": true
+      },
+      "open": {
+        "wardrobe": 1
+      }
+    },
+    "unlock": {
+      "clock": true,
+      "quest": true,
+      "log": true,
+      "minimap": true,
+      "battery": true,
+      "hotbar": true,
+      "inventory": true
+    },
+    "phone": {
+      "battery": 40.60344760000026,
+      "torch": false,
+      "docked": false,
+      "notes": [
+        {
+          "id": 2,
+          "kind": "note",
+          "title": "待办",
+          "text": "明早 9:00 交报告。牛奶没了。",
+          "time": "23:40"
+        },
+        {
+          "id": 1,
+          "kind": "note",
+          "title": "论坛帖 · 巷子",
+          "text": "本地论坛「边界」：有人说附近一条巷子能「卡进」后室。出来的人说，要集齐六张磁带，送进 Level 11 的档案馆。——多半是编的。",
+          "time": "23:40"
+        }
+      ],
+      "photos": 0,
+      "nextId": 3
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 755,
+      "textures": 208
+    },
+    "geometries": 755
+  },
+  "bootstrap": {
+    "text": "FOYER\n前厅\n23:40\n卧室\n41%\n任务 · 准备出门\n□\n看看本地论坛的帖子\n■\n带上手机\n■\n从衣柜拿背包\n□\n找到手电筒（床头柜？）\n□\n冰箱：水和零食\n□\n出门，去那条巷子\n拿起手机（电量 41%）——装在【副手】。\n背上背包。快捷栏与背包界面已就绪。\n03/22\n论坛有新回帖在闪。再按 [E] 看看那个帖子\n+ 背包\nHUD · 快捷栏 / 背包界面\n1\n2\n3\n4\n5\n6\n7\nE 打开 床头柜抽屉\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

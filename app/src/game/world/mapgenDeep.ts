@@ -650,6 +650,14 @@ function genLibrary(m: GameMap, rng: RNG, H: GenHelpers): Room[] {
   H.carveRoom(m, 3, 3, size - 6, size - 6)
   const rooms: Room[] = []
 
+  // [window] 外墙一圈普通木窗（每 5 格一扇，避开墙角）；其中一部分会被 Entity 2 占据（windowAI 按世界坐标抽签）
+  for (let i = 6; i < size - 6; i += 5) {
+    S(m, 'libwindow', i, 3, 1, 1, false, { winDir: 0 })
+    S(m, 'libwindow', i, size - 4, 1, 1, false, { winDir: 2 })
+    S(m, 'libwindow', 3, i, 1, 1, false, { winDir: 3 })
+    S(m, 'libwindow', size - 4, i, 1, 1, false, { winDir: 1 })
+  }
+
   // 中央广场：金属字母 the end is near
   const cx = size >> 1, cy = size >> 1
   rooms.push({ x: cx - 4, y: cy - 4, w: 9, h: 9, cx, cy })

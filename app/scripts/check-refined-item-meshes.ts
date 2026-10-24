@@ -146,7 +146,7 @@ for (const mode of ['classic', 'realistic'] as const) {
   }
 }
 setMaterialMode('classic')
-assert.equal(REFINED_ITEM_TYPES.length, 54) // v79：+尸鼠肉；v81：旱虾/酥炸旱虾移交 shrimpMesh
+assert.equal(REFINED_ITEM_TYPES.length, 69) // 54 原有 + 6 市场 + 9 遗物
 for (const type of ['toString', 'constructor', '__proto__', 'unknown-item']) {
   assert(!isRefinedItemType(type), `${type}: prototype key dispatched as an item`)
   const fallback = buildItemMesh(type, { halo: false }); dispose(fallback); checks++

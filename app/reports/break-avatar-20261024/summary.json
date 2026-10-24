@@ -1,0 +1,282 @@
+{
+  "checks": [
+    {
+      "name": "check:foyer-shell",
+      "exit": 0,
+      "ms": 578,
+      "log": "check-foyer-shell.log"
+    },
+    {
+      "name": "check:seating",
+      "exit": 0,
+      "ms": 678,
+      "log": "check-seating.log"
+    },
+    {
+      "name": "check:model-warmup",
+      "exit": 0,
+      "ms": 642,
+      "log": "check-model-warmup.log"
+    },
+    {
+      "name": "check:foyer-entry",
+      "exit": 0,
+      "ms": 1175,
+      "log": "check-foyer-entry.log"
+    },
+    {
+      "name": "check:break-avatar",
+      "exit": 0,
+      "ms": 961,
+      "log": "check-break-avatar.log"
+    },
+    {
+      "name": "build",
+      "exit": 0,
+      "ms": 65811,
+      "log": "build.log"
+    }
+  ],
+  "cases": [
+    {
+      "label": "final-male-realistic",
+      "ok": true,
+      "seed": 424243,
+      "mode": "realistic",
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "avatar": {
+        "appearance": {
+          "avatar": {
+            "skin": "#c9a58a",
+            "gender": 0,
+            "hair": 1,
+            "hairColor": "#232326",
+            "top": "#8f4030",
+            "topStyle": 7,
+            "pants": "#4b5538",
+            "pantsStyle": 2,
+            "face": 0,
+            "glasses": 0,
+            "beard": 0,
+            "shoes": 2
+          },
+          "equipment": {
+            "gloves": false,
+            "suit": false,
+            "cavingsuit": false,
+            "divemask": false,
+            "headlamp": false,
+            "nightvision": false
+          }
+        },
+        "skinned": true,
+        "bones": 19,
+        "triangles": 1592,
+        "materialGroups": 4,
+        "visible": true,
+        "pose": {
+          "leftLeg": [
+            -0.34487226968879636,
+            0.008283661747074485,
+            0.11,
+            "XYZ"
+          ],
+          "rightLeg": [
+            -0.5723245070050638,
+            -0.03210286070912121,
+            -0.11,
+            "XYZ"
+          ]
+        },
+        "textures": [
+          {
+            "size": [
+              128,
+              128
+            ],
+            "ready": true,
+            "loadError": null
+          },
+          {
+            "size": [
+              128,
+              128
+            ],
+            "ready": true,
+            "loadError": null
+          },
+          {
+            "size": [
+              64,
+              64
+            ],
+            "ready": true,
+            "loadError": null
+          }
+        ],
+        "render": {
+          "frame": 1748,
+          "calls": 14,
+          "triangles": 53504,
+          "points": 520,
+          "lines": 0
+        },
+        "programs": 15,
+        "error": 0
+      },
+      "release": {
+        "geometry": 1,
+        "skeleton": 1,
+        "materials": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "textures": 0
+      },
+      "animation": {
+        "mode": "3d",
+        "shards": 480,
+        "maze": 5503,
+        "frames": 1950,
+        "avgMs": 0.34,
+        "maxMs": 2
+      },
+      "prepareMs": 364.40000000596046,
+      "errors": [],
+      "failedResources": [],
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "label": "final-female-classic",
+      "ok": true,
+      "seed": 424243,
+      "mode": "classic",
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "avatar": {
+        "appearance": {
+          "avatar": {
+            "skin": "#5a4030",
+            "gender": 1,
+            "hair": 1,
+            "hairColor": "#232326",
+            "top": "#2e6c50",
+            "topStyle": 5,
+            "pants": "#4e405e",
+            "pantsStyle": 1,
+            "face": 0,
+            "glasses": 0,
+            "beard": 0,
+            "shoes": 1
+          },
+          "equipment": {
+            "gloves": false,
+            "suit": false,
+            "cavingsuit": false,
+            "divemask": false,
+            "headlamp": false,
+            "nightvision": false
+          }
+        },
+        "skinned": true,
+        "bones": 19,
+        "triangles": 1228,
+        "materialGroups": 3,
+        "visible": true,
+        "pose": {
+          "leftLeg": [
+            -0.3354875323690474,
+            -0.0018526194190789642,
+            0.11,
+            "XYZ"
+          ],
+          "rightLeg": [
+            -0.5805989746606188,
+            -0.03475727309745522,
+            -0.11,
+            "XYZ"
+          ]
+        },
+        "textures": [
+          {
+            "size": [
+              128,
+              128
+            ],
+            "ready": true,
+            "loadError": null
+          },
+          {
+            "size": [
+              128,
+              128
+            ],
+            "ready": true,
+            "loadError": null
+          },
+          {
+            "size": [
+              64,
+              64
+            ],
+            "ready": true,
+            "loadError": null
+          }
+        ],
+        "render": {
+          "frame": 1786,
+          "calls": 13,
+          "triangles": 53140,
+          "points": 520,
+          "lines": 0
+        },
+        "programs": 15,
+        "error": 0
+      },
+      "release": {
+        "geometry": 1,
+        "skeleton": 1,
+        "materials": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "textures": 0
+      },
+      "animation": {
+        "mode": "3d",
+        "shards": 480,
+        "maze": 5503,
+        "frames": 1931,
+        "avgMs": 0.26,
+        "maxMs": 1
+      },
+      "prepareMs": 274.20000000298023,
+      "errors": [],
+      "failedResources": [],
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    }
+  ]
+}

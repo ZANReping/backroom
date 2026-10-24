@@ -1,0 +1,279 @@
+{
+  "checks": [
+    "safe start bank_west",
+    "new passage can be walked through bank_west",
+    "passage can be walked in reverse bank_west",
+    "safe start bank_south",
+    "new passage can be walked through bank_south",
+    "passage can be walked in reverse bank_south",
+    "safe start food_east",
+    "new passage can be walked through food_east",
+    "passage can be walked in reverse food_east",
+    "safe start food_south",
+    "new passage can be walked through food_south",
+    "passage can be walked in reverse food_south",
+    "safe start market_north",
+    "new passage can be walked through market_north",
+    "passage can be walked in reverse market_north",
+    "safe start visitor_north",
+    "new passage can be walked through visitor_north",
+    "passage can be walked in reverse visitor_north",
+    "safe start sorting_north",
+    "new passage can be walked through sorting_north",
+    "passage can be walked in reverse sorting_north",
+    "safe start secondary_west",
+    "new passage can be walked through secondary_west",
+    "passage can be walked in reverse secondary_west",
+    "safe start guard_monitor",
+    "new passage can be walked through guard_monitor",
+    "passage can be walked in reverse guard_monitor",
+    "safe start office_meeting",
+    "new passage can be walked through office_meeting",
+    "passage can be walked in reverse office_meeting",
+    "safe start dorm_north",
+    "new passage can be walked through dorm_north",
+    "passage can be walked in reverse dorm_north",
+    "safe start west_through",
+    "new passage can be walked through west_through",
+    "passage can be walked in reverse west_through",
+    "safe start east_through",
+    "new passage can be walked through east_through",
+    "passage can be walked in reverse east_through",
+    "normal map preview retains streaming rather than building the whole world"
+  ],
+  "screenshots": [
+    "10-bank_west",
+    "10-bank_south",
+    "10-food_east",
+    "10-food_south",
+    "10-market_north",
+    "10-visitor_north",
+    "10-sorting_north",
+    "10-secondary_west",
+    "10-guard_monitor",
+    "10-office_meeting",
+    "10-dorm_north",
+    "10-west_through",
+    "10-east_through",
+    "20-map-overview"
+  ],
+  "passages": [
+    {
+      "id": "bank_west",
+      "start": {
+        "x": 73.2,
+        "y": 101.5
+      },
+      "end": {
+        "x": 77.53500000000041,
+        "y": 101.5
+      },
+      "crossed": true,
+      "back": {
+        "x": 73.99333333333341,
+        "y": 101.5
+      }
+    },
+    {
+      "id": "bank_south",
+      "start": {
+        "x": 117,
+        "y": 103.2
+      },
+      "end": {
+        "x": 117,
+        "y": 107.56333333333374
+      },
+      "crossed": true,
+      "back": {
+        "x": 117,
+        "y": 103.99333333333341
+      }
+    },
+    {
+      "id": "food_east",
+      "start": {
+        "x": 349.2,
+        "y": 97
+      },
+      "end": {
+        "x": 353.61999999999597,
+        "y": 97
+      },
+      "crossed": true,
+      "back": {
+        "x": 350.0499999999992,
+        "y": 97
+      }
+    },
+    {
+      "id": "food_south",
+      "start": {
+        "x": 340,
+        "y": 103.2
+      },
+      "end": {
+        "x": 340,
+        "y": 107.4500000000004
+      },
+      "crossed": true,
+      "back": {
+        "x": 340,
+        "y": 104.56000000000013
+      }
+    },
+    {
+      "id": "market_north",
+      "start": {
+        "x": 112,
+        "y": 122.4
+      },
+      "end": {
+        "x": 112,
+        "y": 127.33000000000047
+      },
+      "crossed": true,
+      "back": {
+        "x": 112,
+        "y": 123.7316666666668
+      }
+    },
+    {
+      "id": "visitor_north",
+      "start": {
+        "x": 337,
+        "y": 133.2
+      },
+      "end": {
+        "x": 337,
+        "y": 137.4500000000004
+      },
+      "crossed": true,
+      "back": {
+        "x": 337,
+        "y": 133.88000000000005
+      }
+    },
+    {
+      "id": "sorting_north",
+      "start": {
+        "x": 227,
+        "y": 142.79999999999998
+      },
+      "end": {
+        "x": 227,
+        "y": 147.05000000000038
+      },
+      "crossed": true,
+      "back": {
+        "x": 227,
+        "y": 143.4516666666667
+      }
+    },
+    {
+      "id": "secondary_west",
+      "start": {
+        "x": 181.2,
+        "y": 242.2
+      },
+      "end": {
+        "x": 185.4500000000004,
+        "y": 242.2
+      },
+      "crossed": true,
+      "back": {
+        "x": 181.93666666666672,
+        "y": 242.2
+      }
+    },
+    {
+      "id": "guard_monitor",
+      "start": {
+        "x": 335.5,
+        "y": 239.39999999999998
+      },
+      "end": {
+        "x": 335.5,
+        "y": 244.33000000000044
+      },
+      "crossed": true,
+      "back": {
+        "x": 335.5,
+        "y": 240.1366666666667
+      }
+    },
+    {
+      "id": "office_meeting",
+      "start": {
+        "x": 365,
+        "y": 239.39999999999998
+      },
+      "end": {
+        "x": 365,
+        "y": 244.27333333333377
+      },
+      "crossed": true,
+      "back": {
+        "x": 365,
+        "y": 240.78833333333344
+      }
+    },
+    {
+      "id": "dorm_north",
+      "start": {
+        "x": 402,
+        "y": 207.6
+      },
+      "end": {
+        "x": 402,
+        "y": 212.07666666666708
+      },
+      "crossed": true,
+      "back": {
+        "x": 402,
+        "y": 208.59166666666675
+      }
+    },
+    {
+      "id": "west_through",
+      "start": {
+        "x": 73.2,
+        "y": 109
+      },
+      "end": {
+        "x": 77.42166666666706,
+        "y": 109
+      },
+      "crossed": true,
+      "back": {
+        "x": 73.88000000000007,
+        "y": 109
+      }
+    },
+    {
+      "id": "east_through",
+      "start": {
+        "x": 349.2,
+        "y": 109
+      },
+      "end": {
+        "x": 354.1299999999955,
+        "y": 109
+      },
+      "crossed": true,
+      "back": {
+        "x": 349.9083333333327,
+        "y": 109
+      }
+    }
+  ],
+  "baseline": false,
+  "final": {
+    "chunks": 39,
+    "npcs": 11,
+    "memory": {
+      "geometries": 1137,
+      "textures": 147
+    }
+  }
+}

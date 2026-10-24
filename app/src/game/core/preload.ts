@@ -41,6 +41,8 @@ function levelCoreAssets(level: number): Asset[] {
       T('l0_decal_fake_door_v2.png', '出生层级', 'Level 0 · 假门贴花'),
     ]
   }
+  // 前厅（FOYER_ID 900）：墙/地/顶由 foyerHome（PBR + 烘焙）与 foyerStreet 自建，没有 l900_* 通用贴图（静态服务下会 404）
+  if (id === 900) return []
   const out = [
     T(`l${id}_wall`, `Level ${level}`, `Level ${level} · 墙面材质`),
     T(`l${id}_floor`, `Level ${level}`, `Level ${level} · 地面材质`),

@@ -21,6 +21,7 @@ export interface ItemDef {
   use?: 'eat' | 'heal' | 'sanity' | 'battery' | 'stamina' | 'bigsanity' | 'light' | 'none' | 'cure' | 'sanityeat' | 'doc' | 'kazoo' // v57t：doc=阅读文档（来源不明的书）；[kazoo] kazoo=吹石卡祖笛（不消耗，tinyAI.blowKazoo）
   value?: number
   value2?: number // v54：第二效果量（sanityeat 的饥饿恢复量）
+  charges?: number // 批发市场 v2：多次使用物品（医疗箱）的次数上限；剩余次数存于 InvSlot.dur，缺省=满
   value3?: number // v54：口渴效果量（正负均可；饮用类物品——杏仁水/咖啡/幸运豆奶/市政自来水/番茄浓汤为正，液态痛苦/腰果水为负）
   weapon?: number // 近战伤害
   attackInterval?: number // 近战攻击间隔（秒）
@@ -37,8 +38,8 @@ export interface ItemDef {
   glyph: string // 绘制用
 }
 
-const BOTTLED_DRINK_ITEMS = new Set(['almond', 'liquidpain', 'coffee', 'citywater', 'cashew', 'luckymilk'])
-const QUICK_FOOD_ITEMS = new Set(['warpberry', 'wheatgrain', 'driedfruit'])
+const BOTTLED_DRINK_ITEMS = new Set(['almond', 'liquidpain', 'coffee', 'citywater', 'cashew', 'luckymilk', 'bottledwater'])
+const QUICK_FOOD_ITEMS = new Set(['warpberry', 'wheatgrain', 'driedfruit', 'snackbar'])
 const MEAL_ITEMS = new Set(['tomatosoup', 'gardensalad', 'garlicbread', 'pasta', 'meatstew', 'pizza', 'lasagna', 'tomsspecial', 'grilledsteak', 'jambread'])
 const READ_ITEMS = new Set(['megfolder', 'pamphlet', 'jerryflyer', 'fakelog'])
 
@@ -55,6 +56,7 @@ export function itemUseProfile(def: ItemDef): ItemUseProfile | null {
   if (def.type === 'bandage') return { duration: 2.8, anim: 'medical', label: '包扎' }
   if (def.type === 'disinfectant') return { duration: 2.2, anim: 'medical', label: '消毒' }
   if (def.type === 'sedative') return { duration: 1.55, anim: 'inject', label: '注射' }
+  if (def.type === 'outdoorkit' || def.type === 'traumakit') return { duration: def.type === 'traumakit' ? 2.6 : 2.4, anim: 'medical', label: '包扎' }
   if (def.type === 'sedgland') return { duration: 1.4, anim: 'eat', label: '吞服' }
   if (def.use === 'battery') return { duration: 1.6, anim: 'battery', label: '更换电池' }
   if (def.use === 'light') return { duration: 0.9, anim: 'activate', label: '启动' }
@@ -169,11 +171,40 @@ export const ITEMS: Record<string, ItemDef> = {
   notebook: { type: 'notebook', name: '笔记本和笔', desc: '一本皮面笔记本，笔还插在书脊上。', stack: 1, use: 'none', rarity: 'uncommon', glyph: 'notebook' },
   fuyouyu: { type: 'fuyouyu', name: '福友玉', desc: '一块苔藓绿色的软玉吊坠，云絮般的矿脉藏在磨圆的玉面下。贴着皮肤时，能感到它细微的暖意变化。（Object 101）', stack: 1, equip: 'pocket', passive: '实体感应', anomalous: true, rarity: 'rare', glyph: 'jade' },
   squirtgun: { type: 'squirtgun', name: '滋水枪', desc: '造型过分鲜艳的玩具水枪。在右侧信息栏可以为储罐装入液体。', stack: 1, use: 'none', anomalous: true, rarity: 'rare', glyph: 'watergun' },
+  // 枪械系统（鎏金兵械库特许店）：枪身状态（弹仓 / 选定弹种）存于 InvSlot.mag / ammoSel；数值见 content/firearms.ts
+  dbshotgun: { type: 'dbshotgun', name: '双管猎枪', desc: '12 号并列双管猎枪，胡桃木英式直托、箱式枪机、双扳机。手工作坊打造——鎏金兵械库特许店出品。左键击发（先右管后左管），右键贴腮瞄准，R 折枪装填，按住 R 选择弹种。', stack: 1, use: 'none', rarity: 'epic', glyph: 'dbshotgun' },
+  leverrifle: { type: 'leverrifle', name: '杠杆步枪', desc: '.44-40 杠杆步枪，黄铜机匣、20 英寸卡宾枪管，管式弹仓装 10 发。每打一枪都要拉一次杠杆。R 从机匣右侧的装弹口逐发压弹。', stack: 1, use: 'none', rarity: 'epic', glyph: 'leverrifle' },
+  revolver: { type: 'revolver', name: '单动转轮手枪', desc: '.44-40 单动转轮，六发。每一枪之前拇指都要把击锤扳回来。R：半击发、开装弹门，用退壳杆逐膛捅出空壳再装弹。和杠杆步枪吃同一种弹。', stack: 1, use: 'none', rarity: 'epic', glyph: 'revolver' },
+  musket: { type: 'musket', name: '前装滑膛枪', desc: '.69 口径击发式前装枪。一发顶一发，威力极大、硝烟极浓。装一次约 7 秒：咬开纸包、倒药、装弹丸、通条压实、收通条、装火帽——每一步都可以中断，进度留在枪上。', stack: 1, use: 'none', rarity: 'rare', glyph: 'musket' },
+  trapdoor: { type: 'trapdoor', name: '活门后膛步枪', desc: '.45-70 活门式单发后膛步枪。拇指扳开击锤、掀起活门就能装填；远距离精准，子弹能打穿第一个目标继续往后飞。', stack: 1, use: 'none', rarity: 'epic', glyph: 'trapdoor' },
+  cart_4440: { type: 'cart_4440', name: '.44-40 弹', desc: '黄铜瓶颈弹壳、铅弹头的中央底火手枪 / 步枪通用弹。杠杆步枪和单动转轮都用它。', stack: 40, use: 'none', rarity: 'uncommon', glyph: 'cart' },
+  cart_paper: { type: 'cart_paper', name: '纸包弹', desc: '牛皮纸卷着一份黑火药和一颗 .69 铅丸，尾部扭成结。前装滑膛枪专用——咬开、倒药、把弹丸连纸塞进去。', stack: 30, use: 'none', rarity: 'common', glyph: 'cart' },
+  cart_4570: { type: 'cart_4570', name: '.45-70 弹', desc: '长直筒黄铜弹壳的大威力步枪弹。活门后膛步枪专用。', stack: 30, use: 'none', rarity: 'uncommon', glyph: 'cart' },
+  shell_buck: { type: 'shell_buck', name: '12 号鹿弹', desc: '红色纸壳、黄铜底火座的 12 号霰弹，内装 9 颗大号铅丸。近距离威力极大，远了散得很快。', stack: 30, use: 'none', rarity: 'uncommon', glyph: 'shell' },
+  shell_bird: { type: 'shell_bird', name: '12 号鸟弹', desc: '绿色纸壳的 12 号细砂弹，二十多颗小铅丸。伤不了大家伙，但对付尸鼠、死亡飞蛾这类小东西特别好用。', stack: 30, use: 'none', rarity: 'common', glyph: 'shell' },
+  shell_clump: { type: 'shell_clump', name: '爆团弹', desc: '鎏金兵械库的招牌弹药（Object 23）。金色弹壳里是一枚专利独头弹——穿入目标后在体内起爆，专治肢团，对悲尸也同样有效。打在墙上不会炸。', stack: 30, use: 'none', anomalous: true, rarity: 'rare', glyph: 'shell' },
   warpberry: { type: 'warpberry', name: '迁跃浆果', desc: '表皮泛着空间涟漪的浆果——据说它认得「家」的方向。每颗都记得自己被发现的地方。', stack: 2, use: 'eat', value: 15, anomalous: true, rarity: 'epic', glyph: 'berry' },
-  royalration: { type: 'royalration', name: '皇家口粮', desc: '传说中的甘美之物，一口便足以忘记饥饿与恐惧。只是从没有人能只吃一口。', stack: 1, use: 'eat', value: 100, anomalous: true, rarity: 'epic', glyph: 'ration' },
+  royalration: { type: 'royalration', name: '皇家口粮', desc: '传说中的甘美之物，一口便足以忘记饥饿与恐惧。只是从没有人能只吃一口。以物易物时，它能换来真正的高级物资。', stack: 1, use: 'eat', value: 100, anomalous: true, rarity: 'epic', glyph: 'ration' },
+  // ===== 批发市场 v2（2026-10-23）：主力店 A 四个新档口的新物品 =====
+  // Object 11「记忆汁」（旧）：蠕灵熬煮的琥珀色药液——游戏内不可饮用，只作交易品；装进滋水枪等效于清水
+  memoryjuice: { type: 'memoryjuice', name: '记忆汁液', desc: '一罐纯净的琥珀色记忆汁，用碾碎的蠕灵在水里煮沸滤出，闻起来有股烟草味。黑市上一罐能换二十瓶杏仁水——高度成瘾，没煮透的还会洗掉人的全部记忆。批发市场只按罐出售，不建议饮用。可装入滋水枪（效果等同清水）。（Object 11）', stack: 2, use: 'none', anomalous: true, rarity: 'rare', glyph: 'jar' },
+  // Object 3「驱笑剂」：事件 A 之后全部失效——只作收藏；装进滋水枪等效于清水
+  laughrepellent: { type: 'laughrepellent', name: '驱笑剂', desc: '一支封着 M.E.G. 标签的小药瓶，几乎透明的液体曾能一滴驱散二十米内的笑魇。事件 A 之后，世上所有驱笑剂都失去了作用，只剩收藏价值。可装入滋水枪（效果等同清水）。（Object 3）', stack: 3, use: 'none', anomalous: true, rarity: 'rare', glyph: 'vial' },
+  // Object 25「巴别润唇膏」：暂无游戏功能（仅交易/收藏）
+  babelbalm: { type: 'babelbalm', name: '巴别润唇膏', desc: '无标签的红色胶囊里装着微微发光的白色膏体。涂在唇上，听者会以为你在说他们的母语；涂在纸上，任何人都读得懂上面的字。味道像原味的普通润唇膏。（Object 25）', stack: 3, use: 'none', anomalous: true, rarity: 'uncommon', glyph: 'balm' },
+  // 医疗箱：多次使用，剩余次数存于槽位 dur
+  outdoorkit: { type: 'outdoorkit', name: '户外医疗箱', desc: '红色硬壳户外急救箱，内含纱布、敷料和止血带。可以多次使用，每次处理伤口并止血。', stack: 1, use: 'heal', value: 30, charges: 4, rarity: 'uncommon', glyph: 'medkit' },
+  traumakit: { type: 'traumakit', name: '高级医疗箱', desc: '橙色防水的专业创伤急救箱，户外医疗箱的升级版：物资更足、用量更大，还附带夹板和速效止痛贴。', stack: 1, use: 'heal', value: 40, charges: 8, rarity: 'rare', glyph: 'medkit' },
+  // 盒装火盐：大量储存火盐，在物品栏中分解为 5 份火盐晶体
+  saltbox: { type: 'saltbox', name: '盒装火盐', desc: '一只印着火焰警示菱形的牛皮纸盒，里面用木屑隔开装着五份火盐晶体。在物品栏中分解即可取出。（Object 15）', stack: 3, use: 'none', anomalous: true, rarity: 'uncommon', glyph: 'saltbox' },
   // M.E.G. Alpha 基地通用货币（仅限 Alpha 基地内交易使用；与杏仁水 1:1 互换）
   eaglecoin: { type: 'eaglecoin', name: '天鹰币', desc: 'M.E.G. 在天鹰段发行的铜黄色硬币，铸有展翅的雄鹰。Alpha 基地的硬通货——仅限基地内使用。', stack: 30, anomalous: true, rarity: 'uncommon', glyph: 'coin' },
 
+  // ===== 前厅（序章）：家中可拾取的日用品（现实制品）=====
+  phone: { type: 'phone', name: '手机', desc: '你自己的手机，屏幕右上角有一道细小的划痕。装在【副手】：手电、笔记、时钟、相机。需要充电——卧室书桌上有充电器。', stack: 1, equip: 'offhand', passive: '手电 / 笔记 / 时钟 / 相机（独立电量）', rarity: 'uncommon', glyph: 'phone' },
+  bottledwater: { type: 'bottledwater', name: '瓶装水', desc: '冰箱里拿的一瓶矿泉水，瓶身还挂着水珠。', stack: 3, use: 'sanity', value: 2, value3: 35, rarity: 'common', glyph: 'bottle' },
+  foyerpack: { type: 'foyerpack', name: '你的背包', desc: '你从衣柜里拿的双肩包，摔落时甩脱了。拾起即重新背上（恢复快捷栏与背包）。', stack: 1, rarity: 'uncommon', glyph: 'pocket' },
+  snackbar: { type: 'snackbar', name: '能量棒', desc: '燕麦巧克力能量棒，包装纸皱皱的。熬夜时的储备粮。', stack: 4, use: 'eat', value: 18, rarity: 'common', glyph: 'ration' },
   // ===== v38：Tom 的餐馆菜肴（仅 Tom 处以物易物可得，无层级掉落；设定：wikidot 汤姆餐厅）=====
   tomatosoup: { type: 'tomatosoup', name: '番茄浓汤', desc: 'Tom 的拿手汤——慢炖三个小时的番茄，酸甜里带一点罗勒香。在后室喝到热汤本身就像个奇迹。', stack: 2, use: 'eat', value: 45, value3: 10, rarity: 'common', glyph: 'bowl' },
   gardensalad: { type: 'gardensalad', name: '田园沙拉', desc: '干果干菜重新焕发出生机的一盘——爱子坚持要在上面摆一片完整的叶子。', stack: 2, use: 'stamina', value: 40, rarity: 'uncommon', glyph: 'bowl' },

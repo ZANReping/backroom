@@ -10,6 +10,7 @@ import { dullerControlsPlayer } from './dullerAI'
 import { clumpControlsPlayer } from './clumpAI'
 import { nwControlsPlayer } from './watchAI'
 import { armsControlsPlayer } from './armsAI'
+import { windowControlsPlayer, windowPull, windowSpeedMul } from './windowAI'
 import { l1DistanceScale } from '../world/l1Layout'
 import { l1BuildingStyleAt } from '../world/l1Building'
 // v53：移动/输入积分 + 垂直物理（固定子步积分主段、液体浮沉、跳跃重力、梯子攀爬）——
@@ -49,7 +50,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   stepPressure(eng, eng.swim, dt) // [swim 阶段 3] 水压提示 + 减压病
   if (eng.over) return 0
   // A scripted wall crossing owns position temporarily; gravity must not snap onto a wall/upper floor.
-  if(bursterControlsPlayer(eng)||wranglerControlsPlayer(eng)||dullerControlsPlayer(eng)||clumpControlsPlayer(eng)||nwControlsPlayer(eng)||armsControlsPlayer(eng,dt)){eng.seating=null;return 0}
+  if(bursterControlsPlayer(eng)||wranglerControlsPlayer(eng)||dullerControlsPlayer(eng)||clumpControlsPlayer(eng)||nwControlsPlayer(eng)||armsControlsPlayer(eng,dt)||windowControlsPlayer(eng,dt)){eng.seating=null;return 0}
   if (eng.devEnabled && eng.dev.fly) {
     eng.seating = null
     eng.swim.out = null; eng.swim.vx = eng.swim.vy = eng.swim.vz = eng.swim.cx = eng.swim.cy = 0
@@ -162,6 +163,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   else if (lq !== 0) speed *= 0.5 // v13：液体中移动减速
   if (p.slowT > 0) { p.slowT -= dt; speed *= 0.5 }
   if (eng.webbedT > 0) speed *= 0.5 // v51：缠丝麻痹——移动迟缓
+  speed *= windowSpeedMul(eng) // [window] 默念时放慢脚步
   speed *= arachnidMoveMul(eng)
   speed *= nguithrSpeedMult(eng) // Nguithr'xurh 轻度镇静：移动略慢
   if (p.flashJamT > 0) p.flashJamT -= dt
@@ -249,7 +251,8 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   } else if (!swimNow || introLock) { sw.vx = 0; sw.vy = 0; if (!swimNow) sw.vz = 0; sw.strokeT = -1 }
   const swimH = swimNow ? Math.hypot(sw.vx, sw.vy) : 0
   const slipDrift = Math.hypot(eng.slipVx, eng.slipVy)
-  if ((mag > 0.1 || (eng.slipperyT > 0 && slipDrift > 0.05) || swimH > 0.02) && !eng.ride && !eng.climb && !introLock) {
+  const wpull0 = windowPull(eng) // [window] 窗户的诱引：站着不动也会被一点点拽过去（默念时为 0）
+  if ((mag > 0.1 || (eng.slipperyT > 0 && slipDrift > 0.05) || swimH > 0.02 || Math.hypot(wpull0.x, wpull0.y) > 0.01) && !eng.ride && !eng.climb && !introLock) {
     // 固定子步积分：dt 先入累加器，按 FIXED_STEP 切分子步逐次「移动→解碰撞」。
     // 高帧率不会积分抖动，低帧率不会大步长穿墙弹回；脚步声/噪音按实际位移计。
     const scale = mag > 0.1 ? Math.min(mag, 1) / mag : 0
@@ -264,8 +267,9 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     // v57t：L7 快速游泳严格朝准星 3D 方向冲刺（WASD 只负责是否冲刺，不再决定方向）；
     // 水平位移按 cos(pitch) 投影，垂直分量由下方按 sin(pitch) 驱动。
     // [swim] 游泳时水平位移=游泳速度（方向+大小都来自 swim.ts），不再直接等于输入
-    const dirX = swimNow ? (swimH > 1e-6 ? sw.vx / swimH : 0) : eng.input.mx * scale + eng.slipVx
-    const dirY = swimNow ? (swimH > 1e-6 ? sw.vy / swimH : 0) : eng.input.my * scale + eng.slipVy
+    const wpull = swimNow ? { x: 0, y: 0 } : wpull0
+    const dirX = swimNow ? (swimH > 1e-6 ? sw.vx / swimH : 0) : eng.input.mx * scale + eng.slipVx + wpull.x
+    const dirY = swimNow ? (swimH > 1e-6 ? sw.vy / swimH : 0) : eng.input.my * scale + eng.slipVy + wpull.y
     const moveSpeed = swimNow ? swimH : speed
     const metric=eng.levelDef.id===1&&m.inf&&!eng.dev.noclip&&!stableAt(eng,p.x,p.y)?l1DistanceScale(m.inf.seed,p.x+m.inf.ox,p.y+m.inf.oy):1
     const acc0 = eng.moveIt.acc
@@ -531,7 +535,8 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   }
   // v26：天花板碰撞——跳跃/上浮头顶不穿天花板（室外/挑高区按各自顶高；风道底 1.15m）
   if (!eng.ride && !eng.climb) {
-    const headH = p.crouching ? 0.95 : 1.55
+    // Keep the prologue camera and its near plane below the visible plaster.
+    const headH = p.crouching ? (m.foyer ? 1.1 : 0.95) : (m.foyer ? 1.7 : 1.55)
     const ceil = Math.min(ceilingHeightAt(m,p.x,p.y,WALL_H[eng.levelDef.gen]??3,band),eng.levelDef.id===11?l11HeadCeilingAt(m,p.x,p.y,verticalStart,headH):Infinity)
     let maxZ = ceil - headH
     // v54c：跳跃顶穿楼板修复——band 随 z 即时翻转（越过 1.5/4.5 即按上层取天花），

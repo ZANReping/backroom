@@ -1,0 +1,564 @@
+{
+  "date": "2026-10-24",
+  "originalProject": "E:/ZAN/backroom",
+  "seed": 424243,
+  "settings": {
+    "width": 1920,
+    "height": 1080,
+    "dpr": 1,
+    "textureQuality": 2,
+    "renderResolution": "native",
+    "renderScale": 100,
+    "dynamicRes": false,
+    "dynamicExposure": false,
+    "grain": false,
+    "shake": false,
+    "devMode": true
+  },
+  "baseline": {
+    "entryMs": 12585.261400000003,
+    "synchronousCaptureMs": 6733.29999999702,
+    "preCutMaxRafMs": 6737.300000000003,
+    "animationMaxDrawMs": 109.6
+  },
+  "realistic": {
+    "ok": true,
+    "entryMs": 11512.0572,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "contextLost": false
+    },
+    "phoneStatLock": {
+      "enabled": true,
+      "unlockedBattery": 49.99515080000007
+    },
+    "stairDoor": {
+      "indoor": true,
+      "home": true,
+      "street": false,
+      "firstMaterial": "foyer-home-fire-door",
+      "at": [
+        7.929999828338623,
+        1.3,
+        16.9
+      ]
+    },
+    "notice": {
+      "heading": "寻人启事",
+      "animation": "slideUp",
+      "role": "dialog",
+      "focused": true,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "bounds": [
+        690,
+        168.78125,
+        540,
+        790.4375
+      ],
+      "button": [
+        1135.5,
+        924.71875,
+        94.5,
+        34.5
+      ],
+      "overflow": false,
+      "read": true
+    },
+    "homeBench": {
+      "rounds": [
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "calls": 131,
+          "triangles": 50429,
+          "resources": {
+            "geometries": 796,
+            "textures": 236
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "calls": 131,
+          "triangles": 50429,
+          "resources": {
+            "geometries": 796,
+            "textures": 236
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "calls": 131,
+          "triangles": 50429,
+          "resources": {
+            "geometries": 796,
+            "textures": 236
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "calls": 131,
+          "triangles": 50429,
+          "resources": {
+            "geometries": 796,
+            "textures": 236
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "calls": 131,
+          "triangles": 50429,
+          "resources": {
+            "geometries": 796,
+            "textures": 236
+          }
+        }
+      ]
+    },
+    "streetBench": {
+      "rounds": [
+        {
+          "median": 4.19999999999709,
+          "p95": 12.39999999999418,
+          "calls": 280,
+          "triangles": 39949,
+          "resources": {
+            "geometries": 797,
+            "textures": 244
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.39999999999418,
+          "calls": 280,
+          "triangles": 39949,
+          "resources": {
+            "geometries": 797,
+            "textures": 244
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.400000000008731,
+          "calls": 280,
+          "triangles": 39949,
+          "resources": {
+            "geometries": 797,
+            "textures": 244
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.39999999999418,
+          "calls": 280,
+          "triangles": 39949,
+          "resources": {
+            "geometries": 797,
+            "textures": 244
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.39999999999418,
+          "calls": 280,
+          "triangles": 39949,
+          "resources": {
+            "geometries": 797,
+            "textures": 244
+          }
+        }
+      ]
+    },
+    "transition": {
+      "synchronousRequestMs": 1,
+      "capture": {
+        "faceMs": [
+          3.2999999970197678,
+          4.100000008940697,
+          1.5,
+          1.2999999970197678,
+          3.7999999970197678,
+          2.5999999940395355
+        ],
+        "elapsedMs": 132.59999999403954,
+        "face": 512,
+        "asynchronousReadback": true,
+        "rgbMean": 41.19274605645074,
+        "maxRGB": 765,
+        "litPixels": 1562066
+      },
+      "preparationMs": 366.09999999403954,
+      "preCutMaxRafMs": 112.5,
+      "animation": {
+        "mode": "3d",
+        "shards": 480,
+        "maze": 5503,
+        "frames": 1941,
+        "avgMs": 0.24,
+        "maxMs": 1.6
+      },
+      "glError": 0
+    },
+    "errors": [],
+    "failedRequests": [
+      {
+        "url": "http://127.0.0.1:4712/favicon.ico",
+        "status": 404
+      },
+      {
+        "url": "http://127.0.0.1:4712/favicon.ico",
+        "status": 404
+      }
+    ],
+    "cleanup": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  "classic": {
+    "ok": true,
+    "entryMs": 9211.489699999998,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "contextLost": false
+    },
+    "phoneStatLock": {
+      "enabled": true,
+      "unlockedBattery": 49.99519880000007
+    },
+    "stairDoor": {
+      "indoor": true,
+      "home": true,
+      "street": false,
+      "firstMaterial": "foyer-home-fire-door",
+      "at": [
+        7.929999828338623,
+        1.3,
+        16.9
+      ]
+    },
+    "notice": {
+      "heading": "寻人启事",
+      "animation": "slideUp",
+      "role": "dialog",
+      "focused": true,
+      "viewport": [
+        1920,
+        1080
+      ],
+      "bounds": [
+        690,
+        151.0859375,
+        540,
+        790.4375
+      ],
+      "button": [
+        1135.5,
+        907.0234375,
+        94.5,
+        34.5
+      ],
+      "overflow": false,
+      "read": true
+    },
+    "noticeMobile": {
+      "desktopSimulation": true,
+      "heading": "寻人启事",
+      "animation": "slideUp",
+      "role": "dialog",
+      "focused": true,
+      "viewport": [
+        390,
+        740
+      ],
+      "bounds": [
+        16,
+        37,
+        358,
+        666
+      ],
+      "button": [
+        279.5,
+        668.5,
+        94.5,
+        34.5
+      ],
+      "overflow": false,
+      "read": true
+    },
+    "homeBench": {
+      "rounds": [
+        {
+          "median": 4.19999999999709,
+          "p95": 4.299999999995634,
+          "calls": 117,
+          "triangles": 50415,
+          "resources": {
+            "geometries": 789,
+            "textures": 219
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "calls": 117,
+          "triangles": 50415,
+          "resources": {
+            "geometries": 789,
+            "textures": 219
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.299999999995634,
+          "calls": 117,
+          "triangles": 50415,
+          "resources": {
+            "geometries": 789,
+            "textures": 219
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "calls": 117,
+          "triangles": 50415,
+          "resources": {
+            "geometries": 789,
+            "textures": 219
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "calls": 117,
+          "triangles": 50415,
+          "resources": {
+            "geometries": 789,
+            "textures": 219
+          }
+        }
+      ]
+    },
+    "streetBench": {
+      "rounds": [
+        {
+          "median": 4.19999999999709,
+          "p95": 4.2999999999883585,
+          "calls": 266,
+          "triangles": 39935,
+          "resources": {
+            "geometries": 790,
+            "textures": 227
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "calls": 266,
+          "triangles": 39935,
+          "resources": {
+            "geometries": 790,
+            "textures": 227
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "calls": 266,
+          "triangles": 39935,
+          "resources": {
+            "geometries": 790,
+            "textures": 227
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.30000000000291,
+          "calls": 266,
+          "triangles": 39935,
+          "resources": {
+            "geometries": 790,
+            "textures": 227
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.2999999999883585,
+          "calls": 266,
+          "triangles": 39935,
+          "resources": {
+            "geometries": 790,
+            "textures": 227
+          }
+        }
+      ]
+    },
+    "transition": {
+      "synchronousRequestMs": 0.8999999910593033,
+      "capture": {
+        "faceMs": [
+          4.299999997019768,
+          4.799999997019768,
+          1.5999999940395355,
+          1.6000000089406967,
+          4.899999991059303,
+          2.7000000029802322
+        ],
+        "elapsedMs": 126.90000000596046,
+        "face": 512,
+        "asynchronousReadback": true,
+        "rgbMean": 32.0760563744439,
+        "maxRGB": 765,
+        "litPixels": 1473624
+      },
+      "preparationMs": 301.70000000298023,
+      "preCutMaxRafMs": 75,
+      "animation": {
+        "mode": "3d",
+        "shards": 480,
+        "maze": 5503,
+        "frames": 1913,
+        "avgMs": 0.2,
+        "maxMs": 1.4
+      },
+      "glError": 0
+    },
+    "errors": [],
+    "failedRequests": [
+      {
+        "url": "http://127.0.0.1:1457/favicon.ico",
+        "status": 404
+      },
+      {
+        "url": "http://127.0.0.1:1457/favicon.ico",
+        "status": 404
+      }
+    ],
+    "cleanup": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  "skippedPrologue": {
+    "ok": true,
+    "entryMs": 3686.951299999997,
+    "starter": {
+      "phone": 1,
+      "water": 1,
+      "snack": 2,
+      "phoneState": {
+        "battery": 100,
+        "torch": false,
+        "docked": false,
+        "notes": [],
+        "photos": 0,
+        "nextId": 1,
+        "cracked": true,
+        "noSignal": true
+      },
+      "carried": [
+        {
+          "type": "phone",
+          "count": 1
+        },
+        {
+          "type": "bottledwater",
+          "count": 1
+        },
+        {
+          "type": "snackbar",
+          "count": 2
+        }
+      ],
+      "ground": [
+        "flashlight",
+        "bandage",
+        "almond"
+      ]
+    },
+    "phoneWorks": true,
+    "errors": [],
+    "cleanup": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  "checks": [
+    {
+      "name": "check:foyer-shell",
+      "exit": 0,
+      "ms": 944,
+      "log": "check-foyer-shell.log"
+    },
+    {
+      "name": "check:skip-foyer-supplies",
+      "exit": 0,
+      "ms": 3231,
+      "log": "check-skip-foyer-supplies.log"
+    },
+    {
+      "name": "check:phone-stat-lock",
+      "exit": 0,
+      "ms": 2046,
+      "log": "check-phone-stat-lock.log"
+    },
+    {
+      "name": "check:foyer-v2",
+      "exit": 0,
+      "ms": 17418,
+      "log": "check-foyer-v2.log"
+    },
+    {
+      "name": "check:ferren-foyer-integration",
+      "exit": 0,
+      "ms": 2095,
+      "log": "check-ferren-foyer-integration.log"
+    },
+    {
+      "name": "check:seating",
+      "exit": 0,
+      "ms": 822,
+      "log": "check-seating.log"
+    },
+    {
+      "name": "check:item-batches",
+      "exit": 0,
+      "ms": 818,
+      "log": "check-item-batches.log"
+    },
+    {
+      "name": "check:texture-images",
+      "exit": 0,
+      "ms": 5759,
+      "log": "check-texture-images.log"
+    },
+    {
+      "name": "check:model-warmup",
+      "exit": 0,
+      "ms": 746,
+      "log": "check-model-warmup.log"
+    },
+    {
+      "name": "build",
+      "exit": 0,
+      "ms": 59312,
+      "log": "build.log"
+    }
+  ],
+  "limits": [
+    "Frame data is warmed headless native-GPU RAF interval data, not GPU timer or Android measurements.",
+    "Cut timeline RAF maxima include CDP screenshots and automation; do not treat them as steady-state P95.",
+    "Realistic cold prologue entry measured 11.51 seconds; no claim that every level enters within 10 seconds.",
+    "Only the final two full routes and skipped-prologue route are final acceptance; earlier debug directories are retained as evidence."
+  ]
+}

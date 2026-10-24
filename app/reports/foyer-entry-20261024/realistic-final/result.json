@@ -1,0 +1,86 @@
+{
+  "seed": 424243,
+  "mode": "realistic",
+  "port": 2612,
+  "cdp": 2613,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:2612/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 24 Oct 2026 06:28:44 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 117,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 2612,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 77606.270463,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.445,
+        "sendEnd": 0.51,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 62.524,
+        "receiveHeadersEnd": 62.776
+      },
+      "responseTime": 1792823324440.425,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\foyer-entry-20261024\\realistic-final\\qa-1792823310585-30156",
+    "--remote-debugging-port=2613",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 76516,
+    "server": 57764
+  },
+  "appBootMs": 13159.378,
+  "ok": false,
+  "failure": "Error: Timeout 01-title-without-save",
+  "bootstrap": {
+    "text": "SECTOR 0.7.13\nNOCLIP DETECTED\nHUM: 50Hz\nCAM_04 OFFLINE\nDEPTH: ??\nSIGNAL LOST\n● REC · SIGNAL RECOVERED · CAM_04\n后 室\nBACKROOMS : DESCENT\n01\n开始游戏\n新的下坠 · 写入槽位 1\n02\n继续游戏\n暂无存档\n03\n图鉴档案\n层级 · 实体 · 物品 · 团体\n04\n形象编辑\n05\n设置\n06\n操作说明\n07\n设计模式\nv1.0 · 所有层级均为程序生成 · 戴上耳机体验更佳"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

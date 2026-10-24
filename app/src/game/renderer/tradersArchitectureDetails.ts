@@ -1,7 +1,31 @@
 import * as THREE from 'three'
 import type {Builder} from './tradersMeshes'
-import {TRADERS_ROOMS,TRADERS_SHOP_GLAZING,TRADERS_ZONES,TRADERS_VAULT_BOUNDS,tradersContains,tradersIntersects,type TradersRect} from '../content/tradersLayout'
+import {tradersRoomSign,tradersSignKey,tradersSignAspect} from '../content/tradersSigns'
+import {TRADERS_ROOMS,TRADERS_SHOP_GLAZING,TRADERS_ZONES,TRADERS_VAULT_BOUNDS,TRADERS_PASSAGES,tradersContains,tradersIntersects,type TradersRect,type TradersPassage,type TradersWall} from '../content/tradersLayout'
 const own=(r:TradersRect,x:number,z:number)=>tradersContains(r,x,z)
+/** Stop wall-skirt/cornice end caps at new openings; padding is only safe on the solid side. */
+export function tradersWallFinishBounds(w:TradersWall,clipped:TradersRect,pad:number):TradersRect{
+ const horizontal=w.w>=w.h,start=horizontal?w.x:w.y,end=start+(horizontal?w.w:w.h),fixed=horizontal?w.y+w.h/2:w.x+w.w/2
+ let low=pad,high=pad
+ for(const p of TRADERS_PASSAGES){
+  if(p.axis!==(horizontal?'x':'y')||Math.abs((horizontal?p.y:p.x)-fixed)>.001)continue
+  const center=horizontal?p.x:p.y
+  if(Math.abs(start-center-p.width/2)<.001)low=Math.min(pad,(horizontal?clipped.x:clipped.y)-start)
+  if(Math.abs(end-center+p.width/2)<.001)high=Math.min(pad,end-(horizontal?clipped.x+clipped.w:clipped.y+clipped.h))
+ }
+ return horizontal?{x:clipped.x-low,y:clipped.y-pad,w:clipped.w+low+high,h:clipped.h+pad*2}:{x:clipped.x-pad,y:clipped.y-low,w:clipped.w+pad*2,h:clipped.h+low+high}
+}
+/** Minimum-corner boxes; the 12mm trim overlap hides coplanar structural wall caps. */
+export function buildTradersPassageFrame(b:Builder,p:TradersPassage){
+ const surface=p.kind==='public'?'stone':'steel',color=p.kind==='public'?'#b8ad94':'#858d82'
+ const box=(u:number,bottom:number,w:number,h:number,d:number,material=surface,tint=color)=>{
+  if(p.axis==='x')b.box(p.x+u-w/2,bottom,p.y-d/2,w,h,d,material,tint)
+  else b.box(p.x-d/2,bottom,p.y+u-w/2,d,h,w,material,tint)
+ }
+ for(const side of [-1,1])box(side*(p.width/2+.04),0,.104,p.height,.24)
+ box(0,p.height-.012,p.width+.16,.112,.24)
+ box(0,0,p.width,.008,.42,'stone','#b8ad94')
+}
 /** Real, repeated construction details; kept in the same chunk/material batches. */
 export function* buildTradersArchitectureDetails(b:Builder,bounds:TradersRect){
  for(const room of TRADERS_ROOMS){
@@ -22,7 +46,13 @@ export function* buildTradersArchitectureDetails(b:Builder,bounds:TradersRect){
    local(0,3.12,0,w+1.25,.38,.46,'wood','#a28b66')
    local(0,3.49,.015,Math.min(w+1.48,(horizontal?room.w:room.h)-.08),.09,.55,'brass','#9b8b67')
    local(0,3.61,.14,w+1.15,.62,.16,'paint','#374d48')
-   b.label(room.name,x+Math.sin(angle)*.235,3.94,z+Math.cos(angle)*.235,Math.min(w,3.5),.43,angle)
+   const fascia=tradersRoomSign(room.id)
+   if(fascia){
+    // Full-width tenant/leasing graphic on the fascia band (AI artwork, aspect kept).
+    const band=Math.min(w+1.1,(horizontal?room.w:room.h)-.3),fh=Math.min(room.kind==='anchor'?1.15:.86,band/tradersSignAspect(fascia)),fw=Math.min(band,fh*tradersSignAspect(fascia))
+    local(0,3.5,.2,fw+.16,fh+.14,.06,'paint','#1e2226')
+    b.sign(fascia,x+Math.sin(angle)*.238,3.57+fh/2,z+Math.cos(angle)*.238,fw,fh,angle)
+   }else b.label(room.name,x+Math.sin(angle)*.235,3.94,z+Math.cos(angle)*.235,Math.min(w,3.5),.43,angle)
    local(0,.005,.03,w,.012,.62,'stone','#a49b83')
    const gap=3.6,pane=(w-gap)/2
    for(const side of [-1,1]){
@@ -44,6 +74,14 @@ export function* buildTradersArchitectureDetails(b:Builder,bounds:TradersRect){
    local(0,2.94,.045,w+.40,.19,.035,'paint',mark)
    for(const side of [-1,1]){local(side*(w/2+.05),0,.02,.10,2.76,.14,'steel','#69766f');local(side*(w/2+.05),.04,.10,.16,.10,.08,'steel','#b2b6a8')}
   }
+  yield
+ }
+ // Fixed public/service openings use a shallow architectural reveal instead of
+ // a separate door asset.  The passage center owns the reveal so neighboring
+ // chunks never duplicate the frame.
+ for(const p of TRADERS_PASSAGES){
+  if(!own(bounds,p.x,p.y))continue
+  buildTradersPassageFrame(b,p)
   yield
  }
  for(const pane of TRADERS_SHOP_GLAZING)if(own(bounds,pane.x+pane.w/2,pane.y+pane.h/2)){
@@ -80,15 +118,16 @@ export function* buildTradersArchitectureDetails(b:Builder,bounds:TradersRect){
   for(const off of [-.45,.45])b.box(x0,2.99,z+off,x1-x0,.055,.055,'steel','#818d83')
   for(let x=Math.ceil(x0/3)*3;x<x1;x+=3){b.box(x-.035,2.94,z-.63,.07,.065,1.26,'steel','#646f65');for(const dz of [-.6,.6])b.box(x-.012,3.03,z+dz,.024,.13,.024,'steel','#b1b4a6')}
   for(const off of [-1.53,1.53])b.box(x0,.003,z+off,x1-x0,.008,.07,'paint','#ae9b63')
-  if(own(bounds,v.x+4,z))b.label(['库区 A / WAREHOUSE A','库区 B / WAREHOUSE B','库区 C / WAREHOUSE C','库区 D / WAREHOUSE D'][row],v.x+4,2.43,z,2.9,.31,Math.PI/2)
+  if(own(bounds,v.x+4,z)){const key='vault_row_'+'ABCD'[row];b.box(v.x+4-.03,2.2,z-.75,.06,.46,1.5,'steel','#596168');for(const side of [-1,1])b.sign(key,v.x+4+side*.035,2.43,z,1.95,.42,side>0?Math.PI/2:-Math.PI/2)}
   yield
  }
  // Public wayfinding boards are suspended above human clearance.
  for(const [text,x,z,angle] of [['北步行街 / NORTH MALL',90,42,Math.PI/2],['南步行街 / SOUTH MALL',90,174,Math.PI/2],['公共服务 / SERVICES',67,109,Math.PI/2],['交易保险库 / TRADERS VAULT',202,138,0],['货物交接 / DISPATCH',212,174,0]] as const){
   if(!own(bounds,x,z))continue
-  const g=new THREE.BoxGeometry(5.8,.76,.11);g.rotateY(angle);g.translate(x,3.31,z);b.add(g,b.assets.material('paint','#344b47'))
-  b.label(text,x+Math.sin(angle)*.066,3.34,z+Math.cos(angle)*.066,5.4,.50,angle)
-  for(const side of [-1,1])b.box(x+side*Math.cos(angle)*2.3-.014,3.7,z-side*Math.sin(angle)*2.3-.014,.028,1.0,.028,'steel','#8d998d')
+  const key=text==='公共服务 / SERVICES'?'way_services':tradersSignKey(text)!,sh=.66,sw=Math.min(4.2,sh*tradersSignAspect(key))
+  const g=new THREE.BoxGeometry(sw+.06,sh+.06,.09);g.rotateY(angle);g.translate(x,3.34,z);b.add(g,b.assets.material('paint','#24292d'))
+  for(const side of [-1,1])b.sign(key,x+side*Math.sin(angle)*.047,3.34,z+side*Math.cos(angle)*.047,sw,sh,angle+(side<0?Math.PI:0))
+  for(const side of [-1,1])b.box(x+side*Math.cos(angle)*(sw/2-.3)-.014,3.67,z-side*Math.sin(angle)*(sw/2-.3)-.014,.028,1.13,.028,'steel','#8d998d')
   yield
  }
 }

@@ -4,6 +4,7 @@ import { canOccupy, PLAYER_RADIUS } from '../core/player'
 import { floorHeight, ceilingHeightAt, structColliders, type GameMap } from '../world/mapgen'
 import { seatsFor, type SeatAnchor } from '../world/seating'
 import { look, WALL_H } from '../renderer/shared'
+import { npcSeatTaken } from './npcIdle'
 
 type Point = { x: number; y: number; z: number }
 export interface SittingState {
@@ -60,6 +61,7 @@ export function pickSeat(eng: Engine, s: Structure): SeatAnchor | null {
   if (!eng.map || eng.seating || eng.climb || eng.ride || eng.porchDrop || eng.inLiquid === 1 || eng.introT > 0 || eng.dev.fly || Math.abs(eng.player.vz) > .2) return null
   const p = eng.player, m = eng.map
   const choices = seatsFor(s, m, eng.levelDef.id).filter(a => {
+    if(npcSeatTaken(eng,a.x,a.y))return false
     if(m.traders&&eng.npcs.some(n=>!n.dead&&m.traders!.duties.get(n.id)?.seatHeight&&Math.hypot(n.x-a.x,n.y-a.y)<.5))return false
     const dx = p.x - a.x, dy = p.y - a.y
     const ground = floorHeight(m, a.x, a.y, a.floor)
@@ -72,7 +74,7 @@ export function pickSeat(eng: Engine, s: Structure): SeatAnchor | null {
   return choices.find(a => clearPath(eng, s, p, { x: a.x, y: a.y, z: p.z }, a.floor)) ?? null
 }
 
-export function beginSitting(eng: Engine, s: Structure): boolean {
+export function beginSitting(eng: Engine, s: Structure, options: { instant?: boolean; silent?: boolean } = {}): boolean {
   const a = pickSeat(eng, s)
   if (!a || !eng.map) { eng.msg('座椅前方没有足够空间，请从正面或侧面靠近。', 'system'); return false }
   const p = eng.player, from = toWorld(eng.map, p), world = toWorld(eng.map, a)
@@ -80,7 +82,14 @@ export function beginSitting(eng: Engine, s: Structure): boolean {
   p.crouching = false; p.vz = 0
   eng.moveIt.acc = 0; eng.stepAcc = 0; eng.slipVx = 0; eng.slipVy = 0
   eng.searching = null
-  eng.msg(`坐在${a.label}上。移动、跳跃或再次交互可起身。`, 'system')
+  if (options.instant) {
+    // Authored openings start in the completed pose, using the same checked seat
+    // and safe stand-up path as interactive sitting.
+    p.x = a.x; p.y = a.y
+    Object.assign(eng.seating, { phase: 'seated', blend: 1, inputReleased: true, last: toWorld(eng.map, p) })
+    look.yaw = angle(a.yaw + Math.PI)
+  }
+  if (!options.silent) eng.msg(`坐在${a.label}上。移动、跳跃或再次交互可起身。`, 'system')
   return true
 }
 

@@ -1,4 +1,5 @@
 // 设置面板（标题/暂停共用）
+import { foyerCompleted } from '@/game/core/foyerFlag'
 import { useEffect, useState } from 'react'
 import { audio } from '@/game/core/audio'
 import type { Difficulty } from '@/game/engine'
@@ -60,6 +61,8 @@ export interface GameSettings {
   bgm: number // v54：音乐（每层 BGM）0-100
   bgmStyle: 'procedural' | 'midi' // v56：BGM 曲风——procedural=随机程序化 / midi=MIDI 音符序列（按 Wikidot 各层风格重制）
   newGameSeed: string // 下次新游戏使用的种子；空值表示随机
+  enableFoyer: boolean // 启用前厅：开启后新游戏总是从序章「前厅」开始（从未完成前厅时无论开关都会进入前厅）
+  showAllHud: boolean // 始终显示全部 HUD（忽略前厅的 HUD 逐步解锁）
   sfx: number // 音效（攻击/拾取/UI/实体叫声等全部单发）0-100
   muted: boolean
   leftHanded: boolean
@@ -88,6 +91,8 @@ export const defaultSettings: GameSettings = {
   volume: 80, ambient: 50, bgm: 100, sfx: 90, muted: false,
   bgmStyle: 'procedural',
   newGameSeed: '',
+  enableFoyer: false,
+  showAllHud: false,
   leftHanded: false, stickSize: 120, btnOpacity: 70, swimMode: 'view',
   sensitivity: 1.0, devMode: false,
   theme: 'amber',
@@ -296,6 +301,9 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                 ))}
               </div>
               <Toggle k="autoSprint" label="自动冲刺" value={settings.autoSprint as boolean} onSet={setBool} />
+              <Toggle k="enableFoyer" label="启用前厅（新游戏从序章开始）" value={settings.enableFoyer} onSet={setBool} />
+              <div className="-mt-1 pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>{foyerCompleted() ? '你已完成过前厅；关闭时新游戏直接进入 Level 0。' : '尚未完成前厅：新游戏会先进入前厅。'}</div>
+              <Toggle k="showAllHud" label="始终显示全部 HUD" value={settings.showAllHud} onSet={setBool} />
               <label className="block py-2 text-[14px]" style={{ color: 'var(--text)' }}>
                 <span className="mb-1 block">新游戏种子</span>
                 <div className="flex gap-2">

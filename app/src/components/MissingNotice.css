@@ -1,0 +1,53 @@
+.missing-notice {
+  width: min(540px, 100%); max-height: 90dvh; display: flex; flex-direction: column;
+  font-family: 'SimSun', 'Songti SC', serif; color: #302e28; outline: none;
+}
+.missing-notice__paper {
+  min-height: 0; display: flex; flex-direction: column; position: relative;
+  background: #e9e4d7;
+  background-image: linear-gradient(90deg, transparent 48.8%, #b9b19e30 49.7%, #fff8e755 50.3%, transparent 51%), radial-gradient(ellipse at 0 85%, #8c795526, transparent 44%), linear-gradient(135deg, #f5f0e7, #e4ddcd);
+  border: 1px solid #b5ae9d; box-shadow: 0 16px 65px #000a, inset 0 0 24px #917e5226;
+}
+.missing-notice__paper::before {
+  content: ''; position: absolute; z-index: 1; width: 94px; height: 22px; top: -11px; left: calc(50% - 47px);
+  background: #cfc19c9e; border: 1px solid #f6edcc40; transform: rotate(-4deg); pointer-events: none;
+}
+.missing-notice__content { padding: 24px 34px 18px; min-height: 0; overflow-y: auto; scrollbar-color: #9d927b transparent; }
+.missing-notice__edition { font-size: 10px; color: #807766; letter-spacing: 2px; text-align: right; }
+.missing-notice__header { text-align: center; padding: 10px 0 15px; border-bottom: 3px double #686052; margin-bottom: 22px; }
+.missing-notice__header h2 { font-size: clamp(34px, 5vw, 48px); line-height: 1.25; font-weight: 900; letter-spacing: .14em; padding-left: .14em; color: #352f29; margin: 0; }
+.missing-notice__header p { font: 700 13px/1.3 Arial, sans-serif; letter-spacing: .36em; margin: 7px 0 0; color: #8b3b31; }
+.missing-notice__identity { display: grid; grid-template-columns: 154px minmax(0, 1fr); gap: 22px; align-items: start; }
+.missing-notice__photo { margin: 0; padding: 5px; background: #e1dbcf; border: 1px solid #9f9889; transform: rotate(-1.2deg); }
+.missing-notice__photo svg { display: block; width: 100%; height: auto; }
+.missing-notice__photo figcaption { color: #827968; font-size: 10px; text-align: center; margin-top: 5px; letter-spacing: 1px; }
+.missing-notice__identity dl { margin: 0; font-size: 14px; line-height: 1.5; }
+.missing-notice__identity dl div { padding: 0 0 10px; display: grid; grid-template-columns: 66px 1fr; gap: 5px; }
+.missing-notice__identity dt { color: #7c7362; font-size: 12px; }
+.missing-notice__identity dd { margin: 0; font-weight: 700; }
+.missing-notice__appeal { border-top: 1px solid #8a806944; margin-top: 21px; padding-top: 17px; text-align: center; }
+.missing-notice__appeal strong { font-size: 20px; letter-spacing: 2px; }
+.missing-notice__appeal p { margin: 12px 0 0; font-size: 14px; line-height: 1.85; text-align: justify; }
+.missing-notice__phone { font: 700 30px/1.4 'Courier New', monospace; letter-spacing: 3px; margin: 8px 0 0; }
+.missing-notice__appeal > span { font-size: 12px; color: #77705f; }
+.missing-notice__pencil { color: #626a79; font: italic 16px/1.7 'KaiTi', 'STKaiti', serif; transform: rotate(-2deg); text-align: right; margin: 20px 4px 10px; }
+.missing-notice__observation { font-size: 11px; line-height: 1.7; color: #8f8674; margin: 0; }
+.missing-notice__tabs { display: flex; border-top: 1px dashed #958b77; flex: none; height: 66px; overflow: hidden; }
+.missing-notice__tabs span { flex: 1; text-align: center; padding: 9px 0 0; font-size: 9px; line-height: 1.8; border-right: 1px dashed #a69d89; color: #786e5b; }
+.missing-notice__tabs span:last-child { border: 0; clip-path: polygon(0 0, 100% 0, 100% 60%, 67% 66%, 77% 84%, 0 78%); background: #ded6c3; }
+.missing-notice__tabs b { font: 10px 'Courier New', monospace; }
+.missing-notice__footer { display: flex; flex: none; gap: 12px; align-items: center; justify-content: space-between; padding: 12px 0 0; font-size: 11px; color: #c7bdab; }
+.missing-notice__footer button { padding: 8px 16px; color: #e8deca; border: 1px solid #aca085; background: #211d17d9; cursor: pointer; }
+.missing-notice__footer button:hover { background: #393125; }
+.missing-notice__footer button:focus-visible { outline: 2px solid #eddda9; outline-offset: 3px; }
+@media (max-width: 520px) {
+  .missing-notice__content { padding: 21px 21px 16px; }
+  .missing-notice__identity { grid-template-columns: 108px minmax(0, 1fr); gap: 15px; }
+  .missing-notice__identity dl { font-size: 12px; }
+  .missing-notice__identity dl div { grid-template-columns: 54px 1fr; gap: 4px; padding-bottom: 8px; }
+  .missing-notice__identity dt { font-size: 10px; }
+  .missing-notice__appeal strong { font-size: 18px; }
+  .missing-notice__appeal p { font-size: 13px; }
+  .missing-notice__tabs { height: 54px; }
+  .missing-notice__tabs span:nth-child(n+6) { display: none; }
+}

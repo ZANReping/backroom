@@ -3,7 +3,7 @@ import { factionSignTexture, signStyleFor, highVoltageTexture, type SignStyle } 
 import {isAlphaKind} from '../content/alphaDecor'
 import {buildAlphaDecor} from './alphaMeshes'
 import {buildL0Furniture} from './l0Furniture'
-import {buildL4Structure} from './l4Meshes'
+import {buildL4ClosedWindow,buildL4Structure} from './l4Meshes'
 import { buildL5Structure, buildL5Registered } from './l5Meshes'
 import { isL5DecorKind } from '../content/l5Decor'
 import {l3Structure} from './l3Meshes'
@@ -13,9 +13,14 @@ import {buildTradeDecor} from './tradeMeshes'
 import { buildSettlementStation, buildSettlementBoard } from './settlementMeshes'
 // 结构/出口低模（按 StructKind 建造，含可动盖板/门铰链 userData 约定）
 import * as THREE from 'three'
+import { buildFerrenNestMesh, buildFerrenBowlMesh, buildFerrenCageMesh } from './ferrenMesh'
+import { FERREN_RENDER } from './ferrenRender' // [ferren] 阶段 3：雪貂笼的窝与食盆
 import { buildTarWriting } from './tarWriting'
 import { buildRatMesh, buildRatGearMesh } from './ratMesh'
 import { buildArmsVent } from './armsMesh'
+import { buildOrdinaryWindow } from './windowMesh'
+import { buildVendingMachine } from './vendingMesh'
+import { vendingSeedOfStruct } from '../content/vendingLayout'
 import {buildL4OldStairs} from './l4OldStairs'
 import { buildL1Column } from './l1Architecture'
 import { buildL1Prop } from './l1Props'
@@ -1208,7 +1213,16 @@ function partyPosterTexture(v: number): THREE.Texture | null {
   return t
 }
 
+/** Keep the few lifecycle window hosts out of static batches, so disappearance is atomic. */
+function windowHost(s:Structure,model:THREE.Object3D,level:number):THREE.Object3D {
+  if (!(level===2&&s.kind==='windowtrap'&&!s.data?.l4 || level===12&&s.kind==='libwindow' || level===4&&s.kind==='glasswin'&&s.data?.l4Facade)) return model
+  const root=new THREE.Group();root.position.copy(model.position);model.position.set(0,0,0);root.add(model)
+  root.userData.windowOpen=model;model.visible=!s.data?.windowGone
+  if(level===4){const wall=buildL4ClosedWindow(s);wall.visible=!!s.data?.windowGone;root.add(wall);root.userData.windowClosed=wall}
+  return root
+}
 export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: number): THREE.Object3D | null {
+  if (s.kind === 'foyerprop') return null // 前厅：模型由 renderer/foyerHome.ts 统一构建（结构仅作碰撞代理）
   if(_def.id===0){const furniture=buildL0Furniture(s);if(furniture)return furniture}
   if(isAlphaKind(s.kind))return m.settlement?.blueprint.id==='alpha'?null:buildAlphaDecor(s)
   if(isTradeKind(s.kind))return m.settlement?.blueprint.decorations&&s.kind!=='trade_anomaly'?null:buildTradeDecor(s)
@@ -1219,11 +1233,21 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
   if (s.kind.startsWith('l11')) return buildL11Structure(s)
   const grp = new THREE.Group()
   const cx = s.x + s.w / 2, cz = s.y + s.h / 2
+  // [ferren] 商人之家雪貂笼：窝（buildFerrenNestMesh，入口朝笼中心）与食盆
+  if (s.kind === 'ferrencage') { const g = buildFerrenCageMesh(s.data?.axis === 'y' ? s.h : s.w, Number(s.data?.height ?? 0.95), s.data?.axis === 'y'); g.position.set(cx, 0, cz); return g }
+  if (s.kind === 'ferrennest' || s.kind === 'ferrenbowl') {
+    const g = s.kind === 'ferrennest' ? buildFerrenNestMesh() : buildFerrenBowlMesh()
+    if (s.kind === 'ferrennest') g.scale.setScalar(FERREN_RENDER.NEST_SCALE) // 放大到装得下蜷睡的 Ferren（ferrenRender 的进窝抬升同步）
+    const d = s.data ?? {}
+    if (s.kind === 'ferrennest' && d.cage0 !== undefined) g.rotation.y = Math.atan2((Number(d.cage0) + Number(d.cage2)) / 2 - cx, (Number(d.cage1) + Number(d.cage3)) / 2 - cz)
+    g.position.set(cx, 0, cz)
+    return g
+  }
     if(isL5DecorKind(s.kind)){const model=buildL5Registered(s);model.position.x=cx;model.position.z=cz;return model}
   const H = wallH
   if(_def.id===10){const l10=buildL10Structure(s,{x:m.inf?.ox??0,y:m.inf?.oy??0});if(l10){l10.position.set(cx,0,cz);return l10}}
   if(_def.id===7&&s.kind.startsWith('l7')){const l7=buildL7Structure(s,m);if(l7){l7.position.x+=cx;l7.position.z+=cz;return l7}}
-  if(_def.id===4){const replacement=buildL4Structure(s);if(replacement){replacement.position.set(cx,0,cz);return replacement}}
+  if(_def.id===4){const replacement=buildL4Structure(s);if(replacement){replacement.position.set(cx,0,cz);return windowHost(s,replacement,4)}}
   if(_def.id===3){const replacement=l3Structure(s,H);if(replacement){replacement.position.set(cx,0,cz);return replacement}}
   const CH = hangingCeil(s, m, H) // v26：本瓦片天花板底面高度（悬挂物专用）
   if(_def.id===5){
@@ -1641,21 +1665,8 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'vending': {
-      grp.add(box(0.95, 2.0, 0.7, '#5a3a3a', 0, 1.0, 0))
-      grp.add(glow(0.7, 1.2, 0.04, '#ffe9b0', 0, 1.2, 0.36))
-      // v54：陈列窗分层货品（3 层板 × 5 件色块，透窗可见）+ 取货口 + 投币区
-      const goods = ['#c94a3a', '#d9b13b', '#6f9a55', '#3a5ad9', '#c9c4b8']
-      for (let sh = 0; sh < 3; sh++) {
-        const gy = 0.86 + sh * 0.36
-        grp.add(box(0.66, 0.02, 0.05, '#3a2a2a', 0, gy - 0.09, 0.38)) // 层板
-        for (let i = 0; i < 5; i++)
-          grp.add(box(0.09, 0.13, 0.04, goods[(sh * 2 + i) % goods.length], -0.26 + i * 0.13, gy, 0.385)) // 货品
-      }
-      grp.add(box(0.56, 0.28, 0.05, '#2a1e1e', 0, 0.32, 0.36)) // 取货口（凹槽）
-      grp.add(box(0.5, 0.2, 0.02, '#1c1515', 0, 0.3, 0.385)) // 取货口翻板
-      grp.add(box(0.14, 0.44, 0.04, '#3a2a2a', 0.39, 1.2, 0.36)) // 投币区面板
-      grp.add(box(0.03, 0.08, 0.02, '#c9c4b8', 0.39, 1.32, 0.385)) // 投币口
-      grp.add(glow(0.05, 0.05, 0.02, '#e8b93c', 0.39, 1.12, 0.385)) // 退币钮
+      // [vending] 重制：日式饮料售货机（发光灯箱 + 两层 4 格陈列窗 + 灯条 + 取货口 + 操作区），虚构品牌按坐标确定
+      grp.add(buildVendingMachine({ variant: 'normal', seed: vendingSeedOfStruct(s, m.inf?.ox, m.inf?.oy), jammed: !!s.data?.jammed && s.data?.jamSlot === undefined }))
       // v46：data.deg 指定朝向（EL3A 休息室售货机面朝公共区，不再背朝外）；
       // v54 缺省朝向与柜类 v48 约定一致：背贴最近墙、正面（+Z 灯板）朝房间内部（faceOutward+flushToWall 贴墙位移）
       if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
@@ -2112,10 +2123,22 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       if (s.data?.l0Door) {for(const child of grp.children)child.position.z-=.44;grp.scale.x *= Math.max(s.w,s.h) / 1.06;grp.scale.y *= 2.13 / 2.27}
       break
     }
-    case 'windowblack': case 'windowtrap': case 'hotelwindow': {
+    case 'libwindow': case 'windowblack': case 'windowtrap': case 'hotelwindow': {
       // 窗户（贴墙）：L4 涂黑=安全 / L4 未涂黑=陷阱（隐约的脸）/ L5 酒店窗
-      const d = wallDir(s, m)
+      // [window] L2 走廊尽头的普通钢格窗 / L601 图书馆木窗：与 Entity 2 同一套窗框（windowMesh.buildOrdinaryWindow），
+      //          被占据时实体模型叠在前面；摆位与 windowAI.windowMount 一致
+      const d = s.kind === 'libwindow' ? (typeof s.data?.winDir === 'number' ? Number(s.data.winDir) : wallDir(s, m)) : wallDir(s, m)
       if (d === null) return null
+      if (s.kind === 'libwindow' || (s.kind === 'windowtrap' && !s.data?.l4)) {
+        const ow = buildOrdinaryWindow(s.kind === 'libwindow' ? 'l601' : 'l2', (s.x * 31 + s.y * 17) & 255)
+        const o = 0.5 - 0.04
+        if (d === 0) ow.position.set(0, 0, -o)
+        else if (d === 2) { ow.position.set(0, 0, o); ow.rotation.y = Math.PI }
+        else if (d === 3) { ow.position.set(-o, 0, 0); ow.rotation.y = Math.PI / 2 }
+        else { ow.position.set(o, 0, 0); ow.rotation.y = -Math.PI / 2 }
+        grp.add(ow)
+        break
+      }
       const wgrp = new THREE.Group()
       const frame = s.kind === 'hotelwindow' ? '#8a6d2e' : '#3a352e'
       wgrp.add(box(0.9, 1.3, 0.06, frame, 0, 0, 0))
@@ -6363,7 +6386,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
   }
   grp.position.set(cx, 0, cz)
   if(_def.id===2)alignL2WallProp(grp,s)
-  return grp
+  return windowHost(s,grp,_def.id)
 }
 
 // ---------- 出口低模 ----------

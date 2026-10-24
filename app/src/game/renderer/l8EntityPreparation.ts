@@ -11,7 +11,8 @@ import { buildLightguideEntityMesh } from './lightguideRender'
 import { buildTinyJob } from './tinyMesh'
 import { buildThingJob } from './thingMesh'
 import { disposeL8Tree } from './l8ModelResources'
-const types=new Set(['arachnid','camocrawler','curabitur','lightguide','tiny','thething'])
+import { buildVendingEntityJob } from './entitiesMesh'
+const types=new Set(['arachnid','camocrawler','curabitur','lightguide','tiny','thething','vendingmachine','vmad'])
 export const isL8Remade=(type:string)=>types.has(type)
 let sharedReady=false
 function* shared():Generator<void,void>{
@@ -20,6 +21,7 @@ function* shared():Generator<void,void>{
  sharedReady=true
 }
 function* model(type:string,o:EntityMeshOpts):Generator<void,THREE.Group,unknown>{
+ if(type==='vendingmachine'||type==='vmad')return yield* buildVendingEntityJob(type,o)
  if(type==='tiny')return yield* buildTinyJob()
  if(type==='thething')return yield* buildThingJob()
  if(type==='arachnid')return yield* buildArachnidEntityJob(o)
@@ -42,7 +44,7 @@ export class L8EntityPreparation{
   for(const[e,j]of this.jobs)if(!live.has(e)){if(j.ready)disposeL8Tree(j.ready);else j.iter.return(undefined as never);this.jobs.delete(e)}
   if(!this.jobs.size)return
   const end=performance.now()+budgetMs
-  if(!sharedReady&&[...this.jobs.keys()].some(e=>e.def.type!=='tiny'&&e.def.type!=='thething')){this.shared??=shared();for(let n=0;n<12&&performance.now()<end;n++)if(this.shared.next().done){this.shared=null;break}if(!sharedReady)return}
+  if(!sharedReady&&[...this.jobs.keys()].some(e=>['arachnid','camocrawler','curabitur','lightguide'].includes(e.def.type))){this.shared??=shared();for(let n=0;n<12&&performance.now()<end;n++)if(this.shared.next().done){this.shared=null;break}if(!sharedReady)return}
   for(let n=0;n<16&&performance.now()<end;n++){
    const next=[...this.jobs].find(([,j])=>!j.ready);if(!next)break
    const[e,j]=next;this.jobs.delete(e);this.jobs.set(e,j)

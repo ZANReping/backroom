@@ -1,5 +1,5 @@
 import type {GameMap} from '../world/mapgen'
-import {TRADERS_WALLS,TRADERS_DOORS,TRADERS_ROOMS,TRADERS_VAULT_CELLS,TRADERS_BOUNDS,tradersContains,tradersIntersects} from '../content/tradersLayout'
+import {TRADERS_PASSAGES,TRADERS_WALLS,TRADERS_DOORS,TRADERS_ROOMS,TRADERS_VAULT_CELLS,TRADERS_BOUNDS,tradersContains,tradersIntersects} from '../content/tradersLayout'
 interface Block{x:number;y:number;w:number;h:number;door?:string}
 const grid=new Map<string,Block[]>(),blocks:Block[]=[...TRADERS_WALLS.filter(w=>w.bottom<1.65&&w.bottom+w.height>1.65),...TRADERS_DOORS.map(d=>({...d,door:d.id}))]
 for(const b of blocks)for(let y=Math.floor(b.y/8);y<=Math.floor((b.y+b.h)/8);y++)for(let x=Math.floor(b.x/8);x<=Math.floor((b.x+b.w)/8);x++){const key=x+','+y,a=grid.get(key)??[];a.push(b);grid.set(key,a)}
@@ -25,6 +25,10 @@ export function tradersVisibleChunks(m:GameMap,x:number,y:number,reach=94):Reado
   const horizontal=r.side==='n'||r.side==='s',px=r.side==='w'?r.x:r.side==='e'?r.x+r.w:r.x+r.w/2,py=r.side==='n'?r.y:r.side==='s'?r.y+r.h:r.y+r.h/2
   if(Math.hypot(px-x,py-y)>reach+2)continue
   for(const off of [-r.doorWidth/2+.02,0,r.doorWidth/2-.02])angles.push(Math.atan2(py-y+(horizontal?0:off),px-x+(horizontal?off:0)))
+ }
+ for(const p of TRADERS_PASSAGES){
+  if(Math.hypot(p.x-x,p.y-y)>reach+2)continue
+  for(const off of [-p.width/2+.02,0,p.width/2-.02])angles.push(Math.atan2(p.y-y+(p.axis==='y'?off:0),p.x-x+(p.axis==='x'?off:0)))
  }
  for(const a of angles){
   const dx=Math.cos(a),dy=Math.sin(a),sx=dx>=0?1:-1,sy=dy>=0?1:-1,tx=Math.abs(dx)<1e-9?Infinity:8/Math.abs(dx),ty=Math.abs(dy)<1e-9?Infinity:8/Math.abs(dy)

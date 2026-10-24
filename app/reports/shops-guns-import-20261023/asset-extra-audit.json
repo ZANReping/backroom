@@ -1,0 +1,27 @@
+{
+  "source": "app/.cache/shops-guns-import-20261023/overlay/app/public/textures",
+  "generatedAt": "2026-10-23",
+  "scope": "All imported image resources outside traders/shops",
+  "fileCount": 22,
+  "totalBytes": 3770925,
+  "validFiles": 22,
+  "invalidFiles": 0,
+  "targetFilesPresent": 22,
+  "byteMismatches": [],
+  "intentionalUpdatedFiles": ["app/public/textures/traders/signs_atlas.jpg"],
+  "groups": {
+    "pixelIcons": {"count": 17, "format": "PNG", "mode": "RGBA", "size": "128x128", "allValid": true},
+    "marketItemAtlases": {
+      "count": 3,
+      "files": ["color.png", "normal.png", "roughness.png"],
+      "details": ["1024x1024 RGB", "512x512 RGB", "512x512 L"],
+      "allValid": true
+    },
+    "goodsAtlas": {"count": 1, "file": "goods_atlas.jpg", "format": "JPEG", "mode": "RGB", "size": "1024x2048", "allValid": true},
+    "signsAtlas": {"count": 1, "file": "signs_atlas.jpg", "format": "JPEG", "mode": "RGB", "size": "2048x4096", "allValid": true, "targetByteEqual": true, "note": "Inventory marks this as existing-different; the imported target is intentionally the updated atlas."}
+  },
+  "firearms": {
+    "offlineImageResources": 0,
+    "note": "firearmMesh.ts creates and caches canvas textures at runtime; firearm models/materials do not require additional offline gun texture files. Gun and shell pixel icons are included in pixelIcons."
+  }
+}

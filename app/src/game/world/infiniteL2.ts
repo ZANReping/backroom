@@ -272,7 +272,7 @@ export function genL2ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
   const items: GroundItem[] = []
   const lights: LightSource[] = []
   const exits: ExitInstance[] = []
-  const entities: { type: string; x: number; y: number; calm?: boolean; scale?: number }[] = []
+  const entities: { type: string; x: number; y: number; calm?: boolean; scale?: number; fcAge?: import('../entities/facelingTraits').FacelingAge }[] = []
   const npcs: { def: NpcDef; x: number; y: number; facing?: number }[] = [] // v45：信众宣传间驻防 NPC
   const li = (x: number, y: number) => y * CS + x
   const isF = (x: number, y: number) => x >= 0 && y >= 0 && x < CS && y < CS && tiles[li(x, y)] === 1
@@ -566,7 +566,11 @@ export function genL2ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
               if (frng.chance(0.7)) pushLight(x0 + 1, y0 + 1, 2.8, '#ffe9b0')
             } else if (frng.chance(0.65)) pushLight(rcx, rcy, variant === 'dim' ? 2.2 : 3.5, variant === 'dirty' ? '#ffb35c' : variant === 'dim' ? '#a8946a' : '#e8e4da')
             // 无面灵：只生成于卧室类房间内（锚点=房间中心，由归属 chunk 推送防重复；v45 信众宣传间无无面灵）
-            if (bedroom && !jerryRoom && frng.chance(0.4) && inChunk(rcx, rcy)) entities.push({ type: 'faceling', x: rcx + 0.5, y: rcy + 0.5 })
+            // v90（Entity 9 重制）：L2 的无面灵相对罕见——卧室 22%（原 40%）；其中约三成是一大一小的「亲子房」
+            if (bedroom && !jerryRoom && frng.chance(0.22) && inChunk(rcx, rcy)) {
+              entities.push({ type: 'faceling', x: rcx + 0.5, y: rcy + 0.5, fcAge: 'adult' })
+              if (frng.chance(0.3)) entities.push({ type: 'faceling', x: Math.min(x1, rcx + 1) + 0.5, y: rcy + 0.5, fcAge: 'child' })
+            }
             // v45：信众宣传间内容——满墙信众宣传海报（megposter data.tex=jerry_poster.png 贴一圈）+ 1 名信众 NPC
             if (jerryRoom) {
               // 海报：内腔边缘瓦片（外侧即墙，渲染层 mountOnWall 强制贴最近墙），避开实心家具与门内一格
@@ -986,7 +990,7 @@ export function genL2ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
       const p = pickFloor(false)
       if (p) {
         pushStruct('pipes', p.x, p.y, 1, 1, false, false, { rust: machineDead })
-        entities.push({ type: 'pipeworm', x: p.x + 0.5, y: p.y + 0.5 })
+        // 管道蠕虫已停用自然生成；保留 RNG、落点与 pipes 装饰以维持地图确定性。\n        void p
       }
     }
   }
@@ -1075,3 +1079,4 @@ registerInfiniteLevel(2, {
   variantNames: L2_VARIANT_NAMES,
   variantLore: L2_VARIANT_LORE,
 })
+

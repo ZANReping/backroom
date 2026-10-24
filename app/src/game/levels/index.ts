@@ -33,6 +33,8 @@ import { LEMPTYNEST } from './l113'
 import { LHAMMOZ } from './l114'
 import { LCORNUCOPIA } from './l116'
 
+import { LFOYER } from './lfoyer'
+
 export const LEVELS: LevelDef[] = [L0, L1, L2, L3, L4, L5, L6, L7, L8, L9, L10, L11, L601]
 
 /** 据点层级定义（独立 id 空间 100+，不占 LEVELS 下标；v45：Level 274 亦走此空间） */
@@ -42,7 +44,11 @@ export const OUTPOST_LEVEL_DEFS: Record<number, LevelDef> = { [LALPHA.id]: LALPH
 export const ALL_LEVEL_DEFS: LevelDef[] = [...LEVELS, ...Object.values(OUTPOST_LEVEL_DEFS)]
 
 /** 按 id 解析层级定义（普通层级走 LEVELS 下标；据点走独立 id 空间） */
+/** 序章「前厅」（id 900）：只经 levelDefOf 解析，不进入 ALL_LEVEL_DEFS（图鉴/路线审计不列出）。 */
+export const FOYER_LEVEL_DEF: LevelDef = LFOYER
+
 export function levelDefOf(id: number): LevelDef | undefined {
+  if (id === LFOYER.id) return LFOYER
   return OUTPOST_LEVEL_DEFS[id] ?? LEVELS[id]
 }
 

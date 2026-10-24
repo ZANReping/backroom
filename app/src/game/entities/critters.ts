@@ -110,7 +110,7 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: true,
   },
   pipeworm: {
-    type: 'pipeworm', name: '管道蠕虫', hp: 45, speed: 2.8, damage: 20, sight: 5, hearing: 8, ambusher: true, color: '#7a4a2e', habitat: 'any',
+    type: 'pipeworm', name: '管道蠕虫', naturalSpawn: false, hp: 45, speed: 2.8, damage: 20, sight: 5, hearing: 8, ambusher: true, color: '#7a4a2e', habitat: 'any',
     desc: '从管道里破墙而出的蠕虫。压力表剧烈抖动时，快跑。',
     codex: {
       no: '未编号「Pipeworm」', danger: '4 级（高威胁）', habitat: 'Level 2 废弃公共带',
@@ -145,19 +145,21 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: false,
   },
   ferren: {
+    // [ferren] 阶段 3：行为由 ferrenAI 驱动（作息状态机 / X 交互 / 站内切行）；hp/speed/noRetaliate 保持原值，speed 只作通用字段，实际速度见 ferrenAI.FR
     type: 'ferren', name: 'Ferren', hp: 12, speed: 2.2, damage: 0, sight: 4, hearing: 3,
     passive: true, noRetaliate: true, color: '#d8cbb0', habitat: 'any',
-    desc: '一只雪貂大小的「切行」吉祥物——无害，像宠物一样到处漫游。',
+    desc: 'B.N.T.G. 养的一只久经训练的暹罗雪貂——商人之家的吉祥物，能凭自己的意愿「切行」。',
     codex: {
-      no: 'Entity 92「Ferren」', danger: '0 级（无害）', habitat: '商人之家（Level 1 跃金地段）的雪貂笼',
-      behavior: '无危害，不会攻击玩家，仅会像宠物一样漫游；偶尔「切行」消失又在别处出现。',
-      counter: '请勿伤害——商人之家视它为吉祥物。攻击它会让 B.N.T.G. 恼火，杀死它的后果更严重。',
+      no: 'Entity 92「Ferren」', danger: '0 级（无害）', habitat: 'Level 1 商人之家（B.N.T.G. 前哨站）的小雪貂笼——笼里有他的窝和食盆',
+      behavior: '顽皮好动，以绝对忠诚著称，从不攻击任何人。他按 B.N.T.G. 定的早晚作息表过日子：唤醒、早/午/晚餐、晨练与下午锻炼、娱乐、训练、午睡、散步、上床、睡觉，一天一轮（游戏里约 20 分钟）。娱乐时他在笼里战舞、打滚、跟着人蹭，这时可以摸他、逗他玩；训练时他站立张望、嗅探、伸展，还会练习切行到房间另一侧；夜里他蜷在窝里睡觉。他能在前哨站内部切行到别处——切行那一刻和他有身体接触的人会被一起带走，落在他身边。',
+      counter: '在允许的情况下（娱乐、散步时）和 Ferren 玩耍；睡着时可以替看护人给他盖好被子。不要在他训练时打扰他——B.N.T.G. 明确不希望流浪者这么做；别让他弄乱你的东西，也别打听他的训练模式。攻击他会让 B.N.T.G. 恼火，杀死他的后果严重得多。',
       lore: [
-        '「切行」吉祥物 Ferren 是商人之家的非正式成员。它常年在货架与保险库之间漫游，没人知道它什么时候来的，也没人见过它进食。',
-        'B.N.T.G. 为它修了雪貂笼，但更多时候它待在人的脚边。警备队长布洛克·奎坚称它不咬人——「至少没咬过我」。',
-        '部分流浪者相信摸一摸 Ferren 的脑袋能带来好运。商人之家对此不予置评，但伤害 Ferren 的人会被请出市场。',
+        'Entity 92「Ferren」被描述为 B.N.T.G. 所有的一只小巧可爱、久经训练的暹罗雪貂，能凭其意愿在层级间任意切行；传言他也能在层级内部切行到特定区域。他的主要住所是 Level 1 商人之家的小雪貂笼，B.N.T.G. 在其他贸易前哨站也备有类似的笼子。',
+        'B.N.T.G. 声称他被用来前往通常手段无法或难以抵达的场所取得资源，比如 Level 7 里的骨头。为了让他的精力保持最佳，B.N.T.G. 给他排了一份作息表：7:00 唤醒，早餐，7:30 放出来晨练，8:00 娱乐，10:00 训练，11:30 午餐，12:00 午睡，13:00 唤醒，下午锻炼，娱乐，15:30 训练，16:30 散步，17:00 晚餐，18:30 再玩半小时释放精力，19:00 上床，21:00 到次日 7:00 睡觉。',
+        '他的发现经过从未公开。B.N.T.G. 职员 Samuel L. 在接受 M.E.G. 采访时说，最初是某位高层把他当宠物养着；Samuel 第一次见到他，是他从 Level 8 带资源回来。Samuel 还提醒：Ferren 最近有一点……淘气，和他接触时要小心些。',
+        '一份「不得公开」的看护人训练指导写道：每天至少两轮，先做基本指令（拿点水来、切入一个 B.N.T.G. 基地再回来、让看护人切行到房间另一侧），休息后去指定层级取资源，最后做伸展运动以适应狭窄环境。指导末尾另附一句：夜间 Ferren 需要人帮他安分睡觉——把他放回笼子、盖好被子、读睡前故事。',
       ],
-      sighting: '「它就卧在我的柜台下面。别踩到它，很贵。」——玛戈·坦恩，杂货摊主',
+      sighting: '「别在他训练的时候逗他。上回有个流浪者非要摸，Ferren 一缩就没了——连人带貂出现在大厅那头，那家伙吓得半天说不出话。」——商人之家的 B.N.T.G. 看护人',
     },
     aggroStinger: false,
   },
@@ -182,3 +184,4 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: false,
   },
 }
+

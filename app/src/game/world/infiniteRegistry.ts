@@ -45,6 +45,7 @@ export interface GenChunk {
     herbivore?: 1
     arachnidVariant?: import('../engine/arachnidStats').ArachnidKind; arachnidNest?: string; arachnidMother?: 1 // [L8-arachnid]
     mothNest?: string
+    fcAge?: import('../entities/facelingTraits').FacelingAge // v90：无面灵年龄档（L2 亲子房的幼体）
     mothForm?: import('../entities/types').MothForm
   }[] // v60：L8 增加洞顶尸鼠与蛛形纲实例生态变体
   // v39：chunk 生成 NPC（BRC 员工随衔尾段 chunk 生成；定义完整内嵌，按 chunk 确定性生成）

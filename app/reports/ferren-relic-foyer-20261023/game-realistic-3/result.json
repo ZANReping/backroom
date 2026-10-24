@@ -1,0 +1,852 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 1591,
+  "cdp": 1592,
+  "errors": [
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version."
+        },
+        {
+          "type": "string",
+          "value": "1"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792763531308.785,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 4924,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "warnOnInvalidKey",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 4923,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 4984,
+            "columnNumber": 53
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 8700,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version."
+        },
+        {
+          "type": "string",
+          "value": "1"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792763531344.547,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 4924,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "warnOnInvalidKey",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 4923,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 4984,
+            "columnNumber": 53
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 8700,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version."
+        },
+        {
+          "type": "string",
+          "value": "1"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792763531448.715,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 4924,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "warnOnInvalidKey",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 4923,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 4984,
+            "columnNumber": 53
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 8700,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "144",
+            "url": "http://127.0.0.1:1591/reports/ferren-relic-foyer-20261023/game-realistic-3/qa-1792763467463-23476/vite-cache/deps/react-dom_client.js?v=114af38c",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    }
+  ],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:1591/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Fri, 23 Oct 2026 13:51:21 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 271,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 1591,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 17758.933754,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.44,
+        "sendEnd": 0.463,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 10.265,
+        "receiveHeadersEnd": 10.396
+      },
+      "responseTime": 1792763481176.609,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    },
+    {
+      "url": "http://127.0.0.1:1591/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Fri, 23 Oct 2026 13:51:34 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 263,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 1591,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 17772.54017,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.71,
+        "sendEnd": 0.799,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 12.396,
+        "receiveHeadersEnd": 12.695
+      },
+      "responseTime": 1792763494785.156,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\ferren-relic-foyer-20261023\\game-realistic-3\\qa-1792763467463-23476",
+    "--remote-debugging-port=1592",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 47000,
+    "server": 74676
+  },
+  "appBootMs": 11777.2217,
+  "entryMs": 5493.324400000001,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 900,
+    "paused": false,
+    "pos": [
+      5.25,
+      5.75,
+      0
+    ],
+    "prologue": {
+      "step": "act0",
+      "flags": {
+        "flash_drawer": true
+      }
+    },
+    "unlock": {},
+    "phone": {
+      "battery": 39.787610000000164,
+      "torch": false,
+      "docked": true,
+      "notes": [],
+      "photos": 0,
+      "nextId": 1
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 744,
+      "textures": 201
+    },
+    "geometries": 744
+  },
+  "aim-computer": {
+    "id": "computer",
+    "pos": [
+      5.1,
+      5.75
+    ],
+    "crouch": false,
+    "target": "使用 电脑"
+  },
+  "aim-phone_dock": {
+    "id": "phone_dock",
+    "pos": [
+      5.4,
+      6.27
+    ],
+    "crouch": false,
+    "target": "拿起 手机"
+  },
+  "phoneUnpaused": true,
+  "aim-wardrobe": {
+    "id": "wardrobe",
+    "pos": [
+      4.99,
+      7.790000000000001
+    ],
+    "crouch": false,
+    "target": "打开 衣柜"
+  },
+  "aim-pick_backpack": {
+    "id": "pick_backpack",
+    "pos": [
+      4.72,
+      7.41
+    ],
+    "crouch": false,
+    "target": "拿起 背包"
+  },
+  "aim-nightstand": {
+    "id": "nightstand",
+    "pos": [
+      6.804719082489673,
+      5.055297602634593
+    ],
+    "crouch": false,
+    "target": "打开 床头柜抽屉"
+  },
+  "aim-pick_flashlight": {
+    "id": "pick_flashlight",
+    "pos": [
+      6.784719082489674,
+      5.3752976026345936
+    ],
+    "crouch": false,
+    "target": "拿起 手电筒"
+  },
+  "aim-fridge": {
+    "id": "fridge",
+    "pos": [
+      16.59,
+      5.239999999999999
+    ],
+    "crouch": false,
+    "target": "打开 冰箱"
+  },
+  "aim-pick_water": {
+    "id": "pick_water",
+    "pos": [
+      16.42,
+      5.6499999999999995
+    ],
+    "crouch": false,
+    "target": "拿 瓶装水"
+  },
+  "aim-pick_snack": {
+    "id": "pick_snack",
+    "pos": [
+      16.394719082489672,
+      5.5852976026345935
+    ],
+    "crouch": false,
+    "target": "拿 能量棒"
+  },
+  "supplies": {
+    "level": 900,
+    "paused": false,
+    "pos": [
+      16.394719082489672,
+      5.5852976026345935,
+      0
+    ],
+    "prologue": {
+      "step": "act1",
+      "flags": {
+        "flash_drawer": true,
+        "read_news": true,
+        "last_forum": false,
+        "got_phone": true,
+        "ev:phone_open": true,
+        "ev:look": true,
+        "tut:look": true,
+        "tut:news": true,
+        "got_backpack": true,
+        "got_flashlight": true,
+        "got_water": true,
+        "got_snack": true
+      },
+      "open": {
+        "wardrobe": 1,
+        "nightstand": 1,
+        "fridge": 1
+      }
+    },
+    "unlock": {
+      "clock": true,
+      "quest": true,
+      "log": true,
+      "minimap": true,
+      "battery": true,
+      "hotbar": true,
+      "inventory": true
+    },
+    "phone": {
+      "battery": 40.63535920000049,
+      "torch": false,
+      "docked": false,
+      "notes": [
+        {
+          "id": 2,
+          "kind": "note",
+          "title": "待办",
+          "text": "明早 9:00 交报告。牛奶没了。",
+          "time": "23:40"
+        },
+        {
+          "id": 1,
+          "kind": "note",
+          "title": "论坛帖 · 巷子",
+          "text": "本地论坛「边界」：有人说附近一条巷子能「卡进」后室。出来的人说，要集齐六张磁带，送进 Level 11 的档案馆。——多半是编的。",
+          "time": "23:40"
+        }
+      ],
+      "photos": 0,
+      "nextId": 3
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 781,
+      "textures": 204
+    },
+    "geometries": 781
+  },
+  "aim-st_down": {
+    "id": "st_down",
+    "pos": [
+      7.348959235991435,
+      17.501040764008565
+    ],
+    "crouch": false,
+    "target": "推开 安全通道门（下楼）"
+  },
+  "break": {
+    "stats": {
+      "mode": "3d",
+      "shards": 480,
+      "maze": 5503,
+      "frames": 158,
+      "avgMs": 0.69,
+      "maxMs": 77.7
+    },
+    "stage": "crack"
+  },
+  "ok": false,
+  "failure": "Error: Runtime/module error at L0 landing",
+  "partial": {
+    "level": 0,
+    "paused": true,
+    "pos": [
+      79.5,
+      79.5,
+      0
+    ],
+    "prologue": {
+      "step": "done",
+      "flags": {
+        "flash_drawer": true,
+        "read_news": true,
+        "last_forum": false,
+        "got_phone": true,
+        "ev:phone_open": true,
+        "ev:look": true,
+        "tut:look": true,
+        "tut:news": true,
+        "got_backpack": true,
+        "got_flashlight": true,
+        "got_water": true,
+        "got_snack": true,
+        "went_down": true,
+        "tut:forum": true,
+        "tut:phone": true,
+        "tut:phone_open": true,
+        "tut:backpack": true,
+        "tut:flashlight": true,
+        "tut:light": true,
+        "tut:fridge": true,
+        "tut:leave": true,
+        "tut:corridor": true,
+        "tut:stairs": true,
+        "outside": true,
+        "said_outside": true,
+        "on_street": true,
+        "tut:downstairs": true,
+        "tut:navigate": true,
+        "clue_graffiti": true,
+        "clue_boxes": true,
+        "clue_cctv": true,
+        "said_alley": true,
+        "reached_alley": true,
+        "tut:mart": true,
+        "tut:sprint": true,
+        "tut:poster": true,
+        "tut:alley": true,
+        "tut:inspect1": true,
+        "ev:phone_camera": true,
+        "photo_clue_graffiti": true,
+        "photo_any": true,
+        "ev:phone_photo": true,
+        "tut:photo": true,
+        "tut:inspect_all": true,
+        "act4": true,
+        "forum_reply": true,
+        "tut:wait_reply": true,
+        "dup1": true,
+        "said_dup1": true,
+        "loop1": true,
+        "loop2": true,
+        "said_home_dark": true,
+        "fell": true,
+        "landing": true
+      }
+    },
+    "unlock": {},
+    "phone": {
+      "battery": 39.69000920000219,
+      "torch": false,
+      "docked": false,
+      "notes": [
+        {
+          "id": 7,
+          "kind": "note",
+          "title": "论坛 · 新回帖",
+          "text": "边界线论坛 214L 匿名用户：「又一个去巷子里拍墙的 😂 拍到门了吗？没拍到就早点回家睡觉吧，明天还上班呢。」\n215L noclip_0：「回家的路上别回头。」",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 6,
+          "kind": "photo",
+          "title": "照片 #1",
+          "text": "旧仓路后巷，23:40。\n拍到：墙上的涂鸦。巷子西墙：黄色喷漆画的门 +「NOCLIP HERE →」。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 5,
+          "kind": "note",
+          "title": "调查 · 旧监控摄像头",
+          "text": "巷底的旧监控：镜头被黄色胶带缠死，指示灯还亮着。它到底在录什么？",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 4,
+          "kind": "note",
+          "title": "调查 · 一堆湿纸箱",
+          "text": "纸箱堆：空罐子、旧毯子，没有人。纸板被泡软了，闻起来像受潮的旧地毯。不知道为什么，让人想到荧光灯的嗡嗡声。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 3,
+          "kind": "note",
+          "title": "调查 · 墙上的涂鸦",
+          "text": "巷子西墙：黄色喷漆画的门 +「NOCLIP HERE →」。箭头指着墙角，敲了敲，实心砖。旁边有七道划痕，像在计数。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 2,
+          "kind": "note",
+          "title": "待办",
+          "text": "明早 9:00 交报告。牛奶没了。",
+          "time": "23:40"
+        },
+        {
+          "id": 1,
+          "kind": "note",
+          "title": "论坛帖 · 巷子",
+          "text": "本地论坛「边界」：有人说附近一条巷子能「卡进」后室。出来的人说，要集齐六张磁带，送进 Level 11 的档案馆。——多半是编的。",
+          "time": "23:40"
+        }
+      ],
+      "photos": 1,
+      "nextId": 8,
+      "cracked": true,
+      "noSignal": true
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 79,
+      "textures": 43
+    },
+    "geometries": 79
+  },
+  "bootstrap": {
+    "text": "LEVEL 0\n教学关卡\nB0\n磁带\n0/6\n开发者模式\n🛠 开发者模式 · DEV\n▴\n—— 你穿过了地面 ——\nLevel 0 · 教学关卡\n嗡————————\n正在准备附近场景…"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

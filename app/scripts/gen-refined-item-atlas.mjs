@@ -572,9 +572,134 @@ const paper = [
   }, normal: .6 },
 ]
 
-const atlases = { tools, gear, food, paper }
+// ---------- relic：2026-10-23 补齐的 9 件异常遗物（此前为方块/球体拼接或无贴图） ----------
+// 分区：0 胼胝 1 胼胝切面/酸液 2 细灰 3 灰中残物 4 蓝羽传单 5 日志残页 6 腺膜 7 腺核/导管
+//       8 便当盒 9 受眷胶标签 10 玻璃 11 受眷胶 12 驱蛾剂液 13 软木/驱蛾标签 14 孢子 15 旋盖
+const relic = [
+  { name: 'callus', paint: a => {
+    // 厚角质：黄褐底 + 龟裂纹（凹）+ 渗酸小孔（亮黄、光滑）
+    a.px((x, y) => {
+      const n = fbm(x * .035, y * .035, 11), c = fbm(x * .12, y * .12, 12)
+      const crack = Math.abs(fbm(x * .05, y * .05, 13) - .5) < .025 || Math.abs(fbm(x * .07 + 9, y * .07, 14) - .5) < .018
+      const pit = fbm(x * .3, y * .3, 15) > .74
+      if (pit) return [[214 + n * 30, 206 + n * 20, 70], 96, 40]
+      if (crack) return [[72, 60, 34], 70, 230]
+      return [[118 + n * 50 + c * 16, 92 + n * 40, 42 + n * 20], 128 + (n - .5) * 60 + (c - .5) * 24, 200 - n * 40]
+    })
+  }, normal: 1.5 },
+  { name: 'callusCut', paint: a => {
+    // 上半：酸液（发亮黄绿、气泡）；下半：切面层状纤维
+    a.px((x, y) => { const n = fbm(x * .05, y * .05, 21), b = fbm(x * .4, y * .4, 22) > .8 ? 30 : 0; return [[200 + n * 40 + b, 222 + n * 30 + b, 64 + b], 128 + b, 18] }, 0, 0, W, 120)
+    a.px((x, y) => { const l = Math.sin(y * .5 + fbm(x * .03, y * .03, 23) * 9), n = fbm(x * .1, y * .1, 24); return [[176 + l * 16 + n * 20, 150 + l * 14, 88 + l * 8], 128 + l * 22, 170] }, 0, 120, W, W)
+  }, normal: 1.2 },
+  { name: 'ash', paint: a => {
+    a.px((x, y) => {
+      const n = fbm(x * .03, y * .03, 31), f = hash(x, y, 32), fl = fbm(x * .25, y * .25, 33)
+      const g = 78 + n * 44 + (f - .5) * 24
+      if (fl > .78) return [[44, 42, 40], 110, 250]            // 炭屑
+      if (fl < .14) return [[180, 176, 166], 140, 250]         // 骨白碎末
+      return [[g, g - 4, g - 9], 128 + (n - .5) * 40 + (f - .5) * 10, 250]
+    })
+  }, normal: .9 },
+  { name: 'ashBits', paint: a => {
+    // q00 炭块（v 上半左）q10 焦布 q01 骨片 q11 铜纽扣
+    a.px((x, y) => { const n = fbm(x * .08, y * .08, 41), cr = Math.abs(fbm(x * .06, y * .06, 42) - .5) < .03; return [[cr ? 70 : 30 + n * 26, cr ? 40 : 28 + n * 20, cr ? 26 : 26 + n * 14], 128 + (n - .5) * 50, 240] }, 0, 0, 120, 120)
+    weave(a, '#5a4a3a', { pitch: 3, amp: 22, x0: 120, y0: 0, x1: W, y1: 120, k: 3 })
+    a.px((x, y) => { const n = fbm(x * .07, y * .07, 43); return n > .62 ? [[24, 20, 18], 110, 250] : null }, 120, 0, W, 120)
+    a.px((x, y) => { const n = fbm(x * .05, y * .1, 44), p = fbm(x * .4, y * .4, 45) > .72; return [[p ? 160 : 214 + n * 24, p ? 150 : 204 + n * 20, p ? 128 : 182 + n * 14], 128 + (n - .5) * 30 - (p ? 30 : 0), 210] }, 0, 120, 120, W)
+    a.px((x, y) => { const d = Math.hypot(x - 180, y - 180) / 56, hole = [[-12, -12], [12, -12], [-12, 12], [12, 12]].some(([dx, dy]) => Math.hypot(x - 180 - dx, y - 180 - dy) < 6); const rim = d > .78 ? 1 : 0, n = fbm(x * .2, y * .2, 46); return hole ? [[30, 22, 14], 60, 200] : [[150 + rim * 30 - n * 40, 104 + rim * 20 - n * 30, 50], 128 + rim * 40 - d * 10, 90 + n * 80] }, 120, 120, W, W)
+  }, normal: 1.1 },
+  { name: 'flyer', paint: a => {
+    // 左半正面：蓝色大鸟 + 黄色眼圈 + 手写一行；右半背面：手绘方位图
+    a.px((x, y) => { const n = fbm(x * .04, y * .04, 51), fold = Math.exp(-(((y - 120) / 2.2) ** 2)) * 40; return [[232 + n * 10 - fold * .6, 232 + n * 10 - fold * .6, 238 + n * 8 - fold * .5], 128 - fold, 230] })
+    shapeFill(a, ctx => { ctx.ellipse(58, 60, 34, 22, -.3, 0, Math.PI * 2) }, '#2f54c6')                    // 身体
+    shapeFill(a, ctx => { ctx.arc(86, 40, 14, 0, Math.PI * 2) }, '#2f54c6')                                  // 头
+    shapeFill(a, ctx => { ctx.moveTo(98, 36); ctx.lineTo(114, 42); ctx.lineTo(98, 46); ctx.closePath() }, '#e0a020') // 喙
+    shapeFill(a, ctx => { ctx.moveTo(40, 52); ctx.quadraticCurveTo(10, 10, 4, 30); ctx.quadraticCurveTo(14, 70, 52, 70); ctx.closePath() }, '#2346a8') // 翅
+    shapeFill(a, ctx => { ctx.moveTo(28, 72); ctx.lineTo(6, 100); ctx.lineTo(22, 98); ctx.lineTo(36, 78); ctx.closePath() }, '#2346a8') // 尾
+    shapeFill(a, ctx => { ctx.arc(88, 38, 6, 0, Math.PI * 2) }, '#f2c419'); shapeFill(a, ctx => { ctx.arc(89, 38, 2.6, 0, Math.PI * 2) }, '#14182a')
+    text(a, 'LOST?', 60, 124, { size: 22, color: '#2f54c6', font: 'Impact, Arial Black, Arial', sx: .9 })
+    handwriting(a, ['we have water,', 'light & friends', '— follow the blue'], 8, 156, 22, '#3a3e52', { size: 15, seed: 5, width: 104 })
+    // 背面
+    strokeAll(a, ctx => { ctx.moveTo(136, 200); ctx.lineTo(150, 150); ctx.lineTo(196, 140); ctx.lineTo(206, 60); ctx.moveTo(150, 150); ctx.lineTo(132, 96) }, '#3a3e52', 2)
+    strokeAll(a, ctx => { for (const [x, y] of [[150, 150], [196, 140]]) { ctx.moveTo(x - 4, y - 4); ctx.lineTo(x + 4, y + 4); ctx.moveTo(x + 4, y - 4); ctx.lineTo(x - 4, y + 4) } }, '#3a3e52', 2)
+    shapeFill(a, ctx => { ctx.arc(206, 52, 9, 0, Math.PI * 2) }, '#2f54c6')
+    text(a, 'HERE', 206, 30, { size: 12, color: '#2f54c6' }); handwriting(a, ['3 left, 1 right'], 136, 224, 0, '#3a3e52', { size: 12, seed: 9, width: 96 })
+    a.px((x, y) => fbm(x * .05, y * .05, 52) > .76 ? [[214, 206, 180], undefined, 240] : null) // 水渍
+  }, normal: .3 },
+  { name: 'logPage', paint: a => {
+    // 横格日志纸：左半正面工整字迹，右半背面淡淡透字
+    a.px((x, y) => { const n = fbm(x * .04, y * .04, 61); const line = (y % 16) === 15 ? 1 : 0; return [[236 - line * 70 + n * 8, 228 - line * 50 + n * 8, 200 - line * 10 + n * 6], 128, 235] })
+    a.px(() => [[200, 90, 84]], 18, 0, 20, W); a.px(() => [[200, 90, 84]], 138, 0, 140, W)
+    text(a, 'DAY 41', 70, 22, { size: 14, color: '#7a2a22', font: 'Georgia, serif', weight: 'bold' })
+    handwriting(a, ['safe room past the', 'yellow door, two', 'hallways east.', 'water, beds, people.', 'they were kind.', 'they were kind.', 'go there.'], 24, 44, 16, '#3a3428', { size: 13, seed: 3, width: 92 })
+    handwriting(a, ['ne yeht .dnik', 'erew yeht'], 146, 60, 16, 'rgba(58,52,40,.22)', { size: 13, seed: 4, width: 86 })
+    // 撕边（纸纤维发白）
+    a.px((x, y) => { const e = fbm(y * .3, 0, 63) * 8; return x < 4 + e || (x > 116 - e && x < 124 + e) ? [[246, 240, 222], 140, 250] : null })
+  }, normal: .3 },
+  { name: 'gland', paint: a => {
+    a.px((x, y) => {
+      const n = fbm(x * .03, y * .03, 71), v = Math.abs(fbm(x * .04, y * .04, 72) - .5) < .02 || Math.abs(fbm(x * .06 + 3, y * .06, 73) - .5) < .012
+      const sp = fbm(x * .22, y * .22, 74) > .7
+      return v ? [[150, 70, 46], 140, 60] : [[214 + n * 20 - (sp ? 30 : 0), 176 + n * 20 - (sp ? 26 : 0), 70 + n * 34], 128 + (n - .5) * 30, 30 + n * 30]
+    })
+  }, normal: .8 },
+  { name: 'glandCore', paint: a => {
+    a.px((x, y) => { const n = fbm(x * .06, y * .06, 81), d = Math.hypot(x - 120, y - 60) / 90; return [[168 + n * 30 - d * 30, 128 + n * 20 - d * 30, 40 + n * 20], 128 + (n - .5) * 40, 50] }, 0, 0, W, 120)
+    a.px((x, y) => { const r = Math.sin(x * .45) * .5 + .5, n = fbm(x * .1, y * .1, 82); return [[128 + r * 26 + n * 16, 94 + r * 20, 70 + r * 12], 128 + r * 30, 150] }, 0, 120, W, W)
+  }, normal: 1.2 },
+  { name: 'bento', paint: a => {
+    // q00 蓝色塑料盒身 q10 米白盒盖 q01 红橡皮筋 q11 胶布名签
+    a.px((x, y) => { const n = fbm(x * .05, y * .05, 91), sc = hash(Math.floor(x / 3), y, 92) > .996 ? 30 : 0; return [[60 + n * 12 + sc, 106 + n * 14 + sc, 138 + n * 14 + sc], 128 + (n - .5) * 8, 110] }, 0, 0, 120, 120)
+    a.px((x, y) => { const n = fbm(x * .05, y * .05, 93), rim = x < 8 || y < 8 || x > 111 || y > 111 ? 1 : 0, rib = (x - 30) * (x - 90) < 0 && Math.abs(y - 60) < 30 && (x % 10 < 2) ? 1 : 0; return [[216 - rim * 20 + n * 10, 210 - rim * 20 + n * 10, 191 - rim * 18 + n * 8], 128 + rim * 30 + rib * 20, 130] }, 120, 0, W, 120)
+    a.px((x, y) => { const s = Math.sin(x * .7) * .5 + .5, n = fbm(x * .1, y * .3, 94); return [[168 + s * 20 + n * 20, 58 + s * 10, 42], 128 + s * 30, 120] }, 0, 120, 120, W)
+    a.px((x, y) => { const n = fbm(x * .2, y * .05, 95); return [[214 + n * 20, 200 + n * 18, 160 + n * 12], 128 + (n - .5) * 20, 230] }, 120, 120, W, W)
+    handwriting(a, ['Ken'], 140, 196, 0, '#2a2a3a', { size: 30, seed: 2, width: 80 })
+  }, normal: .7 },
+  { name: 'gelLabel', paint: a => {
+    // 受眷胶罐标签：牛皮纸 + 鸟形浮囊徽记 + 手写批次
+    a.px((x, y) => { const n = fbm(x * .05, y * .05, 101); return [[196 + n * 20, 168 + n * 18, 120 + n * 12], 128, 230] })
+    strokeAll(a, ctx => { ctx.rect(10, 10, 220, 220) }, '#5a4a2a', 3)
+    shapeFill(a, ctx => { ctx.ellipse(120, 92, 46, 34, 0, 0, Math.PI * 2) }, '#9ac43a')
+    shapeFill(a, ctx => { ctx.moveTo(74, 92); ctx.quadraticCurveTo(40, 60, 30, 80); ctx.quadraticCurveTo(50, 110, 80, 104); ctx.closePath(); ctx.moveTo(166, 92); ctx.quadraticCurveTo(200, 60, 210, 80); ctx.quadraticCurveTo(190, 110, 160, 104); ctx.closePath() }, '#5a4a2a')
+    text(a, 'GEL', 120, 160, { size: 34, color: '#3a2e18', font: 'Impact, Arial Black, Arial' })
+    handwriting(a, ['lot 08 · keep sealed'], 30, 204, 0, '#3a2e18', { size: 14, seed: 6, width: 180 })
+  }, normal: .3 },
+  { name: 'glass', paint: a => {
+    a.px((x, y) => { const s = Math.exp(-(((x - 60) / 10) ** 2)) * 60 + Math.exp(-(((x - 150) / 4) ** 2)) * 30, sm = fbm(x * .03, y * .03, 111) > .66 ? -18 : 0; return [[196 + s + sm, 214 + s + sm, 206 + s * .8 + sm], 128, sm ? 60 : 8] })
+  }, normal: .2 },
+  { name: 'gel', paint: a => {
+    a.px((x, y) => { const n = fbm(x * .04, y * .04, 121), b = fbm(x * .35, y * .35, 122) > .78 ? 1 : 0, sw = Math.sin((x + y) * .05 + n * 6) * .5 + .5; return [[150 + n * 50 + sw * 30 + b * 40, 220 + n * 30 + b * 20, 70 + sw * 30 + b * 60], 128, 10] })
+  }, normal: .3 },
+  { name: 'repellent', paint: a => {
+    a.px((x, y) => { const n = fbm(x * .04, y * .06, 131), sed = y > 170 ? (y - 170) / 70 : 0, f = fbm(x * .3, y * .3, 132) > .75 ? 1 : 0; return [[74 + n * 24 - sed * 30 + f * 20, 70 + n * 22 - sed * 30 + f * 12, 34 + n * 10 - sed * 10], 128, 30] })
+  }, normal: .3 },
+  { name: 'corkLabel', paint: a => {
+    // 左半：软木；右半：手写标签（划掉的飞蛾）
+    a.px((x, y) => { const n = fbm(x * .1, y * .1, 141), p = fbm(x * .5, y * .5, 142) > .72 ? 1 : 0; return [[160 + n * 30 - p * 50, 122 + n * 24 - p * 40, 76 + n * 16 - p * 24], 128 + (n - .5) * 40 - p * 30, 240] }, 0, 0, 120, W)
+    a.px((x, y) => { const n = fbm(x * .05, y * .05, 143), st = fbm(x * .04, y * .04, 144) > .64 ? 1 : 0; return [[230 - st * 40 + n * 10, 222 - st * 30 + n * 10, 196 - st * 40], 128, 230] }, 120, 0, W, W)
+    strokeAll(a, ctx => { ctx.ellipse(180, 90, 10, 16, 0, 0, Math.PI * 2); ctx.moveTo(170, 84); ctx.quadraticCurveTo(140, 60, 136, 96); ctx.quadraticCurveTo(150, 108, 170, 96); ctx.moveTo(190, 84); ctx.quadraticCurveTo(220, 60, 224, 96); ctx.quadraticCurveTo(210, 108, 190, 96) }, '#3a3020', 3)
+    strokeAll(a, ctx => { ctx.moveTo(140, 50); ctx.lineTo(222, 132); ctx.moveTo(222, 50); ctx.lineTo(140, 132) }, '#9a2a1a', 5)
+    handwriting(a, ['REPEL', 'spores · rot'], 132, 170, 26, '#3a3020', { size: 18, seed: 8, width: 100 })
+  }, normal: .6 },
+  { name: 'spore', paint: a => {
+    // 上半：新鲜发光孢子（橙、细孔）；下半：腐解后的暗褐膜
+    a.px((x, y) => { const n = fbm(x * .06, y * .06, 151), pore = fbm(x * .4, y * .4, 152) > .7 ? 1 : 0; return [[255 - pore * 60, 180 + n * 40 - pore * 60, 74 + n * 30 - pore * 30], 128 - pore * 40, 60] }, 0, 0, W, 120)
+    a.px((x, y) => { const n = fbm(x * .08, y * .08, 153); return [[124 + n * 30, 96 + n * 24, 56 + n * 12], 128 + (n - .5) * 40, 160] }, 0, 120, W, W)
+  }, normal: 1.0 },
+  { name: 'lid', paint: a => {
+    // 上半：旋盖顶（褐漆）；下半：滚花侧边
+    a.px((x, y) => { const n = fbm(x * .05, y * .05, 161), chip = fbm(x * .15, y * .15, 162) > .74 ? 1 : 0; return chip ? [[150, 150, 146], 120, 70] : [[106 + n * 20, 90 + n * 16, 68 + n * 12], 128 + (n - .5) * 16, 120] }, 0, 0, W, 120)
+    a.px((x, y) => { const k = Math.sin(x * 1.2) * .5 + .5, n = fbm(x * .1, y * .1, 163); return [[90 + k * 40 + n * 20, 78 + k * 34, 60 + k * 24], 128 + k * 60, 100] }, 0, 120, W, W)
+  }, normal: 1.2 },
+]
+
+const atlases = { tools, gear, food, paper, relic }
+// 用法：node scripts/gen-refined-item-atlas.mjs [图集名…]（不带参数 = 全部重画）
+const only = process.argv.slice(2)
 for (const [name, tiles] of Object.entries(atlases)) {
+  if (only.length && !only.includes(name)) continue
   if (tiles.length !== 16) throw new Error(`${name}: ${tiles.length} tiles`)
   makeAtlas(name, tiles)
 }
-console.log('Generated refined-item atlases: tools, gear, food, paper (color 1024², OpenGL normal 512², roughness 512²)')
+console.log(`Generated refined-item atlases: ${only.length ? only.join(', ') : Object.keys(atlases).join(', ')} (color 1024², OpenGL normal 512², roughness 512²)`)

@@ -1,0 +1,131 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 9194,
+  "cdp": 9195,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\four-import-20261023\\resource-diagnostic\\qa-1792754769404-53812",
+    "--remote-debugging-port=9195",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 35696,
+    "server": 13520
+  },
+  "appBootMs": 10232.9407,
+  "entryMs": 2537.34,
+  "firstPlayableMs": 17846.3871,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 79.5,
+        "y": 79.5,
+        "z": 0
+      },
+      "entities": 0,
+      "memory": {
+        "geometries": 475,
+        "textures": 67
+      },
+      "calls": 1,
+      "checks": 0
+    }
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Repeated vending/window retirements keep GPU geometry stable after warmup\",\"lineNumber\":21,\"columnNumber\":19,\"scriptId\":\"699\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"ok\",\"scriptId\":\"699\",\"url\":\"http://127.0.0.1:9194/verifier/four-import-game.ts\",\"lineNumber\":20,\"columnNumber\":18},{\"functionName\":\"modelChurn\",\"scriptId\":\"699\",\"url\":\"http://127.0.0.1:9194/verifier/four-import-game.ts\",\"lineNumber\":308,\"columnNumber\":4}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Repeated vending/window retirements keep GPU geometry stable after warmup\\n    at ok (http://127.0.0.1:9194/verifier/four-import-game.ts:21:19)\\n    at Object.modelChurn (http://127.0.0.1:9194/verifier/four-import-game.ts:309:5)\",\"objectId\":\"5902034029234012149.2.1\"}}",
+  "partial": {
+    "checks": [
+      "Generated Level 4 has a safely approachable window",
+      "Window entity attaches to an existing generated window",
+      "Occupied window scenery is visible in the actual scene",
+      "Entity uses layer-specific window model"
+    ],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 78.5,
+        "y": 69,
+        "z": 0
+      },
+      "entities": 0,
+      "memory": {
+        "geometries": 1008,
+        "textures": 121
+      },
+      "calls": 1,
+      "checks": 4
+    },
+    "resourceSamples": [
+      {
+        "shown": {
+          "geometries": 948,
+          "textures": 104
+        },
+        "retired": {
+          "geometries": 877,
+          "textures": 116
+        }
+      },
+      {
+        "shown": {
+          "geometries": 1041,
+          "textures": 121
+        },
+        "retired": {
+          "geometries": 965,
+          "textures": 121
+        }
+      },
+      {
+        "shown": {
+          "geometries": 1083,
+          "textures": 121
+        },
+        "retired": {
+          "geometries": 1008,
+          "textures": 121
+        }
+      },
+      {
+        "shown": {
+          "geometries": 1082,
+          "textures": 121
+        },
+        "retired": {
+          "geometries": 1008,
+          "textures": 121
+        }
+      }
+    ]
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 8972.799999998882
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 4\n废弃办公室\nB4\n磁带\n0/6\n空旷区\n100%\nLevel 4「废弃办公室」\nSurvival Difficulty: Class 1 · 杏仁水全后室最富集 · 实体几乎绝迹\n入口：办公走廊尽头\n出口线索：电梯井在等两枚保险丝。\n1\n2\n3\n4\n5\n6\n7\nE 眺望 窗外\n空格\n跳跃\nC\n蹲伏\nF\n手电\n左Alt\n取出主手\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

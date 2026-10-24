@@ -1,4 +1,5 @@
 import { l7SeabedMaterial } from './l7Seabed'
+import { FOYER_ID } from '../world/foyerLayout'
 import {buildL4Terrain} from './l4Terrain'
 import { l5SurfaceBatches } from './l5Materials'
 import { buildL5Architecture } from './l5Architecture'
@@ -117,6 +118,7 @@ export function buildTerrain(m: GameMap, def: LevelDef, wallH: number, g: THREE.
 // Keep the original material batches and triangle order while yielding during
 // tile construction, including the work inside each streamed four-row slice.
 export function* buildTerrainJob(m: GameMap, def: LevelDef, wallH: number, g: THREE.Group, range?: TerrainRange): Generator<void, void, unknown> {
+  if (def.id === FOYER_ID) return // 前厅：地面/墙面/吊顶由 renderer/foyerHome.ts 按房间材质构建
   if (def.id === 4) return buildL4Terrain(m,g,range)
   if (m.settlement) return yield* buildSettlementTerrainJob(m, g)
   if (def.id === 11) return yield* buildL11TerrainJob(m, g, range)

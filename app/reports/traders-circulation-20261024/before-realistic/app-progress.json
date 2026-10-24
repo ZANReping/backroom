@@ -1,0 +1,184 @@
+{
+  "checks": [
+    "safe start bank_west",
+    "original wall stops movement bank_west",
+    "safe start bank_south",
+    "original wall stops movement bank_south",
+    "safe start food_east",
+    "original wall stops movement food_east",
+    "safe start food_south",
+    "original wall stops movement food_south",
+    "safe start market_north",
+    "original wall stops movement market_north",
+    "safe start visitor_north",
+    "original wall stops movement visitor_north",
+    "safe start sorting_north",
+    "original wall stops movement sorting_north",
+    "safe start secondary_west",
+    "original wall stops movement secondary_west",
+    "safe start guard_monitor",
+    "original wall stops movement guard_monitor",
+    "safe start office_meeting",
+    "original wall stops movement office_meeting",
+    "safe start dorm_north",
+    "original wall stops movement dorm_north",
+    "normal map preview retains streaming rather than building the whole world"
+  ],
+  "screenshots": [
+    "10-bank_west",
+    "10-bank_south",
+    "10-food_east",
+    "10-food_south",
+    "10-market_north",
+    "10-visitor_north",
+    "10-sorting_north",
+    "10-secondary_west",
+    "10-guard_monitor",
+    "10-office_meeting",
+    "10-dorm_north",
+    "20-map-overview"
+  ],
+  "passages": [
+    {
+      "id": "bank_west",
+      "start": {
+        "x": 73.2,
+        "y": 101.5
+      },
+      "end": {
+        "x": 75.58000000000023,
+        "y": 101.5
+      },
+      "crossed": false
+    },
+    {
+      "id": "bank_south",
+      "start": {
+        "x": 117,
+        "y": 103.2
+      },
+      "end": {
+        "x": 117,
+        "y": 105.58000000000023
+      },
+      "crossed": false
+    },
+    {
+      "id": "food_east",
+      "start": {
+        "x": 349.2,
+        "y": 109
+      },
+      "end": {
+        "x": 351.29666666666475,
+        "y": 109
+      },
+      "crossed": false
+    },
+    {
+      "id": "food_south",
+      "start": {
+        "x": 340,
+        "y": 123.60000000000001
+      },
+      "end": {
+        "x": 340,
+        "y": 125.98000000000023
+      },
+      "crossed": false
+    },
+    {
+      "id": "market_north",
+      "start": {
+        "x": 112,
+        "y": 112.8
+      },
+      "end": {
+        "x": 112,
+        "y": 115.18000000000022
+      },
+      "crossed": false
+    },
+    {
+      "id": "visitor_north",
+      "start": {
+        "x": 337,
+        "y": 133.2
+      },
+      "end": {
+        "x": 337,
+        "y": 135.5800000000002
+      },
+      "crossed": false
+    },
+    {
+      "id": "sorting_north",
+      "start": {
+        "x": 227,
+        "y": 142.79999999999998
+      },
+      "end": {
+        "x": 227,
+        "y": 145.1800000000002
+      },
+      "crossed": false
+    },
+    {
+      "id": "secondary_west",
+      "start": {
+        "x": 181.2,
+        "y": 242.2
+      },
+      "end": {
+        "x": 183.5800000000002,
+        "y": 242.2
+      },
+      "crossed": false
+    },
+    {
+      "id": "guard_monitor",
+      "start": {
+        "x": 335.5,
+        "y": 239.39999999999998
+      },
+      "end": {
+        "x": 335.5,
+        "y": 241.7800000000002
+      },
+      "crossed": false
+    },
+    {
+      "id": "office_meeting",
+      "start": {
+        "x": 365,
+        "y": 239.39999999999998
+      },
+      "end": {
+        "x": 365,
+        "y": 241.7800000000002
+      },
+      "crossed": false
+    },
+    {
+      "id": "dorm_north",
+      "start": {
+        "x": 402,
+        "y": 207.6
+      },
+      "end": {
+        "x": 402,
+        "y": 209.98000000000022
+      },
+      "crossed": false
+    }
+  ],
+  "baseline": true,
+  "final": {
+    "chunks": 31,
+    "npcs": 15,
+    "memory": {
+      "geometries": 1106,
+      "textures": 165
+    }
+  }
+}

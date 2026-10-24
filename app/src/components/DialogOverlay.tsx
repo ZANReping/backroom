@@ -611,13 +611,13 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                         if(creditTrade){reportTrade(engine.bntgBuy(npcId,t.item,paymentMode));return}
                         if (engine.countItem(coinItem) < price) { engine.msg(`${coinName}不够。`, 'system'); return }
                         for (let i = 0; i < price; i++) engine.consumeItem(coinItem)
-                        engine.addItem(t.item)
+                        for (let q = 0; q < Math.max(1, t.qty ?? 1); q++) engine.addItem(t.item)
                         audio.pickup()
                         engine.emit({ kind: 'toast', text: `-${price} ${coinName} → ${it?.name ?? t.item}` })
                       }}
                     >
                       <ItemGlyph type={t.item} size={20} />
-                      <span className="flex-1 text-[12px]" style={{ color: 'var(--text)' }}>{it?.name ?? t.item}</span>
+                      <span className="flex-1 text-[12px]" style={{ color: 'var(--text)' }}>{it?.name ?? t.item}{(t.qty ?? 1) > 1 ? ` ×${t.qty}` : ''}</span>
                       <span className="font-mono2 text-[11px]" style={{ color: 'var(--amber)' }}>{creditTrade&&payment?`${payment.credit?payment.credit+' 信用点':''}${payment.credit&&payment.cash?' + ':''}${payment.cash?payment.cash+' 压印币':''}`:`${price} ${creditTrade&&paymentMode==='credits'?'信用点':coinUnit}`}{discount && price < t.price ? `（原 ${t.price}）` : ''}</span>
                     </button>
                   )

@@ -1,6 +1,7 @@
 import { bindLabelFor } from '@/game/core/keybinds'
 
-export type SquirtWheelAction = 'cancel' | 'clear' | 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid'
+export type SquirtWheelAction = 'cancel' | 'clear' | 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid' | 'memoryjuice' | 'laughrepellent'
+  | `ammo:${string}` | 'unload' // 枪械：选弹（立刻换上）/ 退弹
 
 export interface SquirtWheelOption {
   action: Exclude<SquirtWheelAction, 'cancel'>
@@ -14,6 +15,8 @@ export interface SquirtWheelState {
   selected: SquirtWheelAction
   cursorX: number
   cursorY: number
+  /** 轮盘标题（缺省 = 滋水枪液体轮盘） */
+  title?: string
 }
 
 interface Props { wheel: SquirtWheelState }
@@ -130,7 +133,7 @@ export default function SquirtRadial({ wheel }: Props) {
       </div>
 
       <div className="absolute left-1/2 top-[calc(50%+196px)] -translate-x-1/2 text-center font-mono">
-        <div className="text-[14px] tracking-[.18em] text-[#dfc66e]">滋水枪液体轮盘</div>
+        <div className="text-[14px] tracking-[.18em] text-[#dfc66e]">{wheel.title ?? '滋水枪液体轮盘'}</div>
         <div className="mt-1 text-[11px] text-[#b7ad8c]">移动鼠标选择 · 松开 {bindLabelFor('reload')} 确认</div>
       </div>
     </div>

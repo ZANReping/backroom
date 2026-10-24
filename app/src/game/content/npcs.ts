@@ -24,7 +24,7 @@ export interface NpcDef {
   uniform?: { top: string; topStyle?: number; badge?: string } // 制服：上衣色/款式 + 胸口徽章色
   avatar: Partial<AvatarCfg> // 形象（手工定制的固定配置：性别/发型/发色/肤色/裤色/表情；上衣由制服覆盖）
   currency?: 'eaglecoin' | 'presses' | 'almond' // 交易货币（缺省天鹰币；BNTG 系为压印币；v54：'almond'=直接以杏仁水计价为 Gamma 基地军需官所用——wikidot 惯例杏仁水是通用等价物）
-  trade?: { item: string; price: number }[] // 商品（按 currency 货币定价）
+  trade?: { item: string; price: number; qty?: number }[] // 商品（按 currency 货币定价；qty = 一份几个，如一盒弹）
   barter?: { give: string; giveN: number; get: string; getN: number; give2?: string; give2N?: number }[] // 以物易物（玩家给 give×giveN[ + give2×give2N]、换得 get×getN；可与普通 trade 并存）
   workLoop?: 'hammer' | 'saw' | 'paint' | 'mop' // v39：装修工作循环动作（BRC 员工：锚定工作点不游荡，渲染层 procedual 驱动手臂+工具）
   wanderRadius?: number // Small public work pockets can keep their staff close without freezing them.
@@ -33,6 +33,10 @@ export interface NpcDef {
   medic?: boolean // v55：医疗身份 NPC（杜邦/马丁/莫雷尔/萨伊拉）——疫疾三阶以上对话出现「求治感染」（清除感染值）
   lines: DialogueNode[] // 预制对话树（0=开场）
   idle: string[] // 自言自语（头顶气泡）
+  /** 前厅环境路人：不交谈、不进入人士名册和地图、不参与玩家挥击声望结算。 */
+  ambient?: boolean
+  route?: [number, number][]
+  routeSpeed?: number
 }
 
 /** NPC 形象：固定配置（独特、精致、不变），制服覆盖上衣 */
@@ -97,7 +101,7 @@ export function genRandomNpcs(rand: () => number, n: number, faction: 'meg' | 'b
     : el3a
     ? ['叉车司机', '盘点员', '质检员', '装卸学徒', '仓管文员', '押运护卫']
     : bntg
-    ? ['店员', '账房学徒', '押运员', '摊位主', '信使', '鉴定学徒', '仓库点数员', '采购员']
+    ? ['店员', '会计学徒', '押运员', '档口店员', '信使', '鉴定学徒', '仓库点数员', '采购员']
     : mixed
     ? ['避难者', '旅人', '吟游诗人', '行商', '前哨队员', '讲故事的人']
     : RAND_ROLES)
@@ -121,7 +125,7 @@ export function genRandomNpcs(rand: () => number, n: number, faction: 'meg' | 'b
     : el3a
     ? ['在 Level 3 的电站边抢了三年货，调来 EL3A 那天睡了整整两天。',
       '跑 L2-L3 物资线的老押运，认得每一道蒸汽阀门的声音。',
-      '商人之家调来的账房，嫌市场街太吵，主动申请来看仓库。',
+      '商人之家调来的会计，嫌市场街太吵，主动申请来看仓库。',
       '在整洁的廊道里迷过路，是分拣队把他捡回来的——后来就留下了。',
       '麦考利的老部下，跟着他从跃金段一路调到 EL3A。',
       '以前在 Level 11 的货站干活，切错了门，干脆在 EL3A 落了脚。']
@@ -256,6 +260,9 @@ export interface NpcState {
   atkT?: number // 敌对近战冷却
   lungeT?: number // 近战蓄力倒计时；归零时才结算命中
   meleeRecoveryT?: number // 收势倒计时
+  routeI?: number
+  routeDir?: 1 | -1
+  routePause?: number
 }
 
 // ================= v39：后室装修公司（BRC）员工 =================
@@ -674,7 +681,7 @@ export const NPCS: Record<string, NpcDef> = {
         ],
       },
       {
-        npc: '押运与征集，随你挑。押运是把货送给 M.E.G. 的朋友，征集是我们高价收稀有商品——报酬都是压印币，一瓶杏仁水兑两枚，童叟无欺。',
+        npc: '押运与征集，随你挑。押运是把货送给 M.E.G. 的朋友，征集是我们高价收稀有商品——报酬都是压印币，一瓶杏仁水兑两枚，对谁都是一个价。',
         opts: [{ text: '那就来点活。', action: 'leave' }],
       },
       {
@@ -682,7 +689,7 @@ export const NPCS: Record<string, NpcDef> = {
         opts: [{ text: '明白了。', action: 'leave' }],
       },
     ],
-    idle: ['东线的商队该回来了……', '迎新手册又该加一页。', '汇率稳定，天下太平。'],
+    idle: ['东线的商队该回来了……', '迎新手册又该加一页。', '汇率稳了，生意就稳了。'],
   },
   candyman: {
     id: 'candyman', name: '「糖佬」希德', role: '雇员 · 糖果贩', faction: 'bntg',
@@ -721,51 +728,38 @@ export const NPCS: Record<string, NpcDef> = {
   },
   laozhangfang: {
     id: 'laozhangfang', name: '奥托·格雷', role: '主管 · 保险库总账', faction: 'bntg',
-    personality: '慢条斯理，算盘珠子比枪子儿还准；见钱眼开，但开的每一眼都有账本。',
-    background: '主管级的总会计，商人之家创立那年就在打算盘。保险库每一笔进出都要过他的手——据说没有他算不清的账，只有他不想算的账。',
+    personality: '慢条斯理，计算器按得比扳机还快；爱钱，但每一分都记在账上。',
+    background: '主管级的总会计，商人之家开业那年就在记账。保险库每一笔进出都要过他的手——据说没有他算不清的账，只有他不想算的账。',
     uniform: { top: '#4a5248', topStyle: 1, badge: '#c9a03a' },
     avatar: { gender: 0, hair: 2, hairColor: '#9a9a9e', skin: '#c9a58a', pants: '#2a2d33', pantsStyle: 0, face: 0 },
     currency: 'presses',
-    trade: [
-      { item: 'skeleton', price: 20 },
-      { item: 'royalration', price: 70 },
-      { item: 'warpberry', price: 48 },
-    ],
     lines: [
       {
-        npc: '嗯……账平了。哦，客人？奥托·格雷，保险库总账。看什么货？先说好，保险库的东西，价格后面都要再加一道「保管费」。',
+        npc: '嗯……账平了。哦，客人？奥托·格雷，保险库总账。我这儿只管保险库的存取和保管费，不卖货——要买东西，去西北角主力店 A 的批发市场。',
         opts: [
-          { text: '看看货。', action: 'trade' },
           { text: '保险库有多大？', next: 1 },
           { text: '不打扰。', action: 'leave' },
         ],
       },
       {
         npc: '车库式储藏室，一整圈。冗余物资、隔离的异常物品、等着交付的高价值商品——从最低级的毛贼到某些知名组织，谁都想咬一口。所以这里常年重兵把守。',
-        opts: [{ text: '那就看看「高价值商品」。', action: 'trade' }],
+        opts: [{ text: '明白了。', action: 'leave' }],
       },
     ],
-    idle: ['这笔保管费记到东区账上……', '又有人想白看保险库。', '算盘珠子该上油了。'],
+    idle: ['这笔保管费记到东区账上……', '又有人想白看保险库。', '计算器又该换电池了。'],
   },
   shen: {
     id: 'shen', name: '塞德里克·科尔曼', role: '经理 · 首席鉴定师', faction: 'bntg',
     personality: '眼毒嘴慢，看货一眼报价，从不说第二遍。',
-    background: '走南闯北鉴定过无数「后室异物」。只要从他手里过的货，真假贵贱一目了然——稀有物件就找他。',
+    background: '跑遍各层级鉴定过无数「后室异物」。只要从他手里过的货，真假贵贱一目了然。如今他只做鉴定，不再卖货。',
     uniform: { top: '#3a3f46', topStyle: 1, badge: '#5c6d5e' },
     avatar: { gender: 0, hair: 6, hairColor: '#232326', skin: '#f0c8a8', pants: '#2e3a4a', pantsStyle: 0, face: 0 },
     currency: 'presses',
-    trade: [
-      { item: 'royalration', price: 70 },
-      { item: 'warpberry', price: 48 },
-      { item: 'fuyouyu', price: 24 },
-      { item: 'squirtgun', price: 30 },
-    ],
     lines: [
       {
-        npc: '坐。塞德里克·科尔曼，首席鉴定师。买货先看货——我的柜台上没有次品，当然，也没有「捡漏」这个词。',
+        npc: '坐。塞德里克·科尔曼，首席鉴定师。我现在只做鉴定，不卖货——买东西去主力店 A 的批发市场，那边明码标价。',
         opts: [
-          { text: '看看货。', action: 'trade' },
-          { text: '你怎么看 rarity 的？', next: 1 },
+          { text: '你怎么看稀有度？', next: 1 },
           { text: '告辞。', action: 'leave' },
         ],
       },
@@ -774,39 +768,34 @@ export const NPCS: Record<string, NpcDef> = {
         opts: [{ text: '……现实。', action: 'leave' }],
       },
     ],
-    idle: ['这批玉器里混了个假的。', '报价单重印，涨半成。'],
+    idle: ['这批货里混了个仿品。', '估价单重印，上调百分之五。'],
   },
   tang: {
-    id: 'tang', name: '玛戈·坦恩', role: '雇员 · 杂货摊主', faction: 'bntg',
-    personality: '嘴碎热情，见谁都是「老主顾」，卖东西总要搭一句使用心得。',
-    background: '市场街资历最老的摊主。从电池到保温服，他的杂货摊养活了大半个商人之家。',
+    id: 'tang', name: '玛戈·坦恩', role: '雇员 · 市场咨询台', faction: 'bntg',
+    personality: '嘴快热情，见谁都当回头客，最爱给人指路。',
+    background: '市场街资历最老的摊主。批发市场开张后，她把杂货摊的货全交给了档口，自己转到大厅的市场咨询台——哪个档口卖什么，问她最快。',
     uniform: { top: '#6a5a40', topStyle: 2, badge: '#5c6d5e' },
-    avatar: { gender: 1, hair: 14, hairColor: '#4a3020', skin: '#f0c8a8', pants: '#3a352e', pantsStyle: 0, face: 1 }, // v54b：双丸子（杂货摊主）
+    avatar: { gender: 1, hair: 14, hairColor: '#4a3020', skin: '#f0c8a8', pants: '#3a352e', pantsStyle: 0, face: 1 }, // v54b：双丸子（原杂货摊主）
     currency: 'presses',
-    trade: [
-      { item: 'headlamp', price: 26 },
-      { item: 'axe', price: 52 },
-      { item: 'cavingsuit', price: 30 },
-      { item: 'divemask', price: 24 },
-      { item: 'notebook', price: 16 },
-      { item: 'uvlamp', price: 34 },
-      { item: 'stonekazoo', price: 20 },
-    ],
     lines: [
       {
-        npc: '哟，老主顾——哎，认错了？没事，从今天起你就是老主顾了！玛戈·坦恩的杂货摊，样样都有，样样都「稍微」贵那么一点点，嘿嘿。',
+        npc: '欢迎！玛戈·坦恩，市场咨询台。我这儿不卖货了——基础物资都搬进了西北角的主力店 A：B.N.T.G. 批发市场，Traders Wholesale。',
         opts: [
-          { text: '看看货。', action: 'trade' },
-          { text: '为什么比 Alpha 基地贵？', next: 1 },
-          { text: '回头再来。', action: 'leave' },
+          { text: '那边都卖什么？', next: 1 },
+          { text: '为什么不在这儿卖了？', next: 2 },
+          { text: '谢了。', action: 'leave' },
         ],
       },
       {
-        npc: '哎哟，话不能这么讲。他们那是「救济价」，我们这是「市场价」——运费、保管费、保险费，哪样不要钱？再说，我这儿能买到他们那儿买不到的。',
-        opts: [{ text: '行吧，看看货。', action: 'trade' }],
+        npc: '八个档口：饮用水、食品干货、药房、照明电池，另一边是特种液体、口粮杂货、急救箱、燃料能源。头灯去找雷吉，整箱急救物资找卡门。压印币和银行信用点都能付款。',
+        opts: [{ text: '明白了。', action: 'leave' }],
+      },
+      {
+        npc: '经理马什把大厅里的散摊统一收进了批发市场，明码标价、不讲价。说实话我也省心——不用每天搬货了。',
+        opts: [{ text: '好。', action: 'leave' }],
       },
     ],
-    idle: ['头灯又卖断货了……', '给老主顾留一把好斧头。', '今天的流水不错，嘿嘿。'],
+    idle: ['批发市场往西北走，进主力店 A。', '头灯？去照明档口找雷吉。', '今天问路的人真多。'],
   },
   kui: {
     id: 'kui', name: '布洛克·奎', role: 'TGPF 警备队长', faction: 'bntg',
@@ -817,7 +806,7 @@ export const NPCS: Record<string, NpcDef> = {
     currency: 'presses',
     lines: [
       {
-        npc: '站住。保险库重地，闲人免进。……买货去市场街，别在这儿晃。',
+        npc: '站住。保险库重地，闲人免进。……买货去主力店 A 的批发市场，别在这儿晃。',
         opts: [
           { text: '保险库里有什么？', next: 1 },
           { text: '我马上走。', action: 'leave' },
@@ -862,8 +851,8 @@ export const NPCS: Record<string, NpcDef> = {
   vesper: {
     id: 'vesper', name: '薇拉·维斯珀', role: '兑换员', faction: 'bntg',
     warehouse: 'bntg', // v54：EL3A 寄存 NPC
-    personality: '笑盈盈的，找零从不出错；对真正落魄的流浪者会悄悄把秤压低一点。',
-    background: '兑换间的掌柜，商人之家派来的老账房。她坚持 EL3A 的兑换价必须比「家里」低——「仓库直销，不赚过路人的救命钱」。',
+    personality: '笑盈盈的，找零从不出错；对真正落魄的流浪者会悄悄抹掉零头。',
+    background: '兑换间的主管，商人之家派来的资深会计。她坚持 EL3A 的兑换价必须比「家里」低——「仓库直销，不赚过路人的救命钱」。',
     uniform: { top: '#5c6d5e', topStyle: 2, badge: '#e8e8e0' },
     avatar: { gender: 1, hair: 5, hairColor: '#6a4a2a', skin: '#f0c8a8', pants: '#3a352e', pantsStyle: 0, face: 1 },
     currency: 'presses',
@@ -892,7 +881,7 @@ export const NPCS: Record<string, NpcDef> = {
   },
   pidge: {
     id: 'pidge', name: '皮奇·伦德尔', role: '分拣员', faction: 'bntg',
-    personality: '手脚麻利，眼睛毒，一眼能挑出缠膜打松的托盘；爱念叨他的「三件清」口诀。',
+    personality: '手脚麻利，眼睛毒，一眼能挑出缠膜打松的托盘；爱念叨他的「三步规矩」。',
     background: '仓库分拣队的老手，每天经手上百箱物资。据说他闭着眼睛也能摸出罐头和电池的区别——靠掂。',
     uniform: { top: '#5c6d5e', topStyle: 3, badge: '#e8e8e0' },
     avatar: { gender: 0, hair: 3, hairColor: '#232326', skin: '#a87f5c', pants: '#3a352e', pantsStyle: 0, face: 0 },
@@ -906,7 +895,7 @@ export const NPCS: Record<string, NpcDef> = {
         ],
       },
       {
-        npc: '三件清：清点、清洁、清楚。进来的货先点数，再擦一遍，最后登记上簿——哪一步都不能糊。麦考利主管的簿子对不上数，整个仓库都得陪着翻箱倒柜。',
+        npc: '三步规矩：点数、擦净、登记。进来的货先点数，再擦一遍，最后登记上簿——哪一步都不能马虎。麦考利主管的簿子对不上数，整个仓库都得陪着翻箱倒柜。',
         opts: [{ text: '辛苦了。', action: 'leave' }],
       },
     ],
@@ -932,7 +921,7 @@ export const NPCS: Record<string, NpcDef> = {
         opts: [{ text: '回头见。', action: 'leave' }],
       },
     ],
-    idle: ['这批码南墙。', '托盘腿断了，换一块。', '（他哼着不成调的号子）'],
+    idle: ['这批码南墙。', '托盘腿断了，换一块。', '（他哼着一首跑调的老歌）'],
   },
   whitfield: {
     id: 'whitfield', name: '玛德琳·惠特菲尔德', role: '运营主任', faction: 'bntg',
@@ -986,7 +975,7 @@ export const NPCS: Record<string, NpcDef> = {
         opts: [{ text: '一定带到。', action: 'leave' }],
       },
     ],
-    idle: ['糖，吃一颗？', '这笔账，三十年前也是这么错的。', '休息室的灯比账房亮堂。', '数字从不说谎，说账的人会。', '千层面……记账上。'],
+    idle: ['糖，吃一颗？', '这笔账，三十年前也是这么错的。', '休息室的灯比会计室亮堂。', '数字从不说谎，说账的人会。', '千层面……记账上。'],
   },
 
   // ================= 希波克拉底 - 1（阿丽亚娜集团；全员白色制服 + 紫徽章，法语人名） =================

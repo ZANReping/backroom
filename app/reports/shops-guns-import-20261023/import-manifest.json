@@ -1,0 +1,512 @@
+{
+  "archive": "backroom-full-shops-guns.zip",
+  "sha256": "aa92431ab00cf2b96996bc7e018933f79d2c3f9345736a73907e81239ac34800",
+  "applied": [
+    "app/FIREARMS.md",
+    "app/SIGNS-SOURCES.md",
+    "app/TRADERS-SHOPS.md",
+    "app/package.json",
+    "app/proto-firearms.html",
+    "app/proto-shops.html",
+    "app/public/textures/traders/shops/SOURCES.md",
+    "app/scripts/audit-traders-dressing.ts",
+    "app/scripts/check-firearms.ts",
+    "app/scripts/check-traders-keep.ts",
+    "app/scripts/check-traders-shops.ts",
+    "app/scripts/gen-item-icons.py",
+    "app/scripts/gen-traders-shop-textures.py",
+    "app/src/App.tsx",
+    "app/src/components/DialogOverlay.tsx",
+    "app/src/components/GunHud.tsx",
+    "app/src/components/HUD.tsx",
+    "app/src/components/SquirtRadial.tsx",
+    "app/src/components/TouchControls.tsx",
+    "app/src/game/content/codexScores.ts",
+    "app/src/game/content/firearms.ts",
+    "app/src/game/content/items.ts",
+    "app/src/game/content/npcs.ts",
+    "app/src/game/content/tradersDressingShapes.ts",
+    "app/src/game/content/tradersFurnishings.ts",
+    "app/src/game/content/tradersLayout.ts",
+    "app/src/game/content/tradersShops.ts",
+    "app/src/game/content/tradersSignAtlas.ts",
+    "app/src/game/core/audio.ts",
+    "app/src/game/core/types.ts",
+    "app/src/game/engine.ts",
+    "app/src/game/engine/bntgBank.ts",
+    "app/src/game/engine/combat.ts",
+    "app/src/game/engine/firearms.ts",
+    "app/src/game/engine/interact.ts",
+    "app/src/game/engine/inventory.ts",
+    "app/src/game/renderer/firearmAnim.ts",
+    "app/src/game/renderer/firearmGuns.ts",
+    "app/src/game/renderer/firearmMesh.ts",
+    "app/src/game/renderer/firearmView.ts",
+    "app/src/game/renderer/itemsMesh.ts",
+    "app/src/game/renderer/npcGearPlan.ts",
+    "app/src/game/renderer/renderer.ts",
+    "app/src/game/renderer/retroViewHand.ts",
+    "app/src/game/renderer/tradersDressingMeshes.ts",
+    "app/src/game/renderer/tradersDressingParts.ts",
+    "app/src/game/renderer/tradersMeshes.ts",
+    "app/src/game/renderer/tradersShopMeshes.ts",
+    "app/src/game/renderer/viewmodel.ts",
+    "app/src/game/world/tradersWorld.ts",
+    "app/src/proto/firearmsProto.ts",
+    "app/src/proto/retroNpcProto.ts",
+    "app/src/proto/shopsProto.ts",
+    "app/public/textures/icons/pixel/item_cart_4440.png",
+    "app/public/textures/icons/pixel/item_cart_4570.png",
+    "app/public/textures/icons/pixel/item_cart_paper.png",
+    "app/public/textures/icons/pixel/item_dbshotgun.png",
+    "app/public/textures/icons/pixel/item_leverrifle.png",
+    "app/public/textures/icons/pixel/item_musket.png",
+    "app/public/textures/icons/pixel/item_revolver.png",
+    "app/public/textures/icons/pixel/item_shell_bird.png",
+    "app/public/textures/icons/pixel/item_shell_buck.png",
+    "app/public/textures/icons/pixel/item_shell_clump.png",
+    "app/public/textures/icons/pixel/item_trapdoor.png",
+    "app/public/textures/traders/shops/cd_ceiling_color.jpg",
+    "app/public/textures/traders/shops/cd_ceiling_normalgl.jpg",
+    "app/public/textures/traders/shops/cd_ceiling_roughness.jpg",
+    "app/public/textures/traders/shops/cd_floor_color.jpg",
+    "app/public/textures/traders/shops/cd_floor_normalgl.jpg",
+    "app/public/textures/traders/shops/cd_floor_roughness.jpg",
+    "app/public/textures/traders/shops/cd_wall_color.jpg",
+    "app/public/textures/traders/shops/cd_wall_normalgl.jpg",
+    "app/public/textures/traders/shops/cd_wall_roughness.jpg",
+    "app/public/textures/traders/shops/gn_ceiling_color.jpg",
+    "app/public/textures/traders/shops/gn_ceiling_normalgl.jpg",
+    "app/public/textures/traders/shops/gn_ceiling_roughness.jpg",
+    "app/public/textures/traders/shops/gn_floor_color.jpg",
+    "app/public/textures/traders/shops/gn_floor_normalgl.jpg",
+    "app/public/textures/traders/shops/gn_floor_roughness.jpg",
+    "app/public/textures/traders/shops/gn_wall_color.jpg",
+    "app/public/textures/traders/shops/gn_wall_normalgl.jpg",
+    "app/public/textures/traders/shops/gn_wall_roughness.jpg",
+    "app/public/textures/traders/shops/hw_ceiling_color.jpg",
+    "app/public/textures/traders/shops/hw_ceiling_normalgl.jpg",
+    "app/public/textures/traders/shops/hw_ceiling_roughness.jpg",
+    "app/public/textures/traders/shops/hw_floor_color.jpg",
+    "app/public/textures/traders/shops/hw_floor_normalgl.jpg",
+    "app/public/textures/traders/shops/hw_floor_roughness.jpg",
+    "app/public/textures/traders/shops/hw_wall_color.jpg",
+    "app/public/textures/traders/shops/hw_wall_normalgl.jpg",
+    "app/public/textures/traders/shops/hw_wall_roughness.jpg",
+    "app/public/textures/traders/shops/od_ceiling_color.jpg",
+    "app/public/textures/traders/shops/od_ceiling_normalgl.jpg",
+    "app/public/textures/traders/shops/od_ceiling_roughness.jpg",
+    "app/public/textures/traders/shops/od_floor_color.jpg",
+    "app/public/textures/traders/shops/od_floor_normalgl.jpg",
+    "app/public/textures/traders/shops/od_floor_roughness.jpg",
+    "app/public/textures/traders/shops/od_wall_color.jpg",
+    "app/public/textures/traders/shops/od_wall_normalgl.jpg",
+    "app/public/textures/traders/shops/od_wall_roughness.jpg",
+    "app/public/textures/traders/shops/of_ceiling_color.jpg",
+    "app/public/textures/traders/shops/of_ceiling_normalgl.jpg",
+    "app/public/textures/traders/shops/of_ceiling_roughness.jpg",
+    "app/public/textures/traders/shops/of_floor_color.jpg",
+    "app/public/textures/traders/shops/of_floor_normalgl.jpg",
+    "app/public/textures/traders/shops/of_floor_roughness.jpg",
+    "app/public/textures/traders/shops/of_wall_color.jpg",
+    "app/public/textures/traders/shops/of_wall_normalgl.jpg",
+    "app/public/textures/traders/shops/of_wall_roughness.jpg",
+    "app/public/textures/traders/shops/ww_ceiling_color.jpg",
+    "app/public/textures/traders/shops/ww_ceiling_normalgl.jpg",
+    "app/public/textures/traders/shops/ww_ceiling_roughness.jpg",
+    "app/public/textures/traders/shops/ww_floor_color.jpg",
+    "app/public/textures/traders/shops/ww_floor_normalgl.jpg",
+    "app/public/textures/traders/shops/ww_floor_roughness.jpg",
+    "app/public/textures/traders/shops/ww_wall_color.jpg",
+    "app/public/textures/traders/shops/ww_wall_normalgl.jpg",
+    "app/public/textures/traders/shops/ww_wall_roughness.jpg",
+    "app/public/textures/traders/signs_atlas.jpg"
+  ],
+  "textMerge": [
+    {
+      "path": "app/FIREARMS.md",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "a9cdb3486bb43d80e93cf0b74f31ef865c177354e44219398a115f03f41f7c11",
+      "mergedSha": "a9cdb3486bb43d80e93cf0b74f31ef865c177354e44219398a115f03f41f7c11"
+    },
+    {
+      "path": "app/SIGNS-SOURCES.md",
+      "status": "merged",
+      "beforeSha": "2f05e9e7282337b99a41947466b296c13399fbc5e56ec3382d9f48404b2000cb",
+      "stageSha": "7549b498969a968285b915d530d6a191462e7d4a922a68d20a06164aee0b299e",
+      "mergedSha": "9995293e360aeb2d172601feab380ab5a39dd7ae499302e61155372513a24b12"
+    },
+    {
+      "path": "app/TRADERS-SHOPS.md",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "bade68a1c37196a68161bf0943d2e34d63b648d1661aeebb7316fffcede9eb28",
+      "mergedSha": "bade68a1c37196a68161bf0943d2e34d63b648d1661aeebb7316fffcede9eb28"
+    },
+    {
+      "path": "app/package.json",
+      "status": "merged-scripts",
+      "beforeSha": "b2bca70a3c3d2ff28da36f5a9190f7604b43b75f54b5005fa88a1aca2be5ff5c",
+      "stageSha": "2eb2fca5abe5396a81d8cc0c34b37094d83e976f71560d3bf294354d08ff4541",
+      "mergedSha": "2eb2fca5abe5396a81d8cc0c34b37094d83e976f71560d3bf294354d08ff4541"
+    },
+    {
+      "path": "app/proto-firearms.html",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "50a4358dac0f9d7fdaba4ecc62a7aeb9b97ce83edcb2d37733cc1a1d93403f0b",
+      "mergedSha": "50a4358dac0f9d7fdaba4ecc62a7aeb9b97ce83edcb2d37733cc1a1d93403f0b"
+    },
+    {
+      "path": "app/proto-shops.html",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "c855a825116f01969aa8004adf8385c9eb12eff0cb0eca49a12e313ca76c0676",
+      "mergedSha": "c855a825116f01969aa8004adf8385c9eb12eff0cb0eca49a12e313ca76c0676"
+    },
+    {
+      "path": "app/public/textures/traders/shops/SOURCES.md",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "209868884c32089c846ac600462575194213baebecdf28305bc83aa92c94ab26",
+      "mergedSha": "209868884c32089c846ac600462575194213baebecdf28305bc83aa92c94ab26"
+    },
+    {
+      "path": "app/scripts/audit-traders-dressing.ts",
+      "status": "merged",
+      "beforeSha": "515c0934b0804f30aaf11c880cbd43cc4f6c881273c89b6b5629f3e7088ca2cc",
+      "stageSha": "54c938a2d11fd381cfacd318dc867f7a80ab916aed24a2a79d1af4faa0301e01",
+      "mergedSha": "4490ec1454d443fd17a4d00328691dee002dcab931c2740108ebfb93ac845244"
+    },
+    {
+      "path": "app/scripts/check-firearms.ts",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "09277283c590d7c669a840f58eb3bc466a71026be93ba19b403c577d05416a28",
+      "mergedSha": "09277283c590d7c669a840f58eb3bc466a71026be93ba19b403c577d05416a28"
+    },
+    {
+      "path": "app/scripts/check-traders-keep.ts",
+      "status": "merged",
+      "beforeSha": "4fe104422fa137b0c04e563de97f58e6a0a105b3299c91c6fb500b66bacbd4e1",
+      "stageSha": "bcf232649c01a8feaa7c06dcd071cf177d12618bd577c4aa7a64104c3214549b",
+      "mergedSha": "322e39840fcccaff4df2292de52ebcd9afbeef7eb8cf044a6550dbc323a6bec4"
+    },
+    {
+      "path": "app/scripts/check-traders-shops.ts",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "44e3f519ab8b874af544a158205fdcadb47199406c82e2aa487fcc3d56883106",
+      "mergedSha": "44e3f519ab8b874af544a158205fdcadb47199406c82e2aa487fcc3d56883106"
+    },
+    {
+      "path": "app/scripts/gen-item-icons.py",
+      "status": "merged",
+      "beforeSha": "4af0d42e3f85bb233324141a2538f4f3cd9a9525596c2f2e7a825128d040aebf",
+      "stageSha": "4b5f6da342d3bb20b3b411d1c4b6c41f5be0a75b2fcff5b08d9aea7224598efc",
+      "mergedSha": "8d754950e46c766d18ee5e76a3d1373b990804cd1162d3cac6013e01fe4513bd"
+    },
+    {
+      "path": "app/scripts/gen-traders-shop-textures.py",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "e7f27cbdd9a5e694f4a3ece9bb778dc77596f7a566c30f71db2bd7d5d3ef3c05",
+      "mergedSha": "e7f27cbdd9a5e694f4a3ece9bb778dc77596f7a566c30f71db2bd7d5d3ef3c05"
+    },
+    {
+      "path": "app/src/App.tsx",
+      "status": "partial",
+      "beforeSha": "e902b374821fc360a42da13942eeeb7eb20d53e0764aea5aed1822bd1d15a998",
+      "stageSha": "265967134109a035564c002f3529f2710dcca0fee7daf25e3f3126c098fb4267",
+      "mergedSha": "1b4e6627f29f88470a1b02e5e5c52f9543afd9bfbe695fb7bcde843b8e394d7f"
+    },
+    {
+      "path": "app/src/components/DialogOverlay.tsx",
+      "status": "merged",
+      "beforeSha": "3c6f7ec61d53d8980e471518d9c5b408b80958ac31d7f0e0ba6c440c2202a1ed",
+      "stageSha": "cdb7915045fdfe42c6ad03f1c238664f57b81d2a0026b73aae9d90d3a49beb70",
+      "mergedSha": "cdb7915045fdfe42c6ad03f1c238664f57b81d2a0026b73aae9d90d3a49beb70"
+    },
+    {
+      "path": "app/src/components/GunHud.tsx",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "7e0969feca93a53578a2d4142bf8999acb114030a763be0a7cd27d75f214ddcf",
+      "mergedSha": "7e0969feca93a53578a2d4142bf8999acb114030a763be0a7cd27d75f214ddcf"
+    },
+    {
+      "path": "app/src/components/HUD.tsx",
+      "status": "merged",
+      "beforeSha": "f5e43e2e21f897498f7187ccad954e32f132724833bf604090629956ab364537",
+      "stageSha": "fcaffc64a5ef28cc17646a98e81a9b128adffe865aa2930c261c4e4e8036bed8",
+      "mergedSha": "47548f9145414b9501168b72cb895748dc8e3e05c34d7b4604d5f92c9c491b0a"
+    },
+    {
+      "path": "app/src/components/SquirtRadial.tsx",
+      "status": "merged",
+      "beforeSha": "b5a44694110d7a9af8dd8e0198e9475b7fd27b8942322d14fa84437850db3347",
+      "stageSha": "7fd0e03f92da8429080a63c4655d4850004aa82bf9113773d94027a738a8cb1e",
+      "mergedSha": "e09245d34fb24cf35c3a41960e1a0f95a90a16be47a7b0fb2c6ccd67c4d8ec9e"
+    },
+    {
+      "path": "app/src/components/TouchControls.tsx",
+      "status": "partial",
+      "beforeSha": "4ee0dbcb5211db097247d5ee0baa589ec5df30561872932fb33ed2d430b97b03",
+      "stageSha": "fc70b980444487f7f22ec7941872a7264d61d5efebe8eccdf40b07efef5d67c5",
+      "mergedSha": "10f72bd74e856503a52c4e970de97ce154679a98fa8f53e1635b5221d3c4a2e8"
+    },
+    {
+      "path": "app/src/game/content/codexScores.ts",
+      "status": "merged",
+      "beforeSha": "2092345ff0c8a866f0bed923bfb1a19614d6d4ade1b6fda2b19608472b0e57dd",
+      "stageSha": "7af398f5747291822c3f45bca6e70ec2d60e7b133ea7038868668d20d1731be4",
+      "mergedSha": "cf78eb0d45f7e15d9e057cd7782ec81043d530b460eed983324bb4d86e5b628c"
+    },
+    {
+      "path": "app/src/game/content/firearms.ts",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "33bb547db7b6d40b6586fedb6f7f6e7ed3d99a93284a86fe915d2f03763d1856",
+      "mergedSha": "33bb547db7b6d40b6586fedb6f7f6e7ed3d99a93284a86fe915d2f03763d1856"
+    },
+    {
+      "path": "app/src/game/content/items.ts",
+      "status": "merged",
+      "beforeSha": "8e2117a8628cb9042ce1c13e17f558c6b31583f0139187da2981d72b4143d534",
+      "stageSha": "16064e99f65245bef84eebcf911b4661c0e3d65263a82c5b1544d62850ea05a7",
+      "mergedSha": "39d7c356bab5b4eb16e11144f763b82cd80fd1795cd5248883b0d5388187ce9f"
+    },
+    {
+      "path": "app/src/game/content/npcs.ts",
+      "status": "merged",
+      "beforeSha": "d6ec9747e9de82b84150ffbf12b485445569059d8458c6cf9da6926ad9bacb61",
+      "stageSha": "7d2a7610c28ee086c639925ba1de9a9cd16c827e565c895cc1045d9d20836817",
+      "mergedSha": "353640374b09fc2bd2af242f9bd1c17bcb1154dfa051beea9d151a88dfdc27ef"
+    },
+    {
+      "path": "app/src/game/content/tradersDressingShapes.ts",
+      "status": "merged",
+      "beforeSha": "192cc4a8747248ec68e5cfc26202c13685fccc363a552f102cf62e23f5e7ff1f",
+      "stageSha": "d37ca8cd830716ba7044b155869aafba9b02ba191f1f4f0cc1e511cb6430ca32",
+      "mergedSha": "c57840062c38b79d19970be8a7ad6d1f318c4c72123f1ce732d49714e60c02d1"
+    },
+    {
+      "path": "app/src/game/content/tradersFurnishings.ts",
+      "status": "merged",
+      "beforeSha": "fa0f02467c85febd23f48137c52225861fe6a131378f120059df051b2b95175c",
+      "stageSha": "bb14f5cb59e7f8785bab17a8a6b13d30eb65a1b72520870ba20ca694859a655c",
+      "mergedSha": "0c77e17266ad276153187f8c524c1351dcd10a23ef2a3cb041d5d24c2541d45a"
+    },
+    {
+      "path": "app/src/game/content/tradersLayout.ts",
+      "status": "merged",
+      "beforeSha": "4f3c9df3d5864cd24845681ed6c4ff32a82a24227548c7658aaff48576ee41aa",
+      "stageSha": "1b7eac9759597a2d93ad59a08751462c0ac1c5c0964c32819cdf85b296c200ef",
+      "mergedSha": "733b66744fd98d8fcdc5d89eb554780cda9acc735af2e5edcdfe68d32316c3eb"
+    },
+    {
+      "path": "app/src/game/content/tradersShops.ts",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "7669c9a7b1c82e94d004b6d101fa45ef5693fb9843e849fa3c08d232d325f9c5",
+      "mergedSha": "7669c9a7b1c82e94d004b6d101fa45ef5693fb9843e849fa3c08d232d325f9c5"
+    },
+    {
+      "path": "app/src/game/content/tradersSignAtlas.ts",
+      "status": "merged",
+      "beforeSha": "dfbefa1d5d9c146380de30f894a58978755e45c6d5398646e235ca5d8877bd4f",
+      "stageSha": "fd9de0fcbc1f4140982de0619357520002e7ae94f441f6ecb20f0bfbab3d8a13",
+      "mergedSha": "d46929ab599a9a81efc81bd46924891ec338b50151161f61cec50bafe303b54e"
+    },
+    {
+      "path": "app/src/game/core/audio.ts",
+      "status": "merged",
+      "beforeSha": "30a6868de91dfd69c2e08f9468a4c2678d0e2ed58dc983781900ffa015aa7833",
+      "stageSha": "1060da9a15ae4a1dffeebb9adb4f6bc6756a1241c5e9756cca1770949a8bb953",
+      "mergedSha": "1060da9a15ae4a1dffeebb9adb4f6bc6756a1241c5e9756cca1770949a8bb953"
+    },
+    {
+      "path": "app/src/game/core/types.ts",
+      "status": "merged",
+      "beforeSha": "8856db18f865e65f8e87649a892539ba91d9364a4a1aada6ab7666f5648b8143",
+      "stageSha": "af41cc35d693720fc7ec73dfc3115c0c1c4aea39c6802d85a3dd0ab104703da7",
+      "mergedSha": "af41cc35d693720fc7ec73dfc3115c0c1c4aea39c6802d85a3dd0ab104703da7"
+    },
+    {
+      "path": "app/src/game/engine.ts",
+      "status": "partial",
+      "beforeSha": "be06538f6a1629245a24f89d305e58a0b469302cf46ea1552d33fa673c9f7dd5",
+      "stageSha": "19dc83e21a38f8bc9b7c456471921fa8bcbc463cd505d6c3b55e81243c17e987",
+      "mergedSha": "dcde0239fe35f58de45397eed203747e1106777662e37e5145656ddb2fe685a2"
+    },
+    {
+      "path": "app/src/game/engine/bntgBank.ts",
+      "status": "merged",
+      "beforeSha": "ecb46802f4a41a0c51445695b2e9dcbe735467cd73acf2b31d23d0601218f2c8",
+      "stageSha": "283e16ff2a5d3e52cbcc03cb937e6e8712b1baec12506833243d87d472dc63d1",
+      "mergedSha": "5b45ec96a5eab68c14b74086eb43e03a3f008b48d9b3531db56868b5aabab1e0"
+    },
+    {
+      "path": "app/src/game/engine/combat.ts",
+      "status": "merged",
+      "beforeSha": "c5e6e84facec755aac45a566765b66b9a1eb7f3d5c5b99e8e91d9b40491f2af7",
+      "stageSha": "96cb3f22f7f14618b1a858258859d66bc4b2ff4dc30d233a66b8be1c011a681b",
+      "mergedSha": "392d607db814baadf08705093d823f0de2fb92e1f22b0644da7df191d96423eb"
+    },
+    {
+      "path": "app/src/game/engine/firearms.ts",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "65e46e542f2131405d15ff58ec1e6fbcf369dda76043e9405c2574861f4cab3e",
+      "mergedSha": "65e46e542f2131405d15ff58ec1e6fbcf369dda76043e9405c2574861f4cab3e"
+    },
+    {
+      "path": "app/src/game/engine/interact.ts",
+      "status": "merged",
+      "beforeSha": "a805d60afe3532e8cd9e05f87ea305e80e270d2f9677cc271087dae66f39dfbe",
+      "stageSha": "2a8ddfda0a94efbbbef0f9114f7257db025a59eafaa7128729abad351a6d7e7f",
+      "mergedSha": "2a8ddfda0a94efbbbef0f9114f7257db025a59eafaa7128729abad351a6d7e7f"
+    },
+    {
+      "path": "app/src/game/engine/inventory.ts",
+      "status": "partial",
+      "beforeSha": "525026e129fdf2b14f6384a311825ebd977d5143d6a3436ea19841c9ee2e7964",
+      "stageSha": "6f2e2c36e96074280997856fa53561bbf9f5c740fd7ad3acb48dbe2a00f83d94",
+      "mergedSha": "e8668dd3a4cb624978e3a1bf84d73e492a37420eb956c4e1a0b28d1afb58a336"
+    },
+    {
+      "path": "app/src/game/renderer/firearmAnim.ts",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "8493bcb20c1278c0605e471cc39cf777f8b7916a26ed28920210aa31414b70a2",
+      "mergedSha": "8493bcb20c1278c0605e471cc39cf777f8b7916a26ed28920210aa31414b70a2"
+    },
+    {
+      "path": "app/src/game/renderer/firearmGuns.ts",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "6ac73988750fb1c9d4076b8f25e91cad0c25f295d5a9dddb6fb6e0ed495204e0",
+      "mergedSha": "6ac73988750fb1c9d4076b8f25e91cad0c25f295d5a9dddb6fb6e0ed495204e0"
+    },
+    {
+      "path": "app/src/game/renderer/firearmMesh.ts",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "ff3e0d4591faa4ffddff04868f8289119ea1dde82fc93cb6883550be3d086522",
+      "mergedSha": "ff3e0d4591faa4ffddff04868f8289119ea1dde82fc93cb6883550be3d086522"
+    },
+    {
+      "path": "app/src/game/renderer/firearmView.ts",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "937a9bc87d425940663a3f9586baae8202f05769580e033234ff3cbe239b7171",
+      "mergedSha": "937a9bc87d425940663a3f9586baae8202f05769580e033234ff3cbe239b7171"
+    },
+    {
+      "path": "app/src/game/renderer/itemsMesh.ts",
+      "status": "merged",
+      "beforeSha": "f1e469b5263210a7a7096d5dbe2561586edf698441a76cb43321f6c4571cda1a",
+      "stageSha": "f409084d004cedfef1a04ab345cabc37d360acb8f47e29c44c3deef3a0e795f7",
+      "mergedSha": "23e8be48908e644c90f11effda6d0777af439563bbce4b8b70467a8ecac4b989"
+    },
+    {
+      "path": "app/src/game/renderer/npcGearPlan.ts",
+      "status": "merged",
+      "beforeSha": "ca94b5c5feb9d40fbafc0a8979e7fe59e6161d1bca32c171194b0384992f04f0",
+      "stageSha": "07786ac3b0cabed6234c5a665ea26490898dd78c3d0b87c4a2da2af62087f935",
+      "mergedSha": "07786ac3b0cabed6234c5a665ea26490898dd78c3d0b87c4a2da2af62087f935"
+    },
+    {
+      "path": "app/src/game/renderer/npcIdlePose.ts",
+      "status": "skip-obsolete-unused-argument-rename",
+      "beforeSha": "2125086cde46a6ea37c572680dcad4af20b7dfced104d3d2fa16dff0bb815a1e",
+      "stageSha": "2125086cde46a6ea37c572680dcad4af20b7dfced104d3d2fa16dff0bb815a1e"
+    },
+    {
+      "path": "app/src/game/renderer/renderer.ts",
+      "status": "partial",
+      "beforeSha": "092d433fe93baba826b384917c8942b7f8298e46d532e1011d3199cfe3811720",
+      "stageSha": "f449adb2cad785ef3023b3f4d57894ba781cf5148734c2c4e6a2cc6a69d58302",
+      "mergedSha": "c4049e4808fbd61ff3246256849e7f4cff8d9ac6cbfec05014d7a17243e7f3b0"
+    },
+    {
+      "path": "app/src/game/renderer/retroViewHand.ts",
+      "status": "merged",
+      "beforeSha": "4f472df5c7eec8fdd51678726bf9f5b61c3c897320c362a37f272818b8c4da23",
+      "stageSha": "fda660e4d8d715cc79e915c3bc97b4cec50fde8d9b25d01775e5dae09329fdc0",
+      "mergedSha": "fda660e4d8d715cc79e915c3bc97b4cec50fde8d9b25d01775e5dae09329fdc0"
+    },
+    {
+      "path": "app/src/game/renderer/tradersDressingMeshes.ts",
+      "status": "merged",
+      "beforeSha": "d474be9d5a74c432c8d10ad49cb818fb53eee015e33dba3c230781655bcf0b1e",
+      "stageSha": "dc22ba78c29c8c4e4d4cca993054342155130cc7550218d6d70aeaa815bfd717",
+      "mergedSha": "7095d44d087275be2cba2c86217a1b17f7c20e453e01aed0dc9b680d21deeb65"
+    },
+    {
+      "path": "app/src/game/renderer/tradersDressingParts.ts",
+      "status": "merged",
+      "beforeSha": "348665503a8de04f1b8302d07375573102820ca2f0e9677d8a5be76aa16f0519",
+      "stageSha": "9838a046e3c0e1c84de0e99d00e6949b9e22433413cdb44c5185d8d80ca74e1c",
+      "mergedSha": "f56017c3abbfcda483c1c9473cfd49ce3e1eb285db1c660d80a9738eca7e2ad9"
+    },
+    {
+      "path": "app/src/game/renderer/tradersMarketMeshes.ts",
+      "status": "merged",
+      "beforeSha": "954afe7ecd0ae1ba9cb944a4af47f2336aaa5211ae7d2e81a419209146b016dd",
+      "stageSha": "2982bd5efc80ad6d96bb35c29fc6fdf58a9774025cc35059ba3ac16f524fba99",
+      "mergedSha": "954afe7ecd0ae1ba9cb944a4af47f2336aaa5211ae7d2e81a419209146b016dd"
+    },
+    {
+      "path": "app/src/game/renderer/tradersMeshes.ts",
+      "status": "merged",
+      "beforeSha": "9d23610cb511ee1c1adabec9e41a561b4a382e56405ea87774d265abb6f2e1f2",
+      "stageSha": "470ecb3970a4627f2f8a74ff544ff0c9ad337925b491104956a25d904e3620d9",
+      "mergedSha": "646e69b00e21715049de18639b63e379bad62e6058c8cbea6c71fa062d45d7cf"
+    },
+    {
+      "path": "app/src/game/renderer/tradersShopMeshes.ts",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "3746ff04e0563cb98fe74369303342d1fdb9a2dce4c2f4104c1bdf6e6ff48fc8",
+      "mergedSha": "3746ff04e0563cb98fe74369303342d1fdb9a2dce4c2f4104c1bdf6e6ff48fc8"
+    },
+    {
+      "path": "app/src/game/renderer/viewmodel.ts",
+      "status": "merged",
+      "beforeSha": "241e9dc451ebdf72645d7f62b63cd5b23e1d2d2af21b10d3146d3c6b05a2f290",
+      "stageSha": "1ae4d6305eba4408646f5b01c97f6c92aa538c6137a24c8a6a61add5932418c5",
+      "mergedSha": "1ae4d6305eba4408646f5b01c97f6c92aa538c6137a24c8a6a61add5932418c5"
+    },
+    {
+      "path": "app/src/game/world/tradersWorld.ts",
+      "status": "merged",
+      "beforeSha": "5631019a9aa91c805c088412126bad8e10b5808e740c9b8389e81bf7e623bfa5",
+      "stageSha": "f347fbc6c2372d32f13c71669161fdb54bda07ed42eb19f25f5c5a81fc81467f",
+      "mergedSha": "770ddafd82255e50dc6e5d050b30729cf6ed32554ea5db9b430ddd7de39fd7ab"
+    },
+    {
+      "path": "app/src/proto/firearmsProto.ts",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "68802197a3932a6fbb151b476b7672a30aedcad19ec72db68f95b5ce6645bbaf",
+      "mergedSha": "68802197a3932a6fbb151b476b7672a30aedcad19ec72db68f95b5ce6645bbaf"
+    },
+    {
+      "path": "app/src/proto/retroNpcProto.ts",
+      "status": "merged",
+      "beforeSha": "09f46bd054926f7e125f228ae1fc90806164408ed831048fed0fbd592de912c1",
+      "stageSha": "49baf1c8f856c9a0fd7edd156c96d4aadc402f6a53016bc9487611bd2f37ed7c",
+      "mergedSha": "49baf1c8f856c9a0fd7edd156c96d4aadc402f6a53016bc9487611bd2f37ed7c"
+    },
+    {
+      "path": "app/src/proto/shopsProto.ts",
+      "status": "new",
+      "beforeSha": null,
+      "stageSha": "8be4bbd7ca63190e941158214c6d18dc09e3d4480dedb0c75ba114e7494ed6a2",
+      "mergedSha": "8be4bbd7ca63190e941158214c6d18dc09e3d4480dedb0c75ba114e7494ed6a2"
+    }
+  ],
+  "resolutions": "Seven context overlaps adapted; current faceling/window/idle and market credit changes preserved."
+}

@@ -13,11 +13,13 @@ import type { LevelDef, StructKind, Structure, LightSource } from '../core/types
 import type { RNG } from '../core/rng'
 import { genRandomNpcs, jerryFollowerDef } from '../content/npcs'
 import { makeEntity } from '../entities'
+import { FOYER_ID, genFoyer } from './foyerLayout'
 
 const K = 1.25 // 区块放大系数（设计坐标 → 地图坐标）
 
 export function genOutpost(m: GameMap, rng: RNG, def: LevelDef): { cx: number; cy: number }[] {
   if (SETTLEMENTS[def.id]) return genSettlement(m, def, SETTLEMENTS[def.id])
+  if (def.id === FOYER_ID) return genFoyer(m, rng, def) // 前厅（序章）：玩家的家
   if (def.id === 102) return genBntgOutpost(m, rng, def)
   if (def.id === 103) return genArianeOutpost(m, rng, def)
   if (def.id === 104) return genTomOutpost(m, rng, def)
@@ -615,12 +617,15 @@ function genBntgOutpost(m: GameMap, rng: RNG, def: LevelDef): { cx: number; cy: 
   for (const ay of [17, 19]) S('photo', 32, ay, 1, 1, false, { flat: 1, tex: 'mall_arrow.png', deg: 180 })
   for (const ay of [34, 37]) S('photo', 32, ay, 1, 1, false, { flat: 1, tex: 'mall_arrow.png' })
 
-  // ---- 雪貂笼（「切行」吉祥物 Ferren 的家：小围栏房 + 窝棚，两只在内漫游） ----
+  // ---- 雪貂笼（「切行」吉祥物 Ferren 的家：小围栏房；[ferren] 阶段 3：只住 1 只，笼里一个窝 + 一个食盆，行为见 ferrenAI） ----
   room(44, 36, 48, 40, [[46, 36]])
-  S('table', 45, 38) // 窝棚
+  { // 窝在西南角、食盆在东南角（门在北墙中段，进门的路空着）；窝的 data 记下笼内沿（地图坐标），供 ferrenAI 绕圈 / 切行落点 / 是否在笼外
+    const [cx0, cy0, cx1, cy1] = [X(44) + 1, X(36) + 1, X(48), X(40)]
+    m.structures.push({ kind: 'ferrennest', x: X(45), y: X(39), w: 1, h: 1, solid: false, data: { cage0: cx0, cage1: cy0, cage2: cx1, cage3: cy1 } })
+    m.structures.push({ kind: 'ferrenbowl', x: X(47), y: X(39), w: 1, h: 1, solid: false })
+  }
   L(46, 38, 4, '#ffe8c0')
   m.entities.push(makeEntity('ferren', X(46) + 0.5, X(38) + 0.5))
-  m.entities.push(makeEntity('ferren', X(45) + 0.5, X(39) + 0.5))
 
   // ---- 南区：公共生活区（ bunkbed 民居，暖木 tint=8） ----
   const house = (x0: number, y0: number, x1: number, y1: number, doors: [number, number][], lite: boolean) => {

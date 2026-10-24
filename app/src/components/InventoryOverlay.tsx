@@ -1,4 +1,5 @@
 import {drawL7Map} from '@/game/content/l7Map'
+import { SQUIRT_LIQUID_NAME, type SquirtLiquidId } from '../game/content/squirtLiquids'
 import L7MapLegend from './L7MapLegend'
 import {drawL23Map} from '@/game/content/l23Map'
 import L23MapLegend from './L23MapLegend'
@@ -151,13 +152,16 @@ function BigMap({ engine }: { engine: Engine }) {
   const playerBand = (typeof pf === 'number' && Number.isFinite(pf) ? Math.max(-1, Math.min(2, Math.floor(pf))) : 0) as FloorBand
   const [floorSel, setFloorSel] = useState<FloorBand | null>(null)
   const viewFloor: FloorBand = floorSel ?? playerBand
+  const chartCenterX=engine.player.x+pan.x+(engine.map?.inf?.ox??0),chartCenterY=engine.player.y+pan.y+(engine.map?.inf?.oy??0),chartSpan=Math.min(512,480/zoom+(engine.levelDef.id===7?4:0))
+  const l7PreviewKey=engine.levelDef.id===7?[Math.floor((chartCenterX-chartSpan/2)/32),Math.floor((chartCenterY-chartSpan/2)/32),Math.floor((chartCenterX+chartSpan/2)/32),Math.floor((chartCenterY+chartSpan/2)/32)].join(','):''
   useEffect(()=>{
     if((!engine.devEnabled||!reveal)&&!engine.map?.l1Architecture&&![2,3,4,7].includes(engine.levelDef.id)){setPreview(null);return}
     const c=new AbortController(),m=engine.map
     if(!m)return
-    const timeout=setTimeout(()=>{void requestDevMapPreview(engine,{x:engine.player.x+pan.x+(m.inf?.ox??0),y:engine.player.y+pan.y+(m.inf?.oy??0),span:Math.min(512,480/zoom+(engine.levelDef.id===7?4:0)),floor:viewFloor},c.signal).then(setPreview).catch(e=>{if(e.name!=='AbortError')setMapMessage('地图预览暂不可用')})},40)
+    const publish=(data:DevMapPreview)=>{if(!c.signal.aborted)setPreview(data)}
+    const timeout=setTimeout(()=>{void requestDevMapPreview(engine,{x:chartCenterX,y:chartCenterY,span:chartSpan,floor:engine.levelDef.id===7?0:viewFloor},c.signal,engine.levelDef.id===7?publish:undefined).then(publish).catch(e=>{if(e.name!=='AbortError'&&!c.signal.aborted)setMapMessage('地图预览暂不可用')})},engine.levelDef.id===7?12:40)
     return()=>{clearTimeout(timeout);c.abort()}
-  },[engine,pan,zoom,viewFloor,reveal,engine.levelDef.id,engine.map?.inf?.seed,engine.map?.inf?.rev])
+  },[engine,engine.levelDef.id===7?l7PreviewKey:pan,engine.levelDef.id===7?0:zoom,viewFloor,reveal,engine.levelDef.id,engine.map?.inf?.seed,engine.levelDef.id===7?0:engine.map?.inf?.rev])
   const host=useRef<HTMLDivElement>(null)
   const [mapSize,setMapSize]=useState(400)
   useLayoutEffect(()=>{
@@ -319,6 +323,7 @@ function BigMap({ engine }: { engine: Engine }) {
     }
     // NPC：软绿点 + 姓名（据点居民；v46：多层按 NPC 所在楼层带过滤——夹楼居民只在 2F 视图显示）
     for (const n of engine.npcs) {
+      if (n.def.ambient) continue // 前厅环境路人不标点
       if (floors > 1 && (n.floor ?? 0) !== viewFloor) continue
       const nx = n.x * s, ny = n.y * s
       g.fillStyle = '#7ac97a'
@@ -892,6 +897,11 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                       耐久 {slotDur(selSlot)}/{slotMaxDur(selSlot)}{isBroken(selSlot) ? ' · 残件（伤害与距离下降）' : ''} · 按住攻击键蓄力重击{slotDur(selSlot) < slotMaxDur(selSlot) * .5 ? ' · 右键用钉子/尼龙绳修理' : ''}
                     </div>
                   )}
+                  {selDef.charges && ( // 批发市场 v2：医疗箱剩余次数
+                    <div className="font-mono2 text-center text-[10px]" style={{ color: (selSlot.dur ?? selDef.charges) <= 1 ? '#d9a13a' : 'var(--text-dim)' }}>
+                      剩余 {selSlot.dur ?? selDef.charges}/{selDef.charges} 次 · 每次生命 +{selDef.value} 并止血
+                    </div>
+                  )}
                   <div className="font-mono2 text-center text-[10px]" style={{ color: selDef.anomalous ? 'var(--sanity)' : 'var(--text-dim)' }}>
                     {selDef.anomalous ? '后室物品' : '普通物品'} · <span style={{ color: IOTS_FREQ_COLORS[ITEM_IOTS[selSlot.type].frequency] }}>{ITEM_IOTS[selSlot.type].frequency}</span>
                   </div>
@@ -914,7 +924,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                       <div className="font-mono2 text-center text-[11px]" style={{ color: 'var(--amber)' }}>
                         储罐：{engine.squirtTank === 'none'
                           ? '空（0/27）'
-                          : `${{ water: '清水', almond: '杏仁水', cashew: '腰果水', liquidpain: '液态痛苦', acid: '酸液' }[engine.squirtTank as 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid']} ${engine.squirtAmmo}/27（约 ${Math.ceil(engine.squirtAmmo / 3)} 瓶）`}
+                          : `${SQUIRT_LIQUID_NAME[engine.squirtTank as SquirtLiquidId]} ${engine.squirtAmmo}/27（约 ${Math.ceil(engine.squirtAmmo / 3)} 瓶）`}
                       </div>
                       <div className="font-mono2 text-center text-[10px]" style={{ color: 'var(--text-dim)' }}>
                         装入 1 瓶 = 3 份喷射 · 储罐只能装一种液体 · 右键/使用 = 自己喝一口
@@ -934,6 +944,12 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                             style={{ borderColor: 'var(--blood)', color: 'var(--blood)' }}
                             onClick={() => { engine.loadSquirt('liquidpain'); refresh() }}
                           >装液态痛苦×{engine.countItem('liquidpain')}</button>
+                        )}
+                        {engine.hasItem('memoryjuice') && (
+                          <button className="menu-btn flex-1 py-1 text-center text-[11px]" style={{ borderColor: '#d9822e', color: '#e8a050' }} onClick={() => { engine.loadSquirt('memoryjuice'); refresh() }}>装记忆汁液×{engine.countItem('memoryjuice')}</button>
+                        )}
+                        {engine.hasItem('laughrepellent') && (
+                          <button className="menu-btn flex-1 py-1 text-center text-[11px]" onClick={() => { engine.loadSquirt('laughrepellent'); refresh() }}>装驱笑剂×{engine.countItem('laughrepellent')}</button>
                         )}
                         {engine.hasItem('acidcallus') && (
                           <button
@@ -968,6 +984,9 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                           onClick={() => { engine.equipItem(sel.w, sel.i); setSel(null); refresh() }}
                         >装备</button>
                       )
+                    )}
+                    {selDef.type === 'saltbox' && !isEquipW(sel.w) && (
+                      <button className="menu-btn flex-1 py-1.5 text-center text-[13px]" onClick={() => { engine.unpackSaltBox(sel.w, sel.i); setSel(null); refresh() }}>分解 ×5</button>
                     )}
                     <button className="menu-btn flex-1 py-1.5 text-center text-[13px]" onClick={() => { engine.dropSlot(sel.w, sel.i); setSel(null); refresh() }}>丢弃</button>
                   </div>

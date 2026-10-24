@@ -148,6 +148,8 @@ export interface Entity {
   fakeT?: number // 复印机幽灵幻影计时
   scrapeT?: number // 穿墙沙沙声计时（钝人）
   intimidated?: boolean // 猎犬：正处于「直视+噪音」威慑中（播报去抖）
+  fc?: import('../engine/facelingAI').FacelingState // v90 无面灵重制：年龄 / 情绪片段 / 安抚进度（不入存档/联机）
+  fcAge?: import('./facelingTraits').FacelingAge // 生成标记指定的年龄档（L2 亲子房），缺省按 id 确定
   provoked?: boolean // 被动实体（无面灵）：被玩家攻击后激怒，持续反击直到脱战平息
   l11Home?: import('../world/l11FacelingTypes').L11FacelingHome
   mothNest?: string // World-stable Beverly annex id; never rebased with the window.
@@ -169,6 +171,9 @@ export interface Entity {
   hd?: import('../engine/houndAI').HoundState // v62：猎犬（含 L11 中立变种）运行时状态（不入存档/联机）
   sm?: import('./smilers').SmilerState // v61：笑魇变种与 AI 运行时状态（不入存档/联机）
   th?: import('../engine/thingAI').ThingState // 七层之物：身体链、休眠、割肉、惊逃
+  fr?: import('../engine/ferrenAI').FerrenEntState // [ferren] Entity 92：作息行为 / 片段 / 切行（不入存档/联机；作息时钟在 eng.ferrenRun）
+  vm?: import('../engine/vendingAI').Vm36State // [vending] Entity 36：库存 / 出货片段 / 活化状态机（不入存档/联机）
+  win?: import('../engine/windowAI').WinEntState // [window] 窗户 Entity 2：挂墙位姿 / 三态 / 片段（不入存档/联机）
   tiny?: import('../engine/tinyAI').TinyState // Single-player Tiny state; not persisted.
   l9FogTravel?: {mode:'arrive'|'active'|'leave';homeX:number;homeY:number;exitX:number;exitY:number} // World coordinates survive streaming shifts.
   l9FogSpawn?: boolean // L9 罕见浓雾期间生成的残缺者；雾散后随之退散

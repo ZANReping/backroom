@@ -10,12 +10,20 @@ import { buildMeleeGroundMesh } from './meleeMesh'
 import { isMelee } from '../content/melee'
 import { buildFiresaltMesh } from './firesaltMesh'
 import { buildSquirtGunMesh } from './squirtGunMesh'
+import { buildFirearmGroundMesh, buildAmmoGroundMesh } from './firearmMesh'
 import { buildLiquidPainMesh, buildRoyalRationMesh, buildWarpberryMesh } from './anomalousProvisionMesh'
 import { buildRefinedItemMesh, isRefinedItemType } from './refinedItemMesh'
 import { buildShrimpItemMesh } from './shrimpMesh'
-import { buildBentoItemMesh } from './object70Mesh'
 import { velvetCakeGeometry } from './partygoerMesh'
 import { buildCurabiturItemMesh, isCurabiturItem } from './curabiturRender' // [L8-curabitur]
+import { glowSprite } from './curabiturMesh'
+
+import { buildFoyerBackpack, buildFoyerPhone, buildFoyerSnack, buildFoyerWater, type ItemMatFactory } from './foyerItemModels'
+
+/** 前厅随身物品（手机/瓶装水/能量棒/背包）在其他层级地面上的版本：Lambert + 像素贴图 + 与其它地面物品一致的弱自发光。 */
+const foyerGroundMats: ItemMatFactory = (_k, p) => p.basic
+  ? new THREE.MeshBasicMaterial({ color: p.color, map: p.map ?? null })
+  : new THREE.MeshLambertMaterial({ color: p.color, map: p.map ?? null, transparent: !!p.transparent, opacity: p.opacity ?? 1, side: p.side ?? THREE.FrontSide, emissive: p.map ? '#ffffff' : p.color, emissiveMap: p.map ?? null, emissiveIntensity: 0.25 })
 
 // ---------- 物品低模 ----------
 // v59：halo 选项——联机远端玩家的手持物品不显示脚底稀有度光圈（地面掉落物保留）
@@ -40,16 +48,20 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     grp.add(gm); grp.userData.itemType = meleeBase; grp.userData.meleeRig=gm.userData.meleeRig
   }
   else if (type === 'dryshrimp' || type === 'liveshrimp' || type === 'friedshrimp') grp.add(buildShrimpItemMesh(type))
+  else if (isRefinedItemType(type)) {
+    const model = buildRefinedItemMesh(type)
+    // 2026-10-23：受眷胶 / 受眷孢子改用细化模型（relic 图集），保留原来的发光光晕（挂在模型下，手持版一起带上）
+    if (type === 'curabiturgel') { const h = glowSprite('#b8ff60', .4, .5); h.position.y = .07; model.add(h) }
+    if (type === 'curabiturspore') for (const [x, z, r] of [[0, 0, .021], [.042, .016, .018], [-.016, .04, .016]]) { const h = glowSprite('#ffb34a', r * 7, .7); h.position.set(x, r * 1.1, z); model.add(h) }
+    grp.add(model)
+  }
   else if (isCurabiturItem(type)) grp.add(buildCurabiturItemMesh(type))
-  else if (isRefinedItemType(type)) grp.add(buildRefinedItemMesh(type))
   else switch (type) {
     // Six detailed models share UV atlases; their factory emits at most three material batches.
     case 'luckymilk': case 'capacitor': case 'skeleton': case 'rabbit': case 'pockets': case 'fuyouyu':
       grp.add(buildSixItemMesh(type)); break
     case 'almond': // 杏仁水：不锈钢保温杯轮廓 +「杏仁水」真实环绕 UV
       grp.add(buildWaterThermosMesh('almond')); break
-    case 'bento': // v83 自制便当（Object 70 公文包里的那只便当盒）
-      grp.add(buildBentoItemMesh()); break
     case 'canned': // 罐头：真实 UV 纸标签 + 金属卷边端盖/压槽/易拉环
       grp.add(buildCannedFoodMesh()); break
     case 'bandage': // 绷带卷：真实 UV 棉纱 + 同心卷层/纸芯/弯曲垂带/散纱
@@ -87,6 +99,8 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     case 'knife': // 刀：带刃线的钢刃、护手、铆钉与防滑柄 UV
     case 'axe': // 斧头：楔形斧刃、斧楔、木纹柄与包覆握把
       grp.add(buildDetailedItemMesh(type)); break
+    case 'dbshotgun': case 'leverrifle': case 'revolver': case 'musket': case 'trapdoor': grp.add(buildFirearmGroundMesh(type)); break // 枪械：与第一人称共用同一模型（侧躺）
+    case 'shell_buck': case 'shell_bird': case 'shell_clump': case 'cart_4440': case 'cart_paper': case 'cart_4570': grp.add(buildAmmoGroundMesh(type)); break // 12 号弹：一小盒 + 露出三发
     case 'squirtgun': { // 滋水枪：共享成型枪壳、透明刻度罐、泵筒、供液管与三套 UV
       const gun = buildSquirtGunMesh()
       gun.scale.setScalar(.82)
@@ -101,43 +115,22 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     // ---------- v40：此前走通用 fallback 的 12 件补齐 ----------
     case 'disinfectant': // 消毒液：泵头瓶、可见液体与英文医用标签 UV
       grp.add(buildDetailedItemMesh(type)); break
-    case 'jerryflyer': { // 重制杰瑞：信众传单——对折过的纸，正面印着蓝色大鸟与几行字
-      em(0.2, 0.004, 0.14, '#e4e6ee', 0, 0.006, 0, 0, 0.04)
-      em(0.075, 0.002, 0.06, '#2f54c6', -0.045, 0.01, 0, 0, 0.04) // 蓝鸟图样
-      em(0.012, 0.002, 0.012, '#f2c419', -0.03, 0.0115, 0.012, 0, 0.04) // 黄色眼圈
-      for (let i = 0; i < 4; i++) em(0.07, 0.002, 0.008, '#3a3e52', 0.045, 0.0105, -0.035 + i * 0.022, 0, 0.04) // 文字行
+    case 'phone': grp.add(buildFoyerPhone(foyerGroundMats)); break // 前厅：手机（精细模型 + 像素锁屏/背壳贴图）
+    case 'bottledwater': grp.add(buildFoyerWater(foyerGroundMats)); break // 前厅：瓶装水（车削瓶身 + 像素腰标）
+    case 'foyerpack': { // 前厅 M4：摔落在 L0 地毯上的双肩包（侧躺）
+      const pk = buildFoyerBackpack(foyerGroundMats)
+      pk.rotation.x = -Math.PI / 2; pk.position.set(0, 0.085, 0.22)
+      grp.add(pk)
       break
     }
-    case 'fakelog': { // 重制杰瑞：伪装成生存日志的残页——撕边的横格纸，字迹工整
-      em(0.15, 0.003, 0.2, '#e9dfc2', 0, 0.005, 0, 0, -0.06)
-      for (let i = 0; i < 7; i++) em(0.12, 0.002, 0.005, i === 0 ? '#7a2a22' : '#4a4436', 0, 0.008, -0.075 + i * 0.024, 0, -0.06) // 横格上的字迹
-      break
-    }
-    case 'sedgland': { // Nguithr'xurh 镇静腺：半透明淡黄腺体 + 深色内核 + 一截褐色导管
-      const gland = new THREE.Mesh(new THREE.SphereGeometry(0.075, 14, 10), new THREE.MeshLambertMaterial({ color: '#d9c46a', emissive: '#6b5214', emissiveIntensity: 0.35, transparent: true, opacity: 0.82, depthWrite: false }))
-      gland.scale.set(1.25, 0.78, 1); gland.position.y = 0.06; grp.add(gland)
-      const core = new THREE.Mesh(new THREE.SphereGeometry(0.036, 10, 8), new THREE.MeshLambertMaterial({ color: '#a8862e', emissive: '#3a2a08', emissiveIntensity: 0.3 }))
-      core.position.y = 0.06; grp.add(core)
-      const duct = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.016, 0.09, 6), new THREE.MeshLambertMaterial({ color: '#8a6a4a' }))
-      duct.position.set(0.07, 0.1, 0); duct.rotation.z = -0.9; grp.add(duct)
-      break
-    }
-    case 'ashpile': {
-      const geo = new THREE.SphereGeometry(1, 12, 6, 0, Math.PI * 2, 0, Math.PI / 2)
-      geo.scale(.17, .046, .13)
-      const p = geo.getAttribute('position')
-      for (let i = 0; i < p.count; i++) { const x = p.getX(i), z = p.getZ(i); p.setY(i, Math.max(0, p.getY(i) * (1 + .14 * Math.sin(x * 61 + z * 37)))) }
-      geo.computeVertexNormals()
-      grp.add(new THREE.Mesh(geo, new THREE.MeshLambertMaterial({color:'#85817b'})))
-      break
-    }
+    case 'snackbar': grp.add(buildFoyerSnack(foyerGroundMats)); break // 前厅：能量棒（圆角包装 + 锯齿封口）
     default: em(0.2, 0.2, 0.2, '#d6cfae'); grp.userData.fallback = 1 // v40：标记通用 fallback（mesh-smoke 断言零 fallback）
   }
   // 发光描边底座（按稀有度/类别配色）
   const ITEM_GLOW: Record<string, string> = {
     tape: '#ffd94d', // 胜利物品：金
     almond: '#8fd98f', canned: '#8fd98f', bento: '#8fd98f', coffee: '#8fd98f', // 补给：绿
-    bandage: '#e8e2d2', sedative: '#9adfff', sedgland: '#d9c46a', // 医疗：白/蓝/镇静腺淡黄
+    bandage: '#e8e2d2', sedative: '#9adfff', sedgland: '#d9c46a', acidcallus: '#d9d23a', ashpile: '#a8a294', curabiturgel: '#b8ff60', curabiturspore: '#ffb34a', curabiturrepellent: '#8a8a4a', // 医疗：白/蓝/镇静腺淡黄
     battery: '#e8b93c', fuse: '#e8b93c', capacitor: '#6abfff', glowstick: '#a8e0a0', flashlight: '#e8b93c', // 电气：琥珀（电容器=瓶装闪电：蓝）
     crowbar: '#d96a4a', wrench: '#d96a4a', gas: '#d96a4a', stapler: '#d96a4a', // 武器/工具：红
     keycard: '#7fb0c9', carkey: '#7fb0c9', skeleton: '#7fb0c9', // 钥匙：冰蓝
@@ -163,6 +156,7 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     headlamp: '#e8b93c', nightvision: '#78b886', // 电气 / 低照度光学
     notebook: '#c9b458', // 纸物
     fuyouyu: '#6ad9a8', squirtgun: '#4ac9e8', // 后室异物：玉绿 / 水蓝
+    dbshotgun: '#d96a4a', leverrifle: '#d96a4a', revolver: '#d96a4a', musket: '#d96a4a', trapdoor: '#d96a4a', cart_4440: '#d96a4a', cart_paper: '#d96a4a', cart_4570: '#d96a4a', shell_buck: '#d96a4a', shell_bird: '#d96a4a', shell_clump: '#ffd94d', // 枪械：武器红 / 爆团弹金
     warpberry: '#b06ae0', royalration: '#ffd94d', // 珍稀：紫 / 金
     // v40 新增（此前走 fallback 的 12 件）
     disinfectant: '#e8e2d2', // 医疗：白
@@ -170,6 +164,8 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     tomatosoup: '#8fd98f', gardensalad: '#8fd98f', garlicbread: '#8fd98f', pasta: '#8fd98f',
     meatstew: '#8fd98f', pizza: '#8fd98f', lasagna: '#8fd98f', tomsspecial: '#8fd98f',
     grilledsteak: '#8fd98f', jambread: '#8fd98f', // 菜肴：补给绿
+    memoryjuice: '#e0a050', laughrepellent: '#cfe8e6', babelbalm: '#e86060', // 批发市场 v2：液体 / 润唇膏
+    outdoorkit: '#e8e2d2', traumakit: '#e8e2d2', saltbox: '#e8823c', // 医疗：白 / 火盐：橙
   }
   const gc = ITEM_GLOW[meleeBase] ?? ITEM_GLOW[type] ?? '#e8b93c'
   if (opts?.halo !== false) {

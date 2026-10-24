@@ -3,7 +3,8 @@
 // 点「继续游戏」进入槽位页（3 手动槽 + 只读自动槽，显示层级/磁带/时间，选择后读取）
 import { useEffect, useState } from 'react'
 import { audio } from '@/game/core/audio'
-import { latestSaveSlot } from '@/game/core/titleSave'
+import { latestSaveSlot, titleBackgroundSource } from '@/game/core/titleSave'
+import { FOYER_ID } from '@/game/world/foyerLayout'
 import { levelLabel, levelDefOf, WIN_TAPES } from '@/game/levels'
 import { SAVE_SLOT_LABELS, type SaveSlotId, type SlotInfo } from '@/game/engine'
 import FullscreenButton from './FullscreenButton'
@@ -52,7 +53,10 @@ function slotTime(t?: number): string {
 }
 
 export default function TitleScreen({ slots, onNewGame, onContinueSlot, onDeleteSlot, onSettings, onHowTo, onCodex, onAvatar, onMultiplayer, devMode, onDesign }: Props) {
-  const [title, setTitle] = useState('后 室')
+  const titleSource = titleBackgroundSource(slots)
+  const isFoyer = titleSource.level === FOYER_ID
+  const baseTitle = isFoyer ? '前 厅' : '后 室'
+  const [title, setTitle] = useState(baseTitle)
   const [entered, setEntered] = useState(false)
   const [view, setView] = useState<'main' | 'slots'>('main') // v54：main=主按钮 / slots=存档槽位页（「继续游戏」进入）
   const [pendingDelete, setPendingDelete] = useState<SaveSlotId | null>(null) // v54：待确认删除的手动槽
@@ -66,21 +70,28 @@ export default function TitleScreen({ slots, onNewGame, onContinueSlot, onDelete
   // 随机字形故障
   useEffect(() => {
     let alive = true
+    let resetTimer: ReturnType<typeof setTimeout> | undefined
+    let nextTimer: ReturnType<typeof setTimeout> | undefined
+    setTitle(baseTitle)
     const glitch = () => {
       if (!alive) return
-      const chars = '后 室'.split('')
+      const chars = baseTitle.split('')
       const n = 1 + Math.floor(Math.random() * 2)
       for (let i = 0; i < n; i++) {
         const idx = Math.floor(Math.random() * chars.length)
         if (chars[idx] !== ' ') chars[idx] = GLYPHS[Math.floor(Math.random() * GLYPHS.length)]
       }
       setTitle(chars.join(''))
-      setTimeout(() => alive && setTitle('后 室'), 120)
-      setTimeout(glitch, 2000 + Math.random() * 3000)
+      resetTimer = setTimeout(() => alive && setTitle(baseTitle), 120)
+      nextTimer = setTimeout(glitch, 2000 + Math.random() * 3000)
     }
-    const to = setTimeout(glitch, 2500)
-    return () => { alive = false; clearTimeout(to) }
-  }, [])
+    nextTimer = setTimeout(glitch, 2500)
+    return () => {
+      alive = false
+      if (resetTimer) clearTimeout(resetTimer)
+      if (nextTimer) clearTimeout(nextTimer)
+    }
+  }, [baseTitle])
 
   // 2026-10 UI：菜单项 = 序号 + 标题 + 情境副行（继续游戏显示最近存档摘要），主操作单独强调
   let menuIndex = 0
@@ -200,7 +211,7 @@ export default function TitleScreen({ slots, onNewGame, onContinueSlot, onDelete
               {title}
             </h1>
             <div className="title-hero font-mono2 text-[11px]" style={{ color: 'var(--text-dim)', letterSpacing: '0.4em' }}>
-              BACKROOMS : DESCENT
+              {isFoyer ? 'FRONTROOMS : PROLOGUE' : 'BACKROOMS : DESCENT'}
             </div>
             <div className="title-hero font-mono2 mt-1 text-[10px]" style={{ color: 'var(--text-dim)', opacity: 0.8 }}>
               v1.0 · 所有层级均为程序生成 · 戴上耳机体验更佳
@@ -225,7 +236,7 @@ export default function TitleScreen({ slots, onNewGame, onContinueSlot, onDelete
             >
               {title}
             </h1>
-            <div className="title-hero title-sub font-mono2">BACKROOMS : DESCENT</div>
+            <div className="title-hero title-sub font-mono2">{isFoyer ? 'FRONTROOMS : PROLOGUE' : 'BACKROOMS : DESCENT'}</div>
             <nav className={`title-menu ${view === 'slots' ? 'is-slots' : ''}`} style={{ opacity: entered ? 1 : 0, transition: 'opacity 0.5s' }}>
               {buttons}
             </nav>

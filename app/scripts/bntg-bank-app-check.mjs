@@ -1,5 +1,5 @@
 // Actual React terminal, live Engine, streamed world and real save slots in an owned headless profile.
-export async function verifyBntgBank({send,evaluate,capture,base,waitFor,mode,checkpoint=()=>{}}){
+export async function verifyBntgBank({send,evaluate,capture,base,waitFor,mode,checkpoint=()=>{},extraChecks}){
  const report={checks:[],shots:[],payments:[],metrics:[]},assert=(ok,label)=>{if(!ok)throw Error(label);report.checks.push(label);checkpoint(report)}
  const until=(expression,label)=>waitFor(()=>evaluate(`Boolean(${expression})`),label,90000)
  const click=async(selector,text)=>evaluate(`(()=>{const b=[...document.querySelectorAll(${JSON.stringify(selector)})].find(b=>b.textContent.includes(${JSON.stringify(text)}));if(!b)throw Error('Missing button '+${JSON.stringify(text)});b.click()})()`)
@@ -16,9 +16,9 @@ export async function verifyBntgBank({send,evaluate,capture,base,waitFor,mode,ch
   await evaluate(`(()=>{const e=__engine;e.dev.god=true;e.dev.statLock=true;e.dev.frozenAI=true;e.handsStowed=true;[...document.querySelectorAll('button')].find(b=>b.textContent.trim()==='▾')?.click()})()`)
  }
  await resume();assert(await evaluate('__engine.bntgBank.balance===0'),'old save with no bank field initializes zero credit')
- const population=await evaluate(`(()=>{const homes=__engine.map.traders.homes;return {all:homes.length,fixed:homes.filter(h=>h.slot===undefined).map(h=>h.id).sort(),present:__engine.npcs.map(n=>n.id),chunks:__engine.map.traders.chunks.size}})()`)
+ const population=await evaluate(`(()=>{const homes=__engine.map.traders.homes;return {all:homes.length,fixed:homes.filter(h=>h.slot===undefined&&!h.id.startsWith('mkt_')&&!h.id.startsWith('shop_')).map(h=>h.id).sort(),present:__engine.npcs.map(n=>n.id),chunks:__engine.map.traders.chunks.size}})()`)
  report.population=population;assert(JSON.stringify(population.fixed)===JSON.stringify(['candyman','kui','lan','laozhangfang','shen','tang']),'only original six named Keep NPCs are instantiated from homes')
- assert(!population.present.some(id=>['vesper','dorian'].includes(id))&&population.all===160,'outside BNTG NPCs absent; local resident population retained')
+ assert(!population.present.some(id=>['vesper','dorian'].includes(id))&&population.all===189,'outside BNTG NPCs absent; 18 market, 11 shop and 154 local residents retained')
  async function at(x,y,yaw=Math.PI,pitch=-.13){
   assert(await evaluate(`(async()=>{const {devMapTeleport}=await import('/src/game/engine/devMap.ts');const ok=await devMapTeleport(__engine,{x:${x},y:${y},floor:0});__look.yaw=${yaw};__look.pitch=${pitch};return ok})()`),'safe QA position '+x+','+y)
   await until(`__renderer.isNearWorldReady(__engine)`,'streamed bank or merchant geometry');await evaluate('new Promise(r=>setTimeout(r,700))')
@@ -49,8 +49,8 @@ export async function verifyBntgBank({send,evaluate,capture,base,waitFor,mode,ch
  }
  await send('Emulation.setDeviceMetricsOverride',{width:1920,height:1080,deviceScaleFactor:1,mobile:false});await click('.atm-close','×');await until(`!__engine.paused`,'ATM close resumes game')
  async function merchant(id){
-  const home=await evaluate(`__engine.map.traders.homes.find(h=>h.id===${JSON.stringify(id)})`);await at(home.x+1.5,home.y,Math.PI/2,0)
-  await evaluate(`(()=>{const n=__engine.npcs.find(n=>n.id===${JSON.stringify(id)});if(!n)throw Error('NPC not streamed');__engine.player.x=n.x+1.5;__engine.player.y=n.y;__look.yaw=Math.PI/2;__look.pitch=0})()`)
+  const home=await evaluate(`__engine.map.traders.homes.find(h=>h.id===${JSON.stringify(id)})`),angle=id==='candyman'?Math.PI/2:id.startsWith('mkt_')?home.facing:0,d=id==='candyman'||id.startsWith('mkt_')?2.55:1.5;await at(home.x+Math.cos(angle)*d,home.y+Math.sin(angle)*d,Math.PI/2-angle,0)
+  await evaluate(`(()=>{const n=__engine.npcs.find(n=>n.id===${JSON.stringify(id)});if(!n)throw Error('NPC not streamed');__look.yaw=${Math.PI/2-angle};__look.pitch=0})()`)
   await evaluate('new Promise(r=>setTimeout(r,250))');await key('KeyE','e');await until('document.querySelector(".dlg-panel")','actual NPC dialog '+id)
   await evaluate(`(()=>{const b=[...document.querySelectorAll('.dlg-panel button')].find(b=>/看看货|换点|交易|买点|买糖|有什么货/.test(b.textContent));if(!b)throw Error('Missing trade entry: '+document.querySelector('.dlg-panel').innerText);b.click()})()`)
   await until('document.querySelector(".bntg-payment")','credit payment selector '+id)
@@ -59,16 +59,16 @@ export async function verifyBntgBank({send,evaluate,capture,base,waitFor,mode,ch
  await evaluate(`document.querySelector('.dlg-panel button.flex.items-center.gap-2.border').click()`)
  assert(await evaluate('__engine.bntgBank.balance===75 && __engine.countItem("presses")===70'),'original candy bulk deal accepts credit only')
  await key('Escape','Escape');await until(`!__engine.paused`,'close merchant')
- await merchant('tang');await click('.bntg-payment-options button','仅信用点');await click('.dlg-panel button','头灯')
- assert(await evaluate('__engine.bntgBank.balance===49 && __engine.countItem("headlamp")===1 && __engine.countItem("presses")===70'),'Tang purchase uses credits and preserves physical coins')
+ await merchant('mkt_moore');await click('.bntg-payment-options button','仅信用点');await click('.dlg-panel button','头灯')
+ assert(await evaluate('__engine.bntgBank.balance===49 && __engine.countItem("headlamp")===1 && __engine.countItem("presses")===70'),'Market lighting purchase uses credits and preserves physical coins')
  await shot('11-merchant-credit-receipt');await key('Escape','Escape');await until(`!__engine.paused`,'close merchant')
  await openAtm(107);await click('.atm-menu button','取出压印币');await send('Input.insertText',{text:'44'});await click('.atm-actions button','下一步');await click('[data-atm-confirm]','确认');await until(`document.querySelector('[data-atm-screen="receipt"]')`,'second terminal receipt');await click('.atm-actions button','结束服务');await until(`!__engine.paused`,'close ATM')
- await merchant('tang');await click('.bntg-payment-options button','优先信用点');await click('.dlg-panel button','笔记本')
- assert(await evaluate('__engine.bntgBank.balance===0 && __engine.countItem("presses")===103 && __engine.countItem("notebook")===1'),'automatic payment splits 16 into 5 credits + 11 cash')
+ await merchant('mkt_ramos');await click('.bntg-payment-options button','优先信用点');await click('.dlg-panel button','户外医疗箱')
+ assert(await evaluate('__engine.bntgBank.balance===0 && __engine.countItem("presses")===101 && __engine.countItem("outdoorkit")===1'),'automatic payment splits 18 into 5 credits + 13 cash')
  await shot('12-mixed-payment');await key('Escape','Escape');await until(`!__engine.paused`,'close merchant')
- const saved=await evaluate(`(()=>{__engine.persist();return {bank:__engine.bntgBank,cash:__engine.countItem('presses'),headlamp:__engine.countItem('headlamp'),notebook:__engine.countItem('notebook'),snapshot:JSON.parse(localStorage.getItem('br_save_slot1')).bntgBank}})()`)
+ const saved=await evaluate(`(()=>{__engine.persist();return {bank:__engine.bntgBank,cash:__engine.countItem('presses'),headlamp:__engine.countItem('headlamp'),outdoorkit:__engine.countItem('outdoorkit'),snapshot:JSON.parse(localStorage.getItem('br_save_slot1')).bntgBank}})()`)
  report.saved=saved;checkpoint(report);assert(JSON.stringify(saved.bank)===JSON.stringify(saved.snapshot),'transaction balances and receipts written to real save slot')
- await resume();assert(await evaluate(`JSON.stringify(__engine.bntgBank)===${JSON.stringify(JSON.stringify(saved.bank))} && __engine.countItem('presses')===103 && __engine.countItem('headlamp')===1 && __engine.countItem('notebook')===1`),'save/reload preserves money and purchased goods without duplication')
+ await resume();assert(await evaluate(`JSON.stringify(__engine.bntgBank)===${JSON.stringify(JSON.stringify(saved.bank))} && __engine.countItem('presses')===101 && __engine.countItem('headlamp')===1 && __engine.countItem('outdoorkit')===1`),'save/reload preserves money and purchased goods without duplication')
  await openAtm();await click('.atm-menu button','交易明细');await shot('13-restored-ledger');await click('.atm-close','×');await until(`!__engine.paused`,'close saved terminal')
  // Keyboard validation and cancellation do not deduct money.
  await openAtm();await click('.atm-menu button','存入压印币');await key('Enter','Enter')
@@ -76,7 +76,8 @@ export async function verifyBntgBank({send,evaluate,capture,base,waitFor,mode,ch
  await click('.atm-keypad button','1');await click('.atm-keypad button','0');await click('.atm-function-keys button','更正')
  assert(await evaluate(`document.querySelector('.atm-amount input').value==='1'`),'physical keypad correction removes one digit')
  await click('.atm-actions button','下一步');await click('.atm-actions button','修改金额');await key('Escape','Escape');await key('Escape','Escape');await until('!__engine.paused','cancel terminal')
- assert(await evaluate(`__engine.bntgBank.balance===0 && __engine.countItem('presses')===103 && __engine.bntgBank.history.length===6`),'cancel/back never transfers funds')
+ assert(await evaluate(`__engine.bntgBank.balance===0 && __engine.countItem('presses')===101 && __engine.bntgBank.history.length===6`),'cancel/back never transfers funds')
+ if(extraChecks){report.market=await extraChecks({send,evaluate,at,until,key,click,shot,assert,resume});checkpoint(report);await at(103,103.65)}
  await until('__renderer.tradersStream.jobs.size===0 && __renderer.tradersStream.groups.size===__engine.map.traders.chunks.size+1','all loaded chunks have finished their streamed dressing')
  await evaluate(`(()=>{const e=__engine,r=__renderer;e.updateNpcs=()=>{};r.three.info.autoReset=false;const render=r.render;r.render=function(...a){this.three.info.reset();return render.apply(this,a)}})()`)
  await evaluate('new Promise(r=>setTimeout(r,2500))')

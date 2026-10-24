@@ -1,0 +1,723 @@
+{
+  "run": "qa-1792763412483-79500",
+  "label": "shops-classic-final",
+  "mode": "classic",
+  "port": 10108,
+  "cdp": 10109,
+  "profile": "E:\\ZAN\\backroom\\app\\reports\\shops-guns-import-20261023\\shops-classic-final\\qa-1792763412483-79500",
+  "levels": [
+    102
+  ],
+  "cases": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\shops-guns-import-20261023\\shops-classic-final\\qa-1792763412483-79500",
+    "--remote-debugging-port=10109",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.86",
+    "revision": "@804d6b05f089b27af8342622a36558c49401a1d4",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.25"
+  },
+  "pids": {
+    "server": 59256,
+    "browser": 12016
+  },
+  "bank": {
+    "checks": [
+      "old save with no bank field initializes zero credit",
+      "only original six named Keep NPCs are instantiated from homes",
+      "outside BNTG NPCs absent; 18 market, 11 shop and 154 local residents retained",
+      "safe QA position 105,101.8",
+      "safe QA position 103,103.65",
+      "look-at scan selects real bank terminal",
+      "terminal pauses game inputs",
+      "double confirm commits once: 100 credits / 50 cash",
+      "withdrawal gives physical coins at 1:1",
+      "ATM fits 390px width without horizontal clipping",
+      "all four services visible at 390×844",
+      "ATM fits 844px width without horizontal clipping",
+      "all four services visible at 844×390",
+      "safe QA position 193,18.1",
+      "original candy bulk deal accepts credit only",
+      "safe QA position 39.349999999999994,73",
+      "Market lighting purchase uses credits and preserves physical coins",
+      "safe QA position 107,103.65",
+      "look-at scan selects real bank terminal",
+      "terminal pauses game inputs",
+      "safe QA position 46.650000000000006,60",
+      "automatic payment splits 18 into 5 credits + 13 cash",
+      "transaction balances and receipts written to real save slot",
+      "save/reload preserves money and purchased goods without duplication",
+      "safe QA position 103,103.65",
+      "look-at scan selects real bank terminal",
+      "terminal pauses game inputs",
+      "safe QA position 103,103.65",
+      "look-at scan selects real bank terminal",
+      "terminal pauses game inputs",
+      "zero amount rejected by keyboard confirmation",
+      "physical keypad correction removes one digit",
+      "cancel/back never transfers funds",
+      "safe QA position 103,39.9",
+      "safe QA position 107.6,18.4",
+      "look-at scan hits owner of 布兰肯希普五金",
+      "safe QA position 139,39.9",
+      "safe QA position 140.6,17.799999999999997",
+      "look-at scan hits owner of 格兰特工装与防护",
+      "safe QA position 193,39.9",
+      "safe QA position 193,18.1",
+      "look-at scan hits owner of 糖佬糖果铺",
+      "safe QA position 271,39.9",
+      "safe QA position 273.6,17.849999999999998",
+      "look-at scan hits owner of 平克尼文具日用",
+      "safe QA position 343,39.9",
+      "safe QA position 346,20.2",
+      "look-at scan hits owner of 鎏金兵械库",
+      "safe QA position 307,39.9",
+      "safe QA position 310,17.2",
+      "look-at scan hits owner of 约根森户外",
+      "safe QA position 346,20.2",
+      "credit purchase delivers 1 dbshotgun",
+      "credit purchase delivers 1 leverrifle",
+      "credit purchase delivers 1 revolver",
+      "credit purchase delivers 1 musket",
+      "credit purchase delivers 1 trapdoor",
+      "credit purchase delivers 6 shell_buck",
+      "credit purchase delivers 10 shell_bird",
+      "credit purchase delivers 6 shell_clump",
+      "credit purchase delivers 20 cart_4440",
+      "credit purchase delivers 10 cart_paper",
+      "credit purchase delivers 10 cart_4570",
+      "five guns and six boxes debit 713 credits total",
+      "safe QA position 335.6,32.949999999999996",
+      "real view model active: dbshotgun",
+      "reload transfers real ammunition into dbshotgun",
+      "real view model active: leverrifle",
+      "reload transfers real ammunition into leverrifle",
+      "real view model active: revolver",
+      "reload transfers real ammunition into revolver",
+      "real view model active: musket",
+      "reload transfers real ammunition into musket",
+      "real view model active: trapdoor",
+      "reload transfers real ammunition into trapdoor",
+      "actual paper target reports scored hits",
+      "hold R displays compatible shell types in the ammo wheel",
+      "focus loss clears aim input",
+      "stowed firearm cannot fire",
+      "safe QA position 346,39.9",
+      "safe QA position 335.6,32.949999999999996",
+      "drop preserves loaded and spent shotgun chambers",
+      "safe QA position 335,32.349999999999994",
+      "E pickup restores exact chamber state",
+      "full page reload restores all five guns while clearing transient actions",
+      "safe QA position 335.6,32.949999999999996",
+      "firearm HUD fits touch viewport",
+      "touch cancellation clears aiming",
+      "cancelled touch reload does not trigger a delayed action",
+      "repeated shooting/reloading returns to stable GPU resources",
+      "safe QA position 103,103.65",
+      "12 ATM open/close cycles keep GPU resource counts stable",
+      "new game starts with no previous account balance"
+    ],
+    "shots": [
+      "01-bank-machines",
+      "02-atm-home",
+      "03-deposit-amount",
+      "04-deposit-confirm",
+      "05-deposit-receipt",
+      "06-withdrawal-receipt",
+      "07-statement",
+      "08-atm-mobile",
+      "09-atm-landscape",
+      "10-candy-credit-payment",
+      "11-merchant-credit-receipt",
+      "12-mixed-payment",
+      "13-restored-ledger",
+      "20-hardware-entrance",
+      "21-hardware-counter",
+      "22-hardware-trade",
+      "20-workwear-entrance",
+      "21-workwear-counter",
+      "22-workwear-trade",
+      "20-candy-entrance",
+      "21-candy-counter",
+      "22-candy-trade",
+      "20-office-entrance",
+      "21-office-counter",
+      "22-office-trade",
+      "20-guns-entrance",
+      "21-guns-counter",
+      "22-guns-trade",
+      "20-outdoor-entrance",
+      "21-outdoor-counter",
+      "22-outdoor-trade",
+      "23-armory-purchase",
+      "30-dbshotgun-hip",
+      "31-dbshotgun-ads",
+      "32-dbshotgun-reload",
+      "33-dbshotgun-fire",
+      "30-leverrifle-hip",
+      "31-leverrifle-ads",
+      "32-leverrifle-reload",
+      "33-leverrifle-fire",
+      "30-revolver-hip",
+      "31-revolver-ads",
+      "32-revolver-reload",
+      "33-revolver-fire",
+      "30-musket-hip",
+      "31-musket-ads",
+      "32-musket-reload",
+      "33-musket-fire",
+      "30-trapdoor-hip",
+      "31-trapdoor-ads",
+      "32-trapdoor-reload",
+      "33-trapdoor-fire",
+      "34-ammo-wheel",
+      "35-outside-lane-stowed",
+      "36-touch-controls",
+      "40-armory-final",
+      "14-bank-final-scene"
+    ],
+    "payments": [],
+    "metrics": [],
+    "population": {
+      "all": 189,
+      "fixed": [
+        "candyman",
+        "kui",
+        "lan",
+        "laozhangfang",
+        "shen",
+        "tang"
+      ],
+      "present": [
+        "traders_resident_23",
+        "traders_resident_22",
+        "traders_resident_21",
+        "traders_resident_20",
+        "traders_resident_19",
+        "traders_resident_18",
+        "traders_resident_74",
+        "traders_resident_75",
+        "shen",
+        "traders_resident_17",
+        "traders_resident_16",
+        "traders_resident_113",
+        "traders_resident_15",
+        "traders_resident_73",
+        "traders_resident_14",
+        "traders_resident_64",
+        "traders_resident_13",
+        "traders_resident_12",
+        "traders_resident_65",
+        "tang",
+        "traders_resident_87",
+        "traders_resident_86",
+        "traders_resident_72",
+        "traders_resident_66",
+        "traders_resident_85",
+        "lan",
+        "traders_resident_67",
+        "traders_resident_76",
+        "mkt_marsh",
+        "traders_resident_77"
+      ],
+      "chunks": 41
+    },
+    "lastTarget": {
+      "kind": "bntgAtm",
+      "label": "使用 银行 ATM"
+    },
+    "saved": {
+      "bank": {
+        "v": 1,
+        "balance": 0,
+        "sequence": 6,
+        "history": [
+          {
+            "id": 1,
+            "at": 1792763451518,
+            "kind": "deposit",
+            "delta": 100,
+            "balance": 100,
+            "cashDelta": -100,
+            "detail": "存入 100 枚压印币，入账 100 信用点。"
+          },
+          {
+            "id": 2,
+            "at": 1792763452601,
+            "kind": "withdraw",
+            "delta": -20,
+            "balance": 80,
+            "cashDelta": 20,
+            "detail": "取出 20 枚压印币，扣除 20 信用点。"
+          },
+          {
+            "id": 3,
+            "at": 1792763465975,
+            "kind": "purchase",
+            "delta": -5,
+            "balance": 75,
+            "cashDelta": 0,
+            "detail": "换取 银舌头 ×8：信用点 5，压印币 0。"
+          },
+          {
+            "id": 4,
+            "at": 1792763477656,
+            "kind": "purchase",
+            "delta": -26,
+            "balance": 49,
+            "cashDelta": 0,
+            "detail": "购买 头灯：信用点 26，压印币 0。"
+          },
+          {
+            "id": 5,
+            "at": 1792763482889,
+            "kind": "withdraw",
+            "delta": -44,
+            "balance": 5,
+            "cashDelta": 44,
+            "detail": "取出 44 枚压印币，扣除 44 信用点。"
+          },
+          {
+            "id": 6,
+            "at": 1792763485571,
+            "kind": "purchase",
+            "delta": -5,
+            "balance": 0,
+            "cashDelta": -13,
+            "detail": "购买 户外医疗箱：信用点 5，压印币 13。"
+          }
+        ]
+      },
+      "cash": 101,
+      "headlamp": 1,
+      "outdoorkit": 1,
+      "snapshot": {
+        "v": 1,
+        "balance": 0,
+        "sequence": 6,
+        "history": [
+          {
+            "id": 1,
+            "at": 1792763451518,
+            "kind": "deposit",
+            "delta": 100,
+            "balance": 100,
+            "cashDelta": -100,
+            "detail": "存入 100 枚压印币，入账 100 信用点。"
+          },
+          {
+            "id": 2,
+            "at": 1792763452601,
+            "kind": "withdraw",
+            "delta": -20,
+            "balance": 80,
+            "cashDelta": 20,
+            "detail": "取出 20 枚压印币，扣除 20 信用点。"
+          },
+          {
+            "id": 3,
+            "at": 1792763465975,
+            "kind": "purchase",
+            "delta": -5,
+            "balance": 75,
+            "cashDelta": 0,
+            "detail": "换取 银舌头 ×8：信用点 5，压印币 0。"
+          },
+          {
+            "id": 4,
+            "at": 1792763477656,
+            "kind": "purchase",
+            "delta": -26,
+            "balance": 49,
+            "cashDelta": 0,
+            "detail": "购买 头灯：信用点 26，压印币 0。"
+          },
+          {
+            "id": 5,
+            "at": 1792763482889,
+            "kind": "withdraw",
+            "delta": -44,
+            "balance": 5,
+            "cashDelta": 44,
+            "detail": "取出 44 枚压印币，扣除 44 信用点。"
+          },
+          {
+            "id": 6,
+            "at": 1792763485571,
+            "kind": "purchase",
+            "delta": -5,
+            "balance": 0,
+            "cashDelta": -13,
+            "detail": "购买 户外医疗箱：信用点 5，压印币 13。"
+          }
+        ]
+      }
+    },
+    "market": {
+      "shops": [
+        {
+          "id": "hardware",
+          "vendor": "mkt_blankenship",
+          "room": "N02",
+          "text": "厄尔·布兰肯希普\n店主 · 布兰肯希普五金\n不结盟贸易集团 The B.N.T.G.\n声望 0\nB.N.T.G. 结账方式\n信用点 0\n随身压印币 101\n优先信用点\n仅信用点\n仅压印币\n\n优先扣除信用点，不足部分使用随身压印币。 1 信用点 = 1 枚压印币。\n\n支持信用点或压印币结账。（压印币：101 枚 · 杏仁水：0 瓶）\n1 杏仁水 → 2 压印币\n2 信用点／压印币 → 1 杏仁水\n撬棍\n5 压印币\n扳手\n6 压印币\n一把钉子\n1 压印币\n木板\n2 压印币\n保险丝\n3 压印币\n斧头\n52 压印币\n刀\n12 压印币\n返回交谈\n告辞。"
+        },
+        {
+          "id": "workwear",
+          "vendor": "mkt_grant",
+          "room": "N04",
+          "text": "塔妮莎·格兰特\n店主 · 格兰特工装与防护\n不结盟贸易集团 The B.N.T.G.\n声望 0\nB.N.T.G. 结账方式\n信用点 0\n随身压印币 101\n优先信用点\n仅信用点\n仅压印币\n\n优先扣除信用点，不足部分使用随身压印币。 1 信用点 = 1 枚压印币。\n\n支持信用点或压印币结账。（压印币：101 枚 · 杏仁水：0 瓶）\n1 杏仁水 → 2 压印币\n2 信用点／压印币 → 1 杏仁水\n隔热手套\n10 压印币\n绝缘服\n18 压印币\n洞穴保温服\n30 压印币\n潜水面罩\n24 压印币\n返回交谈\n告辞。"
+        },
+        {
+          "id": "candy",
+          "vendor": "candyman",
+          "room": "N07",
+          "text": "「糖佬」希德\n雇员 · 糖果贩\n不结盟贸易集团 The B.N.T.G.\n声望 0\nB.N.T.G. 结账方式\n信用点 0\n随身压印币 101\n优先信用点\n仅信用点\n仅压印币\n\n优先扣除信用点，不足部分使用随身压印币。 1 信用点 = 1 枚压印币。\n\n压印币报价支持信用点结算；其余换物仍需相应实物。（）\nB.N.T.G.压印币 ×5 → 银舌头 ×8\n持有 101\nB.N.T.G.压印币 ×5 → 咀嚼子弹 ×8\n持有 101\nB.N.T.G.压印币 ×5 → 枪糖 ×8\n持有 101\nB.N.T.G.压印币 ×5 → 纸片人斯坦利 ×8\n持有 101\nB.N.T.G.压印币 ×5 → 危害废料 ×8\n持有 101\nB.N.T.G.压印币 ×5 → 天才糖 ×8\n持有 101\nB.N.T.G.压印币 ×5 → 杏仁薄荷糖 ×8\n持有 101\n返回交谈\n告辞。"
+        },
+        {
+          "id": "office",
+          "vendor": "mkt_pinkney",
+          "room": "N10",
+          "text": "霍华德·平克尼\n店主 · 平克尼文具日用\n不结盟贸易集团 The B.N.T.G.\n声望 0\nB.N.T.G. 结账方式\n信用点 0\n随身压印币 101\n优先信用点\n仅信用点\n仅压印币\n\n优先扣除信用点，不足部分使用随身压印币。 1 信用点 = 1 枚压印币。\n\n支持信用点或压印币结账。（压印币：101 枚 · 杏仁水：0 瓶）\n1 杏仁水 → 2 压印币\n2 信用点／压印币 → 1 杏仁水\n笔记本和笔\n16 压印币\n订书机\n2 压印币\n打火机\n4 压印币\n石卡祖笛\n20 压印币\n返回交谈\n告辞。"
+        },
+        {
+          "id": "guns",
+          "vendor": "shop_kat",
+          "room": "N14",
+          "text": "凯特·瓦伦\n店主 · 鎏金兵械库\n不结盟贸易集团 The B.N.T.G.\n声望 0\nB.N.T.G. 结账方式\n信用点 0\n随身压印币 101\n优先信用点\n仅信用点\n仅压印币\n\n优先扣除信用点，不足部分使用随身压印币。 1 信用点 = 1 枚压印币。\n\n支持信用点或压印币结账。（压印币：101 枚 · 杏仁水：0 瓶）\n1 杏仁水 → 2 压印币\n2 信用点／压印币 → 1 杏仁水\n双管猎枪\n120 枚\n杠杆步枪\n160 枚\n单动转轮手枪\n110 枚\n前装滑膛枪\n60 压印币\n活门后膛步枪\n180 枚\n12 号鹿弹 ×6\n8 压印币\n12 号鸟弹 ×10\n5 压印币\n爆团弹 ×6\n30 压印币\n.44-40 弹 ×20\n18 压印币\n纸包弹 ×10\n6 压印币\n.45-70 弹 ×10\n16 压印币\n返回交谈\n告辞。"
+        },
+        {
+          "id": "outdoor",
+          "vendor": "mkt_jorgensen",
+          "room": "N12",
+          "text": "卡尔·约根森\n店主 · 约根森户外\n不结盟贸易集团 The B.N.T.G.\n声望 0\nB.N.T.G. 结账方式\n信用点 0\n随身压印币 101\n优先信用点\n仅信用点\n仅压印币\n\n优先扣除信用点，不足部分使用随身压印币。 1 信用点 = 1 枚压印币。\n\n支持信用点或压印币结账。（压印币：101 枚 · 杏仁水：0 瓶）\n1 杏仁水 → 2 压印币\n2 信用点／压印币 → 1 杏仁水\n尼龙绳\n8 压印币\n打火机\n4 压印币\n刀\n12 压印币\n干果与干菜\n2 压印币\n返回交谈\n告辞。"
+        }
+      ],
+      "guns": [
+        {
+          "type": "dbshotgun",
+          "before": {
+            "shotN": 0,
+            "mag": [
+              "shell_buck",
+              "shell_buck"
+            ]
+          },
+          "slot": {
+            "type": "dbshotgun",
+            "count": 1,
+            "mag": [
+              "spent",
+              "shell_buck"
+            ]
+          },
+          "targetMessages": [
+            "近靶（11 米）：1 颗上靶，最好 5 环。"
+          ],
+          "muzzleFlash": 0
+        },
+        {
+          "type": "leverrifle",
+          "before": {
+            "shotN": 1,
+            "mag": [
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              ""
+            ]
+          },
+          "slot": {
+            "type": "leverrifle",
+            "count": 1,
+            "mag": [
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "",
+              ""
+            ]
+          },
+          "targetMessages": [
+            "近靶（11 米）：1 颗上靶，最好 5 环。",
+            "近靶（11 米）：脱靶（擦着靶纸边）。"
+          ],
+          "muzzleFlash": 0
+        },
+        {
+          "type": "revolver",
+          "before": {
+            "shotN": 2,
+            "mag": [
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440"
+            ]
+          },
+          "slot": {
+            "type": "revolver",
+            "count": 1,
+            "mag": [
+              "spent",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440",
+              "cart_4440"
+            ],
+            "cyl": 1
+          },
+          "targetMessages": [
+            "近靶（11 米）：1 颗上靶，最好 5 环。",
+            "近靶（11 米）：脱靶（擦着靶纸边）。",
+            "近靶（11 米）：脱靶（擦着靶纸边）。"
+          ],
+          "muzzleFlash": 0
+        },
+        {
+          "type": "musket",
+          "before": {
+            "shotN": 3,
+            "mag": [
+              "cart_paper"
+            ],
+            "ammo": "cart_paper"
+          },
+          "slot": {
+            "type": "musket",
+            "count": 1,
+            "mag": [
+              ""
+            ],
+            "ammoSel": "cart_paper",
+            "stage": 0
+          },
+          "targetMessages": [
+            "近靶（11 米）：1 颗上靶，最好 5 环。",
+            "近靶（11 米）：脱靶（擦着靶纸边）。",
+            "近靶（11 米）：脱靶（擦着靶纸边）。",
+            "脱靶。"
+          ],
+          "muzzleFlash": 0
+        },
+        {
+          "type": "trapdoor",
+          "before": {
+            "shotN": 4,
+            "mag": [
+              "cart_4570"
+            ]
+          },
+          "slot": {
+            "type": "trapdoor",
+            "count": 1,
+            "mag": [
+              "spent"
+            ]
+          },
+          "targetMessages": [
+            "近靶（11 米）：脱靶（擦着靶纸边）。",
+            "近靶（11 米）：脱靶（擦着靶纸边）。",
+            "脱靶。",
+            "近靶（11 米）：10 环。"
+          ],
+          "muzzleFlash": 0
+        }
+      ],
+      "samples": [
+        {
+          "medianMs": 4.199999999254942,
+          "p95Ms": 4.699999999254942,
+          "calls": 148,
+          "triangles": 98311,
+          "memory": {
+            "geometries": 1123,
+            "textures": 90
+          },
+          "npcs": 8
+        },
+        {
+          "medianMs": 4.100000001490116,
+          "p95Ms": 4.600000001490116,
+          "calls": 148,
+          "triangles": 98311,
+          "memory": {
+            "geometries": 1123,
+            "textures": 90
+          },
+          "npcs": 8
+        },
+        {
+          "medianMs": 4.100000001490116,
+          "p95Ms": 4.800000000745058,
+          "calls": 148,
+          "triangles": 98311,
+          "memory": {
+            "geometries": 1123,
+            "textures": 90
+          },
+          "npcs": 8
+        },
+        {
+          "medianMs": 4.100000001490116,
+          "p95Ms": 4.699999999254942,
+          "calls": 148,
+          "triangles": 98311,
+          "memory": {
+            "geometries": 1123,
+            "textures": 90
+          },
+          "npcs": 8
+        },
+        {
+          "medianMs": 4.199999999254942,
+          "p95Ms": 4.699999999254942,
+          "calls": 148,
+          "triangles": 98311,
+          "memory": {
+            "geometries": 1123,
+            "textures": 90
+          },
+          "npcs": 8
+        }
+      ],
+      "resources": [
+        {
+          "geometries": 1123,
+          "textures": 90,
+          "fly": 0,
+          "decals": 0,
+          "puffs": 0
+        },
+        {
+          "geometries": 1123,
+          "textures": 90,
+          "fly": 0,
+          "decals": 0,
+          "puffs": 0
+        },
+        {
+          "geometries": 1123,
+          "textures": 90,
+          "fly": 0,
+          "decals": 0,
+          "puffs": 0
+        }
+      ],
+      "views": []
+    },
+    "openCloseResources": [
+      {
+        "geometries": 2445,
+        "textures": 110,
+        "chunks": 41,
+        "built": 42,
+        "jobs": 0
+      },
+      {
+        "geometries": 2445,
+        "textures": 110,
+        "chunks": 41,
+        "built": 42,
+        "jobs": 0
+      },
+      {
+        "geometries": 2445,
+        "textures": 110,
+        "chunks": 41,
+        "built": 42,
+        "jobs": 0
+      }
+    ],
+    "samples": [
+      {
+        "medianMs": 4.199999999254942,
+        "p95Ms": 5.800000000745058,
+        "calls": 470,
+        "triangles": 245841,
+        "memory": {
+          "geometries": 2445,
+          "textures": 110
+        }
+      },
+      {
+        "medianMs": 4.399999998509884,
+        "p95Ms": 6.100000001490116,
+        "calls": 470,
+        "triangles": 245841,
+        "memory": {
+          "geometries": 2445,
+          "textures": 110
+        }
+      },
+      {
+        "medianMs": 4.5,
+        "p95Ms": 6.399999998509884,
+        "calls": 470,
+        "triangles": 245841,
+        "memory": {
+          "geometries": 2445,
+          "textures": 110
+        }
+      },
+      {
+        "medianMs": 4.399999998509884,
+        "p95Ms": 5.899999998509884,
+        "calls": 470,
+        "triangles": 245841,
+        "memory": {
+          "geometries": 2445,
+          "textures": 110
+        }
+      },
+      {
+        "medianMs": 4.100000001490116,
+        "p95Ms": 5.600000001490116,
+        "calls": 470,
+        "triangles": 245841,
+        "memory": {
+          "geometries": 2445,
+          "textures": 110
+        }
+      }
+    ],
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": []
+}

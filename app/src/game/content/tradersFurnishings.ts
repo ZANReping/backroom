@@ -1,7 +1,9 @@
 import {tradersDressingForChunk} from './tradersDressing'
+import {tradersMarketForChunk} from './tradersMarket'
+import {tradersShopsForChunk} from './tradersShops'
 import {tradersFitoutForChunk,tradersFoodTable} from './tradersFitout'
 import type {Structure} from '../core/types'
-import {TRADERS_ROOMS,TRADERS_ZONES,TRADERS_SERVICES,TRADERS_VAULT_CELLS,TRADERS_WALLS,tradersIntersects,tradersContains,type TradersRect,type TradersRoom} from './tradersLayout'
+import {tradersCirculationReserved,TRADERS_PASSAGES,tradersPassageApron,TRADERS_ROOMS,TRADERS_ZONES,TRADERS_SERVICES,TRADERS_VAULT_CELLS,TRADERS_WALLS,tradersIntersects,tradersContains,type TradersRect,type TradersRoom} from './tradersLayout'
 
 /** Pure chunk-local furnishings. Real dimensions, no stock or businesses in empty shops. */
 export function tradersFurnishingsForChunk(cx:number,cy:number):Structure[]{
@@ -9,13 +11,14 @@ export function tradersFurnishingsForChunk(cx:number,cy:number):Structure[]{
  const inDoor=(p:TradersRect,r:TradersRoom)=>{
   const half=r.doorWidth/2+.35,depth=r.kind==='vault'?1.2:3
   const d=r.side==='n'?{x:r.x+r.w/2-half,y:r.y-.3,w:half*2,h:depth+.3}:r.side==='s'?{x:r.x+r.w/2-half,y:r.y+r.h-depth,w:half*2,h:depth+.3}:r.side==='w'?{x:r.x-.3,y:r.y+r.h/2-half,w:depth+.3,h:half*2}:{x:r.x+r.w-depth,y:r.y+r.h/2-half,w:depth+.3,h:half*2}
-  return tradersIntersects(p,d)
+  return tradersIntersects(p,d)||TRADERS_PASSAGES.some(a=>a.rooms.includes(r.id)&&tradersIntersects(p,tradersPassageApron(a)))
  }
  function add(kind:Structure['kind'],id:string,x:number,y:number,w:number,h:number,data:NonNullable<Structure['data']>={},host?:TradersRoom){
   const center={x:x+w/2,y:y+h/2},p={x,y,w,h}
   if(!tradersContains(bounds,center.x,center.y))return
   if(host&&(x<host.x+.18||y<host.y+.18||x+w>host.x+host.w-.18||y+h>host.y+host.h-.18||inDoor(p,host)))return
   if(kind!=='trade_beam'&&kind!=='trade_wall'){
+   if(tradersCirculationReserved(p))return
    if(TRADERS_SERVICES.some(s=>Math.hypot(center.x-s.x,center.y-s.y)<3+Math.max(w,h)/2))return
    if(nearWalls.some(wall=>tradersIntersects(p,wall)))return
   }
@@ -78,5 +81,5 @@ export function tradersFurnishingsForChunk(cx:number,cy:number):Structure[]{
    add('trashbin',z.id+'.bin.'+i,horizontal?x+3.2:x+.1,horizontal?y+.1:y+3.2,.45,.45)
   }
  }
- return [...out,...tradersFitoutForChunk(cx,cy),...tradersDressingForChunk(cx,cy)]
+ return [...out,...tradersFitoutForChunk(cx,cy),...tradersDressingForChunk(cx,cy),...tradersMarketForChunk(cx,cy),...tradersShopsForChunk(cx,cy)]
 }

@@ -9,6 +9,7 @@
 //   茧只怕重击（蓄力攻击），普攻打上去会弹开；茧碎即死，掉落「酸性胼胝」。茧放着 90 秒不管会重新孵出来。
 // - 水：清水喷中会使它僵直，正在鼓胀的那一轮也作废；杏仁水造成重度灼伤（45 伤害，且留疤，不再自愈）。
 // 运行时状态不入存档/联机。
+import { squirtActsAsWater } from '../content/squirtLiquids'
 import type { Engine } from '../engine'
 import type { Entity } from '../entities'
 import { ITEMS } from '../content/items'
@@ -185,7 +186,7 @@ export function bursterWash(eng: Engine, type: string): boolean {
   if (!f) return false
   const A = f.acid
   if (A.blind < 0.05 && A.shockT <= 0 && A.burn < 1) return false
-  const gun = type === 'squirtgun' && (eng.squirtTank === 'water' || eng.squirtTank === 'almond') && eng.squirtAmmo > 0
+  const gun = type === 'squirtgun' && (squirtActsAsWater(eng.squirtTank) || eng.squirtTank === 'almond') && eng.squirtAmmo > 0
   if (!gun && type !== 'citywater' && type !== 'almond') return false
   if (gun) { eng.squirtAmmo--; if (eng.squirtAmmo <= 0) eng.squirtTank = 'none' } else eng.consumeItem(type)
   const wasShock = A.shockT > 0

@@ -17,7 +17,7 @@ export interface Palette {
 }
 
 // v23：新增 noclip（相位穿透）/ collapse（地面坍塌坠落）/ sink（沉没）/ dawn（破晓白场）
-export type ExitAnim = 'bloom' | 'shutter' | 'iris' | 'glitch' | 'fall' | 'noclip' | 'collapse' | 'sink' | 'dawn'
+export type ExitAnim = 'bloom' | 'shutter' | 'iris' | 'glitch' | 'fall' | 'noclip' | 'collapse' | 'sink' | 'dawn' | 'realitybreak'
 
 export interface ExitDef {
   kind: string
@@ -116,6 +116,7 @@ export interface ExitInstance {
 export type StructKind = import('../content/tradeDecor').TradeKind | import('../content/l5Decor').L5DecorKind | import('../content/alphaDecor').AlphaKind | import('../content/l11Decor').L11DecorKind | 'settlementprop' | 'settlementstation' | 'l4stairs' | 'l4prop'
   | 'pillar' | 'car' | 'booth' | 'pipes' | 'valve' | 'gauge' | 'boiler'
   | 'generator' | 'cabinet' | 'trench' | 'cubicle' | 'copier' | 'server' | 'vending' | 'watercooler'
+  | 'ferrennest' | 'ferrenbowl' | 'ferrencage' // [ferren] 商人之家雪貂笼：窝（data.cage0..3 = 笼内沿）/ 食盆 / 铁丝围栏（data.axis、height）
   | 'desk' | 'door' | 'ballroom' | 'lightgrid' | 'wet'   | 'graffiti' | 'crate'
   | 'corpse' | 'ladder' | 'vent' | 'mirror' | 'elevator' | 'frontdesk' | 'bed' | 'sconce'
   | 'socket' // 墙上插板（L0 装饰：米色插座面板）
@@ -123,7 +124,8 @@ export type StructKind = import('../content/tradeDecor').TradeKind | import('../
   // v6 新增：层级特色生成物与预制结构内容
   | 'hoteldoor' // 可交互房门（开关/上锁，撬棍/万能钥匙）
   | 'windowblack' // L4 涂黑窗户（安全装饰）
-  | 'windowtrap' // L4 未涂黑窗户=陷阱（靠近触发）
+  | 'windowtrap' // L4 未涂黑窗户=陷阱（靠近触发）；[window] L2 走廊尽头的普通钢格窗也沿用此 kind（可能被 Entity 2 占据）
+  | 'libwindow' // [window] L601 图书馆外墙的普通木窗（可能被 Entity 2 占据；data.winDir 墙方向）
   | 'hotelwindow' // L5 酒店窗（装饰）
   | 'table' // 桌子（宴会厅/客房）
   | 'chandelier' // L5 水晶吊灯（带光源）
@@ -146,6 +148,7 @@ export type StructKind = import('../content/tradeDecor').TradeKind | import('../
   | 'glassdoor' // 玻璃门（可交互开关，L5 通庭院泳池）
   // v13 新增：多层结构
   | 'lift' // 载客电梯（交互后轿厢垂直送达另一层）
+  | 'foyerprop' // 前厅（序章）隔墙/门/家具碰撞代理：模型由 renderer/foyerHome.ts 统一构建，data.foyer=wall|door|prop
 
   // ===== v23：Level 6「Lights Out」 =====
   | 'hotpipe'      // 输送加热液体的金属管道（Fandom L6；黑暗中唯一的触觉导航线索）
@@ -377,6 +380,10 @@ export interface GroundItem {
   z?: number // v13：所在高度（米；缺省=所在地面高度，上层物品=FLOOR_H）
   dur?: number // 近战重制：丢下的近战武器保留单件耐久（0=残件）
   blood?: number
+  mag?: string[] // 枪械：丢下的枪保留膛内弹药
+  ammoSel?: string
+  stage?: number
+  cyl?: number
 }
 
 export interface LightSource {

@@ -129,6 +129,12 @@ const IOTS_UTILITY_OVERRIDE: Record<string, string> = {
   squirtgun: '情境实用', uvlamp: '情境实用', // 特殊场景装备
   friedshrimp: '高实用性',
   liveshrimp: '实用', // v81 活旱虾：口粮 + 诱饵
+  memoryjuice: '不建议使用', // 批发市场 v2：Object 11 高度成瘾
+  laughrepellent: '无实用性', babelbalm: '低实用性', // Object 3（已失效，仅收藏）/ Object 25（暂无功能）
+  saltbox: '高风险实用', // 盒装火盐：分解为火盐晶体
+  dbshotgun: '高实用性', // 双管猎枪：威力大，但枪声会招来一切
+  leverrifle: '高实用性', revolver: '高实用性', musket: '实用', trapdoor: '高实用性', cart_4440: '高实用性', cart_paper: '实用', cart_4570: '高实用性',
+  shell_buck: '高实用性', shell_bird: '实用', shell_clump: '高实用性', // 12 号弹（爆团弹：对肢团 / 悲尸翻倍）
 }
 /** 产地来源个例 */
 const IOTS_ORIGIN_OVERRIDE: Record<string, string> = {
@@ -147,6 +153,7 @@ const IOTS_ORIGIN_OVERRIDE: Record<string, string> = {
   friedshrimp: '人为制造', // Tom 餐厅加工
   dryshrimp: '实体相关', liveshrimp: '实体相关', // v81 旱虾（Entity 20）
   bento: '人为制造', // v83 Object 70 公文包里的自制便当
+  memoryjuice: '人为制造', laughrepellent: '事件相关', outdoorkit: '交易流通', traumakit: '交易流通', saltbox: '交易流通', // 批发市场 v2
 }
 
 /** 物品的 IOTS 三栏分类：罕见度 / 实用性 / 产地来源（均为 IOTS 建议标准用语） */

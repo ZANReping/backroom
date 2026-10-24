@@ -1,0 +1,27 @@
+{
+  "source": "app/.cache/shops-guns-import-20261023/overlay/app/public/textures/traders/shops",
+  "sourceDocumentation": "SOURCES.md",
+  "generatedAt": "2026-10-23",
+  "fileCount": 54,
+  "totalBytes": 5010433,
+  "format": "JPEG",
+  "validFiles": 54,
+  "invalidFiles": 0,
+  "missingMaterialChannels": [],
+  "channelCounts": {"color": 18, "normalgl": 18, "roughness": 18},
+  "shops": {
+    "hw": {"name": "五金", "color": "1024x1024 RGB", "normalgl": "512x512 RGB", "roughness": "512x512 L"},
+    "ww": {"name": "工装", "color": "1024x1024 RGB", "normalgl": "512x512 RGB", "roughness": "512x512 L"},
+    "cd": {"name": "糖果", "color": "1024x1024 RGB", "normalgl": "512x512 RGB", "roughness": "512x512 L"},
+    "of": {"name": "文具", "color": "1024x1024 RGB", "normalgl": "512x512 RGB", "roughness": "512x512 L"},
+    "od": {"name": "户外", "color": "1024x1024 RGB", "normalgl": "512x512 RGB", "roughness": "512x512 L"},
+    "gn": {"name": "兵械库", "color": "1024x1024 RGB", "normalgl": "512x512 RGB", "roughness": "512x512 L"}
+  },
+  "validation": [
+    "All 54 files opened and verified with Pillow.",
+    "Each shop has floor, wall and ceiling color/normalgl/roughness triplets.",
+    "No alpha channel is present; roughness maps are single-channel L JPEGs.",
+    "Normal maps are documented as OpenGL tangent-space normal maps.",
+    "No third-party material is claimed in SOURCES.md; generated and programmatically processed assets are recorded there."
+  ]
+}

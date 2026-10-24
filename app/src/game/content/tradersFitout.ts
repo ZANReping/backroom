@@ -21,7 +21,7 @@ for(const [i,x] of [21,37,53].entries())for(const side of [0,1]){
  for(let seat=0;seat<2;seat++){const slot=i*4+side*2+seat;duty(slot,x+(seat?1.18:-1.18),y,side?-Math.PI/2:Math.PI/2,'sit','西门候场座椅',{seatHeight:.46})}
  prop('planter','west.planter.'+i+'.'+side,x+4,y,1.05,1.05,{height:1.55})
 }
-prop('directory','west.directory',65,100,2.8,.65,{height:2.35,label:'咨询与导览 / INFORMATION'})
+prop('directory','west.directory',65,100,1.05,.55,{height:2.55,label:'咨询与导览 / INFORMATION'})
 prop('reception','west.information',64,116,5.4,2.4,{height:1.14,label:'咨询与导览 / INFORMATION'})
 prop('waterpoint','west.water',13,120,1.8,.72,{height:1.55})
 prop('noticeboard','west.notices',9,97,3,.18,{height:2.2,deg:180})
@@ -86,7 +86,7 @@ for(let i=0;i<16;i++){
 }
 // Public amenities and visual breaks, all outside the main evacuation/cargo lanes.
 for(const p of [[154,147],[269,147],[151,58],[276,58]]){prop('lounge','court.lounge.'+p.join('.'),p[0],p[1],5,3,{height:1.05});prop('planter','court.green.'+p.join('.'),p[0]+4,p[1],1.3,1.3,{height:1.9})}
-prop('directory','court.directory',144,98,3,.7,{height:2.5,label:'交易保险库 / TRADERS VAULT'})
+prop('directory','court.directory',144,98,1.0,.55,{height:2.55,label:'交易保险库 / TRADERS VAULT'})
 for(const id of ['food_court','vacant_market']){
  const r=room(id);prop('waterpoint',id+'.recycle',r.x+3,r.y+r.h-4,2.5,.8,{height:1.55});prop('noticeboard',id+'.notices',r.x+r.w-3,r.y+1,3,.18,{height:2.2})
  for(const side of [0,1])for(const row of [0,1,2])prop('planter',id+'.planter.'+side+'.'+row,r.x+3+side*(r.w-6),r.y+5+row*(r.h-10)/2,1.1,1.1,{height:1.65})

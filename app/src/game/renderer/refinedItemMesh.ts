@@ -6,7 +6,7 @@ import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { configureSurfaceTexture, getMaterialMode, levelTexture, litMaterial } from './shared'
 
-export type RefinedAtlas = 'tools' | 'gear' | 'food' | 'paper'
+export type RefinedAtlas = 'tools' | 'gear' | 'food' | 'paper' | 'market' | 'relic'
 
 export const REFINED_ITEM_ATLAS = {
   carkey: 'tools', gas: 'tools', wrench: 'tools', fuse: 'tools', stapler: 'tools', keycard: 'tools', nails: 'tools', timber: 'tools',
@@ -19,6 +19,11 @@ export const REFINED_ITEM_ATLAS = {
   megfolder: 'paper', oddbook: 'paper', pamphlet: 'paper', endnote: 'paper', welcomenote: 'paper', notebook: 'paper', parcel: 'paper',
   candysilver: 'paper', candybullet: 'paper', candygun: 'paper', candystanley: 'paper', candywaste: 'paper', candygenius: 'paper',
   candymint: 'paper', manmade: 'paper', citywater: 'paper',
+  // 批发市场 v2（2026-10-23）：scripts/gen-market-item-atlas.py 生成的 market 图集
+  memoryjuice: 'market', laughrepellent: 'market', babelbalm: 'market', outdoorkit: 'market', traumakit: 'market', saltbox: 'market',
+  // 2026-10-23：此前为方块/球体拼接或无贴图的 9 件异常遗物
+  acidcallus: 'relic', ashpile: 'relic', jerryflyer: 'relic', fakelog: 'relic', sedgland: 'relic', bento: 'relic',
+  curabiturgel: 'relic', curabiturspore: 'relic', curabiturrepellent: 'relic',
 } as const satisfies Record<string, RefinedAtlas>
 export type RefinedItemType = keyof typeof REFINED_ITEM_ATLAS
 export const REFINED_ITEM_TYPES = Object.keys(REFINED_ITEM_ATLAS) as RefinedItemType[]
@@ -29,7 +34,9 @@ const T = {
   tools: { dark: 0, steel: 1, gas: 2, enamel: 3, ceramic: 4, brass: 5, card: 6, wood: 7, eagle: 8, press: 9, syringe: 10, uv: 11, strap: 12, lens: 13, olive: 14, rubber: 15 },
   gear: { glove: 0, suit: 1, nylon: 2, fleece: 3, reflect: 4, rope: 5, silicone: 6, maskglass: 7, chalk: 8, stone: 9, straw: 10, grain: 11, xenon: 12, buckle: 13, burlap: 14, fruit: 15 },
   food: { ceramic: 0, stoneware: 1, copper: 2, soup: 3, salad: 4, bread: 5, pasta: 6, stew: 7, pizza: 8, lasagna: 9, meat: 10, steak: 11, jam: 12, shell: 13, batter: 14, misc: 15 },
+  relic: { callus: 0, callusCut: 1, ash: 2, ashBits: 3, flyer: 4, logPage: 5, gland: 6, glandCore: 7, bento: 8, gelLabel: 9, glass: 10, gel: 11, repellent: 12, corkLabel: 13, spore: 14, lid: 15 },
   paper: { kraft: 0, paper: 1, cloth: 2, pamphlet: 3, burnt: 4, welcome: 5, leather: 6, cardboard: 7, foil: 8, gunmetal: 9, stanley: 10, hazard: 11, wafer: 12, mint: 13, manmade: 14, water: 15 },
+  market: { jarGlass: 0, amber: 1, tapeLabel: 2, lidMetal: 3, vialGlass: 4, megLabel: 5, cork: 6, balmRed: 7, balmWhite: 8, kitRed: 9, kitOrange: 10, kitTrim: 11, kraft: 12, crystal: 13, kitPanel: 14 },
 } as const
 
 /** 分区内子矩形 [u0, v0, u1, v1]（v 向上，分区内 0..1）。与图集脚本的绘制区域对应。 */
@@ -80,6 +87,13 @@ function atlas(group: RefinedAtlas, file: 'color' | 'normal' | 'roughness') {
   texture.magFilter = THREE.LinearFilter
   texture.minFilter = THREE.LinearMipmapLinearFilter
   return texture
+}
+
+/** Start decoding shared item images while the containing market is streamed in.
+ * No geometry is allocated and classic mode never requests roughness. */
+export function prepareRefinedItemTextures(type: RefinedItemType) {
+  const group = REFINED_ITEM_ATLAS[type]
+  return [atlas(group, 'color'), atlas(group, 'normal'), ...(getMaterialMode() === 'realistic' ? [atlas(group, 'roughness')] : [])]
 }
 
 function surface(group: RefinedAtlas, metalness = 0, roughness = .7) {
@@ -1001,11 +1015,223 @@ function citywater(p: Parts) {
   p.add(cyl(.031, .031, .022, 16), cap, D.water, { p: [0, .136, 0], rect: SUB.cap })
 }
 
+
+// ---------- 批发市场 v2（2026-10-23）：market 图集 ----------
+const M = T.market
+const HALF_TOP: Rect = [0, .5, 1, 1], HALF_BOT: Rect = [0, 0, 1, .5]
+
+function memoryjuice(p: Parts) { // Object 11 记忆汁：宽口玻璃罐、琥珀液体与白色沉淀、旋盖、纸胶带标签
+  const glass = glassMat('market', .34), solid = surface('market', 0, .5), metal = surface('market', .7, .38)
+  p.add(lathe([[0, -.085], [.06, -.085], [.066, -.078], [.066, .06], [.058, .072], [.055, .082]], 22), glass, M.jarGlass)
+  p.add(cyl(.061, .061, .122, 22), solid, M.amber, { p: [0, -.022, 0] })
+  p.add(cyl(.06, .06, .026, 22), metal, M.lidMetal, { p: [0, .094, 0] })
+  p.add(cyl(.054, .056, .006, 22), metal, M.lidMetal, { p: [0, .109, 0], rect: [0, 0, 1, .2] })
+  p.add(box(.072, .042, .004), solid, M.tapeLabel, { p: [0, -.01, .0665] })
+}
+
+function laughrepellent(p: Parts) { // Object 3 驱笑剂：细长药瓶、几乎透明的液体、软木塞、M.E.G. 黄标签
+  const glass = glassMat('market', .3), solid = surface('market', 0, .55)
+  p.add(lathe([[0, -.06], [.022, -.06], [.024, -.055], [.024, .03], [.014, .045], [.012, .062]], 16), glass, M.vialGlass)
+  p.add(cyl(.0205, .0205, .07, 14), solid, M.vialGlass, { p: [0, -.023, 0] })
+  p.add(cyl(.0245, .0245, .034, 16, true), solid, M.megLabel, { p: [0, -.018, 0] })
+  p.add(cyl(.012, .010, .03, 10), solid, M.cork, { p: [0, .068, 0] })
+}
+
+function babelbalm(p: Parts) { // Object 25 巴别润唇膏：开盖的红色半透明管、微微发光的白色膏体、横放的盖子
+  const red = surface('market', 0, .3), glow = glowMat('market', 1)
+  p.add(cyl(.012, .012, .056, 16), red, M.balmRed, { p: [0, -.012, 0] })
+  p.add(cyl(.0105, .0105, .014, 16), red, M.balmRed, { p: [0, .022, 0], rect: [0, 0, 1, .3] })
+  p.add(cyl(.0085, .0085, .018, 14), glow, M.balmWhite, { p: [0, .036, 0] })
+  p.add(sphere(.0085, 14, 5, 0, HP), glow, M.balmWhite, { p: [0, .045, 0] })
+  p.add(cyl(.013, .013, .044, 16), red, M.balmRed, { p: [.04, -.027, .01], r: [0, .4, HP] })
+  p.add(sphere(.013, 14, 5, 0, HP), red, M.balmRed, { p: [.062, -.027, .02], r: [0, .4, -HP] })
+}
+
+function medkit(p: Parts, body: number, panel: Rect, w: number, h: number, d: number, bands: boolean) {
+  const shell = surface('market', .05, .55), trim = surface('market', .1, .7)
+  p.add(box(w, h, d), shell, body, { p: [0, 0, 0] })
+  p.add(box(w * .7, h * .78, .004, [FULL, FULL, FULL, FULL, panel, FULL]), shell, M.kitPanel, { p: [0, 0, d / 2 + .002] })
+  p.add(box(w + .006, .008, d + .006), trim, M.kitTrim, { p: [0, h * .18, 0] })
+  for (const x of [-w * .32, w * .32]) p.add(box(.026, .03, .012), trim, M.kitTrim, { p: [x, h * .18, d / 2 + .006] })
+  p.add(tube([[-w * .22, h / 2, 0], [-w * .2, h / 2 + .04, 0], [w * .2, h / 2 + .04, 0], [w * .22, h / 2, 0]], .009, 12, 6), trim, M.kitTrim)
+  for (const x of [-w * .22, w * .22]) p.add(box(.03, .012, .03), trim, M.kitTrim, { p: [x, h / 2 + .006, 0] })
+  if (bands) for (const x of [-w / 2 + .012, w / 2 - .012]) p.add(box(.024, h + .008, d + .008), trim, M.kitTrim, { p: [x, 0, 0] })
+  for (const x of [-w / 2 + .03, w / 2 - .03]) for (const z of [-d / 2 + .02, d / 2 - .02]) p.add(cyl(.009, .009, .008, 8), trim, M.kitTrim, { p: [x, -h / 2 - .004, z] })
+}
+function outdoorkit(p: Parts) { medkit(p, M.kitRed, HALF_TOP, .26, .17, .09, false) } // 户外医疗箱：红色硬壳 + 白十字
+function traumakit(p: Parts) { medkit(p, M.kitOrange, HALF_BOT, .3, .2, .12, true) } // 高级医疗箱：橙色防水箱 + 灰色护角胶条
+
+function saltbox(p: Parts) { // 盒装火盐：牛皮纸盒、火焰警示菱形正面、掀开的盒盖、盒口露出的火盐碎晶
+  const card = surface('market', 0, .85), salt = surface('market', .05, .25)
+  const W = .14, H = .1, Dp = .1
+  p.add(box(W, H, Dp, [HALF_BOT, HALF_BOT, HALF_BOT, HALF_BOT, HALF_TOP, HALF_BOT]), card, M.kraft)
+  p.add(box(W - .004, .004, Dp / 2), card, M.kraft, { p: [0, H / 2 + .018, -Dp / 2 - .012], r: [-1.1, 0, 0], rect: HALF_BOT })
+  p.add(box(W - .004, .004, Dp / 2), card, M.kraft, { p: [0, H / 2 + .014, Dp / 2 + .01], r: [1.25, 0, 0], rect: HALF_BOT })
+  for (let i = 0; i < 6; i++) {
+    const g = lumpyWelded(new THREE.OctahedronGeometry(.016 + (i % 3) * .004, 0), .003, 90, i)
+    p.add(g, salt, M.crystal, { p: [-.045 + (i % 3) * .045, H / 2 - .002 + (i % 2) * .006, -.02 + Math.floor(i / 3) * .04], r: [i * .7, i * 1.3, i * .4] })
+  }
+}
+
+// ---------- relic：9 件异常遗物（2026-10-23） ----------
+const E = T.relic
+const LEFT: Rect = [0, 0, .5, 1], RIGHT: Rect = [.5, 0, 1, 1]
+
+function acidcallus(p: Parts) {
+  const skin = surface('relic', 0, .75), acid = surface('relic', 0, .12)
+  // 主块：压扁、起伏的角质团，一侧被茧壁撕开露出切面
+  const g = sphere(1, 16, 11)
+  warp(g, v => { v.x *= .1; v.y *= .046; v.z *= .072; if (v.y < 0) v.y *= .6; v.x += Math.sin(v.z * 40) * .006 })
+  lumpyWelded(g, .009, 22, 3)
+  p.add(g, skin, E.callus, { p: [0, .028, 0] })
+  // 撕开的切面（略凹的斜面）
+  const cut = circle(.04, 14)
+  warp(cut, v => { v.z = -(Math.hypot(v.x, v.y) ** 2) * 3 + noise3(v.x * 90, v.y * 90, 1) * .002 })
+  p.add(cut, skin, E.callusCut, { p: [.088, .03, .004], r: [0, HP, .2], s: [1, .75, 1], rect: R.bottom })
+  // 两处鼓起的硬结
+  for (const [x, z, r] of [[-.04, .03, .026], [.02, -.04, .021]] as const) {
+    const k = sphere(r, 9, 6, 0, PI / 2); lumpyWelded(k, .003, 80, x * 10)
+    p.add(k, skin, E.callus, { p: [x, .05, z], s: [1, .6, 1] })
+  }
+  // 渗出的酸液：表面一层薄膜 + 三颗挂着的液滴 + 脚下一小滩
+  for (const [x, y, z, r] of [[.07, .018, .03, .009], [-.06, .012, -.035, .007], [.03, .008, .062, .006]] as const) {
+    const d = lathe([[0, -r * 1.8], [r * .55, -r * 1.1], [r, 0], [r * .7, r * .7], [0, r]], 8)
+    p.add(d, acid, E.callusCut, { p: [x, y, z], rect: R.top })
+  }
+  const pool = circle(1, 18)
+  warp(pool, v => { const a = Math.atan2(v.y, v.x), k = .06 * (1 + .25 * Math.sin(a * 3 + 1) + .12 * Math.sin(a * 7)); v.x *= k; v.y *= k })
+  p.add(pool, acid, E.callusCut, { p: [.05, .0015, .03], r: [-HP, 0, 0], rect: R.top })
+}
+
+function ashpile(p: Parts) {
+  const ash = surface('relic', 0, .98), bits = surface('relic', .2, .7)
+  // 灰堆：低矮、不对称的锥丘，坡面细碎起伏
+  const mound = lathe([[.17, 0], [.16, .003], [.12, .016], [.07, .042], [.03, .066], [0, .074]], 22)
+  warp(mound, v => { const a = Math.atan2(v.z, v.x), k = 1 + .18 * Math.sin(a * 2 + .4) + .08 * Math.sin(a * 5 + 1.3); v.x *= k * 1.0; v.z *= k * .78 })
+  lumpyWelded(mound, .004, 55, 7)
+  p.add(mound, ash, E.ash)
+  // 坡脚的散灰
+  for (const [x, z, r] of [[.17, .05, .045], [-.15, -.07, .035], [.04, -.13, .03]] as const) {
+    const s = lathe([[r, 0], [r * .5, .005], [0, .008]], 10); lumpyWelded(s, .0015, 120, x * 5)
+    p.add(s, ash, E.ash, { p: [x, 0, z] })
+  }
+  // 灰里埋着的东西：炭块、焦布角、骨片、一枚铜纽扣
+  const char = new THREE.BoxGeometry(.03, .016, .022, 2, 1, 2); lumpyWelded(char, .003, 90, 2)
+  p.add(char, bits, E.ashBits, { p: [.06, .046, .03], r: [.3, .6, .2], rect: R.q00 })
+  const cloth = new THREE.PlaneGeometry(.05, .04, 3, 3)
+  warp(cloth, v => { v.z = Math.sin(v.x * 60) * .004 + Math.sin(v.y * 70) * .003 })
+  p.add(twoSided(cloth), bits, E.ashBits, { p: [-.07, .04, .045], r: [-1.2, .3, .5], rect: R.q10 })
+  const bone = lathe([[0, -.03], [.004, -.026], [.0055, 0], [.0045, .026], [0, .03]], 7); lumpyWelded(bone, .0008, 200, 4)
+  p.add(bone, bits, E.ashBits, { p: [-.02, .062, -.035], r: [HP - .25, 0, .9], rect: R.q01 })
+  coin(p, bits, E.ashBits, E.ashBits, .011, .004, [.1, .016, -.05], [.35, 0, .25], R.q11, R.q11)
+}
+
+/** 纸张（正面 / 背面分别用分区左右两半）；fold = 中线折痕隆起高度，torn = 撕边的那一侧（+1 右 / -1 左 / 0 无） */
+function paperSheet(p: Parts, tile: number, w: number, h: number, o: { fold?: number; torn?: number; curl?: number; r?: V3; at?: V3 } = {}) {
+  const paper = surface('relic', 0, .88)
+  const pts: number[][] = [], n = 22
+  // 逆时针一圈：底边 → 右边 → 顶边 → 左边；撕边一侧加噪声
+  const push = (x: number, y: number, side: number) => pts.push([x + (o.torn && side === o.torn ? noise3(y * 60, 1, 3) * w * .07 - w * .035 : 0), y])
+  for (let i = 0; i < n; i++) push(-w / 2 + w * i / n, -h / 2, 0)
+  for (let i = 0; i < n; i++) push(w / 2, -h / 2 + h * i / n, 1)
+  for (let i = 0; i < n; i++) push(w / 2 - w * i / n, h / 2, 0)
+  for (let i = 0; i < n; i++) push(-w / 2, h / 2 - h * i / n, -1)
+  const g = extrude(shape(pts), .0012, { front: LEFT, back: RIGHT, side: LEFT, curve: 2 })
+  warp(g, v => {
+    if (o.fold) v.z += Math.max(0, 1 - Math.abs(v.y) / (h * .5)) * o.fold - o.fold * .5
+    if (o.curl) v.z += (v.x / (w / 2)) ** 2 * o.curl
+    v.z += noise3(v.x * 30, v.y * 30, tile) * .0015
+  })
+  p.add(g, paper, tile, { p: o.at ?? [0, .004, 0], r: o.r ?? [-HP, 0, 0] })
+}
+function jerryflyer(p: Parts) { paperSheet(p, E.flyer, .1, .2, { fold: .008, curl: .004, r: [-HP, 0, .12] }) }
+function fakelog(p: Parts) { paperSheet(p, E.logPage, .1, .16, { torn: -1, curl: .006, r: [-HP, 0, -.08] }) }
+
+function sedgland(p: Parts) {
+  const mem = surface('relic', 0, .25), core = surface('relic', 0, .55)
+  mem.transparent = true; mem.opacity = .86; mem.depthWrite = false
+  // 半透明腺体：一端略尖的卵形，表面分出三个小叶
+  const g = sphere(1, 18, 12)
+  warp(g, v => { const t = v.x; v.x *= .092; v.y *= .058 * (1 - .18 * t); v.z *= .07 * (1 - .12 * t); v.y += .012 * Math.max(0, -v.z * 14) * 0 })
+  lumpyWelded(g, .005, 26, 5)
+  p.add(g, mem, E.gland, { p: [0, .06, 0] })
+  for (const [x, z, r] of [[-.06, .03, .03], [-.05, -.034, .028]] as const) {
+    const l = sphere(r, 10, 8); lumpyWelded(l, .003, 60, x * 9)
+    p.add(l, mem, E.gland, { p: [x, .055, z], s: [1, .75, 1] })
+  }
+  // 深色内核与分泌物囊
+  const k = sphere(.034, 12, 9); lumpyWelded(k, .004, 70, 2)
+  p.add(k, core, E.glandCore, { p: [-.008, .06, 0], s: [1.3, .9, 1], rect: R.top })
+  // 一截割断的导管，断口外翻
+  const duct = tube([[.075, .07, 0], [.11, .085, .01], [.14, .08, .03], [.16, .07, .036]], .012, 10, 7)
+  p.add(duct, core, E.glandCore, { rect: R.bottom })
+  const lip = torus(.012, .004, 10, 5); p.add(lip, core, E.glandCore, { p: [.161, .07, .036], r: [0, .9, HP - .3], rect: R.bottom })
+}
+
+function bento(p: Parts) {
+  const box_ = surface('relic', 0, .45)
+  const W_ = .12, L = .17
+  // 盒身（圆角，蓝色）+ 盒盖（米白，略大，带一圈凸沿）
+  p.add(extrude(roundRect(W_, L, .014), .044, { front: R.q00, back: R.q00, side: R.q00, curve: 4, bevel: .002 }), box_, E.bento, { p: [0, .022, 0], r: [-HP, 0, 0] })
+  p.add(extrude(roundRect(W_ + .006, L + .006, .016), .013, { front: R.q10, back: R.q10, side: R.q10, curve: 4, bevel: .002 }), box_, E.bento, { p: [0, .052, 0], r: [-HP, 0, 0] })
+  // 红橡皮筋：绕盒子一圈（沿 X 方向的四段）
+  const bw = .012, t = .003, z = .025
+  p.add(box(W_ + .014, t, bw), box_, E.bento, { p: [0, .0605, z], rect: R.q01 })
+  p.add(box(W_ + .014, t, bw), box_, E.bento, { p: [0, -.0005, z], rect: R.q01 })
+  for (const s of [-1, 1]) p.add(box(t, .062, bw), box_, E.bento, { p: [s * (W_ / 2 + .0055), .03, z], rect: R.q01 })
+  // 盒盖上的胶布名签
+  p.add(box(.05, .0015, .022), box_, E.bento, { p: [.02, .0596, -.05], r: [0, .08, 0], rect: R.q11 })
+}
+
+function curabiturgel(p: Parts) {
+  const glass = glassMat('relic', .3), gel = glowMat('relic'), solid = surface('relic', .35, .5)
+  // 旋盖玻璃罐：肩部收口、螺纹颈
+  p.add(lathe([[.045, 0], [.048, .006], [.048, .1], [.04, .112], [.036, .118], [.036, .126]], 20), glass, E.glass)
+  p.add(circle(.045, 20), glass, E.glass, { p: [0, .001, 0], r: [HP, 0, 0] })
+  // 发光胶（顶面略凹）
+  p.add(lathe([[0, .003], [.043, .003], [.044, .006], [.044, .096], [.03, .1], [0, .098]], 18), gel, E.gel)
+  // 牛皮纸标签（只绕前半圈）
+  p.add(new THREE.CylinderGeometry(.0488, .0488, .05, 18, 1, true, -PI * .45, PI * .9), solid, E.gelLabel, { p: [0, .052, 0] })
+  // 旋盖：顶面 + 滚花侧边
+  p.add(cyl(.04, .04, .02, 22, true), solid, E.lid, { p: [0, .132, 0], rect: R.bottom })
+  p.add(circle(.04, 22), solid, E.lid, { p: [0, .142, 0], r: [-HP, 0, 0], rect: R.top })
+  p.add(torus(.039, .003, 22, 4), solid, E.lid, { p: [0, .142, 0], r: [HP, 0, 0], rect: R.top })
+}
+
+function curabiturspore(p: Parts) {
+  const glow = glowMat('relic'), stalk = surface('relic', 0, .6)
+  // 一小撮三颗：带细孔的卵形孢子，尾端一截干瘪的柄
+  for (const [x, z, r, a] of [[0, 0, .021, 0], [.042, .016, .018, 1.7], [-.016, .04, .016, 3.4]] as const) {
+    const g = sphere(r, 12, 9)
+    warp(g, v => { v.y *= 1.25; v.x *= .92 })
+    lumpyWelded(g, r * .12, 120 / r * .02, a)
+    p.add(g, glow, E.spore, { p: [x, r * 1.1, z], r: [.5, a, .9], rect: R.top })
+    p.add(new THREE.ConeGeometry(r * .32, r * 1.1, 6, 1, true), stalk, E.spore, { p: [x + Math.cos(a) * r * .9, r * .5, z + Math.sin(a) * r * .9], r: [HP, 0, -a], rect: R.bottom })
+  }
+}
+
+function curabiturrepellent(p: Parts) {
+  const glass = glassMat('relic', .32), solid = surface('relic', 0, .55)
+  // 小药瓶：圆肩细颈，装大半瓶褐绿腐液（液面有一圈沉淀）
+  const bottle = [[.03, 0], [.033, .006], [.033, .075], [.026, .088], [.016, .094], [.016, .112], [.019, .116]]
+  p.add(lathe(bottle, 18), glass, E.glass)
+  p.add(circle(.03, 18), glass, E.glass, { p: [0, .001, 0], r: [HP, 0, 0] })
+  p.add(lathe([[0, .003], [.03, .003], [.0305, .008], [.0305, .062], [.022, .066], [0, .065]], 16), solid, E.repellent)
+  // 软木塞
+  p.add(cyl(.0145, .0135, .026, 12), solid, E.corkLabel, { p: [0, .118, 0], rect: [0, 0, .5, 1] })
+  // 手写标签：绕前半圈
+  p.add(new THREE.CylinderGeometry(.0335, .0335, .05, 16, 1, true, -PI * .4, PI * .8), solid, E.corkLabel, { p: [0, .04, 0], rect: [.5, 0, 1, 1] })
+  // 瓶口一圈细绳
+  p.add(torus(.0172, .0022, 14, 4), solid, E.corkLabel, { p: [0, .108, 0], r: [HP, 0, 0], rect: [0, 0, .5, .3] })
+}
+
 const BUILDERS: Record<RefinedItemType, (p: Parts) => void> = {
   carkey, gas, wrench, fuse, stapler, keycard, nails, timber, housekey, presses, eaglecoin, sedative, uvlamp, headlamp, nightvision, silverware,
   gloves, suit, cavingsuit, rope, divemask, chalkstub, stonekazoo, wheatgrain, xenonmarble, driedfruit,
   thingmeat, ratmeat, tomatosoup, gardensalad, garlicbread, pasta, meatstew, pizza, lasagna, tomsspecial, grilledsteak, jambread,
   megfolder, oddbook, pamphlet, endnote, welcomenote, notebook, parcel, candysilver, candybullet, candygun, candystanley, candywaste, candygenius, candymint, manmade, citywater,
+  memoryjuice, laughrepellent, babelbalm, outdoorkit, traumakit, saltbox,
+  acidcallus, ashpile, jerryflyer, fakelog, sedgland, bento, curabiturgel, curabiturspore, curabiturrepellent,
 }
 
 /** 实例独立几何与材质；文件纹理经 levelTexture 缓存共享。 */

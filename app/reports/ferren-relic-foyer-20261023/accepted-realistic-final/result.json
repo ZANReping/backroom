@@ -1,0 +1,1089 @@
+{
+  "seed": 424243,
+  "mode": "realistic",
+  "port": 1245,
+  "cdp": 1246,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:1245/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Fri, 23 Oct 2026 14:12:42 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 289,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 1245,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 19039.966182,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 1.019,
+        "sendEnd": 1.059,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 10.525,
+        "receiveHeadersEnd": 10.676
+      },
+      "responseTime": 1792764762209.296,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    },
+    {
+      "url": "http://127.0.0.1:1245/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Fri, 23 Oct 2026 14:12:55 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 273,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 1245,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 19052.847285,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.71,
+        "sendEnd": 0.784,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 11.684,
+        "receiveHeadersEnd": 11.935
+      },
+      "responseTime": 1792764775091.559,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\ferren-relic-foyer-20261023\\accepted-realistic-final\\qa-1792764748682-36112",
+    "--remote-debugging-port=1246",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 10888,
+    "server": 77636
+  },
+  "appBootMs": 12844.865099999999,
+  "entryMs": 5131.357699999997,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 900,
+    "paused": false,
+    "pos": [
+      5.25,
+      5.75,
+      0
+    ],
+    "prologue": {
+      "step": "act0",
+      "flags": {
+        "flash_drawer": true
+      }
+    },
+    "unlock": {},
+    "phone": {
+      "battery": 39.778480000000116,
+      "torch": false,
+      "docked": true,
+      "notes": [],
+      "photos": 0,
+      "nextId": 1
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 744,
+      "textures": 208
+    },
+    "geometries": 744
+  },
+  "aim-computer": {
+    "id": "computer",
+    "pos": [
+      5.1,
+      5.75
+    ],
+    "crouch": false,
+    "target": "使用 电脑"
+  },
+  "aim-phone_dock": {
+    "id": "phone_dock",
+    "pos": [
+      5.4,
+      6.27
+    ],
+    "crouch": false,
+    "target": "拿起 手机"
+  },
+  "phoneUnpaused": true,
+  "aim-wardrobe": {
+    "id": "wardrobe",
+    "pos": [
+      4.99,
+      7.790000000000001
+    ],
+    "crouch": false,
+    "target": "打开 衣柜"
+  },
+  "aim-pick_backpack": {
+    "id": "pick_backpack",
+    "pos": [
+      4.72,
+      7.41
+    ],
+    "crouch": false,
+    "target": "拿起 背包"
+  },
+  "aim-nightstand": {
+    "id": "nightstand",
+    "pos": [
+      6.804719082489673,
+      5.055297602634593
+    ],
+    "crouch": false,
+    "target": "打开 床头柜抽屉"
+  },
+  "aim-pick_flashlight": {
+    "id": "pick_flashlight",
+    "pos": [
+      6.784719082489674,
+      5.3752976026345936
+    ],
+    "crouch": false,
+    "target": "拿起 手电筒"
+  },
+  "aim-fridge": {
+    "id": "fridge",
+    "pos": [
+      16.59,
+      5.239999999999999
+    ],
+    "crouch": false,
+    "target": "打开 冰箱"
+  },
+  "aim-pick_water": {
+    "id": "pick_water",
+    "pos": [
+      16.42,
+      5.6499999999999995
+    ],
+    "crouch": false,
+    "target": "拿 瓶装水"
+  },
+  "aim-pick_snack": {
+    "id": "pick_snack",
+    "pos": [
+      16.394719082489672,
+      5.5852976026345935
+    ],
+    "crouch": false,
+    "target": "拿 能量棒"
+  },
+  "supplies": {
+    "level": 900,
+    "paused": false,
+    "pos": [
+      16.394719082489672,
+      5.5852976026345935,
+      0
+    ],
+    "prologue": {
+      "step": "act1",
+      "flags": {
+        "flash_drawer": true,
+        "read_news": true,
+        "last_forum": false,
+        "got_phone": true,
+        "ev:phone_open": true,
+        "ev:look": true,
+        "tut:look": true,
+        "tut:news": true,
+        "got_backpack": true,
+        "got_flashlight": true,
+        "got_water": true,
+        "got_snack": true
+      },
+      "open": {
+        "wardrobe": 1,
+        "nightstand": 1,
+        "fridge": 1
+      }
+    },
+    "unlock": {
+      "clock": true,
+      "quest": true,
+      "log": true,
+      "minimap": true,
+      "battery": true,
+      "hotbar": true,
+      "inventory": true
+    },
+    "phone": {
+      "battery": 40.584287600000465,
+      "torch": false,
+      "docked": false,
+      "notes": [
+        {
+          "id": 2,
+          "kind": "note",
+          "title": "待办",
+          "text": "明早 9:00 交报告。牛奶没了。",
+          "time": "23:40"
+        },
+        {
+          "id": 1,
+          "kind": "note",
+          "title": "论坛帖 · 巷子",
+          "text": "本地论坛「边界」：有人说附近一条巷子能「卡进」后室。出来的人说，要集齐六张磁带，送进 Level 11 的档案馆。——多半是编的。",
+          "time": "23:40"
+        }
+      ],
+      "photos": 0,
+      "nextId": 3
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 781,
+      "textures": 208
+    },
+    "geometries": 781
+  },
+  "homeBench": {
+    "rounds": [
+      {
+        "median": 4.200000000000728,
+        "p95": 4.299999999999272,
+        "calls": 139,
+        "triangles": 48997,
+        "resources": {
+          "geometries": 781,
+          "textures": 208
+        }
+      },
+      {
+        "median": 4.200000000000728,
+        "p95": 4.299999999999272,
+        "calls": 139,
+        "triangles": 48997,
+        "resources": {
+          "geometries": 781,
+          "textures": 208
+        }
+      },
+      {
+        "median": 4.200000000000728,
+        "p95": 4.299999999999272,
+        "calls": 139,
+        "triangles": 48997,
+        "resources": {
+          "geometries": 781,
+          "textures": 208
+        }
+      },
+      {
+        "median": 4.200000000000728,
+        "p95": 4.299999999999272,
+        "calls": 139,
+        "triangles": 48997,
+        "resources": {
+          "geometries": 781,
+          "textures": 208
+        }
+      },
+      {
+        "median": 4.200000000000728,
+        "p95": 4.30000000000291,
+        "calls": 139,
+        "triangles": 48997,
+        "resources": {
+          "geometries": 781,
+          "textures": 208
+        }
+      }
+    ]
+  },
+  "aim-st_down": {
+    "id": "st_down",
+    "pos": [
+      7.348959235991435,
+      17.501040764008565
+    ],
+    "crouch": false,
+    "target": "推开 安全通道门（下楼）"
+  },
+  "streetBench": {
+    "rounds": [
+      {
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "calls": 272,
+        "triangles": 26739,
+        "resources": {
+          "geometries": 781,
+          "textures": 208
+        }
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "calls": 272,
+        "triangles": 26739,
+        "resources": {
+          "geometries": 781,
+          "textures": 208
+        }
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "calls": 272,
+        "triangles": 26739,
+        "resources": {
+          "geometries": 781,
+          "textures": 208
+        }
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "calls": 272,
+        "triangles": 26739,
+        "resources": {
+          "geometries": 781,
+          "textures": 208
+        }
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "calls": 272,
+        "triangles": 26739,
+        "resources": {
+          "geometries": 781,
+          "textures": 208
+        }
+      }
+    ]
+  },
+  "break": {
+    "stats": {
+      "mode": "3d",
+      "shards": 480,
+      "maze": 5503,
+      "frames": 157,
+      "avgMs": 0.72,
+      "maxMs": 78.3
+    },
+    "stage": "crack"
+  },
+  "landing": {
+    "level": 0,
+    "paused": false,
+    "pos": [
+      79.5,
+      79.5,
+      0
+    ],
+    "prologue": {
+      "step": "done",
+      "flags": {
+        "flash_drawer": true,
+        "read_news": true,
+        "last_forum": false,
+        "got_phone": true,
+        "ev:phone_open": true,
+        "ev:look": true,
+        "tut:look": true,
+        "tut:news": true,
+        "got_backpack": true,
+        "got_flashlight": true,
+        "got_water": true,
+        "got_snack": true,
+        "went_down": true,
+        "tut:forum": true,
+        "tut:phone": true,
+        "tut:phone_open": true,
+        "tut:backpack": true,
+        "tut:flashlight": true,
+        "tut:light": true,
+        "tut:fridge": true,
+        "tut:leave": true,
+        "tut:corridor": true,
+        "tut:stairs": true,
+        "outside": true,
+        "said_outside": true,
+        "on_street": true,
+        "tut:downstairs": true,
+        "tut:navigate": true,
+        "clue_graffiti": true,
+        "clue_boxes": true,
+        "clue_cctv": true,
+        "said_alley": true,
+        "reached_alley": true,
+        "tut:mart": true,
+        "tut:sprint": true,
+        "tut:poster": true,
+        "tut:alley": true,
+        "tut:inspect1": true,
+        "ev:phone_camera": true,
+        "photo_clue_graffiti": true,
+        "photo_any": true,
+        "ev:phone_photo": true,
+        "tut:photo": true,
+        "tut:inspect_all": true,
+        "act4": true,
+        "forum_reply": true,
+        "tut:wait_reply": true,
+        "dup1": true,
+        "said_dup1": true,
+        "loop1": true,
+        "loop2": true,
+        "said_home_dark": true,
+        "fell": true,
+        "landing": true,
+        "l0_hud": true,
+        "main_quest": true
+      }
+    },
+    "unlock": {
+      "status": true,
+      "hp": true,
+      "quest": true
+    },
+    "phone": {
+      "battery": 39.521688000003806,
+      "torch": false,
+      "docked": false,
+      "notes": [
+        {
+          "id": 7,
+          "kind": "note",
+          "title": "论坛 · 新回帖",
+          "text": "边界线论坛 214L 匿名用户：「又一个去巷子里拍墙的 😂 拍到门了吗？没拍到就早点回家睡觉吧，明天还上班呢。」\n215L noclip_0：「回家的路上别回头。」",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 6,
+          "kind": "photo",
+          "title": "照片 #1",
+          "text": "旧仓路后巷，23:40。\n拍到：墙上的涂鸦。巷子西墙：黄色喷漆画的门 +「NOCLIP HERE →」。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 5,
+          "kind": "note",
+          "title": "调查 · 旧监控摄像头",
+          "text": "巷底的旧监控：镜头被黄色胶带缠死，指示灯还亮着。它到底在录什么？",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 4,
+          "kind": "note",
+          "title": "调查 · 一堆湿纸箱",
+          "text": "纸箱堆：空罐子、旧毯子，没有人。纸板被泡软了，闻起来像受潮的旧地毯。不知道为什么，让人想到荧光灯的嗡嗡声。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 3,
+          "kind": "note",
+          "title": "调查 · 墙上的涂鸦",
+          "text": "巷子西墙：黄色喷漆画的门 +「NOCLIP HERE →」。箭头指着墙角，敲了敲，实心砖。旁边有七道划痕，像在计数。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 2,
+          "kind": "note",
+          "title": "待办",
+          "text": "明早 9:00 交报告。牛奶没了。",
+          "time": "23:40"
+        },
+        {
+          "id": 1,
+          "kind": "note",
+          "title": "论坛帖 · 巷子",
+          "text": "本地论坛「边界」：有人说附近一条巷子能「卡进」后室。出来的人说，要集齐六张磁带，送进 Level 11 的档案馆。——多半是编的。",
+          "time": "23:40"
+        }
+      ],
+      "photos": 1,
+      "nextId": 8,
+      "cracked": true,
+      "noSignal": true
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 239,
+      "textures": 76
+    },
+    "geometries": 239
+  },
+  "scattered": [
+    {
+      "id": 0.6960780385659705,
+      "type": "flashlight",
+      "count": 1,
+      "x": 74.98817288470623,
+      "y": 80.47588772213749
+    },
+    {
+      "id": 0.749222108636475,
+      "type": "bottledwater",
+      "count": 1,
+      "x": 78.09392068276556,
+      "y": 78.22525176952463
+    },
+    {
+      "id": 0.7476110614036039,
+      "type": "snackbar",
+      "count": 2,
+      "x": 80.53999219022884,
+      "y": 77.92524489361465
+    },
+    {
+      "id": 0.9169188478464713,
+      "type": "phone",
+      "count": 1,
+      "x": 80.96148546827393,
+      "y": 80.85292869812226
+    },
+    {
+      "id": 0.2887219225828629,
+      "type": "foyerpack",
+      "count": 1,
+      "x": 79.89453616518031,
+      "y": 81.47604250190582
+    }
+  ],
+  "recovered": {
+    "level": 0,
+    "paused": false,
+    "pos": [
+      81.23999219022885,
+      77.92524489361465,
+      0
+    ],
+    "prologue": {
+      "step": "done",
+      "flags": {
+        "flash_drawer": true,
+        "read_news": true,
+        "last_forum": false,
+        "got_phone": true,
+        "ev:phone_open": true,
+        "ev:look": true,
+        "tut:look": true,
+        "tut:news": true,
+        "got_backpack": true,
+        "got_flashlight": true,
+        "got_water": true,
+        "got_snack": true,
+        "went_down": true,
+        "tut:forum": true,
+        "tut:phone": true,
+        "tut:phone_open": true,
+        "tut:backpack": true,
+        "tut:flashlight": true,
+        "tut:light": true,
+        "tut:fridge": true,
+        "tut:leave": true,
+        "tut:corridor": true,
+        "tut:stairs": true,
+        "outside": true,
+        "said_outside": true,
+        "on_street": true,
+        "tut:downstairs": true,
+        "tut:navigate": true,
+        "clue_graffiti": true,
+        "clue_boxes": true,
+        "clue_cctv": true,
+        "said_alley": true,
+        "reached_alley": true,
+        "tut:mart": true,
+        "tut:sprint": true,
+        "tut:poster": true,
+        "tut:alley": true,
+        "tut:inspect1": true,
+        "ev:phone_camera": true,
+        "photo_clue_graffiti": true,
+        "photo_any": true,
+        "ev:phone_photo": true,
+        "tut:photo": true,
+        "tut:inspect_all": true,
+        "act4": true,
+        "forum_reply": true,
+        "tut:wait_reply": true,
+        "dup1": true,
+        "said_dup1": true,
+        "loop1": true,
+        "loop2": true,
+        "said_home_dark": true,
+        "fell": true,
+        "landing": true,
+        "l0_hud": true,
+        "main_quest": true,
+        "l0_phone": true,
+        "l0_pack": true,
+        "l0_flash": true,
+        "l0_water": true,
+        "l0_snack": true,
+        "l0_done": true
+      }
+    },
+    "phone": {
+      "battery": 39.466790400004555,
+      "torch": false,
+      "docked": false,
+      "notes": [
+        {
+          "id": 8,
+          "kind": "note",
+          "title": "主线",
+          "text": "收集六张磁带并送往 Level 11 档案馆。\n论坛帖子说的是真的。屏幕摔裂了，右上角一格信号都没有。",
+          "time": "23:40"
+        },
+        {
+          "id": 7,
+          "kind": "note",
+          "title": "论坛 · 新回帖",
+          "text": "边界线论坛 214L 匿名用户：「又一个去巷子里拍墙的 😂 拍到门了吗？没拍到就早点回家睡觉吧，明天还上班呢。」\n215L noclip_0：「回家的路上别回头。」",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 6,
+          "kind": "photo",
+          "title": "照片 #1",
+          "text": "旧仓路后巷，23:40。\n拍到：墙上的涂鸦。巷子西墙：黄色喷漆画的门 +「NOCLIP HERE →」。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 5,
+          "kind": "note",
+          "title": "调查 · 旧监控摄像头",
+          "text": "巷底的旧监控：镜头被黄色胶带缠死，指示灯还亮着。它到底在录什么？",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 4,
+          "kind": "note",
+          "title": "调查 · 一堆湿纸箱",
+          "text": "纸箱堆：空罐子、旧毯子，没有人。纸板被泡软了，闻起来像受潮的旧地毯。不知道为什么，让人想到荧光灯的嗡嗡声。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 3,
+          "kind": "note",
+          "title": "调查 · 墙上的涂鸦",
+          "text": "巷子西墙：黄色喷漆画的门 +「NOCLIP HERE →」。箭头指着墙角，敲了敲，实心砖。旁边有七道划痕，像在计数。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 2,
+          "kind": "note",
+          "title": "待办",
+          "text": "明早 9:00 交报告。牛奶没了。",
+          "time": "23:40"
+        },
+        {
+          "id": 1,
+          "kind": "note",
+          "title": "论坛帖 · 巷子",
+          "text": "本地论坛「边界」：有人说附近一条巷子能「卡进」后室。出来的人说，要集齐六张磁带，送进 Level 11 的档案馆。——多半是编的。",
+          "time": "23:40"
+        }
+      ],
+      "photos": 1,
+      "nextId": 9,
+      "cracked": true,
+      "noSignal": true
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 311,
+      "textures": 76
+    },
+    "geometries": 311
+  },
+  "relic": {
+    "types": [
+      "acidcallus",
+      "ashpile",
+      "jerryflyer",
+      "fakelog",
+      "sedgland",
+      "bento",
+      "curabiturgel",
+      "curabiturspore",
+      "curabiturrepellent"
+    ]
+  },
+  "ferrenEntryMs": 7260.223199999993,
+  "ferrenBefore": {
+    "fr": {
+      "act": "nestSleep",
+      "actT": 0,
+      "clip": "sleep",
+      "clipT": 0.9474999999999989,
+      "speed": 0,
+      "phase": 15,
+      "sub": 0,
+      "lapA": 0,
+      "lapDir": 1,
+      "tx": 336,
+      "ty": 148.8,
+      "inNest": true,
+      "outside": false,
+      "outT": 0,
+      "noclip": null,
+      "spontCd": 14.04249999999998,
+      "lastHp": 12,
+      "rnd": 0.44225486086262056
+    },
+    "run": {
+      "clock": 950.9374999999983,
+      "tuck": null,
+      "petGain": 0,
+      "petCycle": 0,
+      "petCd": 0,
+      "disturbCd": 0,
+      "prevHeld": false,
+      "flash": 0,
+      "sanBackT": 0,
+      "carried": 0,
+      "touchT": 0
+    },
+    "hint": {
+      "id": "ferren-tuck",
+      "label": "盖被子",
+      "hint": "给睡着的 Ferren 盖好小被子（B.N.T.G. 好感 +，每次入睡只能盖一次）",
+      "hold": false
+    },
+    "sanity": 100,
+    "tucked": false
+  },
+  "ferrenAfter": {
+    "fr": {
+      "act": "nestSleep",
+      "actT": 0,
+      "clip": "sleep",
+      "clipT": 2.547500000000009,
+      "speed": 0,
+      "phase": 15,
+      "sub": 0,
+      "lapA": 0,
+      "lapDir": 1,
+      "tx": 336,
+      "ty": 148.8,
+      "inNest": true,
+      "outside": false,
+      "outT": 0,
+      "noclip": null,
+      "spontCd": 12.442499999999939,
+      "lastHp": 12,
+      "rnd": 0.44225486086262056
+    },
+    "run": {
+      "clock": 952.5374999999949,
+      "tuck": "0:night",
+      "petGain": 0,
+      "petCycle": 0,
+      "petCd": 0,
+      "disturbCd": 0,
+      "prevHeld": false,
+      "flash": 0,
+      "sanBackT": 0,
+      "carried": 0,
+      "touchT": 0
+    },
+    "hint": null,
+    "rep": 2,
+    "sanity": 100,
+    "tucked": true
+  },
+  "ferrenBench": {
+    "rounds": [
+      {
+        "median": 4.2000000000116415,
+        "p95": 12.39999999999418,
+        "calls": 192,
+        "triangles": 129607,
+        "resources": {
+          "geometries": 892,
+          "textures": 108
+        }
+      },
+      {
+        "median": 4.30000000000291,
+        "p95": 12.5,
+        "calls": 204,
+        "triangles": 144203,
+        "resources": {
+          "geometries": 1009,
+          "textures": 108
+        }
+      },
+      {
+        "median": 4.2000000000116415,
+        "p95": 12.400000000008731,
+        "calls": 204,
+        "triangles": 144203,
+        "resources": {
+          "geometries": 1029,
+          "textures": 108
+        }
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 8.400000000008731,
+        "calls": 204,
+        "triangles": 144203,
+        "resources": {
+          "geometries": 1029,
+          "textures": 108
+        }
+      },
+      {
+        "median": 8.30000000000291,
+        "p95": 8.5,
+        "calls": 204,
+        "triangles": 144203,
+        "resources": {
+          "geometries": 1113,
+          "textures": 108
+        }
+      }
+    ]
+  },
+  "summary": {
+    "level": 102,
+    "paused": false,
+    "pos": [
+      335.45,
+      150.2,
+      0
+    ],
+    "prologue": {
+      "step": "done",
+      "flags": {
+        "flash_drawer": true,
+        "read_news": true,
+        "last_forum": false,
+        "got_phone": true,
+        "ev:phone_open": true,
+        "ev:look": true,
+        "tut:look": true,
+        "tut:news": true,
+        "got_backpack": true,
+        "got_flashlight": true,
+        "got_water": true,
+        "got_snack": true,
+        "went_down": true,
+        "tut:forum": true,
+        "tut:phone": true,
+        "tut:phone_open": true,
+        "tut:backpack": true,
+        "tut:flashlight": true,
+        "tut:light": true,
+        "tut:fridge": true,
+        "tut:leave": true,
+        "tut:corridor": true,
+        "tut:stairs": true,
+        "outside": true,
+        "said_outside": true,
+        "on_street": true,
+        "tut:downstairs": true,
+        "tut:navigate": true,
+        "clue_graffiti": true,
+        "clue_boxes": true,
+        "clue_cctv": true,
+        "said_alley": true,
+        "reached_alley": true,
+        "tut:mart": true,
+        "tut:sprint": true,
+        "tut:poster": true,
+        "tut:alley": true,
+        "tut:inspect1": true,
+        "ev:phone_camera": true,
+        "photo_clue_graffiti": true,
+        "photo_any": true,
+        "ev:phone_photo": true,
+        "tut:photo": true,
+        "tut:inspect_all": true,
+        "act4": true,
+        "forum_reply": true,
+        "tut:wait_reply": true,
+        "dup1": true,
+        "said_dup1": true,
+        "loop1": true,
+        "loop2": true,
+        "said_home_dark": true,
+        "fell": true,
+        "landing": true,
+        "l0_hud": true,
+        "main_quest": true,
+        "l0_phone": true,
+        "l0_pack": true,
+        "l0_flash": true,
+        "l0_water": true,
+        "l0_snack": true,
+        "l0_done": true
+      }
+    },
+    "phone": {
+      "battery": 39.35559120000609,
+      "torch": false,
+      "docked": false,
+      "notes": [
+        {
+          "id": 8,
+          "kind": "note",
+          "title": "主线",
+          "text": "收集六张磁带并送往 Level 11 档案馆。\n论坛帖子说的是真的。屏幕摔裂了，右上角一格信号都没有。",
+          "time": "23:40"
+        },
+        {
+          "id": 7,
+          "kind": "note",
+          "title": "论坛 · 新回帖",
+          "text": "边界线论坛 214L 匿名用户：「又一个去巷子里拍墙的 😂 拍到门了吗？没拍到就早点回家睡觉吧，明天还上班呢。」\n215L noclip_0：「回家的路上别回头。」",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 6,
+          "kind": "photo",
+          "title": "照片 #1",
+          "text": "旧仓路后巷，23:40。\n拍到：墙上的涂鸦。巷子西墙：黄色喷漆画的门 +「NOCLIP HERE →」。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 5,
+          "kind": "note",
+          "title": "调查 · 旧监控摄像头",
+          "text": "巷底的旧监控：镜头被黄色胶带缠死，指示灯还亮着。它到底在录什么？",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 4,
+          "kind": "note",
+          "title": "调查 · 一堆湿纸箱",
+          "text": "纸箱堆：空罐子、旧毯子，没有人。纸板被泡软了，闻起来像受潮的旧地毯。不知道为什么，让人想到荧光灯的嗡嗡声。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 3,
+          "kind": "note",
+          "title": "调查 · 墙上的涂鸦",
+          "text": "巷子西墙：黄色喷漆画的门 +「NOCLIP HERE →」。箭头指着墙角，敲了敲，实心砖。旁边有七道划痕，像在计数。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 2,
+          "kind": "note",
+          "title": "待办",
+          "text": "明早 9:00 交报告。牛奶没了。",
+          "time": "23:40"
+        },
+        {
+          "id": 1,
+          "kind": "note",
+          "title": "论坛帖 · 巷子",
+          "text": "本地论坛「边界」：有人说附近一条巷子能「卡进」后室。出来的人说，要集齐六张磁带，送进 Level 11 的档案馆。——多半是编的。",
+          "time": "23:40"
+        }
+      ],
+      "photos": 1,
+      "nextId": 9,
+      "cracked": true,
+      "noSignal": true
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 1113,
+      "textures": 108
+    },
+    "geometries": 1113
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  },
+  "metadataCorrection": {
+    "field": "seed",
+    "previous": 424242,
+    "reason": "Fixture newGameSeed was 424243; runner inherited the previous task constant. Corrected to the actual fixed seed; raw scene measurements unchanged."
+  }
+}

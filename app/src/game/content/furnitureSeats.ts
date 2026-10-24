@@ -1,6 +1,7 @@
 // Seat surfaces are authored in the furniture's local model space, in metres.
 import type { Structure } from '../core/types'
 import { l11DecorDef } from './l11Decor'
+import { foyerSeats } from '../world/foyerLayout'
 
 export interface FurnitureSeat {
   x: number
@@ -21,6 +22,7 @@ export function furnitureSeats(s: Structure, level: number): FurnitureSeat[] {
   if(s.data?.tradersModel==='lounge')return [-1,1].flatMap(side=>[-.7,.7].map(z=>seat(.54,side*1.55,z,-side*Math.PI/2,'休息软座',true)))
   const k = s.kind, w = s.w, d = s.h
   switch (k) {
+    case 'foyerprop': return level === 900 ? foyerSeats(String(s.data?.pid ?? '')) : []
     case 'settlementprop': {
       const height = Number(s.data?.seatHeight)
       if (!Number.isFinite(height)) return []

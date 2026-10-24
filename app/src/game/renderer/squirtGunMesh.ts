@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { litMaterial } from './shared'
 
-export type SquirtLiquid = 'none' | 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid'
+export type SquirtLiquid = 'none' | 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid' | 'memoryjuice' | 'laughrepellent'
 
 const textureCache = new Map<string, THREE.CanvasTexture>()
 
@@ -106,6 +106,8 @@ const LIQUID_VISUAL: Record<SquirtLiquid, { color: string; opacity: number; shel
   cashew: { color: '#c79a55', opacity: .78, shell: '#dfc38f' },
   liquidpain: { color: '#d94a3a', opacity: .82, shell: '#e78c82' },
   acid: { color: '#c9d83a', opacity: .8, shell: '#dfe68c' }, // 爆酸者酸液（酸性胼胝）
+  memoryjuice: { color: '#d9822e', opacity: .78, shell: '#e8b37a' }, // 记忆汁液：琥珀橙
+  laughrepellent: { color: '#dff4f2', opacity: .4, shell: '#d6ecea' }, // 驱笑剂：近乎透明
 }
 
 /**

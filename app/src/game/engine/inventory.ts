@@ -1,4 +1,6 @@
+import { isGun } from '../content/firearms'
 import {acidDrink,bursterWash} from './bursterAI'
+import { vendingAte, vendingRefuseFood } from './vendingAI'
 import { isMelee } from '../content/melee'
 import { finishRepair, tryRepairHeld, slotName } from './melee'
 // v53：背包/装备/物品使用（槽位读写、快捷使用/丢弃、粉笔头、迁跃浆果）——
@@ -47,8 +49,9 @@ export function addItem(eng: Engine, type: string, extra?: Partial<InvSlot>): bo
   const all = [...p.hotbar, ...p.backpack]
   let ok = false
   // 近战武器带单件耐久/血污（extra 来自地面物品），永不堆叠
-  const ex = extra && isMelee(type) ? { ...(extra.dur !== undefined ? { dur: extra.dur } : {}), ...(extra.blood ? { blood: extra.blood } : {}) } : {}
-  for (const s of all) if (!ok && s && s.type === type && s.tag === tag && s.count < def.stack && !isMelee(type)) { s.count++; ok = true }
+  const ex = extra && isGun(type) ? { ...(extra.mag ? { mag: [...extra.mag] } : {}), ...(extra.ammoSel ? { ammoSel: extra.ammoSel } : {}), ...(extra.stage ? { stage: extra.stage } : {}), ...(extra.cyl ? { cyl: extra.cyl } : {}) }
+    : extra && (isMelee(type) || def.charges) ? { ...(extra.dur !== undefined ? { dur: extra.dur } : {}), ...(extra.blood ? { blood: extra.blood } : {}) } : {}
+  for (const s of all) if (!ok && s && s.type === type && s.tag === tag && s.count < def.stack && !isMelee(type) && !def.charges) { s.count++; ok = true }
   for (let i = 0; !ok && i < p.hotbar.length; i++) if (!p.hotbar[i]) { p.hotbar[i] = { type, count: 1, ...(tag !== undefined ? { tag } : {}), ...ex }; ok = true }
   for (let i = 0; !ok && i < p.backpack.length; i++) if (!p.backpack[i]) { p.backpack[i] = { type, count: 1, ...(tag !== undefined ? { tag } : {}), ...ex }; ok = true }
   if (ok) {
@@ -148,6 +151,7 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
   }
   // [kazoo] 石卡祖笛：吹一声（不消耗）。声源/回声、耗氧、逼退小小全在 tinyAI
   if (def.use === 'kazoo') { blowKazoo(eng); return }
+  if (s.type === 'saltbox') { unpackSaltBox(eng, where, i); return } // 批发市场 v2：盒装火盐 → 5 份火盐晶体
   if (!def.use || def.use === 'none') {
     // v32：笔记本和笔——翻开笔记本（可自由书写，字迹自动保留）
     if (s.type === 'notebook') { eng.emit({ kind: 'notebook' }); return }
@@ -168,6 +172,8 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
         eng.player.sanity = Math.max(0, eng.player.sanity - 55)
         eng.msg('你就着储罐喝了一口液态痛苦——喉咙和胃像被烧穿了一样。千万别再这么干。（生命 -35 · 理智 -55）', 'damage')
       }
+      else if (eng.squirtTank === 'memoryjuice') eng.msg('你就着储罐抿了一口记忆汁液——稀得像水，只剩一点烟草味。', 'system')
+      else if (eng.squirtTank === 'laughrepellent') eng.msg('你就着储罐喝了一口失效的驱笑剂——尝起来就是清水。', 'system')
       else eng.msg('你就着储罐喝了一口清水。', 'system')
       if (eng.squirtAmmo <= 0) { eng.squirtTank = 'none'; eng.msg('储罐空了。', 'system') }
       return
@@ -195,10 +201,11 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
         eng.manmadeT = 300
         p.hunger = Math.min(100, p.hunger + (def.value ?? 15))
         eng.msg('甜得发腻，胃里却更空了——你还想要更多。（人制品效应 5 分钟 · 饥饿+15）', 'lore')
+        vendingAte(eng) // [vending] 累积依赖度（≥25 远离掉理智 / ≥50 拒食 / 100 成为受害者）
         break
       }
-      // v51：人制品效应中——拒绝进食其他食物（不消耗物品）
-      if (eng.manmadeT > 0) {
+      // v51：人制品效应中——拒绝进食其他食物（不消耗物品）；[vending] 依赖度 ≥50 时也有概率拒食
+      if (eng.manmadeT > 0 || vendingRefuseFood(eng)) {
         eng.msg('你的胃拒绝接受别的食物——你满脑子只有那台售货机。（人制品效应）', 'damage')
         noConsume = true
         break
@@ -286,7 +293,8 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
       if (s.type === 'warpberry') eng.warpToBerryLevel(s.tag)
       break
     }
-    case 'heal': if (s.type === 'bandage') stopMothBleed(eng)
+    case 'heal': if (s.type === 'bandage' || def.charges) stopMothBleed(eng) // 医疗箱同样止血
+    if (s.type === 'traumakit') { p.slowT = 0; eng.webbedT = 0 } // 高级医疗箱：夹板 + 止痛贴，顺带解除迟缓
     if (s.type === 'sedgland') { // 镇静腺：天然止痛剂——回少量血、稳住理智、压下迟缓/缠丝麻痹
       p.hp = Math.min(100, p.hp + (def.value ?? 15) * (eng.manmadeT > 0 ? 0.5 : 1)); p.sanity = Math.min(100, p.sanity + 10); p.slowT = 0; eng.webbedT = 0
       eng.msg('微苦、发凉的分泌物滑下喉咙——疼痛像被一层棉花裹住了。（生命 +15 · 理智 +10 · 解除迟缓）', 'loot'); break
@@ -327,7 +335,13 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
   if (s.type !== 'royalration' && !noConsume) {
     // 精确扣除动作开始时的槽位，避免同类物品较多时扣到另一个格子。
     const current = eng.slotGet({ w: where, i })
-    if (current && current.type === s.type && current.tag === s.tag) {
+    if (current && current.type === s.type && current.tag === s.tag && def.charges) {
+      // 批发市场 v2：医疗箱——每次使用扣 1 次，用完才移除
+      current.dur = Math.max(0, (current.dur ?? def.charges) - 1)
+      if (current.dur <= 0) { eng.slotSet({ w: where, i }, null); eng.msg(`${def.name}里的物资用完了。`, 'system') }
+      else eng.msg(`${def.name}还能再用 ${current.dur}/${def.charges} 次。`, 'system')
+      eng.syncPassives()
+    } else if (current && current.type === s.type && current.tag === s.tag) {
       current.count--
       if (current.count <= 0) eng.slotSet({ w: where, i }, null)
       eng.syncPassives()
@@ -436,7 +450,7 @@ export function dropSlot(eng: Engine, where: SlotWhere, i: number) {
     eng.msg(n > 1 ? `放下了 ${n} 只活旱虾，它们慢慢爬开了。（诱饵 ${SHRIMP_BAIT_TIME} 秒）` : `放下了活旱虾，它慢慢爬开了。（诱饵 ${SHRIMP_BAIT_TIME} 秒）`, 'system')
     return
   }
-  eng.map.items.push({ id: Math.random(), type: s.type, count: s.count, x: p.x + 0.3, y: p.y + 0.3, ...(s.dur !== undefined ? { dur: s.dur } : {}), ...(s.blood ? { blood: s.blood } : {}) })
+  eng.map.items.push({ id: Math.random(), type: s.type, count: s.count, x: p.x + 0.3, y: p.y + 0.3, ...(s.dur !== undefined ? { dur: s.dur } : {}), ...(s.blood ? { blood: s.blood } : {}), ...(s.mag ? { mag: [...s.mag] } : {}), ...(s.ammoSel ? { ammoSel: s.ammoSel } : {}), ...(s.stage ? { stage: s.stage } : {}), ...(s.cyl ? { cyl: s.cyl } : {}) })
   eng.slotSet(r, null)
   eng.syncPassives()
   eng.msg(s.count > 1 ? `丢下了 ${itemName(s.type)} ×${s.count}` : `丢下了 ${slotName(s)}`, 'system')
@@ -529,4 +543,26 @@ export function syncPassives(eng: Engine) {
   while (p.backpack.length > wantBag && !p.backpack[p.backpack.length - 1]) p.backpack.pop()
   // 照明=副手手电筒 / 头饰头灯：两者皆无则强制关灯（装备/拾取时由对应路径点亮）
   if (p.equip.offhand?.type !== 'flashlight' && p.equip.head?.type !== 'headlamp') p.flashlight = false
+}
+
+// ---------- 批发市场 v2：盒装火盐分解 ----------
+export const SALTBOX_YIELD = 5
+/** 盒装火盐 → 5 份火盐晶体。背包放不下全部 5 份时不拆（避免晶体掉在地上）。 */
+export function unpackSaltBox(eng: Engine, where: SlotWhere, i: number): boolean {
+  if (eng.handsStowed||(nguithrInputLock(eng)||armsInputLock(eng))) return false
+  const s = eng.slotGet({ w: where, i })
+  if (!s || s.type !== 'saltbox') return false
+  const p = eng.player, cap = ITEMS.firesalt.stack
+  // 拆开后原格若被腾空也可以放火盐
+  let room = s.count <= 1 ? cap : 0
+  for (const sl of [...p.hotbar, ...p.backpack]) room += !sl ? cap : sl.type === 'firesalt' ? cap - sl.count : 0
+  if (room < SALTBOX_YIELD) { eng.msg(`背包空间不足——拆开盒装火盐需要能放下 ${SALTBOX_YIELD} 份火盐晶体。`, 'system'); return false }
+  s.count--
+  if (s.count <= 0) eng.slotSet({ w: where, i }, null)
+  let got = 0
+  for (let k = 0; k < SALTBOX_YIELD; k++) if (eng.addItem('firesalt')) got++
+  eng.syncPassives()
+  audio.pickup()
+  eng.msg(`拆开了盒装火盐，取出 ${got} 份火盐晶体。`, 'loot')
+  return true
 }

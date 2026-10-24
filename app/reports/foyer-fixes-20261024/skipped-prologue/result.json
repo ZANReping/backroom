@@ -1,0 +1,165 @@
+{
+  "seed": 424243,
+  "mode": "realistic",
+  "port": 13543,
+  "cdp": 13544,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:13543/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 24 Oct 2026 05:54:10 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 301,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 13543,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 75532.701274,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.465,
+        "sendEnd": 0.514,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 93.393,
+        "receiveHeadersEnd": 93.636
+      },
+      "responseTime": 1792821250902.105,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    },
+    {
+      "url": "http://127.0.0.1:13543/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 24 Oct 2026 05:54:27 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 287,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 13543,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 75549.55671,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.463,
+        "sendEnd": 0.509,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 11.254,
+        "receiveHeadersEnd": 11.408
+      },
+      "responseTime": 1792821267675.401,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\foyer-fixes-20261024\\skipped-prologue\\qa-1792821232049-26944",
+    "--remote-debugging-port=13544",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 13860,
+    "server": 34532
+  },
+  "appBootMs": 16365.667699999998,
+  "entryMs": 3686.951299999997,
+  "starter": {
+    "phone": 1,
+    "water": 1,
+    "snack": 2,
+    "phoneState": {
+      "battery": 100,
+      "torch": false,
+      "docked": false,
+      "notes": [],
+      "photos": 0,
+      "nextId": 1,
+      "cracked": true,
+      "noSignal": true
+    },
+    "carried": [
+      {
+        "type": "phone",
+        "count": 1
+      },
+      {
+        "type": "bottledwater",
+        "count": 1
+      },
+      {
+        "type": "snackbar",
+        "count": 2
+      }
+    ],
+    "ground": [
+      "flashlight",
+      "bandage",
+      "almond"
+    ]
+  },
+  "phoneWorks": true,
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

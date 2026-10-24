@@ -34,7 +34,6 @@ export function buildTradersAtm(s:Structure,assets:TradersAssets){
  p.finish(root)
  const labels:THREE.BufferGeometry[]=[]
  for(const [text,x,y,z,w,h] of [
-  ['B.N.T.G. / ATM',0,1.83,.4,.90,.18],
   ['信用点 / CREDIT',-.09,1.55,.402,.49,.067],
   ['存款 / DEPOSIT',-.09,1.44,.402,.49,.067],
   ['取款 / CASH',-.09,1.33,.402,.49,.067],
@@ -44,6 +43,7 @@ export function buildTradersAtm(s:Structure,assets:TradersAssets){
  ] as const){
   const g=assets.labelGeometry(text,w,h);g.translate(x,y,z);labels.push(g)
  }
+ {const g=assets.signGeometry('atm_topper',.92,.21);g.translate(0,1.83,.402);root.add(new THREE.Mesh(g,assets.material('sign','#ffffff',false)))}
  try{const g=mergeGeometries(labels);if(!g)throw Error('ATM label geometry layout');root.add(new THREE.Mesh(g,assets.material('label','#ffffff',false)))}finally{for(const g of labels)g.dispose()}
  return root
 }

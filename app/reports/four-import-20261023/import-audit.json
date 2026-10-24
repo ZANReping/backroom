@@ -1,0 +1,834 @@
+[
+  {
+    "pack": "window",
+    "file": "app/WINDOW-REMAKE.md",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "5b8bb15fa667ffee096aeb537e683ea73f10d8928c20cee006f104b8af05c474",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "window",
+    "file": "app/package.json",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "b2bca70a3c3d2ff28da36f5a9190f7604b43b75f54b5005fa88a1aca2be5ff5c",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/proto-window.html",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "4fe37c5ce84067061d2d04155efe24991aed441b517fdf61be1fd1e7d8989616",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "window",
+    "file": "app/scripts/check-window.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "f6734f7913a049deb5dd25fa6c60c158bcc810d81fb394ae655e4a15df906596",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "window",
+    "file": "app/scripts/verify-window.mjs",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "72ee7d55638a589fe3b370792834bb01885cef6c609e2d72d2c8ae0f4bb71ede",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "window",
+    "file": "app/src/App.tsx",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "e902b374821fc360a42da13942eeeb7eb20d53e0764aea5aed1822bd1d15a998",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/components/HUD.tsx",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "f5e43e2e21f897498f7187ccad954e32f132724833bf604090629956ab364537",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/components/TouchControls.tsx",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "4ee0dbcb5211db097247d5ee0baa589ec5df30561872932fb33ed2d430b97b03",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/core/keybinds.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "9a8a4c75822f45407fd95020ccfe800c8493b65e0e8d2117f0e0e0c6d9594777",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/core/types.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "8856db18f865e65f8e87649a892539ba91d9364a4a1aada6ab7666f5648b8143",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/engine.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "be06538f6a1629245a24f89d305e58a0b469302cf46ea1552d33fa673c9f7dd5",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/engine/combat.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "c5e6e84facec755aac45a566765b66b9a1eb7f3d5c5b99e8e91d9b40491f2af7",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/engine/effects.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "c1697c3ac91896864b6a4ba2f9030739dabd01c6665625a6ef1822becbdd379a",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/engine/entityAI.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "9cda009cebc740c9f41bfaa9acdbe2da21f519b3a8632fb2a9e5354526849ddb",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/engine/interact.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "a805d60afe3532e8cd9e05f87ea305e80e270d2f9677cc271087dae66f39dfbe",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/engine/movement.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "41288f873ef2bf9dad0bab8af5099f79643a6618208dd0fba4f2c6dfc3de9e96",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/engine/special.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "3001c359ef5d9cea82daa7b71e95b72a573aca41d6020948127ec156f4aeb2a1",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/engine/windowAI.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "38185a78706a50cff3f3e9df6aa2310aee8afe060a49857843f02a08eec3835b",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/entities/deep.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "1fd27e5fbec81107210e693dad6d9486631f187b1f2265bfc3a7b6c7b42a879f",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/entities/spawns.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "622e8411e97428b222cbc13fb4c92721410dd69aa2a6b76a3a07230fbef8a96f",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/entities/types.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "4a9ba766b51baae10448975b8085a8b60e6dc7bc5f7919bd6c0a2b77206195e4",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/levels/l601.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "bf302fd37a2e45241693ac112c3692bb43025a91e4bf88ef14ecd11521ad0625",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/net/session.ts",
+    "excluded": true,
+    "currentExists": true,
+    "currentSha256": "43002fcd30f496573f527e3bdb95f3117a89c87aeb8c7ad8a9d62dfe316fb847",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/renderer/entitiesMesh.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "1677f7a56faea30a1d6fabdf6c323361a5b12147b5bce2488624b2bf16d56ce7",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/renderer/renderer.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "092d433fe93baba826b384917c8942b7f8298e46d532e1011d3199cfe3811720",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/renderer/structures.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "e6a89ea55b45883f00bc5cb9f4c04d6ef7370303f92b8750c78e933233c70649",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/renderer/windowAnim.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "8d5ddf00ddb9b21c3666589e3579a0f4b96ec62b78c824872507991612e86cbe",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/renderer/windowMesh.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "fe91036df4e9657271454dd2d0b429cb7edec9274ff4d59c2b294a37779f4ef7",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/renderer/windowRender.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "6e5c3367c86c852943ee9faf312d5406ed5e4211fe7af274ecfa2b24c1c5c488",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "window",
+    "file": "app/src/game/world/mapgenDeep.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "a1be3fa38b837bddd1399a568657fbfa9d57b6c52223e412dcd726c10c31f884",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "window",
+    "file": "app/src/proto/windowProto.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "46cbaa0ef6f4d3690c024a99a799a4bcfd99985bae1118070d0500f2c402f13f",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "faceling",
+    "file": "app/FACELING-REMAKE.md",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "291a6b62cec4b1532c7c6891b216af13b0cf102ca50d277dbf088043bcca5717",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "faceling",
+    "file": "app/package.json",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "b2bca70a3c3d2ff28da36f5a9190f7604b43b75f54b5005fa88a1aca2be5ff5c",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "faceling",
+    "file": "app/proto-faceling.html",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "2265b458f1006f5ae857d1d46a51a820d2ff5ac66e332686237b478249403b08",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "faceling",
+    "file": "app/scripts/check-faceling-skinstealer-models.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "e966ab8ee5f634dbeabf6eaf0184525cedc6fdefc4935fc17170741eac335745",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "faceling",
+    "file": "app/scripts/check-faceling.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "25f9f7e43bc746d5f2061266f0cf14befca1ce2f1a51c8f107e663a21c504ead",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "faceling",
+    "file": "app/scripts/faceling-gif.py",
+    "excluded": true,
+    "currentExists": false,
+    "currentSha256": null,
+    "changedFromBackup": null
+  },
+  {
+    "pack": "faceling",
+    "file": "app/scripts/verify-faceling.mjs",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "929027d9a9737fe97a8a01cfa9d7a60776b881890e3c1b4fd215e6f79894d13d",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/game/core/audio.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "30a6868de91dfd69c2e08f9468a4c2678d0e2ed58dc983781900ffa015aa7833",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/game/engine/combat.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "c5e6e84facec755aac45a566765b66b9a1eb7f3d5c5b99e8e91d9b40491f2af7",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/game/engine/entityAI.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "9cda009cebc740c9f41bfaa9acdbe2da21f519b3a8632fb2a9e5354526849ddb",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/game/engine/facelingAI.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "8aa01aab85977fcbd53e7f63629cf4b3d56881d2d1fc5a078598accbe7843eb4",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/game/engine/special.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "3001c359ef5d9cea82daa7b71e95b72a573aca41d6020948127ec156f4aeb2a1",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/game/entities/facelingTraits.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "ec2d8a0689c436d0b9ed4c445b8e7b2883b9d625a0f14f48984572625258f726",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/game/entities/forms.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "3ac8e4ac60fde11fe4c75bb10d446b1ef0435121680edb378bd4a9d4979d1dfc",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/game/entities/humanoid.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "11e7c4124d8c5df58bbb6ab44ae438f3b8754c9c36101137901381044e7c8554",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/game/entities/types.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "4a9ba766b51baae10448975b8085a8b60e6dc7bc5f7919bd6c0a2b77206195e4",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/game/renderer/entitiesMesh.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "1677f7a56faea30a1d6fabdf6c323361a5b12147b5bce2488624b2bf16d56ce7",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/game/renderer/facelingAnim.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "a6168f6c1700aad522e4d934b068c6edbd67cf12cb05fe5a2d4b55b56d2ec7c6",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/game/renderer/facelingFace.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "5081b41482f00261d069108e7aac854a2f7917091c7e73e8c4724e40ef47b0d3",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/game/renderer/humanoidMotion.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "070ff2681ac7a70f312df37539eaddcae098aef2d5e01f36d55956e63740a1c7",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/game/renderer/renderer.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "092d433fe93baba826b384917c8942b7f8298e46d532e1011d3199cfe3811720",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/game/renderer/retroNpc.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "ce06d42b80cff8925b3400613cafcc4a56d6c66b7f66a7dcd9df8a442096602f",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/game/world/infinite.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "b07069a80dadb3111a36560b34c6bcc0d95c90188ec725ac934be3051efd6fa4",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/game/world/infiniteL2.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "6da0d8b6f01776499184cc3825143a0ca2da56b8986a063dc1a102e87f5036cf",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/game/world/infiniteRegistry.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "ed7ec0c6f6bc34356219c2b23ca223a1c647700884144535e8d1917d47f9cf48",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/proto/facelingProto.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "1b2b620cc063d4413362a3d3c7d0c365a40be3016b8677bde8c377c23929643b",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "faceling",
+    "file": "app/src/proto/retroNpcProto.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "09f46bd054926f7e125f228ae1fc90806164408ed831048fed0fbd592de912c1",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "faceling",
+    "file": "app/verifier/faceling-skinstealer.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "2650c09030750a1f248bfb2389bc27c70e006e4f4b5a587d48d3cc1f5cb8af2c",
+    "changedFromBackup": false
+  },
+  {
+    "pack": "vending",
+    "file": "app/VENDING-REMAKE.md",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "1440d77e8a915f45b98cb6e4b0690e1908ed496684792b9dbf7815b3c2d9db61",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "vending",
+    "file": "app/package.json",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "b2bca70a3c3d2ff28da36f5a9190f7604b43b75f54b5005fa88a1aca2be5ff5c",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "vending",
+    "file": "app/proto-vending-ui.html",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "2b75d7106cf4aa1592464baf8a6ae6f867e139687803c1cba909ec6a7ed50d4d",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "vending",
+    "file": "app/scripts/check-vending.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "8012890354821af2206b173dbbf5a40d16734949812b51dc732eb1a37e1a8c3e",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "vending",
+    "file": "app/scripts/faceling-gif.py",
+    "excluded": true,
+    "currentExists": false,
+    "currentSha256": null,
+    "changedFromBackup": null
+  },
+  {
+    "pack": "vending",
+    "file": "app/scripts/verify-vending.mjs",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "bb191ab218c6f84022ce607f6322d896c90cb606781ba89471412e5531952ef2",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/App.tsx",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "e902b374821fc360a42da13942eeeb7eb20d53e0764aea5aed1822bd1d15a998",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/components/VendingOverlay.css",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "8bf5b69a1531766f292554472a5e82bc173f6149b02a27e6aabc6576af8fd8c7",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/components/VendingOverlay.tsx",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "90abf09a2958028680c5e7263cc8619ad3acac541c338bbd1dc4276ab8d8661f",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/game/content/vendingLayout.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "b2f7b045a4419cfec927e0c378883793dea725950e703fc89763ce82e2bf0a2b",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/game/engine.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "be06538f6a1629245a24f89d305e58a0b469302cf46ea1552d33fa673c9f7dd5",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/game/engine/combat.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "c5e6e84facec755aac45a566765b66b9a1eb7f3d5c5b99e8e91d9b40491f2af7",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/game/engine/effects.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "c1697c3ac91896864b6a4ba2f9030739dabd01c6665625a6ef1822becbdd379a",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/game/engine/entityAI.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "9cda009cebc740c9f41bfaa9acdbe2da21f519b3a8632fb2a9e5354526849ddb",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/game/engine/interact.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "a805d60afe3532e8cd9e05f87ea305e80e270d2f9677cc271087dae66f39dfbe",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/game/engine/inventory.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "525026e129fdf2b14f6384a311825ebd977d5143d6a3436ea19841c9ee2e7964",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/game/engine/level.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "45f8a3fcd96db24a394f80fac1bf30987db90a18eb3c5d347237dd3341f20a98",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/game/engine/vendingAI.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "33c141a2f4bd686e58a935138623d4be12216f0fa13ea6ce21b401f0252ca677",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/game/entities/special.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "3c203c87746573915931d311307be00923014f7bd2322ff6254a18d0e3a5cfe4",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/game/entities/types.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "4a9ba766b51baae10448975b8085a8b60e6dc7bc5f7919bd6c0a2b77206195e4",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/game/renderer/entitiesMesh.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "1677f7a56faea30a1d6fabdf6c323361a5b12147b5bce2488624b2bf16d56ce7",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/game/renderer/renderer.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "092d433fe93baba826b384917c8942b7f8298e46d532e1011d3199cfe3811720",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/game/renderer/structures.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "e6a89ea55b45883f00bc5cb9f4c04d6ef7370303f92b8750c78e933233c70649",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/game/renderer/vendingAnim.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "495e0f5f3bafaa464cf15204f973301600e614887cc5644bfa8f3d752b20c4ab",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/game/renderer/vendingMesh.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "8103b8aacf50942108dfb4131d0aaf5aeefce2c9e78d4a986a713f10ac1fa425",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/game/renderer/vendingRender.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "06b45943d01ec3f599ed30fda87fb5020e413db6aba9fd756f749f6b26725df1",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/proto/vendingProto.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "c3407d34fe6a775c65beea1ce5e2711e8bc790fd0f91b743139a43e7e68bde52",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "vending",
+    "file": "app/src/proto/vendingUiProto.tsx",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "5d9d3f02ed908d614b74d5b4663f61fc8ac97f89471e8e830b42f0eee34cb22a",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "npc-idle",
+    "file": "app/NPC-IDLE.md",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "df43e80dbdfc666913a8feb255c770e7da71a91a5200564666228ea441a394b4",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "npc-idle",
+    "file": "app/package.json",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "b2bca70a3c3d2ff28da36f5a9190f7604b43b75f54b5005fa88a1aca2be5ff5c",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "npc-idle",
+    "file": "app/proto-npc-idle.html",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "fe2636c2c8ad7ba13638a1ee37b9dc798503c7c5f2fb010af39185d5fa8ff720",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "npc-idle",
+    "file": "app/reports/npc-idle/acts1.png",
+    "excluded": true,
+    "currentExists": false,
+    "currentSha256": null,
+    "changedFromBackup": null
+  },
+  {
+    "pack": "npc-idle",
+    "file": "app/reports/npc-idle/acts2.png",
+    "excluded": true,
+    "currentExists": false,
+    "currentSha256": null,
+    "changedFromBackup": null
+  },
+  {
+    "pack": "npc-idle",
+    "file": "app/reports/npc-idle/check.json",
+    "excluded": true,
+    "currentExists": true,
+    "currentSha256": "6a1e51b62a5e00e8312a3b6d98a3aba434e68a5dcc33627f8a001c7f8003ed2a",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "npc-idle",
+    "file": "app/reports/npc-idle/compare.png",
+    "excluded": true,
+    "currentExists": false,
+    "currentSha256": null,
+    "changedFromBackup": null
+  },
+  {
+    "pack": "npc-idle",
+    "file": "app/reports/npc-idle/life.png",
+    "excluded": true,
+    "currentExists": false,
+    "currentSha256": null,
+    "changedFromBackup": null
+  },
+  {
+    "pack": "npc-idle",
+    "file": "app/scripts/check-npc-idle.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "0d5729b5467a4a2ff93286ee7626d1e157091ccf030b4c4fd9ab62f92db48905",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "npc-idle",
+    "file": "app/src/game/content/npcChatLines.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "169ae6398897dedacf353b0841353345f2a6442c598fd9d7118b02c4f256ebcb",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "npc-idle",
+    "file": "app/src/game/engine/npc.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "76aae1fcd16a7351bb2f1f654c42a1ca7aa65ee3d84f0a66a15272a34af5c51b",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "npc-idle",
+    "file": "app/src/game/engine/npcIdle.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "cc60129e4d0931e44de4a41f9da9ca276473a87f8fd1953f280f504b0fddab0c",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "npc-idle",
+    "file": "app/src/game/engine/seating.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "07efba5eae3ee8587e3308f5721030d0cead6948e66bc7a807ee8bd34b725c95",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "npc-idle",
+    "file": "app/src/game/renderer/humanoidMotion.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "070ff2681ac7a70f312df37539eaddcae098aef2d5e01f36d55956e63740a1c7",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "npc-idle",
+    "file": "app/src/game/renderer/npcIdlePose.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "2125086cde46a6ea37c572680dcad4af20b7dfced104d3d2fa16dff0bb815a1e",
+    "changedFromBackup": null
+  },
+  {
+    "pack": "npc-idle",
+    "file": "app/src/game/renderer/renderer.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "092d433fe93baba826b384917c8942b7f8298e46d532e1011d3199cfe3811720",
+    "changedFromBackup": true
+  },
+  {
+    "pack": "npc-idle",
+    "file": "app/src/proto/npcIdleProto.ts",
+    "excluded": false,
+    "currentExists": true,
+    "currentSha256": "4cf50e933160fde9a15ffaf2d80491c80f658e1f4c78484fe9b44d8b608e5522",
+    "changedFromBackup": null
+  }
+]

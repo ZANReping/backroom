@@ -1,4 +1,8 @@
+import { facelingAgeOf } from './facelingAI'
+import { isVm36, vm36Struck, vm36Shocked, vm36KillGuard } from './vendingAI'
+import { FACELING_AGE_HEIGHT } from '../entities/facelingTraits'
 import { lightguideHit, lightguideLure } from './lightguideAI'
+import { SQUIRT_LIQUID_NAME, SQUIRT_LIQUID_SRC, squirtActsAsWater } from '../content/squirtLiquids'
 import {bursterKillGuard,bursterMelee,bursterSquirt,acidBurnEntity,BURSTER} from './bursterAI'
 import { heldMelee, startMeleeSwing } from './melee'
 import { isWrangler, wranglerFire, wranglerFireEggs, wranglerKillGuard, wranglerMelee } from './wranglerAI'
@@ -9,6 +13,7 @@ import { provokeMoths } from './moths'
 import { mothEggSwing, mothHurt } from './mothAI'
 import { provokeHound } from './houndAI'
 import { tinyKillGuard, tinyStruck } from './tinyAI'
+import { windowHittable, windowKillGuard } from './windowAI'
 import { thingKillGuard, thingMeleePart, thingCut, thingStruck } from './thingAI'
 import { camoHurt, camoProjectileLanded, camoSound } from './camoAI' // [L8-camo]
 import { curabiturKilled } from './curabiturAI' // [L8-curabitur]
@@ -84,6 +89,7 @@ function mpDrop(eng: Engine, id: number, it: string, x: number, y: number) {
 export function canHit(eng: Engine, e: Entity): boolean {
   const p = eng.player
   if (e.def.type === 'thething') return thingMeleePart(eng, e) !== null
+  if (e.def.type === 'windowent') return !e.dead && windowHittable(eng, e) // [window] 只有伸出来的手臂打得到
   if (e.def.type === 'arms' && !armsHittable(e)) return false // 手臂：缩在管内 / 被赶走时打不到
   if (e.dead || (e.disguised && e.disguised !== 'human')) return false // v77：穿着人皮的窃皮者是真实的身体，可以被击中
   const d = Math.hypot(e.x - p.x, e.y - p.y)
@@ -113,7 +119,7 @@ export function aimEntity(eng: Engine): Entity | null {
 }
 
 /** 相机中心准星的三维世界方向。所有远程/投掷行为必须共用它，避免俯仰只影响特效、不影响命中。 */
-function crosshairDirection() {
+export function crosshairDirection() {
   const n = Math.hypot(look.rayX, look.rayY, look.rayZ)
   if (n > 0.5) return { x: look.rayX / n, y: look.rayY / n, z: look.rayZ / n }
   const cp = Math.cos(look.pitch)
@@ -144,7 +150,7 @@ function traceCrosshair(eng: Engine, range: number): { x: number; y: number; z: 
       const scale = (e.def.scale ?? 1) * Math.min(2.5, e.def.huge ?? 1)
       const radius = Math.max(0.3, Math.min(1.35, 0.42 * scale))
       const bottom = e.z - (e.def.flying ? 0.38 * scale : 0.05)
-      const bodyHeight = e.def.type === 'skinstealer' ? (e.disguised === 'human' ? 1.95 : 2.2) : e.def.type === 'faceling' ? 1.85 : 1.6
+      const bodyHeight = e.def.type === 'skinstealer' ? (e.disguised === 'human' ? 1.95 : 2.2) : e.def.type === 'faceling' ? 1.85 * FACELING_AGE_HEIGHT[facelingAgeOf(e)] : 1.6
       const top = e.z + Math.max(0.8, bodyHeight * scale)
       if (Math.hypot(e.x - x, e.y - y) <= radius && z >= bottom && z <= top) {
         return { x, y, z, travel: s, entity: e }
@@ -161,7 +167,9 @@ function startAttackAnimation(eng: Engine, kind: Engine['attackAnimKind'], durat
 }
 
 export function killCheck(eng: Engine, e: Entity) {
+  if (vm36KillGuard(eng, e)) return // [vending] Entity 36 血量见底只会瘫倒（之后可撬开后部暗格）
   if (thingKillGuard(eng, e)) return
+  if (e.def.type === 'windowent' && windowKillGuard(eng, e)) return // [window] 窗户不可杀；打中手臂 = 松手
   if (tinyKillGuard(eng, e)) return // Tiny cannot die or drop loot; attacks provoke it.
   if (lightguideHit(eng, e)) return
   if (e.def.type === 'arachnid' && arachnidHurt(eng, e)) return
@@ -331,6 +339,7 @@ export function strike(eng: Engine, dmgIn: number, melee?: MeleeStrike): { hit: 
     if (isWrangler(e.def.type) && wranglerMelee(eng, e)) { hit = true; continue }
     if(e.def.type==='burster'){bursterMelee(eng,e,edmg,!!melee?.heavy);hit=true;eng.provoked=true;continue}
     if (e.def.type === 'tiny') { tinyStruck(eng, e); hit = true; eng.provoked = true; continue }
+    if (isVm36(e)) { vm36Struck(eng, e, edmg); hit = true; eng.provoked = true; continue } // [vending] Entity 36：普通武器几乎打不动，打了就活化
     if (e.def.type === 'partygoer') {
       // 派对客：按准星打中的部位结算（面条臂 / 头脸 / 躯干），胸甲闭合时躯体减伤 90%，倒地后只能用火烧尽
       const dir = crosshairDirection(), off = seatedEyeOffset(eng)
@@ -373,7 +382,7 @@ export function strike(eng: Engine, dmgIn: number, melee?: MeleeStrike): { hit: 
   // v35：挥击波及 NPC——降低其所属团体声望（NPC 是居民不是实体：不会受伤、不会死亡）
   let blockedFollower = false // v47：教化约束——被拦下的对信众挥击
   for (const n of eng.npcs) {
-    if (n.dead) continue
+    if (n.dead || n.def.ambient) continue
     if ((n.floor ?? 0) !== bandOfPlayerZ(m, p.z, p.x, p.y)) continue // v46：隔层打不到（夹楼 NPC 不会被穿楼板挥中；v56 七轮：玩家带按实际楼层钳制）
     const d = Math.hypot(n.x - p.x, n.y - p.y)
     if (d > 1.8) continue
@@ -476,21 +485,21 @@ export function throwHeld(eng: Engine, type: string) {
 /** 滋水枪储罐容量（份数）：9 瓶 × 每瓶 3 份 = 27 */
 export const SQUIRT_CAP = 27
 /** 往滋水枪储罐装入 1 瓶液体（3 份喷射量；储罐只能装一种液体，清水无需对应物品） */
-export function loadSquirt(eng: Engine, liquid: 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid'): boolean {
+export function loadSquirt(eng: Engine, liquid: 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid' | 'memoryjuice' | 'laughrepellent'): boolean {
   if (eng.handsStowed||(nguithrInputLock(eng)||armsInputLock(eng))) return false
-  const NAME = { water: '清水', almond: '杏仁水', cashew: '腰果水', liquidpain: '液态痛苦', acid: '酸液' } as const
+  const NAME = SQUIRT_LIQUID_NAME
   if (eng.squirtTank !== 'none' && eng.squirtTank !== liquid) {
     eng.msg(`储罐里还有别的液体——喷完或喝完才能换。`, 'system')
     return false
   }
   if (eng.squirtAmmo >= SQUIRT_CAP) { eng.msg(`储罐已经装满了。（${SQUIRT_CAP}/${SQUIRT_CAP}）`, 'system'); return false }
-  const src=liquid==='acid'?'acidcallus':liquid
-  if (liquid !== 'water' && !eng.hasItem(src)) { eng.msg(`背包里没有${NAME[liquid]}。`, 'system'); return false }
-  if (liquid !== 'water') eng.consumeItem(src)
+  const src = SQUIRT_LIQUID_SRC[liquid]
+  if (src && !eng.hasItem(src)) { eng.msg(`背包里没有${NAME[liquid]}。`, 'system'); return false }
+  if (src) eng.consumeItem(src)
   eng.squirtTank = liquid
   eng.squirtAmmo = Math.min(SQUIRT_CAP, eng.squirtAmmo + 3)
   audio.pickup()
-  eng.msg(`装入 1 瓶${NAME[liquid]}（储罐 ${eng.squirtAmmo}/${SQUIRT_CAP}）。`, 'loot')
+  eng.msg(`装入 1 瓶${NAME[liquid]}（储罐 ${eng.squirtAmmo}/${SQUIRT_CAP}）${squirtActsAsWater(liquid) && liquid !== 'water' ? '——效果等同清水' : ''}。`, 'loot')
   return true
 }
 
@@ -498,7 +507,7 @@ export function loadSquirt(eng: Engine, liquid: 'water' | 'almond' | 'cashew' | 
 export function clearSquirt(eng: Engine) {
   if (eng.handsStowed||(nguithrInputLock(eng)||armsInputLock(eng))) return
   if (eng.squirtTank === 'none') { eng.msg('储罐本来就是空的。', 'system'); return }
-  const NAME = { water: '清水', almond: '杏仁水', cashew: '腰果水', liquidpain: '液态痛苦', acid: '酸液' } as const
+  const NAME = SQUIRT_LIQUID_NAME
   eng.msg(`倒空了储罐里的${NAME[eng.squirtTank]}（${eng.squirtAmmo} 份残液）。`, 'system')
   eng.squirtTank = 'none'
   eng.squirtAmmo = 0
@@ -581,7 +590,7 @@ export function squirt(eng: Engine) {
   eng.squirtAmmo--
   audio.swing()
   const dmg = eng.squirtTank === 'liquidpain' ? 60 : eng.squirtTank === 'acid' ? BURSTER.acidShot : eng.squirtTank === 'cashew' ? 20 : 8 // 液态痛苦：腐蚀性高伤；酸液：中等直伤 + 持续腐蚀
-  const pc = eng.squirtTank === 'acid' ? '#c9d83a' : eng.squirtTank === 'liquidpain' ? '#d94a3a' : eng.squirtTank === 'cashew' ? '#c9a05a' : eng.squirtTank === 'almond' ? '#c9e8a0' : '#9adfff'
+  const pc = eng.squirtTank === 'acid' ? '#c9d83a' : eng.squirtTank === 'liquidpain' ? '#d94a3a' : eng.squirtTank === 'cashew' ? '#c9a05a' : eng.squirtTank === 'almond' ? '#c9e8a0' : eng.squirtTank === 'memoryjuice' ? '#e0a050' : '#9adfff'
   // 三维水线：实际命中、墙地遮挡与画面特效全部沿同一条准星射线。
   const aim = crosshairDirection()
   const flat = Math.hypot(aim.x, aim.y) || 1
@@ -633,7 +642,7 @@ export function squirt(eng: Engine) {
       eng.msg(`水线滋了${e.def.name}一身清水——什么效果也没有。`, 'system')
     }
   } else {
-    eng.msg(eng.squirtTank === 'water' ? '你喷出一道清水——什么效果也没有。' : eng.squirtTank === 'acid' ? '你喷出一道冒烟的黄色酸线。' : eng.squirtTank === 'liquidpain' ? '你喷出一道淡红色的腐蚀水线。' : eng.squirtTank === 'cashew' ? '你喷出一道苦涩的腰果水线。' : '你喷出一道甜腻的杏仁水线。', 'system')
+    eng.msg(squirtActsAsWater(eng.squirtTank) ? (eng.squirtTank === 'water' ? '你喷出一道清水——什么效果也没有。' : `你喷出一道${SQUIRT_LIQUID_NAME[eng.squirtTank as 'water']}——和清水一样，什么效果也没有。`) : eng.squirtTank === 'acid' ? '你喷出一道冒烟的黄色酸线。' : eng.squirtTank === 'liquidpain' ? '你喷出一道淡红色的腐蚀水线。' : eng.squirtTank === 'cashew' ? '你喷出一道苦涩的腰果水线。' : '你喷出一道甜腻的杏仁水线。', 'system')
   }
   if (eng.squirtAmmo <= 0) {
     eng.squirtTank = 'none'
@@ -729,6 +738,7 @@ export function landProjectile(eng: Engine, pr: Projectile, x: number, y: number
         const d = Math.hypot(e.x - x, e.y - y)
         if (d > 2.8 || Math.abs(e.z - pr.floorZ) >= 1) continue
         if (e.def.type === 'jerry' && eng.indoctrination > 0) continue // v47：教化约束——投掷波及对鹉主无效
+        if (isVm36(e)) { vm36Shocked(eng, e); n++; continue } // [vending] 瓶装闪电是 Entity 36 唯一的克星：重创 + 电晕 8 秒
         if (e.def.type === 'partygoer') { partygoerDamage(eng, e, 20, 'shock'); continue } // 派对客：免疫电击（法拉第笼般的皮肤），也不会被电僵
         if (!mpHurtEntity(eng, e, 20)) { e.hp -= 20; eng.killCheck(e) } // v59：联机走房主结算
         e.stunT = Math.max(e.stunT, 2.5)

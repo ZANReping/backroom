@@ -8,26 +8,33 @@ import {tradersRibs,tradersHallPosts} from '../content/tradersRibs'
 import {isTradeKind,tradeParts} from '../content/tradeDecor'
 import {litMaterial,getMaterialMode} from './shared'
 import {l1Texture,l1WorldUV} from './l1Materials'
-import {buildTradersArchitectureDetails} from './tradersArchitectureDetails'
+import {buildTradersArchitectureDetails,tradersWallFinishBounds} from './tradersArchitectureDetails'
 import {TRADERS_SIGN_TEXT} from '../content/tradersFitout'
+import {TRADERS_SIGN_ATLAS} from '../content/tradersSignAtlas'
+import {tradersSignKey,tradersRoomSign,tradersSignAspect} from '../content/tradersSigns'
 import {materialBatchKey} from './materialBatch'
+import {tradersShopAt,shopSurface,TRADERS_SHOP_UV} from '../content/tradersShops'
 import {applyTradersBake,bakeTradersGeometry,tradersIrradiance,type TradersProbe,type TradersProbeField} from './tradersBakedLighting'
 
+const SHOP_ROUGHNESS:Record<string,number>={hw_floor:.62,hw_wall:.82,hw_ceiling:.5,ww_floor:.48,ww_wall:.55,ww_ceiling:.8,cd_floor:.32,cd_wall:.78,cd_ceiling:.86,of_floor:.34,of_wall:.86,of_ceiling:.92,od_floor:.74,od_wall:.62,od_ceiling:.66,gn_floor:.38,gn_wall:.72,gn_ceiling:.55}
 /** One atlas and material family per streamed world, independent of chunk retirement. */
 export class TradersAssets{
  readonly materials=new Map<string,THREE.Material>()
  readonly atlas:THREE.CanvasTexture
  private labels:string[]
  constructor(){
-  this.labels=[...new Set([...TRADERS_SIGN_TEXT,...TRADERS_ENTRIES.map(e=>e.sign),...TRADERS_ROOMS.map(r=>r.name),...TRADERS_ZONES.map(r=>r.name),'商人之家 / TRADERS KEEP','公共服务 / SERVICES','保险库登记','TGPF / 通行核验','L2 铁路 · 未开通','补给连接 · 未开通','返回 LEVEL 1','公共交易柜台','雇佣与业务登记','兑换与寄存','业务与调度','货物核验','封签核验','打包与交接','空摊位','冷藏柜','固定藏品 · 浅蓝色 250 GT','TH-001-A / S-014','TH-001-B / S-014','TH-001-C / S-014','TV-001 / S-014','TV-002 / S-014','TV-003 / S-014'])]
+  this.labels=[...new Set([...TRADERS_SIGN_TEXT,...TRADERS_ENTRIES.map(e=>e.sign),...TRADERS_ROOMS.map(r=>r.name),...TRADERS_ZONES.map(r=>r.name),'商人之家 / TRADERS KEEP','公共服务 / SERVICES','保险库登记','TGPF / 通行核验','L2 铁路 · 未开通','补给连接 · 未开通','返回 LEVEL 1','公共交易柜台','雇佣与业务登记','兑换与寄存','业务与调度','货物核验','封签核验','打包与交接','空摊位','冷藏柜','固定藏品 · 浅蓝色 250 GT','TH-001-A / S-014','TH-001-B / S-014','TH-001-C / S-014','TV-001 / S-014','TV-002 / S-014','TV-003 / S-014','TRADERS WHOLESALE','每个轮班均营业','压印币 / BNTG 信用点','支持现金、信用点及混合支付'])]
   const canvas=document.createElement('canvas');canvas.width=2048;canvas.height=2048
-  const c=canvas.getContext('2d')!;c.fillStyle='#27362f';c.fillRect(0,0,2048,2048);c.textAlign='center';c.textBaseline='middle'
+  const c=canvas.getContext('2d')!;c.fillStyle='#24282c';c.fillRect(0,0,2048,2048);c.textAlign='center';c.textBaseline='middle'
+  // v-market: small leftover plates (keypads, unit numbers, cargo tags) in a modern US engraved-plate style.
   for(let i=0;i<this.labels.length;i++){
-   const x=i%8*256,y=Math.floor(i/8)*64
-   const bay=/^[NS]\d{2}$/.test(this.labels[i])?Number(this.labels[i].slice(1)):-1
-   c.fillStyle=bay<0?'#35473e':['#415e61','#765943','#545d77','#686247'][bay%4];c.fillRect(x+3,y+3,250,58);c.strokeStyle='#aaa17b';c.lineWidth=1;c.strokeRect(x+5,y+5,246,54)
-   let font=30;do{c.font='600 '+font+'px sans-serif';font--}while(c.measureText(this.labels[i]).width>236&&font>12)
-   c.fillStyle='#f0edd9';c.fillText(this.labels[i],x+128,y+32)
+   const x=i%8*256,y=Math.floor(i/8)*64,t=this.labels[i]
+   const unit=/^[NSV]\d{2,3}$/.test(t)
+   c.fillStyle=unit?'#d9dcdf':'#2b3034';c.fillRect(x+3,y+3,250,58)
+   c.fillStyle=unit?'#1f6fb2':'#d23b2f';c.fillRect(x+3,y+3,unit?250:6,unit?7:58)
+   c.strokeStyle=unit?'#8d949a':'#55606a';c.lineWidth=1.5;c.strokeRect(x+4,y+4,248,56)
+   let font=30;do{c.font='700 '+font+"px 'Metropolis','Glow Sans SC','Helvetica Neue',Arial,sans-serif";font--}while(c.measureText(t).width>226&&font>12)
+   c.fillStyle=unit?'#1d2226':'#f4f4f2';c.fillText(t,x+131,y+35)
   }
   this.atlas=new THREE.CanvasTexture(canvas);this.atlas.colorSpace=THREE.SRGBColorSpace;this.atlas.anisotropy=4
  }
@@ -35,7 +42,17 @@ export class TradersAssets{
   const key=surface+'|'+color+'|'+baked,old=this.materials.get(key);if(old)return old
   let mat:THREE.Material
   if(surface==='label')mat=new THREE.MeshBasicMaterial({map:this.atlas,toneMapped:false})
+  else if(surface==='sign'){const map=l1Texture('traders/signs_atlas.jpg');map.wrapS=map.wrapT=THREE.ClampToEdgeWrapping;map.anisotropy=8;mat=new THREE.MeshBasicMaterial({map,color:'#e4e4e4'})}
+  else if(surface==='goods'){const map=l1Texture('traders/goods_atlas.jpg');mat=litMaterial({map,color:'#ffffff',roughness:.82});if(baked)applyTradersBake(mat)}
   else if(surface==='emitter')mat=new THREE.MeshBasicMaterial({color:new THREE.Color(color).multiplyScalar(2.7),toneMapped:false})
+  else if(surface.startsWith('shop:')){
+   // 北排主题小店：每家店独立的 AI 地 / 墙 / 顶纹理（public/textures/traders/shops/<tex>_<part>_*.jpg）。
+   const name='traders/shops/'+surface.slice(5),floor=surface.endsWith('_floor'),rough=SHOP_ROUGHNESS[surface.slice(5)]??.7
+   mat=litMaterial({color,roughness:rough,metalness:surface.startsWith('shop:ww_')&&!surface.endsWith('_ceiling')?.35:0,map:l1Texture(name+'_color.jpg'),normalMap:l1Texture(name+'_normalgl.jpg',true),normalScale:new THREE.Vector2(floor?.45:.3,floor?.45:.3),
+    ...(getMaterialMode()==='realistic'?{roughnessMap:l1Texture(name+'_roughness.jpg',true)}:{})})
+   mat.customProgramCacheKey=()=>'traders-shop-pbr-1'
+   if(baked)applyTradersBake(mat)
+  }
   else{
    const scans:Record<string,string>={tile:'settlements/tiles',ceiling:'settlements/ceiling',acoustic:'alpha/plaster',terrazzo:'alpha/terrazzo',steel:'alpha/steel',cardboard:'alpha/cardboard',fabric:'settlements/fabric',wood:'alpha/wood',stone:'l11_limestone',metal:'l11_metal',brass:'alpha/steel',concrete:'l11_concrete',plaster:'l11_plaster'}
    const printed=surface==='dressingprint',texture=printed?'traders/dressing':scans[surface]??'l11_plaster',folder=texture.includes('/'),plain=['rubber','paint','screen','paper','leaf','glass','frosted','ceramic','water','mirror'].includes(surface)
@@ -70,6 +87,20 @@ export class TradersAssets{
   for(let j=0;j<uv.count;j++)uv.setXY(j,(i%8*256+5+uv.getX(j)*246)/2048,1-(Math.floor(i/8)*64+4+(1-uv.getY(j))*56)/2048)
   return geo
  }
+ /** AI sign plane fitted inside w×h (aspect kept), or the canvas plate for unmapped text. */
+ labelPart(text:string,width:number,height:number):{geometry:THREE.BufferGeometry;material:THREE.Material}{
+  const key=tradersSignKey(text)
+  if(!key)return{geometry:this.labelGeometry(text,width,height),material:this.material('label','#ffffff',false)}
+  return{geometry:this.signGeometry(key,width,height),material:this.material('sign','#ffffff',false)}
+ }
+ signGeometry(key:string,width:number,height:number,fit:'contain'|'width'|'height'='contain'){
+  const [u0,v0,u1,v1,aspect]=TRADERS_SIGN_ATLAS[key]
+  let w=width,h=width/aspect
+  if(fit==='height'||(fit==='contain'&&h>height)){h=height;w=height*aspect}
+  const geo=new THREE.PlaneGeometry(w,h),uv=geo.getAttribute('uv')
+  for(let j=0;j<uv.count;j++)uv.setXY(j,u0+(u1-u0)*uv.getX(j),1-(v0+(v1-v0)*(1-uv.getY(j))))
+  return geo
+ }
  dispose(){for(const m of this.materials.values())m.dispose();this.materials.clear();this.atlas.dispose()}
 }
 interface Bucket{material:THREE.Material;geometries:THREE.BufferGeometry[]}
@@ -87,7 +118,10 @@ export class Builder{
   if(rotation)geo.rotateY(rotation);geo.translate(x+w/2,y+h/2,z+d/2);this.add(geo,this.assets.material(surface,color,baked))
  }
  label(text:string,x:number,y:number,z:number,w:number,h:number,angle=0){
-  const geo=this.assets.labelGeometry(text,w,h);geo.rotateY(angle);geo.translate(x,y,z);this.add(geo,this.assets.material('label','#ffffff',false),false)
+  const {geometry,material}=this.assets.labelPart(text,w,h);geometry.rotateY(angle);geometry.translate(x,y,z);this.add(geometry,material,false)
+ }
+ sign(key:string,x:number,y:number,z:number,w:number,h:number,angle=0,fit:'contain'|'width'|'height'='contain'){
+  const geo=this.assets.signGeometry(key,w,h,fit);geo.rotateY(angle);geo.translate(x,y,z);this.add(geo,this.assets.material('sign','#ffffff',false),false)
  }
  *finish(parent:THREE.Group):Generator<void,void,unknown>{
   for(const b of this.buckets.values()){
@@ -142,11 +176,12 @@ export function* buildTradersArchitecture(m:GameMap,c:TradersChunk,parent:THREE.
   for(let zi=0;zi<zs.length-1;zi++){
    for(let xi=0;xi<xs.length-1;xi++){
     const x0=xs[xi],x1=xs[xi+1],z0=zs[zi],z1=zs[zi+1],mx=(x0+x1)/2,mz=(z0+z1)/2,zone=tradersZoneAt(mx,mz)
-    const geo=panel([x0,0,z0,x0,0,z1,x1,0,z1,x1,0,z0],[0,1,0,0,1,0,0,1,0,0,1,0]);b.add(geo,assets.material(zone?.kind==='vault'||zone?.kind==='logistics'||zone?.kind==='rail'?'concrete':zone?.kind==='street'?'stone':'terrazzo',zone?.kind==='hall'?(((zone.w>zone.h?(mz-zone.y)/zone.h:(mx-zone.x)/zone.w)>.36&&(zone.w>zone.h?(mz-zone.y)/zone.h:(mx-zone.x)/zone.w)<.64)?'#b0bab3':'#c9c6b7'):floorColor(zone?.kind??'hall')))
+    const shop=tradersShopAt(mx,mz),geo=panel([x0,0,z0,x0,0,z1,x1,0,z1,x1,0,z0],[0,1,0,0,1,0,0,1,0,0,1,0]);if(shop){l1WorldUV(geo,0,0,TRADERS_SHOP_UV[shopSurface(shop,'floor')]);b.add(geo,assets.material(shopSurface(shop,'floor'),'#ffffff'),false)}else b.add(geo,assets.material(zone?.kind==='vault'||zone?.kind==='logistics'||zone?.kind==='rail'?'concrete':zone?.kind==='street'?'stone':'terrazzo',zone?.kind==='hall'?(((zone.w>zone.h?(mz-zone.y)/zone.h:(mx-zone.x)/zone.w)>.36&&(zone.w>zone.h?(mz-zone.y)/zone.h:(mx-zone.x)/zone.w)<.64)?'#b0bab3':'#c9c6b7'):floorColor(zone?.kind??'hall')))
     const pts=[[x0,z0],[x1,z0],[x1,z1],[x0,z1]]
     const cp:number[]=[],cn:number[]=[]
     for(const [x,z] of pts){cp.push(x,roofHeight(zone,x,z),z);cn.push(...(zone?.kind==='street'?ceilingNormal(zone,x,z):[0,-1,0]))}
-    b.add(panel(cp,cn),assets.material(zone?.kind==='street'?'plaster':'acoustic',ceilingColor(zone?.kind??'hall')))
+    if(shop){const g=panel(cp,cn);l1WorldUV(g,0,0,TRADERS_SHOP_UV[shopSurface(shop,'ceiling')]);b.add(g,assets.material(shopSurface(shop,'ceiling'),'#ffffff'),false)}
+    else b.add(panel(cp,cn),assets.material(zone?.kind==='street'?'plaster':'acoustic',ceilingColor(zone?.kind??'hall')))
     // A real fascia closes each change in ceiling elevation, including arch ends.
     for(const [a,d,dx,dz] of [[0,1,0,-1],[1,2,1,0],[2,3,0,1],[3,0,-1,0]]){
      const step=tradersCeilingStep(cp[a*3],cp[a*3+2],cp[d*3],cp[d*3+2],dx,dz,cp[a*3+1],cp[d*3+1])
@@ -157,9 +192,10 @@ export function* buildTradersArchitecture(m:GameMap,c:TradersChunk,parent:THREE.
   for(const w of TRADERS_WALLS)if(tradersIntersects(w,c.bounds)){
    const a=clip(w,c.bounds);b.box(a.x,w.bottom,a.y,a.w,w.height,a.h,'plaster',w.surface==='vault'?'#c5c4b5':'#c9cbc1')
    if(w.bottom<.01&&w.height>2){
-    b.box(a.x-.012,.04,a.y-.012,a.w+.024,1.02,a.h+.024,w.surface==='vault'?'concrete':'stone',w.surface==='vault'?'#8d9994':'#b7af96')
-    b.box(a.x-.02,1.07,a.y-.02,a.w+.04,.045,a.h+.04,'brass','#938564')
-    b.box(a.x-.015,w.height-.19,a.y-.015,a.w+.03,.14,a.h+.03,'plaster','#d5d0bd')
+    const skirt=tradersWallFinishBounds(w,a,.012),belt=tradersWallFinishBounds(w,a,.02),cornice=tradersWallFinishBounds(w,a,.015)
+    b.box(skirt.x,.04,skirt.y,skirt.w,1.02,skirt.h,w.surface==='vault'?'concrete':'stone',w.surface==='vault'?'#8d9994':'#b7af96')
+    b.box(belt.x,1.07,belt.y,belt.w,.045,belt.h,'brass','#938564')
+    b.box(cornice.x,w.height-.19,cornice.y,cornice.w,.14,cornice.h,'plaster','#d5d0bd')
    }
    yield
   }
@@ -179,7 +215,18 @@ export function* buildTradersArchitecture(m:GameMap,c:TradersChunk,parent:THREE.
    const f=roomFront(room);if(!owned(c.bounds,f.x,f.z))continue
    const height=room.kind==='vault'?2.94:Math.min(3.45,room.height-.13),labelHeight=room.height<=3.3?.22:.65
    const normal=new THREE.Vector3(Math.sin(f.angle),0,Math.cos(f.angle))
-   b.label(room.name,f.x+normal.x*.13,height,f.z+normal.z*.13,room.kind==='vault'?1.05:2.8,room.kind==='vault'?.26:labelHeight,f.angle)
+   const key=tradersRoomSign(room.id)
+   if(key&&room.kind!=='vault'){
+    if(room.height<=3.3){
+     // US ADA practice: room plaques sit beside the latch side of the door at ~1.5 m, not above a 2.8 m head.
+     const along=room.doorWidth/2+.75,sx=f.x+Math.cos(f.angle)*along+normal.x*.11,sz=f.z-Math.sin(f.angle)*along+normal.z*.11
+     b.box(sx-.5,1.33,sz-.018,1,.44,.036,'steel','#30363a',true,f.angle)
+     b.sign(key,sx+normal.x*.021,1.55,sz+normal.z*.021,.92,.36,f.angle)
+    }else{
+     const sw=Math.min(3.4,.66*tradersSignAspect(key)),hh=sw/tradersSignAspect(key)
+     b.sign(key,f.x+normal.x*.13,Math.min(height,room.height-.08-hh/2),f.z+normal.z*.13,sw,hh,f.angle)
+    }
+   }else b.label(room.name,f.x+normal.x*.13,height,f.z+normal.z*.13,room.kind==='vault'?1.05:2.8,room.kind==='vault'?.26:labelHeight,f.angle)
    const w=room.doorWidth
    for(const side of [-1,1]){
     const offset=side*(w/2+.06)
@@ -188,6 +235,7 @@ export function* buildTradersArchitecture(m:GameMap,c:TradersChunk,parent:THREE.
    }
   }
   for(const l of c.lights){
+   if(tradersShopAt(l.x,l.y))continue // Themed shops draw their own fixtures (tradersShopMeshes).
    const h=(l.fixZ??4.6),zone=tradersZoneAt(l.x,l.y),vault=zone?.kind==='vault'
    b.box(l.x-.65,h-.015,l.y-.30,1.3,.10,.60,'metal','#7c8581')
    b.box(l.x-.59,h-.055,l.y-.245,1.18,.04,.49,'plaster','#b5b9af')
@@ -207,7 +255,7 @@ export function* buildTradersArchitecture(m:GameMap,c:TradersChunk,parent:THREE.
    yield
   }
   for(const [text,x,z,angle] of [['公共服务 / SERVICES',tradersMetresLocal(115),tradersMetresLocal(175),-Math.PI/2],['商人之家 / TRADERS KEEP',tradersMetresLocal(110),tradersMetresLocal(155),0],['保险库登记',tradersMetresLocal(350),tradersMetresLocal(220),0]] as const){
-   if(owned(c.bounds,x,z)){b.box(x-2.6,3.42,z-.11,5.2,.75,.22,'metal','#33463f',true,angle);b.label(text,x+Math.sin(angle)*.12,3.8,z+Math.cos(angle)*.12,5,.62,angle)}
+   if(owned(c.bounds,x,z)){const key=tradersSignKey(text)!,sh=.7,sw=Math.min(4.6,sh*tradersSignAspect(key));for(const side of [-1,1])b.box(x+side*Math.cos(angle)*(sw/2-.25)-.015,4.15,z-side*Math.sin(angle)*(sw/2-.25)-.015,.03,.65,.03,'steel','#9aa3a8');b.box(x-sw/2-.04,3.43,z-.06,sw+.08,sh+.08,.12,'metal','#2a2f33',true,angle);for(const side of [-1,1])b.sign(key,x+side*Math.sin(angle)*.064,3.43+.04+sh/2,z+side*Math.cos(angle)*.064,sw,sh,angle+(side<0?Math.PI:0))}
   }
   // Transport remains architectural only; no new destination or automatic travel.
   for(const [id,text] of [['rail_terminal','L2 铁路 · 未开通'],['dock','补给连接 · 未开通']] as const){

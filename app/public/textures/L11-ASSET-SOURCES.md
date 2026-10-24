@@ -165,3 +165,7 @@ project assets and carry no CC0 claim.
 `unfinished-frame`（未完工混凝土楼）直接复用 L1 裸混凝土使用的 `Concrete034` 三张图：`app/public/textures/l11_concrete.jpg`、`l11_concrete_normal.jpg`、`l11_concrete_roughness.jpg`。来源为 [Concrete034](https://ambientcg.com/view?id=Concrete034)，Lennart Demes / ambientCG，CC0 1.0 Universal，沿用本文件上方既有官方来源记录。运行时世界尺度重复为颜色 0.32 次/米、法线 0.24、粗糙度 0.86；无噪点纹理。
 
 出口建筑的新木门复用既有 `Wood092` 的 `app/public/textures/l11_rawwood.jpg`、`l11_rawwood_normal.jpg`、`l11_rawwood_roughness.jpg`，沿用 0.8m 尺度；砖楼复用既有 `Bricks097` 的 `app/public/textures/l11_brick.jpg`、`l11_brick_normal.jpg`、`l11_brick_roughness.jpg`。Wood092 与 Bricks097 的作者、许可证和官方链接见上方既有记录。出口建筑几何为项目自产参数化模型，不新增外部资产、不改动 L1 资源。
+
+## 前厅 M3 街区复用（2026-10-23）
+
+`src/game/renderer/foyerStreet.ts`（前厅 level 900 的楼栋门厅 / 小区 / 第六大街 / 旧仓路后巷）通过 `l11Material()` 直接复用本文件上方已登记的 ambientCG CC0 贴图：`l11_asphalt`（Asphalt012，路面）、`l11_paving`（PavingStones035，人行道/小区地面）、`l11_concrete`（Concrete034，路缘/勒脚/楼梯）、`l11_brick`（Bricks097，后巷砖墙/过街楼）、`l11_plaster`（门厅/便利店内墙、小区围墙）、`l11_grass`（花坛）、`l11_metal`（灯杆/扶手/围栏）、`l11_ceramic`（门厅/便利店地砖）、`l11_propwood`（长椅）、`l11-bark`（行道树树干）及 `glass`/`rubber` 程序材质。作者、许可证、官方链接与本地路径均同上方原始记录；图像文件未复制、未修改，仅以同一材质工厂（米制 UV、颜色微调 tint）引用。街区招牌、立面窗格、寻人启事、涂鸦等为运行时 Canvas 程序化贴图（`foyerStreetTextures.ts`），无外部来源。

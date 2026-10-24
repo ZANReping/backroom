@@ -7,6 +7,8 @@
 // 姿势用「H 的 X、Y 轴落到父节点的哪个方向」描述（ax / ay），再平移到 at。左手 = 右手几何沿 X 镜像。
 import * as THREE from 'three'
 import { MELEE_HOLD, meleeHandPose } from './meleeAnim'
+import { GUN_RIGHT_POSE } from './firearmAnim'
+import type { GunType } from '../content/firearms'
 import type { MeleeType } from './meleeMesh'
 import { retroTexture } from './retroNpc'
 import { installL0EnvironmentShader } from './l0EnvironmentShader'
@@ -21,6 +23,14 @@ export interface HandPose {
   fdir?: V3 // 前臂方向（H 坐标），默认 (0.3,-0.35,1)
   trigger?: boolean // 食指伸直搭在扳机上
   open?: boolean // 游泳：四指伸直并拢，拇指自然微张；不参与物品握持求解
+  /** 拇指所在截面沿握持轴的偏移（米，正 = 食指一侧）。握枪颈时拇指要落在击锤后面、绕过枪颈顶上，缺省 0 */
+  thumbDy?: number
+  /** 拇指根在握持圆上的方位（弧度，缺省 -0.55）；越负越靠「上」（远离四指） */
+  thumbPhi?: number
+  /** 四指最多弯到正常的几成（0..1，缺省 1）：托护木时指尖停在护木侧面、不翻到枪管上面 */
+  wrap?: number
+  /** 拇指最多合拢到正常的几成（0..1，缺省 1） */
+  thumbWrap?: number
 }
 export type SleeveKind = 'long' | 'short' | 'none'
 export interface RetroHandLook { skin: string; sleeve: string; sleeveKind: SleeveKind; topStyle: number; plainSleeve?: boolean; gloved?: boolean }
@@ -33,6 +43,8 @@ export interface RetroHand {
   /** Cache contact geometry without changing the visible hand. Borrowed meshes; do not dispose. */
   preparePose(p: HandPose, item?: THREE.Object3D | null): THREE.Group
   setLook(l: RetroHandLook): void
+  /** 整只手（皮肤 + 袖子）的不透明度：< 1 时半透明（先写一遍深度再上色，手指叠在手掌上不会互相透出来）。枪械贴腮瞄准用 */
+  setOpacity(a: number): void
   /** Release all cached poses and private materials; clothing textures remain shared. */
   dispose(): void
 }
@@ -249,7 +261,7 @@ function buildHandGeo(p: HandPose, mirror: boolean, sleeveKind: SleeveKind, col?
     const phi = PHI0 + dphi
     const trig = p.trigger && fi === 0
     const rad = [th / 2, th * 0.46, th * 0.4]
-    const J = closeChain(mcp[fi], [-Math.sin(phi), 0, -Math.cos(phi)], L, rad, [0, 0, 0], p.open ? [0.04, 0.12, 0.08] : trig ? [0.12, 0.4, 0.5] : [1.55, 1.85, 1.35], [0.05, 0.06, 0.045], 1)
+    const J = closeChain(mcp[fi], [-Math.sin(phi), 0, -Math.cos(phi)], L, rad, [0, 0, 0], p.open ? [0.04, 0.12, 0.08] : trig ? [0.12, 0.4, 0.5] : [1.55, 1.85, 1.35].map((t) => t * (p.wrap ?? 1)), [0.05, 0.06, 0.045], 1)
     for (let k = 0; k < 3; k++) caps.push([J[k], J[k + 1], rad[k]])
     const pts = [add(J[0], mul(tb, 0.012)), ...J] // 指根埋进掌内
     for (let k = 0; k < pts.length - 1; k++) {
@@ -274,16 +286,16 @@ function buildHandGeo(p: HandPose, mirror: boolean, sleeveKind: SleeveKind, col?
   S.quad(ko2, k2, w2, wo2, 0.9, 0.92, 0.9, 0.88) // 小鱼际侧
   S.quad(ko1, k1, k2, ko2, 0.86) // 指根面
   // ---------- ③ 拇指：掌骨端点沿径向找到第一个不碰撞的位置，两节指骨反向合拢，障碍含四指 ----------
-  const yt = FINGERS[0][0] + 0.004
-  const T0 = add(lerp3(w1, k1, 0.3), [0, -0.004, 0])
-  const pt = -0.55
+  const yt = FINGERS[0][0] + 0.004 + (p.thumbDy ?? 0)
+  const T0 = add(lerp3(w1, k1, 0.3), [0, -0.004 + (p.thumbDy ?? 0) * 0.6, 0])
+  const pt = p.thumbPhi ?? -0.55
   let T1 = circ(R + 0.012, pt, yt - 0.004)
   for (let rho = R + 0.006; rho < R + 0.06; rho += 0.002) {
     const q = circ(rho, pt, yt - 0.004)
     if (!(col?.near(q, 0.0105 + SKIN_GAP)) && !caps.some(([a, b, r]) => segDist(q, a, b) < (r + 0.0105) * 0.72)) { T1 = q; break }
   }
   const dT: V3 = norm([Math.sin(pt), 0, Math.cos(pt)])
-  const TJ = closeChain(T1, dT, [0.031, 0.026], [0.0095, 0.0082], [0.5, 0.2], p.open ? [0.15, 0.05] : [-1.35, -1.1], [-0.05, -0.05], 9, caps, 0.2)
+  const TJ = closeChain(T1, dT, [0.031, 0.026], [0.0095, 0.0082], [0.5, 0.2], p.open ? [0.15, 0.05] : [-1.35 * (p.thumbWrap ?? 1), -1.1 * (p.thumbWrap ?? 1)], p.thumbDy !== undefined ? [-0.06, -0.022] : [-0.05, -0.05], 9, caps, 0.2) // 握枪颈：拇指根先绕过去、末节后弯（真手就是这样包住枪颈的）
   prism(S, T0, T1, [0, 1, 0], 0.012, 0.014, 0.0105, 0.0118, 0.95, 0.92)
   prism(S, sub(TJ[0], mul(norm(sub(TJ[1], TJ[0])), 0.003)), TJ[1], [0, 1, 0], 0.0098, 0.0108, 0.009, 0.01, 0.88, 0.98, 6, [false, true])
   prism(S, sub(TJ[1], mul(norm(sub(TJ[2], TJ[1])), 0.003)), TJ[2], [0, 1, 0], 0.009, 0.0096, 0.0074, 0.008, 0.88, 1.06, 6, [false, true])
@@ -323,6 +335,13 @@ export function buildRetroHand(opts: { left?: boolean } = {}): RetroHand {
   const sleeve = new THREE.Mesh(new THREE.BufferGeometry(), sleeveMat)
   skin.frustumCulled = false; sleeve.frustumCulled = false // 贴相机的近距物体：避免包围球误判
   group.add(skin, sleeve)
+  // 半透明用的深度预写：同一份几何、只写深度不写颜色，排在皮肤 / 袖子前面画（都在透明队列里，枪先画完，所以枪能从手后面透出来）
+  const zMat = new THREE.MeshBasicMaterial({ colorWrite: false, transparent: true })
+  const skinZ = new THREE.Mesh(skin.geometry, zMat), sleeveZ = new THREE.Mesh(sleeve.geometry, zMat)
+  skinZ.frustumCulled = false; sleeveZ.frustumCulled = false; skinZ.visible = false; sleeveZ.visible = false
+  skinZ.renderOrder = sleeveZ.renderOrder = 30
+  group.add(skinZ, sleeveZ)
+  let opacity = 1
   let pose: HandPose = { at: [0, 0, -0.03], r: 0 }
   let look: RetroHandLook = { skin: '#c9a58a', sleeve: '#3a3f46', sleeveKind: 'long', topStyle: 3 }
   let item: THREE.Object3D | null = null
@@ -339,8 +358,10 @@ export function buildRetroHand(opts: { left?: boolean } = {}): RetroHand {
     // 镜像后的左手：H.X 在几何里已取反，基底保持右手系即可
     return new THREE.Matrix4().makeBasis(ax, ay, az)
   }
+  // Recreated contact-only proxies may name their stable source; normal items use instance UUIDs.
+  const contactKey = (it: THREE.Object3D | null) => it?.userData.handContactCacheKey ?? it?.uuid ?? ''
   const prepare = (p: HandPose, it: THREE.Object3D | null, B: THREE.Matrix4) => {
-    const key = JSON.stringify([p, look.sleeveKind, it?.uuid ?? ''])
+    const key = JSON.stringify([p, look.sleeveKind, contactKey(it)])
     let g = cache.get(key)
     if (!g) {
       const M = B.clone().setPosition(...p.at)
@@ -359,13 +380,14 @@ export function buildRetroHand(opts: { left?: boolean } = {}): RetroHand {
   const rebuild = () => {
     if (disposed) return
     const B = basis()
-    const key = JSON.stringify([pose, look.sleeveKind, item?.uuid ?? ''])
+    const key = JSON.stringify([pose, look.sleeveKind, contactKey(item)])
     if (key !== geoKey) {
       const { g } = prepare(pose, item, B)
       geoKey = key
       // Dispose the initial empty buffers, then keep a true bounded LRU.
       if (!geoKeyInitialized) { skin.geometry.dispose(); sleeve.geometry.dispose(); geoKeyInitialized = true }
       skin.geometry = g.skin; sleeve.geometry = g.sleeve
+      skinZ.geometry = g.skin; sleeveZ.geometry = g.sleeve
       shift = g.shift
     }
     group.quaternion.setFromRotationMatrix(B)
@@ -373,6 +395,7 @@ export function buildRetroHand(opts: { left?: boolean } = {}): RetroHand {
     const sv = new THREE.Vector3(opts.left ? -shift[0] : shift[0], shift[1], shift[2]).applyQuaternion(group.quaternion)
     group.position.set(pose.at[0] + sv.x, pose.at[1] + sv.y, pose.at[2] + sv.z)
     sleeve.visible = look.sleeveKind === 'long'
+    skinZ.visible = opacity < 1; sleeveZ.visible = opacity < 1 && sleeve.visible
   }
   let geoKeyInitialized = false
   rebuild()
@@ -403,13 +426,23 @@ export function buildRetroHand(opts: { left?: boolean } = {}): RetroHand {
       sleeveMat.color.copy(map ? tint(l.sleeve, 1.45) : new THREE.Color(l.sleeve))
       rebuild()
     },
+    setOpacity(a) {
+      a = Math.max(0, Math.min(1, a))
+      if (Math.abs(a - opacity) < 0.004 && (a < 1) === (opacity < 1)) return
+      const was = opacity < 1
+      opacity = a < 0.996 ? a : 1
+      const now = opacity < 1
+      for (const m of [skinMat, sleeveMat]) { m.opacity = opacity; if (was !== now) { m.transparent = now; m.depthWrite = !now; m.needsUpdate = true } }
+      skin.renderOrder = sleeve.renderOrder = now ? 31 : 0
+      skinZ.visible = now; sleeveZ.visible = now && sleeve.visible
+    },
     dispose() {
       if (disposed) return
       disposed = true
       group.removeFromParent()
       for (const g of cache.values()) { g.skin.dispose(); g.sleeve.dispose() }
       cache.clear(); item = null
-      skinMat.dispose(); sleeveMat.dispose()
+      skinMat.dispose(); sleeveMat.dispose(); zMat.dispose()
     },
   }
 }
@@ -434,6 +467,7 @@ export const SWIM_HAND_POSE: HandPose = { at: [0, 0, -.03], r: 0, open: true, ax
 export const SWIM_LEFT_HAND_POSE: HandPose = { ...SWIM_HAND_POSE, ax: [0, -1, 0], ay: [1, 0, 0] }
 export function heldHandPose(type: string, box?: HeldBox): HandPose {
   if (type in MELEE_HOLD) return meleeHandPose(type as MeleeType) // 近战武器重制：握点/握把轴/半径见 meleeAnim.MELEE_HOLD
+  if (type in GUN_RIGHT_POSE) return GUN_RIGHT_POSE[type as GunType] // 枪械：握枪颈，食指搭前扳机（firearmMesh）
   switch (type) {
     case '': return VERT([0.004, -0.005, -0.03], 0, { fdir: [0.28, -0.4, 1] }) // 空手：握拳，指节朝前（出拳）
     case '__swim': return SWIM_HAND_POSE // 张开并拢的划水掌

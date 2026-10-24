@@ -1,0 +1,1839 @@
+{
+  "seed": 424243,
+  "mode": "realistic",
+  "port": 12768,
+  "cdp": 12769,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:12768/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 24 Oct 2026 04:01:48 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 275,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 12768,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 68793.221903,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.299,
+        "sendEnd": 0.339,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 9.438,
+        "receiveHeadersEnd": 9.558
+      },
+      "responseTime": 1792814508293.467,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    },
+    {
+      "url": "http://127.0.0.1:12768/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 24 Oct 2026 04:02:06 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 267,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 12768,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 68811.753136,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.876,
+        "sendEnd": 1.185,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 12.323,
+        "receiveHeadersEnd": 12.589
+      },
+      "responseTime": 1792814526827.584,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\foyer-v2-20261024\\accepted-realistic\\qa-1792814491734-33224",
+    "--remote-debugging-port=12769",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 66468,
+    "server": 17212
+  },
+  "appBootMs": 13732.9185,
+  "entryMs": 9151.048199999997,
+  "v2Initial": {
+    "warm": {
+      "ms": 1965,
+      "programs": 51,
+      "textures": 112,
+      "npcs": 7
+    },
+    "indoor": true,
+    "homeVisible": true,
+    "streetVisible": false,
+    "npcs": [
+      {
+        "id": "foyer_ped_0",
+        "x": 42.088375000000426,
+        "y": 47.2,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_1",
+        "x": 87.75423500000097,
+        "y": 58.45,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_2",
+        "x": 51,
+        "y": 58.75,
+        "route": false
+      },
+      {
+        "id": "foyer_ped_3",
+        "x": 119.9213050000001,
+        "y": 47.4,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_4",
+        "x": 45.58716500000001,
+        "y": 29.6,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_5",
+        "x": 87.4,
+        "y": 58.9,
+        "route": false
+      },
+      {
+        "id": "foyer_ped_6",
+        "x": 101.32930000000053,
+        "y": 57.9,
+        "route": true
+      }
+    ],
+    "models": [
+      {
+        "id": "foyer_ped_4",
+        "visible": false,
+        "position": [
+          44,
+          0,
+          29.6
+        ]
+      },
+      {
+        "id": "foyer_ped_0",
+        "visible": false,
+        "position": [
+          40,
+          0,
+          47.2
+        ]
+      },
+      {
+        "id": "foyer_ped_2",
+        "visible": false,
+        "position": [
+          51,
+          0,
+          58.75
+        ]
+      },
+      {
+        "id": "foyer_ped_1",
+        "visible": false,
+        "position": [
+          86,
+          0,
+          58.45
+        ]
+      },
+      {
+        "id": "foyer_ped_5",
+        "visible": false,
+        "position": [
+          87.4,
+          0,
+          58.9
+        ]
+      },
+      {
+        "id": "foyer_ped_6",
+        "visible": false,
+        "position": [
+          103,
+          0,
+          57.9
+        ]
+      },
+      {
+        "id": "foyer_ped_3",
+        "visible": false,
+        "position": [
+          118,
+          0,
+          47.4
+        ]
+      }
+    ],
+    "programs": 142,
+    "flags": {
+      "flash_drawer": true
+    }
+  },
+  "pickupTransforms": [
+    {
+      "id": "backpack",
+      "pos": [
+        4.72,
+        0.08,
+        8.26
+      ],
+      "box": [
+        0.3623113863310339,
+        0.48300000026822093,
+        0.28677455672172236
+      ]
+    },
+    {
+      "id": "water",
+      "pos": [
+        16.42,
+        0.98,
+        4.8
+      ],
+      "box": [
+        0.14242437037317757,
+        0.21200000013411047,
+        0.06964873974500208
+      ]
+    },
+    {
+      "id": "snack",
+      "pos": [
+        16.72,
+        1.4,
+        4.8
+      ],
+      "box": [
+        0.1509538828468031,
+        0.044499999880790675,
+        0.09154833911710814
+      ]
+    }
+  ],
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "seed": 424243,
+    "level": 900,
+    "paused": false,
+    "pos": [
+      5.25,
+      5.75,
+      0
+    ],
+    "prologue": {
+      "step": "act0",
+      "flags": {
+        "flash_drawer": true
+      }
+    },
+    "unlock": {},
+    "phone": {
+      "battery": 39.85603000000012,
+      "torch": false,
+      "docked": true,
+      "notes": [],
+      "photos": 0,
+      "nextId": 1
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 704,
+      "textures": 232
+    },
+    "geometries": 704
+  },
+  "aim-computer": {
+    "id": "computer",
+    "pos": [
+      5.1,
+      5.75
+    ],
+    "crouch": false,
+    "target": "使用 电脑"
+  },
+  "forum": {
+    "home": true,
+    "theme": true,
+    "detail": true,
+    "fold": true,
+    "back": true
+  },
+  "aim-phone_dock": {
+    "id": "phone_dock",
+    "pos": [
+      5.4,
+      6.27
+    ],
+    "crouch": false,
+    "target": "拿起 手机"
+  },
+  "phoneUnpaused": true,
+  "aim-wardrobe": {
+    "id": "wardrobe",
+    "pos": [
+      4.99,
+      7.790000000000001
+    ],
+    "crouch": false,
+    "target": "打开 衣柜"
+  },
+  "aim-pick_backpack": {
+    "id": "pick_backpack",
+    "pos": [
+      4.72,
+      7.41
+    ],
+    "crouch": false,
+    "target": "拿起 背包"
+  },
+  "aim-nightstand": {
+    "id": "nightstand",
+    "pos": [
+      6.724719082489673,
+      5.035297602634594
+    ],
+    "crouch": false,
+    "target": "打开 床头柜抽屉"
+  },
+  "aim-pick_flashlight": {
+    "id": "pick_flashlight",
+    "pos": [
+      6.704719082489674,
+      5.355297602634594
+    ],
+    "crouch": false,
+    "target": "拿起 手电筒"
+  },
+  "aim-fridge": {
+    "id": "fridge",
+    "pos": [
+      16.59,
+      5.239999999999999
+    ],
+    "crouch": false,
+    "target": "打开 冰箱"
+  },
+  "aim-pick_water": {
+    "id": "pick_water",
+    "pos": [
+      16.42,
+      5.6499999999999995
+    ],
+    "crouch": false,
+    "target": "拿 瓶装水"
+  },
+  "aim-pick_snack": {
+    "id": "pick_snack",
+    "pos": [
+      16.394719082489672,
+      5.5852976026345935
+    ],
+    "crouch": false,
+    "target": "拿 能量棒"
+  },
+  "supplies": {
+    "seed": 424243,
+    "level": 900,
+    "paused": false,
+    "pos": [
+      16.394719082489672,
+      5.5852976026345935,
+      0
+    ],
+    "prologue": {
+      "step": "act1",
+      "flags": {
+        "flash_drawer": true,
+        "read_news": true,
+        "last_forum": true,
+        "read_forum": true,
+        "got_phone": true,
+        "ev:phone_open": true,
+        "ev:look": true,
+        "tut:look": true,
+        "tut:news": true,
+        "tut:forum": true,
+        "tut:phone": true,
+        "tut:phone_open": true,
+        "got_backpack": true,
+        "tut:backpack": true,
+        "got_flashlight": true,
+        "tut:flashlight": true,
+        "got_water": true,
+        "got_snack": true
+      },
+      "open": {
+        "wardrobe": 1,
+        "nightstand": 1,
+        "fridge": 1
+      }
+    },
+    "unlock": {
+      "clock": true,
+      "quest": true,
+      "log": true,
+      "minimap": true,
+      "battery": true,
+      "hotbar": true,
+      "inventory": true
+    },
+    "phone": {
+      "battery": 41.075617600000434,
+      "torch": false,
+      "docked": false,
+      "notes": [
+        {
+          "id": 2,
+          "kind": "note",
+          "title": "待办",
+          "text": "明早 9:00 交报告。牛奶没了。",
+          "time": "23:40"
+        },
+        {
+          "id": 1,
+          "kind": "note",
+          "title": "论坛帖 · 巷子",
+          "text": "本地论坛「边界线」：有人说附近一条巷子能「卡进」后室。出来的人说，要集齐六张磁带，送进 Level 11 的档案馆。——多半是编的。",
+          "time": "23:40"
+        }
+      ],
+      "photos": 0,
+      "nextId": 3
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 798,
+      "textures": 237
+    },
+    "geometries": 798
+  },
+  "homeBench": {
+    "rounds": [
+      {
+        "median": 4.19999999999709,
+        "p95": 12.5,
+        "calls": 130,
+        "triangles": 48097,
+        "resources": {
+          "geometries": 798,
+          "textures": 237
+        }
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 8.39999999999418,
+        "calls": 130,
+        "triangles": 48097,
+        "resources": {
+          "geometries": 798,
+          "textures": 237
+        }
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 8.39999999999418,
+        "calls": 130,
+        "triangles": 48097,
+        "resources": {
+          "geometries": 798,
+          "textures": 237
+        }
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 8.400000000001455,
+        "calls": 130,
+        "triangles": 48097,
+        "resources": {
+          "geometries": 798,
+          "textures": 237
+        }
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 8.400000000001455,
+        "calls": 130,
+        "triangles": 48097,
+        "resources": {
+          "geometries": 798,
+          "textures": 237
+        }
+      }
+    ]
+  },
+  "seats": [
+    {
+      "id": "desk_chair",
+      "hint": "坐下",
+      "seated": {
+        "phase": "seated",
+        "position": [
+          5.25,
+          5.75,
+          0
+        ]
+      }
+    },
+    {
+      "id": "sofa",
+      "hint": "坐下",
+      "seated": {
+        "phase": "seated",
+        "position": [
+          11.475,
+          11.74,
+          0
+        ]
+      }
+    },
+    {
+      "id": "toilet",
+      "hint": "坐下",
+      "seated": {
+        "phase": "seated",
+        "position": [
+          11.61,
+          6.1,
+          0
+        ]
+      }
+    }
+  ],
+  "aim-door_front": {
+    "id": "door_front",
+    "pos": [
+      5.5,
+      14.91
+    ],
+    "crouch": false,
+    "target": "打开 防盗门"
+  },
+  "beforeDoorway": {
+    "warm": {
+      "ms": 1965,
+      "programs": 51,
+      "textures": 112,
+      "npcs": 7
+    },
+    "indoor": true,
+    "homeVisible": true,
+    "streetVisible": false,
+    "npcs": [
+      {
+        "id": "foyer_ped_0",
+        "x": 62.93162500000089,
+        "y": 47.2,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_1",
+        "x": 86.11812500000077,
+        "y": 58.45,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_2",
+        "x": 51,
+        "y": 58.75,
+        "route": false
+      },
+      {
+        "id": "foyer_ped_3",
+        "x": 139.097095000001,
+        "y": 47.4,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_4",
+        "x": 61.42803499999824,
+        "y": 29.6,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_5",
+        "x": 87.4,
+        "y": 58.9,
+        "route": false
+      },
+      {
+        "id": "foyer_ped_6",
+        "x": 84.6547000000079,
+        "y": 57.9,
+        "route": true
+      }
+    ],
+    "models": [
+      {
+        "id": "foyer_ped_4",
+        "visible": false,
+        "position": [
+          44,
+          0,
+          29.6
+        ]
+      },
+      {
+        "id": "foyer_ped_0",
+        "visible": false,
+        "position": [
+          40,
+          0,
+          47.2
+        ]
+      },
+      {
+        "id": "foyer_ped_2",
+        "visible": false,
+        "position": [
+          51,
+          0,
+          58.75
+        ]
+      },
+      {
+        "id": "foyer_ped_1",
+        "visible": false,
+        "position": [
+          86,
+          0,
+          58.45
+        ]
+      },
+      {
+        "id": "foyer_ped_5",
+        "visible": false,
+        "position": [
+          87.4,
+          0,
+          58.9
+        ]
+      },
+      {
+        "id": "foyer_ped_6",
+        "visible": false,
+        "position": [
+          103,
+          0,
+          57.9
+        ]
+      },
+      {
+        "id": "foyer_ped_3",
+        "visible": false,
+        "position": [
+          118,
+          0,
+          47.4
+        ]
+      }
+    ],
+    "programs": 143,
+    "flags": {
+      "flash_drawer": true,
+      "read_news": true,
+      "last_forum": true,
+      "read_forum": true,
+      "got_phone": true,
+      "ev:phone_open": true,
+      "ev:look": true,
+      "tut:look": true,
+      "tut:news": true,
+      "tut:forum": true,
+      "tut:phone": true,
+      "tut:phone_open": true,
+      "got_backpack": true,
+      "tut:backpack": true,
+      "got_flashlight": true,
+      "tut:flashlight": true,
+      "got_water": true,
+      "got_snack": true,
+      "ev:corridor_light": true
+    }
+  },
+  "doorway": {
+    "warm": {
+      "ms": 1965,
+      "programs": 51,
+      "textures": 112,
+      "npcs": 7
+    },
+    "indoor": true,
+    "homeVisible": true,
+    "streetVisible": false,
+    "npcs": [
+      {
+        "id": "foyer_ped_0",
+        "x": 63.82237500000089,
+        "y": 47.2,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_1",
+        "x": 86.65635500000076,
+        "y": 58.45,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_2",
+        "x": 51,
+        "y": 58.75,
+        "route": false
+      },
+      {
+        "id": "foyer_ped_3",
+        "x": 139.91658500000105,
+        "y": 47.4,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_4",
+        "x": 62.10500499999818,
+        "y": 29.6,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_5",
+        "x": 87.4,
+        "y": 58.9,
+        "route": false
+      },
+      {
+        "id": "foyer_ped_6",
+        "x": 83.94210000000817,
+        "y": 57.9,
+        "route": true
+      }
+    ],
+    "models": [
+      {
+        "id": "foyer_ped_4",
+        "visible": false,
+        "position": [
+          44,
+          0,
+          29.6
+        ]
+      },
+      {
+        "id": "foyer_ped_0",
+        "visible": false,
+        "position": [
+          40,
+          0,
+          47.2
+        ]
+      },
+      {
+        "id": "foyer_ped_2",
+        "visible": false,
+        "position": [
+          51,
+          0,
+          58.75
+        ]
+      },
+      {
+        "id": "foyer_ped_1",
+        "visible": false,
+        "position": [
+          86,
+          0,
+          58.45
+        ]
+      },
+      {
+        "id": "foyer_ped_5",
+        "visible": false,
+        "position": [
+          87.4,
+          0,
+          58.9
+        ]
+      },
+      {
+        "id": "foyer_ped_6",
+        "visible": false,
+        "position": [
+          103,
+          0,
+          57.9
+        ]
+      },
+      {
+        "id": "foyer_ped_3",
+        "visible": false,
+        "position": [
+          118,
+          0,
+          47.4
+        ]
+      }
+    ],
+    "programs": 143,
+    "flags": {
+      "flash_drawer": true,
+      "read_news": true,
+      "last_forum": true,
+      "read_forum": true,
+      "got_phone": true,
+      "ev:phone_open": true,
+      "ev:look": true,
+      "tut:look": true,
+      "tut:news": true,
+      "tut:forum": true,
+      "tut:phone": true,
+      "tut:phone_open": true,
+      "got_backpack": true,
+      "tut:backpack": true,
+      "got_flashlight": true,
+      "tut:flashlight": true,
+      "got_water": true,
+      "got_snack": true,
+      "ev:corridor_light": true
+    }
+  },
+  "doorwayProgramDelta": 0,
+  "aim-st_down": {
+    "id": "st_down",
+    "pos": [
+      7.348959235991435,
+      17.501040764008565
+    ],
+    "crouch": false,
+    "target": "推开 安全通道门（下楼）"
+  },
+  "streetBefore": {
+    "warm": {
+      "ms": 1965,
+      "programs": 51,
+      "textures": 112,
+      "npcs": 7
+    },
+    "indoor": false,
+    "homeVisible": false,
+    "streetVisible": true,
+    "npcs": [
+      {
+        "id": "foyer_ped_0",
+        "x": 69.8376250000006,
+        "y": 47.2,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_1",
+        "x": 88.29645500000085,
+        "y": 58.45,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_2",
+        "x": 51,
+        "y": 58.75,
+        "route": false
+      },
+      {
+        "id": "foyer_ped_3",
+        "x": 145.45061500000145,
+        "y": 47.4,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_4",
+        "x": 66.67659499999827,
+        "y": 29.6,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_5",
+        "x": 87.4,
+        "y": 58.9,
+        "route": false
+      },
+      {
+        "id": "foyer_ped_6",
+        "x": 79.12990000000916,
+        "y": 57.9,
+        "route": true
+      }
+    ],
+    "models": [
+      {
+        "id": "foyer_ped_4",
+        "visible": true,
+        "position": [
+          66.67659499999827,
+          0,
+          29.6
+        ]
+      },
+      {
+        "id": "foyer_ped_0",
+        "visible": true,
+        "position": [
+          69.8376250000006,
+          0,
+          47.2
+        ]
+      },
+      {
+        "id": "foyer_ped_2",
+        "visible": true,
+        "position": [
+          51,
+          0,
+          58.75
+        ]
+      },
+      {
+        "id": "foyer_ped_1",
+        "visible": true,
+        "position": [
+          88.29645500000085,
+          0,
+          58.45
+        ]
+      },
+      {
+        "id": "foyer_ped_5",
+        "visible": true,
+        "position": [
+          87.4,
+          0,
+          58.9
+        ]
+      },
+      {
+        "id": "foyer_ped_6",
+        "visible": true,
+        "position": [
+          79.12990000000916,
+          0,
+          57.9
+        ]
+      },
+      {
+        "id": "foyer_ped_3",
+        "visible": true,
+        "position": [
+          145.45061500000145,
+          0,
+          47.4
+        ]
+      }
+    ],
+    "programs": 186,
+    "flags": {
+      "flash_drawer": true,
+      "read_news": true,
+      "last_forum": true,
+      "read_forum": true,
+      "got_phone": true,
+      "ev:phone_open": true,
+      "ev:look": true,
+      "tut:look": true,
+      "tut:news": true,
+      "tut:forum": true,
+      "tut:phone": true,
+      "tut:phone_open": true,
+      "got_backpack": true,
+      "tut:backpack": true,
+      "got_flashlight": true,
+      "tut:flashlight": true,
+      "got_water": true,
+      "got_snack": true,
+      "ev:corridor_light": true,
+      "went_down": true,
+      "tut:light": true,
+      "tut:fridge": true,
+      "tut:leave": true,
+      "tut:corridor": true,
+      "tut:stairs": true,
+      "outside": true,
+      "said_outside": true,
+      "on_street": true,
+      "tut:downstairs": true,
+      "tut:navigate": true
+    }
+  },
+  "streetAfter": {
+    "warm": {
+      "ms": 1965,
+      "programs": 51,
+      "textures": 112,
+      "npcs": 7
+    },
+    "indoor": false,
+    "homeVisible": false,
+    "streetVisible": true,
+    "npcs": [
+      {
+        "id": "foyer_ped_0",
+        "x": 71.47312499999931,
+        "y": 47.2,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_1",
+        "x": 86.9226350000007,
+        "y": 58.45,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_2",
+        "x": 51,
+        "y": 58.75,
+        "route": false
+      },
+      {
+        "id": "foyer_ped_3",
+        "x": 145.88186500000148,
+        "y": 47.4,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_4",
+        "x": 67.88385499999852,
+        "y": 29.6,
+        "route": true
+      },
+      {
+        "id": "foyer_ped_5",
+        "x": 87.4,
+        "y": 58.9,
+        "route": false
+      },
+      {
+        "id": "foyer_ped_6",
+        "x": 77.8215000000101,
+        "y": 57.9,
+        "route": true
+      }
+    ],
+    "models": [
+      {
+        "id": "foyer_ped_4",
+        "visible": true,
+        "position": [
+          67.88385499999852,
+          0,
+          29.6
+        ]
+      },
+      {
+        "id": "foyer_ped_0",
+        "visible": true,
+        "position": [
+          71.47312499999931,
+          0,
+          47.2
+        ]
+      },
+      {
+        "id": "foyer_ped_2",
+        "visible": true,
+        "position": [
+          51,
+          0,
+          58.75
+        ]
+      },
+      {
+        "id": "foyer_ped_1",
+        "visible": true,
+        "position": [
+          86.9226350000007,
+          0,
+          58.45
+        ]
+      },
+      {
+        "id": "foyer_ped_5",
+        "visible": true,
+        "position": [
+          87.4,
+          0,
+          58.9
+        ]
+      },
+      {
+        "id": "foyer_ped_6",
+        "visible": true,
+        "position": [
+          77.8215000000101,
+          0,
+          57.9
+        ]
+      },
+      {
+        "id": "foyer_ped_3",
+        "visible": true,
+        "position": [
+          145.88186500000148,
+          0,
+          47.4
+        ]
+      }
+    ],
+    "programs": 186,
+    "flags": {
+      "flash_drawer": true,
+      "read_news": true,
+      "last_forum": true,
+      "read_forum": true,
+      "got_phone": true,
+      "ev:phone_open": true,
+      "ev:look": true,
+      "tut:look": true,
+      "tut:news": true,
+      "tut:forum": true,
+      "tut:phone": true,
+      "tut:phone_open": true,
+      "got_backpack": true,
+      "tut:backpack": true,
+      "got_flashlight": true,
+      "tut:flashlight": true,
+      "got_water": true,
+      "got_snack": true,
+      "ev:corridor_light": true,
+      "went_down": true,
+      "tut:light": true,
+      "tut:fridge": true,
+      "tut:leave": true,
+      "tut:corridor": true,
+      "tut:stairs": true,
+      "outside": true,
+      "said_outside": true,
+      "on_street": true,
+      "tut:downstairs": true,
+      "tut:navigate": true
+    }
+  },
+  "streetBench": {
+    "rounds": [
+      {
+        "median": 4.19999999999709,
+        "p95": 8.30000000000291,
+        "calls": 280,
+        "triangles": 39949,
+        "resources": {
+          "geometries": 799,
+          "textures": 245
+        }
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 8.30000000000291,
+        "calls": 280,
+        "triangles": 39949,
+        "resources": {
+          "geometries": 799,
+          "textures": 245
+        }
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 8.30000000000291,
+        "calls": 280,
+        "triangles": 39949,
+        "resources": {
+          "geometries": 799,
+          "textures": 245
+        }
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 8.400000000008731,
+        "calls": 280,
+        "triangles": 39949,
+        "resources": {
+          "geometries": 799,
+          "textures": 245
+        }
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 8.30000000000291,
+        "calls": 280,
+        "triangles": 39949,
+        "resources": {
+          "geometries": 799,
+          "textures": 245
+        }
+      }
+    ]
+  },
+  "act4": {
+    "warm": {
+      "ms": 1965,
+      "programs": 51,
+      "textures": 112,
+      "npcs": 7
+    },
+    "indoor": false,
+    "homeVisible": false,
+    "streetVisible": true,
+    "npcs": [],
+    "models": [],
+    "programs": 170,
+    "flags": {
+      "flash_drawer": true,
+      "read_news": true,
+      "last_forum": true,
+      "read_forum": true,
+      "got_phone": true,
+      "ev:phone_open": true,
+      "ev:look": true,
+      "tut:look": true,
+      "tut:news": true,
+      "tut:forum": true,
+      "tut:phone": true,
+      "tut:phone_open": true,
+      "got_backpack": true,
+      "tut:backpack": true,
+      "got_flashlight": true,
+      "tut:flashlight": true,
+      "got_water": true,
+      "got_snack": true,
+      "ev:corridor_light": true,
+      "went_down": true,
+      "tut:light": true,
+      "tut:fridge": true,
+      "tut:leave": true,
+      "tut:corridor": true,
+      "tut:stairs": true,
+      "outside": true,
+      "said_outside": true,
+      "on_street": true,
+      "tut:downstairs": true,
+      "tut:navigate": true,
+      "clue_graffiti": true,
+      "clue_boxes": true,
+      "clue_cctv": true,
+      "said_alley": true,
+      "reached_alley": true,
+      "tut:mart": true,
+      "tut:sprint": true,
+      "tut:poster": true,
+      "tut:alley": true,
+      "tut:inspect1": true,
+      "ev:phone_camera": true,
+      "photo_clue_graffiti": true,
+      "photo_any": true,
+      "ev:phone_photo": true,
+      "tut:photo": true,
+      "tut:inspect_all": true,
+      "act4": true,
+      "forum_reply": true,
+      "tut:wait_reply": true
+    }
+  },
+  "break": {
+    "stats": {
+      "mode": "3d",
+      "shards": 480,
+      "maze": 5503,
+      "frames": 144,
+      "avgMs": 0.79,
+      "maxMs": 86.2
+    },
+    "stage": "crack"
+  },
+  "landing": {
+    "seed": 424243,
+    "level": 0,
+    "paused": false,
+    "pos": [
+      79.5,
+      79.5,
+      0
+    ],
+    "prologue": {
+      "step": "done",
+      "flags": {
+        "flash_drawer": true,
+        "read_news": true,
+        "last_forum": true,
+        "read_forum": true,
+        "got_phone": true,
+        "ev:phone_open": true,
+        "ev:look": true,
+        "tut:look": true,
+        "tut:news": true,
+        "tut:forum": true,
+        "tut:phone": true,
+        "tut:phone_open": true,
+        "got_backpack": true,
+        "tut:backpack": true,
+        "got_flashlight": true,
+        "tut:flashlight": true,
+        "got_water": true,
+        "got_snack": true,
+        "ev:corridor_light": true,
+        "went_down": true,
+        "tut:light": true,
+        "tut:fridge": true,
+        "tut:leave": true,
+        "tut:corridor": true,
+        "tut:stairs": true,
+        "outside": true,
+        "said_outside": true,
+        "on_street": true,
+        "tut:downstairs": true,
+        "tut:navigate": true,
+        "clue_graffiti": true,
+        "clue_boxes": true,
+        "clue_cctv": true,
+        "said_alley": true,
+        "reached_alley": true,
+        "tut:mart": true,
+        "tut:sprint": true,
+        "tut:poster": true,
+        "tut:alley": true,
+        "tut:inspect1": true,
+        "ev:phone_camera": true,
+        "photo_clue_graffiti": true,
+        "photo_any": true,
+        "ev:phone_photo": true,
+        "tut:photo": true,
+        "tut:inspect_all": true,
+        "act4": true,
+        "forum_reply": true,
+        "tut:wait_reply": true,
+        "dup1": true,
+        "said_dup1": true,
+        "loop1": true,
+        "loop2": true,
+        "said_home_dark": true,
+        "fell": true,
+        "landing": true,
+        "l0_hud": true,
+        "main_quest": true
+      }
+    },
+    "unlock": {
+      "status": true,
+      "hp": true,
+      "quest": true
+    },
+    "phone": {
+      "battery": 39.883367600005485,
+      "torch": false,
+      "docked": false,
+      "notes": [
+        {
+          "id": 7,
+          "kind": "note",
+          "title": "论坛 · 新回帖",
+          "text": "边界线论坛 214L 匿名用户：「又一个去巷子里拍墙的 😂 拍到门了吗？没拍到就早点回家睡觉吧，明天还上班呢。」\n215L noclip_0：「回家的路上别回头。」",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 6,
+          "kind": "photo",
+          "title": "照片 #1",
+          "text": "旧仓路后巷，23:40。\n拍到：墙上的涂鸦。巷子西墙：黄色喷漆画的门 +「NOCLIP HERE →」。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 5,
+          "kind": "note",
+          "title": "调查 · 旧监控摄像头",
+          "text": "巷底的旧监控：镜头被黄色胶带缠死，指示灯还亮着。它到底在录什么？",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 4,
+          "kind": "note",
+          "title": "调查 · 一堆湿纸箱",
+          "text": "纸箱堆：空罐子、旧毯子，没有人。纸板被泡软了，闻起来像受潮的旧地毯。不知道为什么，让人想到荧光灯的嗡嗡声。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 3,
+          "kind": "note",
+          "title": "调查 · 墙上的涂鸦",
+          "text": "巷子西墙：黄色喷漆画的门 +「NOCLIP HERE →」。箭头指着墙角，敲了敲，实心砖。旁边有七道划痕，像在计数。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 2,
+          "kind": "note",
+          "title": "待办",
+          "text": "明早 9:00 交报告。牛奶没了。",
+          "time": "23:40"
+        },
+        {
+          "id": 1,
+          "kind": "note",
+          "title": "论坛帖 · 巷子",
+          "text": "本地论坛「边界线」：有人说附近一条巷子能「卡进」后室。出来的人说，要集齐六张磁带，送进 Level 11 的档案馆。——多半是编的。",
+          "time": "23:40"
+        }
+      ],
+      "photos": 1,
+      "nextId": 8,
+      "cracked": true,
+      "noSignal": true
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 257,
+      "textures": 104
+    },
+    "geometries": 257
+  },
+  "scattered": [
+    {
+      "id": 0.27056158986010725,
+      "type": "flashlight",
+      "count": 1,
+      "x": 74.98817288470623,
+      "y": 80.47588772213749
+    },
+    {
+      "id": 0.7170187490623309,
+      "type": "bottledwater",
+      "count": 1,
+      "x": 78.09392068276556,
+      "y": 78.22525176952463
+    },
+    {
+      "id": 0.3292649927978818,
+      "type": "snackbar",
+      "count": 2,
+      "x": 80.53999219022884,
+      "y": 77.92524489361465
+    },
+    {
+      "id": 0.3277723566385691,
+      "type": "phone",
+      "count": 1,
+      "x": 80.96148546827393,
+      "y": 80.85292869812226
+    },
+    {
+      "id": 0.9514665029083064,
+      "type": "foyerpack",
+      "count": 1,
+      "x": 79.89453616518031,
+      "y": 81.47604250190582
+    }
+  ],
+  "recovered": {
+    "seed": 424243,
+    "level": 0,
+    "paused": false,
+    "pos": [
+      81.23999219022885,
+      77.92524489361465,
+      0
+    ],
+    "prologue": {
+      "step": "done",
+      "flags": {
+        "flash_drawer": true,
+        "read_news": true,
+        "last_forum": true,
+        "read_forum": true,
+        "got_phone": true,
+        "ev:phone_open": true,
+        "ev:look": true,
+        "tut:look": true,
+        "tut:news": true,
+        "tut:forum": true,
+        "tut:phone": true,
+        "tut:phone_open": true,
+        "got_backpack": true,
+        "tut:backpack": true,
+        "got_flashlight": true,
+        "tut:flashlight": true,
+        "got_water": true,
+        "got_snack": true,
+        "ev:corridor_light": true,
+        "went_down": true,
+        "tut:light": true,
+        "tut:fridge": true,
+        "tut:leave": true,
+        "tut:corridor": true,
+        "tut:stairs": true,
+        "outside": true,
+        "said_outside": true,
+        "on_street": true,
+        "tut:downstairs": true,
+        "tut:navigate": true,
+        "clue_graffiti": true,
+        "clue_boxes": true,
+        "clue_cctv": true,
+        "said_alley": true,
+        "reached_alley": true,
+        "tut:mart": true,
+        "tut:sprint": true,
+        "tut:poster": true,
+        "tut:alley": true,
+        "tut:inspect1": true,
+        "ev:phone_camera": true,
+        "photo_clue_graffiti": true,
+        "photo_any": true,
+        "ev:phone_photo": true,
+        "tut:photo": true,
+        "tut:inspect_all": true,
+        "act4": true,
+        "forum_reply": true,
+        "tut:wait_reply": true,
+        "dup1": true,
+        "said_dup1": true,
+        "loop1": true,
+        "loop2": true,
+        "said_home_dark": true,
+        "fell": true,
+        "landing": true,
+        "l0_hud": true,
+        "main_quest": true,
+        "l0_phone": true,
+        "l0_pack": true,
+        "l0_flash": true,
+        "l0_water": true,
+        "l0_snack": true,
+        "l0_done": true
+      }
+    },
+    "phone": {
+      "battery": 39.82886840000625,
+      "torch": false,
+      "docked": false,
+      "notes": [
+        {
+          "id": 8,
+          "kind": "note",
+          "title": "主线",
+          "text": "收集六张磁带并送往 Level 11 档案馆。\n论坛帖子说的是真的。屏幕摔裂了，右上角一格信号都没有。",
+          "time": "23:40"
+        },
+        {
+          "id": 7,
+          "kind": "note",
+          "title": "论坛 · 新回帖",
+          "text": "边界线论坛 214L 匿名用户：「又一个去巷子里拍墙的 😂 拍到门了吗？没拍到就早点回家睡觉吧，明天还上班呢。」\n215L noclip_0：「回家的路上别回头。」",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 6,
+          "kind": "photo",
+          "title": "照片 #1",
+          "text": "旧仓路后巷，23:40。\n拍到：墙上的涂鸦。巷子西墙：黄色喷漆画的门 +「NOCLIP HERE →」。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 5,
+          "kind": "note",
+          "title": "调查 · 旧监控摄像头",
+          "text": "巷底的旧监控：镜头被黄色胶带缠死，指示灯还亮着。它到底在录什么？",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 4,
+          "kind": "note",
+          "title": "调查 · 一堆湿纸箱",
+          "text": "纸箱堆：空罐子、旧毯子，没有人。纸板被泡软了，闻起来像受潮的旧地毯。不知道为什么，让人想到荧光灯的嗡嗡声。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 3,
+          "kind": "note",
+          "title": "调查 · 墙上的涂鸦",
+          "text": "巷子西墙：黄色喷漆画的门 +「NOCLIP HERE →」。箭头指着墙角，敲了敲，实心砖。旁边有七道划痕，像在计数。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 2,
+          "kind": "note",
+          "title": "待办",
+          "text": "明早 9:00 交报告。牛奶没了。",
+          "time": "23:40"
+        },
+        {
+          "id": 1,
+          "kind": "note",
+          "title": "论坛帖 · 巷子",
+          "text": "本地论坛「边界线」：有人说附近一条巷子能「卡进」后室。出来的人说，要集齐六张磁带，送进 Level 11 的档案馆。——多半是编的。",
+          "time": "23:40"
+        }
+      ],
+      "photos": 1,
+      "nextId": 9,
+      "cracked": true,
+      "noSignal": true
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 351,
+      "textures": 104
+    },
+    "geometries": 351
+  },
+  "relic": {
+    "types": [
+      "acidcallus",
+      "ashpile",
+      "jerryflyer",
+      "fakelog",
+      "sedgland",
+      "bento",
+      "curabiturgel",
+      "curabiturspore",
+      "curabiturrepellent"
+    ]
+  },
+  "summary": {
+    "seed": 424243,
+    "level": 0,
+    "paused": false,
+    "pos": [
+      81.23999219022885,
+      77.92524489361465,
+      0
+    ],
+    "prologue": {
+      "step": "done",
+      "flags": {
+        "flash_drawer": true,
+        "read_news": true,
+        "last_forum": true,
+        "read_forum": true,
+        "got_phone": true,
+        "ev:phone_open": true,
+        "ev:look": true,
+        "tut:look": true,
+        "tut:news": true,
+        "tut:forum": true,
+        "tut:phone": true,
+        "tut:phone_open": true,
+        "got_backpack": true,
+        "tut:backpack": true,
+        "got_flashlight": true,
+        "tut:flashlight": true,
+        "got_water": true,
+        "got_snack": true,
+        "ev:corridor_light": true,
+        "went_down": true,
+        "tut:light": true,
+        "tut:fridge": true,
+        "tut:leave": true,
+        "tut:corridor": true,
+        "tut:stairs": true,
+        "outside": true,
+        "said_outside": true,
+        "on_street": true,
+        "tut:downstairs": true,
+        "tut:navigate": true,
+        "clue_graffiti": true,
+        "clue_boxes": true,
+        "clue_cctv": true,
+        "said_alley": true,
+        "reached_alley": true,
+        "tut:mart": true,
+        "tut:sprint": true,
+        "tut:poster": true,
+        "tut:alley": true,
+        "tut:inspect1": true,
+        "ev:phone_camera": true,
+        "photo_clue_graffiti": true,
+        "photo_any": true,
+        "ev:phone_photo": true,
+        "tut:photo": true,
+        "tut:inspect_all": true,
+        "act4": true,
+        "forum_reply": true,
+        "tut:wait_reply": true,
+        "dup1": true,
+        "said_dup1": true,
+        "loop1": true,
+        "loop2": true,
+        "said_home_dark": true,
+        "fell": true,
+        "landing": true,
+        "l0_hud": true,
+        "main_quest": true,
+        "l0_phone": true,
+        "l0_pack": true,
+        "l0_flash": true,
+        "l0_water": true,
+        "l0_snack": true,
+        "l0_done": true
+      }
+    },
+    "phone": {
+      "battery": 39.79896920000667,
+      "torch": false,
+      "docked": false,
+      "notes": [
+        {
+          "id": 8,
+          "kind": "note",
+          "title": "主线",
+          "text": "收集六张磁带并送往 Level 11 档案馆。\n论坛帖子说的是真的。屏幕摔裂了，右上角一格信号都没有。",
+          "time": "23:40"
+        },
+        {
+          "id": 7,
+          "kind": "note",
+          "title": "论坛 · 新回帖",
+          "text": "边界线论坛 214L 匿名用户：「又一个去巷子里拍墙的 😂 拍到门了吗？没拍到就早点回家睡觉吧，明天还上班呢。」\n215L noclip_0：「回家的路上别回头。」",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 6,
+          "kind": "photo",
+          "title": "照片 #1",
+          "text": "旧仓路后巷，23:40。\n拍到：墙上的涂鸦。巷子西墙：黄色喷漆画的门 +「NOCLIP HERE →」。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 5,
+          "kind": "note",
+          "title": "调查 · 旧监控摄像头",
+          "text": "巷底的旧监控：镜头被黄色胶带缠死，指示灯还亮着。它到底在录什么？",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 4,
+          "kind": "note",
+          "title": "调查 · 一堆湿纸箱",
+          "text": "纸箱堆：空罐子、旧毯子，没有人。纸板被泡软了，闻起来像受潮的旧地毯。不知道为什么，让人想到荧光灯的嗡嗡声。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 3,
+          "kind": "note",
+          "title": "调查 · 墙上的涂鸦",
+          "text": "巷子西墙：黄色喷漆画的门 +「NOCLIP HERE →」。箭头指着墙角，敲了敲，实心砖。旁边有七道划痕，像在计数。",
+          "time": "23:40",
+          "place": "旧仓路后巷"
+        },
+        {
+          "id": 2,
+          "kind": "note",
+          "title": "待办",
+          "text": "明早 9:00 交报告。牛奶没了。",
+          "time": "23:40"
+        },
+        {
+          "id": 1,
+          "kind": "note",
+          "title": "论坛帖 · 巷子",
+          "text": "本地论坛「边界线」：有人说附近一条巷子能「卡进」后室。出来的人说，要集齐六张磁带，送进 Level 11 的档案馆。——多半是编的。",
+          "time": "23:40"
+        }
+      ],
+      "photos": 1,
+      "nextId": 9,
+      "cracked": true,
+      "noSignal": true
+    },
+    "transition": null,
+    "resources": {
+      "geometries": 396,
+      "textures": 109
+    },
+    "geometries": 396
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

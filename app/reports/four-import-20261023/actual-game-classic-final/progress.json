@@ -1,0 +1,78 @@
+{
+  "seed": 424242,
+  "mode": "classic",
+  "port": 10119,
+  "cdp": 10120,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\four-import-20261023\\actual-game-classic-final\\qa-1792752924612-36644",
+    "--remote-debugging-port=10120",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 56344,
+    "server": 42784
+  },
+  "appBootMs": 20414.0761,
+  "entryMs": 4481.544300000001,
+  "firstPlayableMs": 30913.6016,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 79.5,
+        "y": 79.5,
+        "z": 0
+      },
+      "entities": 0,
+      "memory": {
+        "geometries": 411,
+        "textures": 43
+      },
+      "calls": 1,
+      "checks": 0
+    }
+  },
+  "vending": {
+    "level": 4,
+    "player": {
+      "x": 79.5,
+      "y": 79.7,
+      "z": 0
+    },
+    "entities": 7,
+    "memory": {
+      "geometries": 512,
+      "textures": 62
+    },
+    "calls": 1,
+    "checks": 3,
+    "stock": [
+      1,
+      1,
+      3,
+      2,
+      3,
+      2,
+      1,
+      1
+    ],
+    "brand": "kopi"
+  }
+}

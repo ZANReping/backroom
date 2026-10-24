@@ -26,7 +26,7 @@ for(const seed of [23,424242,20261006]){
  natural.push({seed,rawArcwraiths:raw.entities.filter(e=>e.type==='arcwraith').length,infiniteArcwraiths:0,finiteArcwraiths:0})
 }
 const m=createTradersMap(levelDefOf(102)!,424242),materials=new Map<string,THREE.Material>()
-const assets={material:(surface:string,color:string)=>{const key=surface+color;let a=materials.get(key);if(!a){a=new THREE.MeshStandardMaterial({color});materials.set(key,a)}return a},labelGeometry:(_text:string,w:number,h:number)=>new THREE.PlaneGeometry(w,h)} as unknown as TradersAssets
+const assets={material:(surface:string,color:string)=>{const key=surface+color;let a=materials.get(key);if(!a){a=new THREE.MeshStandardMaterial({color});materials.set(key,a)}return a},labelGeometry:(_t:string,w:number,h:number)=>new THREE.PlaneGeometry(w,h),signGeometry:(_k:string,w:number,h:number)=>new THREE.PlaneGeometry(w,h),labelPart(_t:string,w:number,h:number){return{geometry:new THREE.PlaneGeometry(w,h),material:this.material('label','#ffffff')}}} as unknown as TradersAssets
 const gates=[]
 for(const entry of TRADERS_ENTRIES){
  const it=buildTradersGate(entry,assets);let step=it.next();while(!step.done)step=it.next();const root=step.value

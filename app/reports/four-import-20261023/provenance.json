@@ -1,0 +1,91 @@
+{
+  "project": "E:/ZAN/backroom/app",
+  "mode": "single-player",
+  "generated": "2026-10-23",
+  "licenseNote": "用户提供的附件未给出代码作者或再分发许可；本记录不推定 CC0 或其它许可。运行时使用程序贴图，不导入网页照片。",
+  "packs": [
+    {
+      "name": "vending-full.zip",
+      "sha256": "111EFC991D590E6603DE63C74B6BA6A3E1CAA1E08F223A72C20E6C54887ED12D",
+      "staging": ".cache/four-import-20261023/vending-full/app",
+      "sourceDocs": [
+        "VENDING-REMAKE.md"
+      ],
+      "sourceCode": "src/",
+      "changes": [
+        "8格售货机UI",
+        "待机骨臂保留",
+        "仅攻击时激活"
+      ]
+    },
+    {
+      "name": "faceling-full.zip",
+      "sha256": "2DFC809EA00CCF4407DE7BDEA6205D4D7DCB6EEF0AC2C3A590FA638BCD782F6B",
+      "staging": ".cache/four-import-20261023/faceling-full/files/app",
+      "sourceDocs": [
+        "FACELING-REMAKE.md"
+      ],
+      "sourceCode": "src/",
+      "changes": [
+        "保留普通无面灵与敌意无面灵注册",
+        "年龄作为外貌/行为属性"
+      ]
+    },
+    {
+      "name": "window-full.zip",
+      "sha256": "026A5ECA8F41770C18E41475979511C9917421BAE75F23DAF9A647F62F1B6FCB",
+      "staging": ".cache/four-import-20261023/window-full/app",
+      "sourceDocs": [
+        "WINDOW-REMAKE.md"
+      ],
+      "sourceCode": "src/",
+      "changes": [
+        "窗口实体三种层级：L2/L4/L601",
+        "生命周期与X/移动按钮"
+      ]
+    },
+    {
+      "name": "backroom-npc-idle.zip",
+      "sha256": "5A725CC943BCEF9C96D980645309C2A33D406B6FAA21C11770FCF9D3B89A145D",
+      "staging": ".cache/four-import-20261023/backroom-npc-idle/npcidle/overlay/app",
+      "sourceDocs": [
+        "NPC-IDLE.md"
+      ],
+      "sourceCode": "src/",
+      "changes": [
+        "NPC待机动作",
+        "保留岗位范围与座位行为"
+      ]
+    }
+  ],
+  "settingSources": [
+    {
+      "id": "entity-2",
+      "url": "https://backrooms-wiki-cn.wikidot.com/entity-2",
+      "author": "DrAkimoto",
+      "translator": "EnderstrayKPC"
+    },
+    {
+      "id": "entity-9",
+      "url": "https://backrooms-wiki-cn.wikidot.com/entity-9",
+      "author": "Jo; Higher Being Love Cereal!; rewrite 1000dumplings and Nikuchan",
+      "translator": "Ambersight"
+    },
+    {
+      "id": "entity-36",
+      "url": "https://backrooms-wiki-cn.wikidot.com/entity-36",
+      "author": "Gasaludo",
+      "translator": "SnowStarMoon"
+    }
+  ],
+  "settingLicense": "上述三项设定采用 CC BY-SA 3.0：https://creativecommons.org/licenses/by-sa/3.0/",
+  "validation": "命令、原生GPU实际游戏、截图、失败诊断及适用限制见同目录 README.md；原始附件报告不作为当前项目的通过证据。",
+  "projectAdaptations": [
+    "三方合并现有工作区，排除冻结的联机补丁",
+    "经典/真实材质、实例几何与材质所有权、共享程序贴图",
+    "Entity 36协作式准备、未拆机暗格模型延迟构建、保留活化模型",
+    "世界坐标种子、流式NPC座位坐标、当前近战及游泳状态衔接",
+    "窗户雾着色器、默认可见与局部生命周期，L4普通窗体实例合批",
+    "售货UI输入释放、焦点和按钮刷新，以及过期窗户交互过滤"
+  ]
+}
