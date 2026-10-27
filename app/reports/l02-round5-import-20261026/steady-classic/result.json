@@ -1,0 +1,307 @@
+{
+  "seed": 424242,
+  "mode": "classic",
+  "port": 12099,
+  "cdp": 12100,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:12099/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Mon, 26 Oct 2026 10:19:07 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 298,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 12099,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 37011.342086,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.447,
+        "sendEnd": 0.513,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 75.247,
+        "receiveHeadersEnd": 75.386
+      },
+      "responseTime": 1793009947843.795,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l02-round5-import-20261026\\steady-classic\\qa-1793009933095-30960",
+    "--remote-debugging-port=12100",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 1008,
+    "server": 5040
+  },
+  "appBootMs": 14549.390599999999,
+  "entryMs": 2447.8500999999997,
+  "firstPlayableMs": 21335.2415,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 589,
+      "textures": 134
+    },
+    "frame": {
+      "cpu": 5.100000001490116,
+      "calls": 572,
+      "triangles": 166949
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0
+  },
+  "bench": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      80,
+      80,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.1112158270654806,
+      "pitch": 0.004287438357623136,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 172,
+      "textures": 53
+    },
+    "frame": {
+      "cpu": 1.8000000044703484,
+      "calls": 111,
+      "triangles": 405513
+    },
+    "pin": null,
+    "l02": {
+      "t": 12.04149999999999,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 2,
+    "rounds": [
+      {
+        "median": 8.299999999999272,
+        "p95": 12.5,
+        "cpuMedian": 1.9000000059604645,
+        "cpuP95": 2.4000000059604645,
+        "calls": 110,
+        "triangles": 405273
+      },
+      {
+        "median": 8.299999999995634,
+        "p95": 12.400000000001455,
+        "cpuMedian": 1.7999999970197678,
+        "cpuP95": 2.2000000029802322,
+        "calls": 110,
+        "triangles": 405273
+      },
+      {
+        "median": 8.30000000000291,
+        "p95": 12.599999999998545,
+        "cpuMedian": 1.8000000044703484,
+        "cpuP95": 2.399999998509884,
+        "calls": 110,
+        "triangles": 405273
+      },
+      {
+        "median": 8.299999999995634,
+        "p95": 12.599999999998545,
+        "cpuMedian": 1.9000000059604645,
+        "cpuP95": 2.600000001490116,
+        "calls": 111,
+        "triangles": 405513
+      },
+      {
+        "median": 8.30000000000291,
+        "p95": 12.5,
+        "cpuMedian": 2,
+        "cpuP95": 4.5999999940395355,
+        "calls": 111,
+        "triangles": 405513
+      }
+    ],
+    "warmMs": 6923.20000000298,
+    "streamedChunks": 25,
+    "expectedChunks": 25,
+    "pendingChunkJob": false
+  },
+  "cleaned": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 1,
+    "player": [
+      80,
+      80,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.1112158270654806,
+      "pitch": 0.004287438357623136,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 172,
+      "textures": 53
+    },
+    "frame": {
+      "cpu": 2.1999999955296516,
+      "calls": 110,
+      "triangles": 405273
+    },
+    "pin": null,
+    "l02": {
+      "t": 12.703999999999986,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "allChecks": [
+      "GL remains healthy after hound/L0/L02 round trip"
+    ],
+    "round5Checks": 2,
+    "allRound5Checks": [
+      "Guaranteed spawn router provides actual Wi-Fi",
+      "Interior L02 has no visible sky"
+    ]
+  },
+  "summary": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 1,
+    "player": [
+      80,
+      80,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.1112158270654806,
+      "pitch": 0.004287438357623136,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 172,
+      "textures": 53
+    },
+    "frame": {
+      "cpu": 2.1999999955296516,
+      "calls": 110,
+      "triangles": 405273
+    },
+    "pin": null,
+    "l02": {
+      "t": 12.71229999999999,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 2
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

@@ -1,0 +1,201 @@
+{
+ "results": [
+  {
+   "name": "L0 施工点已建立（返回落点检查用）",
+   "ok": true,
+   "detail": "{\"x\": 17.436999999999998, \"y\": 25.637, \"yaw\": 3.141592653589793}"
+  },
+  {
+   "name": "进入 L0.2 后崩塌运行时从 0 开始（阶段 0）",
+   "ok": true,
+   "detail": "{\"t\": 1.25, \"stage\": 0, \"stopped\": false, \"dust\": 0, \"lull\": false, \"stats\": {\"tiles\": 0, \"walls\": 0, \"floors\": 0, \"tileHits\": 0, \"wallHits\": 0, \"falls\": 0, \"dustDmg\": 0}, \"charge\": null}"
+  },
+  {
+   "name": "进入时播报返回门方位",
+   "ok": true,
+   "detail": "门在身后合上，消失在墙里。施工单背面潦草地写着：「最近的一扇返回 Level 0 的门在入口东方向，约 69 米。」"
+  },
+  {
+   "name": "返回门距离按米播报（不再按 10 m 取整）",
+   "ok": true,
+   "detail": "播报 69 m / 实际 69 m"
+  },
+  {
+   "name": "崩塌阶段按时间自然推进（t≥20 → 阶段 1「落板」）",
+   "ok": true,
+   "detail": "{\"t\": 20.75, \"stage\": 1, \"stopped\": false, \"dust\": 0.071, \"lull\": false, \"stats\": {\"tiles\": 0, \"walls\": 0, \"floors\": 0, \"tileHits\": 0, \"wallHits\": 0, \"falls\": 0, \"dustDmg\": 0}, \"charge\": null}"
+  },
+  {
+   "name": "调试「跳到崩塌阶段 3」生效",
+   "ok": true,
+   "detail": "{\"t\": 125.75, \"stage\": 3, \"stopped\": false, \"dust\": 0.113, \"lull\": true, \"stats\": {\"tiles\": 0, \"walls\": 0, \"floors\": 0, \"tileHits\": 0, \"wallHits\": 0, \"falls\": 0, \"dustDmg\": 0}, \"charge\": null}"
+  },
+  {
+   "name": "吊顶板掉落砸中玩家扣血（14）",
+   "ok": true,
+   "detail": "hp 100→86 stats={'tiles': 1, 'walls': 0, 'floors': 0, 'tileHits': 1, 'wallHits': 0, 'falls': 0, 'dustDmg': 0}"
+  },
+  {
+   "name": "隔墙倒塌：倒塌段碰撞体已切除（可从缺口走过）",
+   "ok": true,
+   "detail": "{\"x\": 3.890000000000002, \"y\": 19.97, \"w\": 0.22, \"h\": 3.136481959588132, \"axis\": \"y\", \"dir\": 1, \"t0\": 128.86660000000003, \"freeEnds\": [true, false], \"rail\": false}"
+  },
+  {
+   "name": "粉尘持续扣血（无口罩）",
+   "ok": true,
+   "detail": "6 s 掉血 10，粉尘 0.421"
+  },
+  {
+   "name": "防尘口罩减轻粉尘伤害（≤ 无口罩的 45%）",
+   "ok": true,
+   "detail": "无口罩 10 / 口罩 3"
+  },
+  {
+   "name": "粉尘降低视野（雾近端/远端随粉尘缩短）",
+   "ok": true,
+   "detail": "见 s2-06-dust（远处墙体被石膏灰雾吞没）"
+  },
+  {
+   "name": "地板塌陷：玩家跌入下方房屋（z≈-2.7）并受摔伤",
+   "ok": true,
+   "detail": "{\"x\": -2, \"y\": 21.5, \"z\": -2.7, \"hp\": 90, \"lvl\": 902}"
+  },
+  {
+   "name": "能在未完工房屋里行走（脚底保持在房屋地面）",
+   "ok": true,
+   "detail": "{'x': -2, 'y': 21.5, 'z': -2.7, 'hp': 100, 'lvl': 902} → {'x': 0.58, 'y': 21.5, 'z': -2.7, 'hp': 100, 'lvl': 902}"
+  },
+  {
+   "name": "沿碎料坡道爬出塌陷口（回到地面 z≈0）",
+   "ok": true,
+   "detail": "{\"x\": -2.97, \"y\": 8.96, \"z\": 0, \"hp\": 100, \"lvl\": 902}"
+  },
+  {
+   "name": "高阶段自然产生吊顶/隔墙/地板事件",
+   "ok": true,
+   "detail": "{\"tiles\": 16, \"walls\": 5, \"floors\": 1, \"tileHits\": 2, \"wallHits\": 0, \"falls\": 1, \"dustDmg\": 36}"
+  },
+  {
+   "name": "到达返回门时崩塌停止",
+   "ok": true,
+   "detail": "{\"t\": 228.1, \"stage\": 4, \"stopped\": true, \"dust\": 0.149, \"lull\": false, \"stats\": {\"tiles\": 16, \"walls\": 5, \"floors\": 1, \"tileHits\": 2, \"wallHits\": 0, \"falls\": 1, \"dustDmg\": 37}, \"charge\": null}"
+  },
+  {
+   "name": "崩塌停止后不再产生新事件",
+   "ok": true,
+   "detail": "{'tiles': 16, 'walls': 5, 'floors': 1, 'tileHits': 2, 'wallHits': 0, 'falls': 1, 'dustDmg': 37} → {'tiles': 16, 'walls': 5, 'floors': 1, 'tileHits': 2, 'wallHits': 0, 'falls': 1, 'dustDmg': 37}"
+  },
+  {
+   "name": "返回门自然生成：出口均为返回门，入口 130 m 内至少一扇且最近一扇 40–110 m",
+   "ok": true,
+   "detail": "距离 [69, 72, 75, 92, 96, 99, 101, 102, 104, 117, 118, 121, 123, 125]"
+  },
+  {
+   "name": "经返回门回到 L0，落在施工门旁",
+   "ok": true,
+   "detail": "{'x': 17.44, 'y': 24.54, 'z': 0, 'hp': 100, 'lvl': 0} 距门 1.10 m"
+  },
+  {
+   "name": "再次进入 L0.2：崩塌状态完全复原",
+   "ok": true,
+   "detail": "{'t': 0.85, 'stage': 0, 'stopped': False, 'dust': 0, 'lull': False, 'stats': {'tiles': 0, 'walls': 0, 'floors': 0, 'tileHits': 0, 'wallHits': 0, 'falls': 0, 'dustDmg': 0}, 'charge': None} {'walls': 0, 'holes': [], 'tiles': 0}"
+  },
+  {
+   "name": "Wi‑Fi 有信号（出生区块路由器 16 m 内）",
+   "ok": true,
+   "detail": "[{\"fx\": 27.094, \"fy\": 20.28, \"d\": 11.89097287861679}]"
+  },
+  {
+   "name": "通电插座可给手机充电",
+   "ok": true,
+   "detail": "标签「插座（通电）：给手机充电」 电量 20.0→26.6 charging=True"
+  },
+  {
+   "name": "板夹文档可读（打开文档视图，含署名）",
+   "ok": true,
+   "detail": "brc_slogan"
+  },
+  {
+   "name": "板夹文档视图显示分节标题（含「后室装修公司」）",
+   "ok": true,
+   "detail": "brc_slogan: ['后室装修公司'] / brc_slogan: ['后室装修公司']"
+  },
+  {
+   "name": "洗手间偶尔生成（隔间 + 马桶 + 洗手台）",
+   "ok": true,
+   "detail": "{'rx': 48, 'ry': 16, 'rw': 6, 'rh': 4, 'dx': 51.9, 'dw': 1.1} 设施 7"
+  },
+  {
+   "name": "调试面板：L0.2 跳阶段按钮存在且点击生效（阶段 2）",
+   "ok": true,
+   "detail": "{\"t\": 65.55, \"stage\": 2, \"stopped\": false, \"dust\": 0.118, \"lull\": false, \"stats\": {\"tiles\": 0, \"walls\": 0, \"floors\": 0, \"tileHits\": 0, \"wallHits\": 0, \"falls\": 0, \"dustDmg\": 0}, \"charge\": null}"
+  },
+  {
+   "name": "页面/控制台无错误",
+   "ok": true,
+   "detail": "[]"
+  }
+ ],
+ "errors": [],
+ "log": [
+  "headless launch: True",
+  "game ready True",
+  "use permit 你把施工许可按在墙上。纸面上的钢印亮了一下——荧光灯的嗡鸣开始变小。 | 附近的墙上出现了一扇施工场所的门。许可需要「切换层级刷新」后才能再次使用。",
+  "CHECK PASS L0 施工点已建立（返回落点检查用） {\"x\": 17.436999999999998, \"y\": 25.637, \"yaw\": 3.141592653589793}",
+  "in L0.2 True",
+  "CHECK PASS 进入 L0.2 后崩塌运行时从 0 开始（阶段 0） {\"t\": 1.25, \"stage\": 0, \"stopped\": false, \"dust\": 0, \"lull\": false, \"stats\": {\"tiles\": 0, \"walls\": 0, \"floors\": 0, \"tileHits\": 0, \"wallHits\": 0, \"falls\": 0, \"dustDmg\": 0}, \"charge\": null}",
+  "CHECK PASS 进入时播报返回门方位 门在身后合上，消失在墙里。施工单背面潦草地写着：「最近的一扇返回 Level 0 的门在入口东方向，约 69 米。」",
+  "CHECK PASS 返回门距离按米播报（不再按 10 m 取整） 播报 69 m / 实际 69 m",
+  "CHECK PASS 崩塌阶段按时间自然推进（t≥20 → 阶段 1「落板」） {\"t\": 20.75, \"stage\": 1, \"stopped\": false, \"dust\": 0.071, \"lull\": false, \"stats\": {\"tiles\": 0, \"walls\": 0, \"floors\": 0, \"tileHits\": 0, \"wallHits\": 0, \"falls\": 0, \"dustDmg\": 0}, \"charge\": null}",
+  "CHECK PASS 调试「跳到崩塌阶段 3」生效 {\"t\": 125.75, \"stage\": 3, \"stopped\": false, \"dust\": 0.113, \"lull\": true, \"stats\": {\"tiles\": 0, \"walls\": 0, \"floors\": 0, \"tileHits\": 0, \"wallHits\": 0, \"falls\": 0, \"dustDmg\": 0}, \"charge\": null}",
+  "SHOT s2-01-tile-sag",
+  "CHECK PASS 吊顶板掉落砸中玩家扣血（14） hp 100→86 stats={'tiles': 1, 'walls': 0, 'floors': 0, 'tileHits': 1, 'wallHits': 0, 'falls': 0, 'dustDmg': 0}",
+  "SHOT s2-02-tile-landed",
+  "SHOT s2-03-wall-warn",
+  "SHOT s2-04-wall-falling",
+  "SHOT s2-05-wall-down",
+  "CHECK PASS 隔墙倒塌：倒塌段碰撞体已切除（可从缺口走过） {\"x\": 3.890000000000002, \"y\": 19.97, \"w\": 0.22, \"h\": 3.136481959588132, \"axis\": \"y\", \"dir\": 1, \"t0\": 128.86660000000003, \"freeEnds\": [true, false], \"rail\": false}",
+  "SHOT s2-06-dust",
+  "CHECK PASS 粉尘持续扣血（无口罩） 6 s 掉血 10，粉尘 0.421",
+  "CHECK PASS 防尘口罩减轻粉尘伤害（≤ 无口罩的 45%） 无口罩 10 / 口罩 3",
+  "CHECK PASS 粉尘降低视野（雾近端/远端随粉尘缩短） 见 s2-06-dust（远处墙体被石膏灰雾吞没）",
+  "SHOT s2-07-floor-crack",
+  "CHECK PASS 地板塌陷：玩家跌入下方房屋（z≈-2.7）并受摔伤 {\"x\": -2, \"y\": 21.5, \"z\": -2.7, \"hp\": 90, \"lvl\": 902}",
+  "SHOT s2-08-house-inside-1",
+  "SHOT s2-09-house-inside-2",
+  "SHOT s2-10-house-look-up",
+  "walk dir 1.0 0.0",
+  "CHECK PASS 能在未完工房屋里行走（脚底保持在房屋地面） {'x': -2, 'y': 21.5, 'z': -2.7, 'hp': 100, 'lvl': 902} → {'x': 0.58, 'y': 21.5, 'z': -2.7, 'hp': 100, 'lvl': 902}",
+  "SHOT s2-11-ramp-bottom",
+  "CHECK PASS 沿碎料坡道爬出塌陷口（回到地面 z≈0） {\"x\": -2.97, \"y\": 8.96, \"z\": 0, \"hp\": 100, \"lvl\": 902}",
+  "SHOT s2-12-hole-from-above",
+  "SHOT s2-13-stage2",
+  "stage 2 {'t': 95.63, 'stage': 2, 'stopped': False, 'dust': 0.598, 'lull': False, 'stats': {'tiles': 8, 'walls': 3, 'floors': 1, 'tileHits': 2, 'wallHits': 0, 'falls': 1, 'dustDmg': 26}, 'charge': None} {'walls': 3, 'holes': [{'id': 1, 'dropped': True, 'open': {'x': -3.6, 'y': 19.7, 'w': 3.2, 'h': 3.6}, 'ramp': {'x': -3.6, 'y': 19.7, 'w': 1.25, 'h': 3.6}, 'rampDir': 'ny'}], 'tiles': 8}",
+  "SHOT s2-13-stage4",
+  "stage 4 {'t': 225.5, 'stage': 4, 'stopped': False, 'dust': 0.439, 'lull': False, 'stats': {'tiles': 16, 'walls': 5, 'floors': 1, 'tileHits': 2, 'wallHits': 0, 'falls': 1, 'dustDmg': 36}, 'charge': None} {'walls': 5, 'holes': [{'id': 1, 'dropped': True, 'open': {'x': -3.6, 'y': 19.7, 'w': 3.2, 'h': 3.6}, 'ramp': {'x': -3.6, 'y': 19.7, 'w': 1.25, 'h': 3.6}, 'rampDir': 'ny'}], 'tiles': 16}",
+  "CHECK PASS 高阶段自然产生吊顶/隔墙/地板事件 {\"tiles\": 16, \"walls\": 5, \"floors\": 1, \"tileHits\": 2, \"wallHits\": 0, \"falls\": 1, \"dustDmg\": 36}",
+  "CHECK PASS 到达返回门时崩塌停止 {\"t\": 228.1, \"stage\": 4, \"stopped\": true, \"dust\": 0.149, \"lull\": false, \"stats\": {\"tiles\": 16, \"walls\": 5, \"floors\": 1, \"tileHits\": 2, \"wallHits\": 0, \"falls\": 1, \"dustDmg\": 37}, \"charge\": null}",
+  "CHECK PASS 崩塌停止后不再产生新事件 {'tiles': 16, 'walls': 5, 'floors': 1, 'tileHits': 2, 'wallHits': 0, 'falls': 1, 'dustDmg': 37} → {'tiles': 16, 'walls': 5, 'floors': 1, 'tileHits': 2, 'wallHits': 0, 'falls': 1, 'dustDmg': 37}",
+  "SHOT s2-14-return-door",
+  "SHOT s2-15-return-door-close",
+  "CHECK PASS 返回门自然生成：出口均为返回门，入口 130 m 内至少一扇且最近一扇 40–110 m 距离 [69, 72, 75, 92, 96, 99, 101, 102, 104, 117, 118, 121, 123, 125]",
+  "CHECK PASS 经返回门回到 L0，落在施工门旁 {'x': 17.44, 'y': 24.54, 'z': 0, 'hp': 100, 'lvl': 0} 距门 1.10 m",
+  "SHOT s2-16-back-in-l0",
+  "CHECK PASS 再次进入 L0.2：崩塌状态完全复原 {'t': 0.85, 'stage': 0, 'stopped': False, 'dust': 0, 'lull': False, 'stats': {'tiles': 0, 'walls': 0, 'floors': 0, 'tileHits': 0, 'wallHits': 0, 'falls': 0, 'dustDmg': 0}, 'charge': None} {'walls': 0, 'holes': [], 'tiles': 0}",
+  "CHECK PASS Wi‑Fi 有信号（出生区块路由器 16 m 内） [{\"fx\": 27.094, \"fy\": 20.28, \"d\": 11.89097287861679}]",
+  "SHOT s2-17-router",
+  "SHOT s2-18-outlet",
+  "CHECK PASS 通电插座可给手机充电 标签「插座（通电）：给手机充电」 电量 20.0→26.6 charging=True",
+  "SHOT s2-19-clipboard",
+  "CHECK PASS 板夹文档可读（打开文档视图，含署名） brc_slogan",
+  "SHOT s2-20-clipboard-doc",
+  "SHOT s2-20b-clipboard-slogan",
+  "CHECK PASS 板夹文档视图显示分节标题（含「后室装修公司」） brc_slogan: ['后室装修公司'] / brc_slogan: ['后室装修公司']",
+  "SHOT s2-21-restroom-outside",
+  "SHOT s2-22-restroom-inside",
+  "CHECK PASS 洗手间偶尔生成（隔间 + 马桶 + 洗手台） {'rx': 48, 'ry': 16, 'rw': 6, 'rh': 4, 'dx': 51.9, 'dw': 1.1} 设施 7",
+  "SHOT s2-23-dev-panel",
+  "CHECK PASS 调试面板：L0.2 跳阶段按钮存在且点击生效（阶段 2） {\"t\": 65.55, \"stage\": 2, \"stopped\": false, \"dust\": 0.118, \"lull\": false, \"stats\": {\"tiles\": 0, \"walls\": 0, \"floors\": 0, \"tileHits\": 0, \"wallHits\": 0, \"falls\": 0, \"dustDmg\": 0}, \"charge\": null}",
+  "CHECK PASS 页面/控制台无错误 []"
+ ]
+}

@@ -1,0 +1,61 @@
+/* NPC 对话界面（重制）：底部电影式对话框——左侧大头像框，名牌贴在对话框上沿，台词逐字出现，
+   选项带数字键编号（1–9），右上角是独立的「交易」入口（特殊交互键 X）。团体色 --fac 贯穿名牌 / 边线 / 编号。 */
+.dlg-root{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;padding:0 16px 28px;
+ background:linear-gradient(180deg,rgba(0,0,0,.15) 0,rgba(0,0,0,.35) 45%,rgba(0,0,0,.82) 100%)}
+.dlg-stage{position:relative;display:flex;align-items:flex-end;gap:0;width:min(1000px,100%)}
+.dlg-portrait{flex:none;position:relative;z-index:2;margin-right:-18px;margin-bottom:14px}
+.dlg-portrait-frame{position:relative;width:172px;height:196px;display:grid;place-items:center;overflow:hidden;
+ background:radial-gradient(ellipse at 50% 35%,color-mix(in srgb,var(--fac) 38%,#1a1810) 0,#0d0c08 72%);
+ border:2px solid var(--fac);box-shadow:0 0 0 4px #0d0c08,0 0 0 5px color-mix(in srgb,var(--fac) 45%,transparent),0 14px 30px rgba(0,0,0,.6);
+ clip-path:polygon(0 0,100% 0,100% 86%,86% 100%,0 100%)}
+.dlg-portrait-frame::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px);pointer-events:none}
+.dlg-box{position:relative;flex:1;min-width:0;padding:30px 22px 16px 40px;color:var(--text);
+ background:linear-gradient(180deg,color-mix(in srgb,var(--panel) 92%,var(--fac)) 0,var(--panel) 40%);
+ border:1px solid color-mix(in srgb,var(--fac) 60%,var(--panel-edge));border-top:3px solid var(--fac);box-shadow:0 20px 60px rgba(0,0,0,.55)}
+.dlg-plate{position:absolute;left:30px;right:14px;top:-17px;display:flex;align-items:center;gap:8px}
+.dlg-name{padding:4px 16px 5px;font:800 18px/1 var(--font-title,inherit);letter-spacing:.06em;color:#14120c;background:var(--fac);clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);box-shadow:0 4px 10px rgba(0,0,0,.4)}
+.dlg-role,.dlg-fac,.dlg-rep{padding:3px 8px;font-size:11px;color:var(--text-dim);background:var(--panel);border:1px solid var(--panel-edge)}
+.dlg-fac{color:var(--fac2)}
+.dlg-rep{color:var(--amber);font-family:'JetBrains Mono',monospace}
+.dlg-gap{flex:1}
+.dlg-shop{display:flex;align-items:center;gap:6px;padding:4px 12px 4px 5px;font-size:13px;font-weight:700;color:var(--fac);background:var(--panel);border:1px solid var(--fac);box-shadow:0 0 12px color-mix(in srgb,var(--fac) 30%,transparent)}
+.dlg-shop:hover{background:color-mix(in srgb,var(--fac) 18%,var(--panel))}
+.dlg-shop kbd{display:inline-grid;place-items:center;min-width:20px;height:20px;font:800 11px/1 'JetBrains Mono',monospace;color:#14120c;background:var(--fac);border-radius:3px}
+.dlg-x{width:26px;height:26px;font-size:13px;color:var(--text-dim);background:var(--panel);border:1px solid var(--panel-edge)}
+.dlg-x:hover{color:var(--text)}
+.dlg-content{max-height:min(46dvh,420px);overflow-y:auto;padding-right:4px}
+.dlg-line{position:relative;min-height:64px;margin-bottom:12px;font-size:15px;line-height:1.75;color:var(--text);cursor:default}
+.dlg-type{white-space:pre-wrap}
+.dlg-caret{margin-left:1px;color:var(--fac);animation:dlgBlink .7s steps(1) infinite}
+.dlg-more{margin-left:6px;font-size:10px;color:var(--fac);display:inline-block;animation:dlgBob 1.2s ease-in-out infinite}
+@keyframes dlgBlink{50%{opacity:0}}
+@keyframes dlgBob{50%{transform:translateY(3px)}}
+.dlg-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px;margin-bottom:8px;counter-reset:dlgopt}
+.dlg-opt{position:relative;display:flex;align-items:center;gap:10px;min-height:36px;padding:7px 12px 7px 8px;text-align:left;font-size:13px;line-height:1.45;color:var(--text);
+ background:rgba(255,255,255,.035);border:1px solid var(--panel-edge);border-left:3px solid color-mix(in srgb,var(--fac) 55%,var(--panel-edge));transition:background .12s,border-color .12s,transform .12s}
+.dlg-opt::before{counter-increment:dlgopt;content:counter(dlgopt);flex:none;display:grid;place-items:center;width:20px;height:20px;font:700 11px/1 'JetBrains Mono',monospace;color:var(--fac);border:1px solid color-mix(in srgb,var(--fac) 60%,transparent);border-radius:3px}
+.dlg-opts .dlg-opt:nth-child(n+10)::before{content:'·'}
+.dlg-opt:hover{background:color-mix(in srgb,var(--fac) 12%,transparent);border-left-color:var(--fac);transform:translateX(2px)}
+.dlg-opt:hover::before{color:#14120c;background:var(--fac)}
+.dlg-content .menu-btn{font-size:12px}
+@media (max-width:720px){
+ .dlg-root{padding:0 8px 10px}
+ .dlg-portrait{position:absolute;left:4px;bottom:calc(100% - 26px);margin:0}
+ .dlg-portrait-frame{width:96px;height:110px}
+ .dlg-box{padding:30px 12px 12px}
+ .dlg-plate{left:110px;flex-wrap:wrap;top:-17px}
+ .dlg-role,.dlg-fac,.dlg-rep{display:none}
+ .dlg-opts{grid-template-columns:1fr}
+}
+/* 团体细节：对话框底纹跟着各自商店的质感走一点（只是底纹，排版统一） */
+[data-dlg-faction='bntg'] .dlg-box{background-image:repeating-linear-gradient(0deg,transparent 0 27px,rgba(125,181,145,.06) 27px 28px)}
+[data-dlg-faction='meg'] .dlg-box{background-image:linear-gradient(90deg,rgba(75,84,52,.18),transparent 30%)}
+[data-dlg-faction='capital'] .dlg-box{background-image:repeating-conic-gradient(from -90deg at 0 0,rgba(231,194,91,.05) 0 4deg,transparent 4deg 8deg)}
+[data-dlg-faction='ariane'] .dlg-box{background-image:linear-gradient(180deg,rgba(42,111,176,.12),transparent 40%)}
+[data-dlg-faction='tom'] .dlg-box{background-image:radial-gradient(ellipse at 20% 0,rgba(255,255,255,.05),transparent 50%)}
+[data-dlg-faction='homely'] .dlg-box{background-image:linear-gradient(180deg,rgba(92,26,38,.35),transparent 50%)}
+[data-dlg-faction='originals'] .dlg-box{background-image:repeating-linear-gradient(90deg,rgba(185,141,90,.05) 0 2px,transparent 2px 7px)}
+
+/* 旧版 .dlg-line 的说话人小标签 / 底框（index.css）在新版里由名牌代替 */
+.dlg-root .dlg-line{margin-top:0;padding:0 !important;border:none;background:none !important}
+.dlg-root .dlg-line::before{display:none}

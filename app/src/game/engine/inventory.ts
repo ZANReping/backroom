@@ -1,3 +1,4 @@
+import { creepBandage, creepEat } from './creeperAI' // [creeper]
 import { isGun } from '../content/firearms'
 import {acidDrink,bursterWash} from './bursterAI'
 import { vendingAte, vendingRefuseFood } from './vendingAI'
@@ -6,7 +7,8 @@ import { finishRepair, tryRepairHeld, slotName } from './melee'
 // v53：背包/装备/物品使用（槽位读写、快捷使用/丢弃、粉笔头、迁跃浆果）——
 // 自 engine.ts 拆分，逻辑逐语句搬运。
 import { aimMothToTame, tameMoth, stopMothBleed } from './mothAI'
-import { ITEMS, itemName, itemUseProfile, type ItemUseProfile } from '../content/items'
+import { ITEMS, itemName, itemUseProfile, isKeyItem, type ItemUseProfile } from '../content/items'
+import { PERMIT_ITEM, usePermit } from './remodel'
 import { tileAt } from '../world/mapgen'
 import { audio } from '../core/audio'
 import { blowKazoo } from './tinyAI'
@@ -149,6 +151,8 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
     eng.msg(`${def.name} 是装备（${def.passive ?? def.desc}），应放在【${slotName}】栏——在背包中拖拽到对应装备位。`, 'system')
     return
   }
+  // 施工许可：在 Level 0 打开施工门（不消耗；冷却=切换层级刷新）
+  if (s.type === PERMIT_ITEM) { usePermit(eng); return }
   // [kazoo] 石卡祖笛：吹一声（不消耗）。声源/回声、耗氧、逼退小小全在 tinyAI
   if (def.use === 'kazoo') { blowKazoo(eng); return }
   if (s.type === 'saltbox') { unpackSaltBox(eng, where, i); return } // 批发市场 v2：盒装火盐 → 5 份火盐晶体
@@ -273,6 +277,13 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
         }
         break
       }
+      // [creeper] 长白毛的尸鼠肉：能顶一点饿，但孢子负荷 +40（爬菌 Entity 17）
+      if (s.type === 'creepmeat' && eng.royalAddictT <= 0) {
+        p.hunger = Math.min(100, p.hunger + (def.value ?? 12))
+        creepEat(eng)
+        eng.msg('白绒在嘴里化开，一股潮湿地下室的味道。（饥饿 +12）', 'loot')
+        break
+      }
       // v79：尸鼠肉——生吃能顶饿（饥饿 +18），但约三成概率染病（疫疾感染 +60、生命 -3）
       if (s.type === 'ratmeat' && eng.royalAddictT <= 0) {
         p.hunger = Math.min(100, p.hunger + (def.value ?? 18))
@@ -293,7 +304,7 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
       if (s.type === 'warpberry') eng.warpToBerryLevel(s.tag)
       break
     }
-    case 'heal': if (s.type === 'bandage' || def.charges) stopMothBleed(eng) // 医疗箱同样止血
+    case 'heal': if (s.type === 'bandage' || def.charges) { stopMothBleed(eng); creepBandage(eng) } // 医疗箱同样止血；[creeper] 包扎后 3 分钟内被咬负荷减半
     if (s.type === 'traumakit') { p.slowT = 0; eng.webbedT = 0 } // 高级医疗箱：夹板 + 止痛贴，顺带解除迟缓
     if (s.type === 'sedgland') { // 镇静腺：天然止痛剂——回少量血、稳住理智、压下迟缓/缠丝麻痹
       p.hp = Math.min(100, p.hp + (def.value ?? 15) * (eng.manmadeT > 0 ? 0.5 : 1)); p.sanity = Math.min(100, p.sanity + 10); p.slowT = 0; eng.webbedT = 0
@@ -436,6 +447,8 @@ export function dropSlot(eng: Engine, where: SlotWhere, i: number) {
   const r = { w: where, i }
   const s = eng.slotGet(r)
   if (!s || !eng.map) return
+  // 关键收藏物（层级专属磁带等）不可丢弃
+  if (isKeyItem(s.type)) { eng.msg(`「${itemName(s.type)}」是关键收藏物，不能丢弃。`, 'system'); return }
   // v81：放生活旱虾——落地即变回实体爬走，并作为诱饵 40 秒（钝人/死亡飞蛾优先去吃它）
   if (s.type === 'liveshrimp') {
     const n = Math.max(1, s.count ?? 1)

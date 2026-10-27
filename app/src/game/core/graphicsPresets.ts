@@ -1,5 +1,5 @@
 import type {GameSettings} from '../../components/SettingsModal'
-export const GRAPHICS_KEYS=['grain','vcrFx','vcrStrength','vcrScanlines','shake','headBob','realWater','renderResolution','renderScale','dynamicRes','dynamicResTarget','maxPixelRatio','sceneLightLimit','chunkBudgetMs','loadingBudgetMs','hudRefreshRate','textureQuality','detailDistance','wallOcclusion','particleDensity','shadowUpdateRate','cameraFov','shadows','fogOfWar','fogScale','darknessBoost','farLights','lightMode','shadowQuality','sunShadows','lightShadows','ambientOcclusion','bloomStrength','reflectivity','bloomFx','exposure','eyeAdaptation','grainStrength','scanlineStrength','vignetteStrength','colorGrade'] as const
+export const GRAPHICS_KEYS=['grain','vcrFx','vcrStrength','vcrScanlines','shake','headBob','headBobStrong','realWater','renderResolution','renderScale','dynamicRes','dynamicResTarget','maxPixelRatio','sceneLightLimit','chunkBudgetMs','loadingBudgetMs','hudRefreshRate','textureQuality','detailDistance','wallOcclusion','particleDensity','shadowUpdateRate','cameraFov','shadows','fogOfWar','fogScale','darknessBoost','farLights','lightMode','shadowQuality','sunShadows','lightShadows','ambientOcclusion','bloomStrength','reflectivity','bloomFx','exposure','eyeAdaptation','grainStrength','scanlineStrength','vignetteStrength','colorGrade'] as const
 export type GraphicsValues=Pick<GameSettings,typeof GRAPHICS_KEYS[number]>
 export type CustomGraphicsPreset={id:string;name:string;values:GraphicsValues}
 const KEY='br_graphics_presets_v1'
@@ -17,6 +17,7 @@ export function parseGraphicsPresets(raw:string|null,defaults:GameSettings):Cust
    if(!p||typeof p!=='object')return[]
    const v=p as CustomGraphicsPreset;if(typeof v.id!=='string'||typeof v.name!=='string'||!v.name.trim()||!v.values)return[]
    const values=graphicsSnapshot(defaults)
+   if(typeof v.values.headBobStrong!=='boolean')values.headBobStrong=v.values.headBob===true // 旧自定义预设中已开启的完整摇晃保持原幅度
    for(const k of GRAPHICS_KEYS){const value=v.values[k],base=defaults[k];if(typeof value!==typeof base)continue
     if(choices[k]&&!choices[k]!.includes(value))continue
     if(typeof value==='number'){const [min,max]=ranges[k]??[0,100];if(!Number.isFinite(value)||value<min||value>max)continue}

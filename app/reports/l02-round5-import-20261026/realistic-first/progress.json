@@ -1,0 +1,1006 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 6574,
+  "cdp": 6575,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:6574/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Mon, 26 Oct 2026 09:36:27 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 335,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 6574,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 34451.207891,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.42,
+        "sendEnd": 0.478,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 113.608,
+        "receiveHeadersEnd": 113.765
+      },
+      "responseTime": 1793007387747.96,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l02-round5-import-20261026\\realistic-first\\qa-1793007367024-22968",
+    "--remote-debugging-port=6575",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 46296,
+    "server": 62024
+  },
+  "appBootMs": 20329.582199999997,
+  "entryMs": 2981.2392,
+  "firstPlayableMs": 30021.6328,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 661,
+      "textures": 158
+    },
+    "frame": {
+      "cpu": 16.600000001490116,
+      "calls": 730,
+      "triangles": 381663
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0
+  },
+  "l0": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 2,
+    "player": [
+      79.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 120,
+      "textures": 70
+    },
+    "frame": {
+      "cpu": 6.5,
+      "calls": 128,
+      "triangles": 129925
+    },
+    "pin": null,
+    "l02": null,
+    "quests": [
+      {
+        "id": "l0_tutorial",
+        "revealed": true,
+        "done": false,
+        "rewarded": false,
+        "obj": [
+          {
+            "id": "explore",
+            "done": false,
+            "visible": true,
+            "progress": 1
+          },
+          {
+            "id": "manila",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "photo_red",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "exit",
+            "done": false,
+            "visible": false
+          }
+        ]
+      },
+      {
+        "id": "l0_beyond",
+        "revealed": false,
+        "done": false,
+        "rewarded": false,
+        "obj": [
+          {
+            "id": "find_zenith_station",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "find_remade_chaos",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "find_ice_room",
+            "done": false,
+            "visible": true
+          }
+        ]
+      }
+    ]
+  },
+  "paperInfo": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 7,
+    "player": [
+      77.237,
+      92.5685,
+      0.018941599999999635
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -1.5707963267948966,
+      "pitch": -0.44794209416966174,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 226,
+      "textures": 80
+    },
+    "frame": {
+      "cpu": 7.799999997019768,
+      "calls": 126,
+      "triangles": 162361
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 5,
+    "kind": "permit",
+    "form": "施 工 许 可 证",
+    "stamp": true,
+    "signatures": 2,
+    "overflow": [],
+    "bounds": {
+      "x": 640,
+      "y": 312.0625,
+      "width": 640,
+      "height": 503.859375
+    },
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  "permit": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 8,
+    "player": [
+      77.237,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -1.5707963267948966,
+      "pitch": -0.44794209416966174,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 289,
+      "textures": 82
+    },
+    "frame": {
+      "cpu": 1.6000000014901161,
+      "calls": 212,
+      "triangles": 266911
+    },
+    "pin": null,
+    "l02": null,
+    "site": {
+      "id": "rm21_141_286",
+      "x": 16.526999999999994,
+      "y": 28.5685,
+      "r": 6,
+      "door": {
+        "x": 14.126999999999995,
+        "y": 28.5685,
+        "yaw": 1.5707963267948966
+      },
+      "t0": 2.079199999999998,
+      "props": [
+        {
+          "kind": "barricade",
+          "x": 15.826999999999995,
+          "y": 27.2185,
+          "yaw": 3.141592653589793
+        },
+        {
+          "kind": "barricade",
+          "x": 15.826999999999995,
+          "y": 29.9185,
+          "yaw": 3.141592653589793
+        },
+        {
+          "kind": "cone",
+          "x": 16.826999999999995,
+          "y": 27.6185,
+          "yaw": 0
+        },
+        {
+          "kind": "cone",
+          "x": 16.826999999999995,
+          "y": 29.5185,
+          "yaw": 0.6
+        },
+        {
+          "kind": "cone",
+          "x": 14.576999999999995,
+          "y": 27.0185,
+          "yaw": 1.1
+        },
+        {
+          "kind": "cone",
+          "x": 14.576999999999995,
+          "y": 30.1685,
+          "yaw": 2.3
+        },
+        {
+          "kind": "sign",
+          "x": 17.426999999999996,
+          "y": 26.5685,
+          "yaw": 1.9207963267948966
+        },
+        {
+          "kind": "worklamp",
+          "x": 14.676999999999996,
+          "y": 26.2685,
+          "yaw": 1.0707963267948966
+        }
+      ]
+    }
+  },
+  "doorSetup": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 9,
+    "player": [
+      79.327,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -4.71238898038469,
+      "pitch": -0.33667481938672655,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 406,
+      "textures": 86
+    },
+    "frame": {
+      "cpu": 2.100000001490116,
+      "calls": 195,
+      "triangles": 271557
+    },
+    "pin": null,
+    "l02": null,
+    "interact": "进入 施工场所的门"
+  },
+  "entryTitle": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 9,
+    "player": [
+      79.327,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -4.71238898038469,
+      "pitch": -0.33667481938672655,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 406,
+      "textures": 86
+    },
+    "frame": {
+      "cpu": 2.600000001490116,
+      "calls": 195,
+      "triangles": 271557
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 7,
+    "theme": "remodel",
+    "text": "—— 门在你身后合拢 ——Level 0.2 · 重塑的混乱Level 0 的子层级 · 后室装修公司施工区 · 结构不稳定正在准备附近场景… @keyframes cutCardEnter { from { opacity: 0; transform: scale(.985) } to { opacity: 1; transform: scale(1) } } @keyframes cutCardExit { from { opacity: 1; transform: sc"
+  },
+  "entered": {
+    "level": 902,
+    "seed": 542454.6044000001,
+    "checks": 12,
+    "player": [
+      80.5,
+      80.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -4.71238898038469,
+      "pitch": -0.33667481938672655,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 306,
+      "textures": 93
+    },
+    "frame": {
+      "cpu": 5.399999998509884,
+      "calls": 147,
+      "triangles": 281959
+    },
+    "pin": null,
+    "l02": {
+      "t": 1.2667000000000022,
+      "stage": 0,
+      "dust": 0,
+      "stopped": false,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "fixtures": [
+      {
+        "fix": "outlet",
+        "fx": -15.507,
+        "fy": -51.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3102040567
+      },
+      {
+        "fix": "outlet",
+        "fx": -23.507,
+        "fy": -43.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1016945546
+      },
+      {
+        "fix": "outlet",
+        "fx": -31.507,
+        "fy": -51.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 261973525
+      },
+      {
+        "fix": "clipboard",
+        "fx": -24.732,
+        "fy": -51.6,
+        "yaw": 0,
+        "doc": "brc_report",
+        "sid": 4226886548
+      },
+      {
+        "fix": "outlet",
+        "fx": 36.413000000000004,
+        "fy": -51.89,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 2212233253
+      },
+      {
+        "fix": "clipboard",
+        "fx": 56.8992,
+        "fy": -51.6,
+        "yaw": 0,
+        "doc": "brc_report",
+        "sid": 2794020943
+      },
+      {
+        "fix": "outlet",
+        "fx": 84.493,
+        "fy": -43.89,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 530676337
+      },
+      {
+        "fix": "toilet",
+        "fx": 71.2,
+        "fy": -55.55,
+        "yaw": 0,
+        "i": 0,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.45,
+        "sid": 1302965316
+      },
+      {
+        "fix": "stall",
+        "fx": 70.4,
+        "fy": -55.2,
+        "yaw": 0,
+        "i": 0,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 3267303857
+      },
+      {
+        "fix": "toilet",
+        "fx": 72.8,
+        "fy": -55.55,
+        "yaw": 0,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.45,
+        "sid": 3244999353
+      },
+      {
+        "fix": "stall",
+        "fx": 72,
+        "fy": -55.2,
+        "yaw": 0,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 3848585561
+      },
+      {
+        "fix": "stall",
+        "fx": 73.6,
+        "fy": -55.2,
+        "yaw": 0,
+        "i": 2,
+        "end": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 1319290410
+      },
+      {
+        "fix": "sink",
+        "fx": 68.35,
+        "fy": -54.4,
+        "yaw": 1.5707963267948966,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.85,
+        "sid": 1892884252
+      },
+      {
+        "fix": "sink",
+        "fx": 68.35,
+        "fy": -53.2,
+        "yaw": 1.5707963267948966,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.85,
+        "sid": 2069190207
+      },
+      {
+        "fix": "restroom",
+        "fx": 71,
+        "fy": -54,
+        "yaw": 0,
+        "rx": 68,
+        "ry": -56,
+        "rw": 6,
+        "rh": 4,
+        "dx": 71.9,
+        "dw": 1.1,
+        "sid": 3952800036
+      },
+      {
+        "fix": "clipboard",
+        "fx": 76.41199999999999,
+        "fy": -35.6,
+        "yaw": 0,
+        "doc": "brc_slogan",
+        "sid": 1162672227
+      },
+      {
+        "fix": "outlet",
+        "fx": -55.586999999999996,
+        "fy": -9.97,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3426288763
+      },
+      {
+        "fix": "router",
+        "fx": -45.728,
+        "fy": -19.64,
+        "yaw": 0,
+        "sid": 2127521591
+      },
+      {
+        "fix": "outlet",
+        "fx": -25.307000000000002,
+        "fy": -19.889999999999997,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 952671196
+      },
+      {
+        "fix": "router",
+        "fx": -21.125999999999998,
+        "fy": -11.639999999999999,
+        "yaw": 0,
+        "sid": 1403292723
+      },
+      {
+        "fix": "outlet",
+        "fx": 0.493,
+        "fy": -27.889999999999997,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 4166936591
+      },
+      {
+        "fix": "outlet",
+        "fx": 16.413,
+        "fy": -23.889999999999997,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1774526919
+      },
+      {
+        "fix": "outlet",
+        "fx": 20.413,
+        "fy": -19.889999999999997,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 594889650
+      },
+      {
+        "fix": "clipboard",
+        "fx": 1.4448,
+        "fy": -7.6,
+        "yaw": 0,
+        "doc": "brc_took",
+        "sid": 3288275079
+      },
+      {
+        "fix": "clipboard",
+        "fx": 62.358399999999996,
+        "fy": -7.6,
+        "yaw": 0,
+        "doc": "brc_slogan",
+        "sid": 2068206555
+      },
+      {
+        "fix": "outlet",
+        "fx": 76.413,
+        "fy": -19.81,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 4132112715
+      },
+      {
+        "fix": "outlet",
+        "fx": -55.586999999999996,
+        "fy": 4.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1161894020
+      },
+      {
+        "fix": "outlet",
+        "fx": -43.586999999999996,
+        "fy": 12.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 4288455778
+      },
+      {
+        "fix": "router",
+        "fx": -57.2832,
+        "fy": 24.28,
+        "yaw": 0,
+        "sid": 3686897058
+      },
+      {
+        "fix": "clipboard",
+        "fx": -58.8448,
+        "fy": 12.4,
+        "yaw": 0,
+        "doc": "brc_slogan",
+        "sid": 3476886912
+      },
+      {
+        "fix": "outlet",
+        "fx": -11.587,
+        "fy": 4.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3461176655
+      },
+      {
+        "fix": "router",
+        "fx": -1.2320000000000002,
+        "fy": 20.28,
+        "yaw": 0,
+        "sid": 2408860595
+      },
+      {
+        "fix": "outlet",
+        "fx": 23.493,
+        "fy": 12.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 491020451
+      },
+      {
+        "fix": "router",
+        "fx": 26.39,
+        "fy": 12.280000000000001,
+        "yaw": 0,
+        "sid": 3105803451
+      },
+      {
+        "fix": "clipboard",
+        "fx": 5.408,
+        "fy": 24.400000000000002,
+        "yaw": 0,
+        "doc": "brc_slogan",
+        "sid": 975398123
+      },
+      {
+        "fix": "clipboard",
+        "fx": 47.2288,
+        "fy": 8.4,
+        "yaw": 0,
+        "doc": "brc_slogan",
+        "sid": 3145523374
+      },
+      {
+        "fix": "outlet",
+        "fx": 64.493,
+        "fy": 4.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3709581710
+      },
+      {
+        "fix": "clipboard",
+        "fx": 81.616,
+        "fy": 4.4,
+        "yaw": 0,
+        "doc": "brc_report",
+        "sid": 1552339106
+      },
+      {
+        "fix": "outlet",
+        "fx": -35.586999999999996,
+        "fy": 36.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 4055998639
+      },
+      {
+        "fix": "router",
+        "fx": -33.4112,
+        "fy": 36.28,
+        "yaw": 0,
+        "sid": 497727323
+      },
+      {
+        "fix": "outlet",
+        "fx": 4.413,
+        "fy": 36.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3122330203
+      },
+      {
+        "fix": "outlet",
+        "fx": 20.413,
+        "fy": 36.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1829598673
+      },
+      {
+        "fix": "outlet",
+        "fx": 48.413000000000004,
+        "fy": 36.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 17244195
+      },
+      {
+        "fix": "router",
+        "fx": 62.099199999999996,
+        "fy": 52.28,
+        "yaw": 0,
+        "sid": 1460744064
+      },
+      {
+        "fix": "outlet",
+        "fx": 88.413,
+        "fy": 36.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2860606454
+      },
+      {
+        "fix": "outlet",
+        "fx": -27.507,
+        "fy": 88.11,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 775229214
+      },
+      {
+        "fix": "router",
+        "fx": -5.266,
+        "fy": 80.35999999999999,
+        "yaw": 0,
+        "sid": 4261028744
+      },
+      {
+        "fix": "outlet",
+        "fx": 12.413,
+        "fy": 68.11,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 485347639
+      },
+      {
+        "fix": "outlet",
+        "fx": 0.493,
+        "fy": 72.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 855610322
+      },
+      {
+        "fix": "outlet",
+        "fx": 16.413,
+        "fy": 72.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3740512387
+      },
+      {
+        "fix": "clipboard",
+        "fx": 14.358400000000001,
+        "fy": 68.39999999999999,
+        "yaw": 0,
+        "doc": "brc_report",
+        "sid": 667445043
+      },
+      {
+        "fix": "outlet",
+        "fx": 52.413000000000004,
+        "fy": 76.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1478902441
+      },
+      {
+        "fix": "clipboard",
+        "fx": 52.7856,
+        "fy": 76.39999999999999,
+        "yaw": 0,
+        "doc": "brc_took",
+        "sid": 2432024140
+      },
+      {
+        "fix": "outlet",
+        "fx": 76.413,
+        "fy": 80.11,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 3353206768
+      },
+      {
+        "fix": "toilet",
+        "fx": 79.2,
+        "fy": 80.45,
+        "yaw": 0,
+        "i": 0,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.45,
+        "sid": 278776193
+      },
+      {
+        "fix": "stall",
+        "fx": 78.4,
+        "fy": 80.8,
+        "yaw": 0,
+        "i": 0,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 2528097468
+      },
+      {
+        "fix": "toilet",
+        "fx": 80.8,
+        "fy": 80.45,
+        "yaw": 0,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.45,
+        "sid": 2849683584
+      },
+      {
+        "fix": "stall",
+        "fx": 80,
+        "fy": 80.8,
+        "yaw": 0,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 4083460872
+      },
+      {
+        "fix": "stall",
+        "fx": 81.6,
+        "fy": 80.8,
+        "yaw": 0,
+        "i": 2,
+        "end": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 702235654
+      },
+      {
+        "fix": "sink",
+        "fx": 76.35,
+        "fy": 81.6,
+        "yaw": 1.5707963267948966,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.85,
+        "sid": 3985510520
+      },
+      {
+        "fix": "sink",
+        "fx": 76.35,
+        "fy": 82.8,
+        "yaw": 1.5707963267948966,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.85,
+        "sid": 615112390
+      },
+      {
+        "fix": "restroom",
+        "fx": 79,
+        "fy": 82,
+        "yaw": 0,
+        "rx": 76,
+        "ry": 80,
+        "rw": 6,
+        "rh": 4,
+        "dx": 79.9,
+        "dw": 1.1,
+        "sid": 1864131476
+      },
+      {
+        "fix": "router",
+        "fx": 78.9334,
+        "fy": 84.27999999999999,
+        "yaw": 0,
+        "sid": 743542696
+      }
+    ]
+  }
+}

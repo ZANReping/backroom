@@ -62,3 +62,11 @@ wheatgrain, wrench, xenonmarble
 ## 2026-10-18 杰瑞相关原创像素图标
 
 `pixel/item_jerryflyer.png` 与 `pixel/item_fakelog.png` 为本项目原创程序化像素画，使用 `scripts/gen-item-icons.py` 的 Pillow 绘制流程生成；无第三方素材或版权来源，随项目同许可发布。生成命令：在 `app` 目录运行 `python scripts/gen-item-icons.py`。
+
+`pixel/item_tape_l0.png`（Level 0 专属磁带）为本项目原创程序化像素画：与 `item_tape.png` 同一卡带轮廓，调色板与标签花纹（单黄墙纸竖纹/菱点、潮湿地毯色外壳、霉斑）取自层级磁带外观表 `src/game/content/levelTapes.json`。使用 `scripts/gen-item-icons.py` 的 `draw_level_tape` 绘制，32×32 透明原稿最近邻放大为 128×128；无第三方素材，随项目同许可发布。以后新增 tape_l1…tape_l11：在外观表追加条目后重跑脚本即可。
+
+## 2026-10-25 施工许可像素图标
+
+`pixel/item_brc_permit.png`（后室装修公司「施工许可」）为本项目原创程序化像素画：写字板 + 淡蓝复写单据 + 团体主色抬头 + 金色钢印 + 黄黑施工条纹，配色取自 `src/game/content/factions.ts` 中 brc 的 color/sub。使用 `scripts/gen-item-icons.py` 的 `draw_brc_permit` 绘制，32×32 透明原稿最近邻放大为 128×128；无第三方素材，随项目同许可发布。
+
+`pixel/item_dustmask.png`（Level 0.2「防尘口罩」）为本项目原创程序化像素画：白色折叠杯形口罩 + 橙色松紧带 + 鼻夹 + 呼吸阀。使用 `scripts/gen-item-icons.py` 的 `draw_dustmask` 绘制，32×32 透明原稿最近邻放大为 128×128；无第三方素材，随项目同许可发布。

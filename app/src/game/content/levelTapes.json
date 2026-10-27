@@ -1,0 +1,24 @@
+{
+  "_comment": "层级专属磁带外观表（tape_l0…tape_l11）。TS 侧 content/levelTapes.ts 生成物品定义；scripts/gen-item-icons.py 按 palette/motif 生成像素图标 item_<item>.png。新增一层：追加一条并重跑脚本。",
+  "tapes": [
+    {
+      "level": 0,
+      "item": "tape_l0",
+      "name": "Level 0 磁带",
+      "desc": "一盘被潮湿地毯的霉味浸透的录像带，外壳是湿地毯那种发闷的棕黄。标签是一小片剥落的单黄色墙纸，花纹与 Level 0 的墙一模一样；凑近能听见磁带里录着荧光灯的嗡鸣。Level 0 专属磁带——关键收藏物，不可丢弃、不可交易。",
+      "palette": {
+        "shell": "#5b4a2c",
+        "shellDark": "#3f321d",
+        "stain": "#4a3c22",
+        "label": "#d9c46e",
+        "labelInk": "#b39a45",
+        "labelEdge": "#f0e2a0",
+        "window": "#1f1a12",
+        "reel": "#e6dbb0",
+        "reelHub": "#8f8566",
+        "trim": "#c9b878"
+      },
+      "motif": "l0_wallpaper"
+    }
+  ]
+}

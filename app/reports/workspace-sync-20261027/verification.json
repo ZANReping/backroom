@@ -1,0 +1,56 @@
+[
+  {
+    "command": "npm --prefix app ls --depth=0",
+    "exitCode": 0,
+    "durationMs": 2751,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261027\\dependency-check.txt"
+  },
+  {
+    "command": "npm run build",
+    "exitCode": 0,
+    "durationMs": 65687,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261027\\build-check.txt"
+  },
+  {
+    "command": "node app/scripts/check-vercel-config.mjs --built",
+    "exitCode": 0,
+    "durationMs": 15886,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261027\\config-built-check.txt"
+  },
+  {
+    "command": "npm --prefix app run check:movefeel",
+    "exitCode": 0,
+    "durationMs": 3667,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261027\\check-04.txt"
+  },
+  {
+    "command": "npm --prefix app run check:careers",
+    "exitCode": 0,
+    "durationMs": 3706,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261027\\check-05.txt"
+  },
+  {
+    "command": "npm --prefix app run check:warehouse-ui",
+    "exitCode": 0,
+    "durationMs": 1485,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261027\\check-06.txt"
+  },
+  {
+    "command": "npm --prefix app run check:merchant-trade",
+    "exitCode": 0,
+    "durationMs": 1598,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261027\\check-07.txt"
+  },
+  {
+    "command": "npm --prefix app run check:player-recovery",
+    "exitCode": 0,
+    "durationMs": 1726,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261027\\check-08.txt"
+  },
+  {
+    "command": "npm --prefix app run check:swim-integration",
+    "exitCode": 0,
+    "durationMs": 1754,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261027\\check-09.txt"
+  }
+]

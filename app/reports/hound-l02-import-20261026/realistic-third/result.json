@@ -1,0 +1,194 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 11564,
+  "cdp": 11565,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:11564/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Mon, 26 Oct 2026 01:20:28 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 118,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 11564,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 4691.366724,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.426,
+        "sendEnd": 0.487,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 105.832,
+        "receiveHeadersEnd": 106.061
+      },
+      "responseTime": 1792977628071.194,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\hound-l02-import-20261026\\realistic-third\\qa-1792977606710-36220",
+    "--remote-debugging-port=11565",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 53104,
+    "server": 28404
+  },
+  "appBootMs": 20450.481099999997,
+  "entryMs": 2927.464600000003,
+  "firstPlayableMs": 31007.038299999997,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 661,
+      "textures": 159
+    },
+    "frame": {
+      "cpu": 8.700000000186265,
+      "calls": 730,
+      "triangles": 381663
+    },
+    "pin": null,
+    "l02": null
+  },
+  "setup": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 1,
+    "player": [
+      78.5,
+      94.5,
+      0.02
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 668,
+      "textures": 184
+    },
+    "frame": {
+      "cpu": 11.299999999813735,
+      "calls": 808,
+      "triangles": 469151
+    },
+    "pin": null,
+    "l02": null,
+    "pad": {
+      "wx": 14.5,
+      "wy": -1.5,
+      "axis": {
+        "x": 0,
+        "y": -1
+      }
+    }
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: L0 tutorial panel renders in actual HUD\",\"lineNumber\":22,\"columnNumber\":19,\"scriptId\":\"783\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"ok\",\"scriptId\":\"783\",\"url\":\"http://127.0.0.1:11564/verifier/hound-l02-import-game.ts\",\"lineNumber\":21,\"columnNumber\":18},{\"functionName\":\"l0\",\"scriptId\":\"783\",\"url\":\"http://127.0.0.1:11564/verifier/hound-l02-import-game.ts\",\"lineNumber\":190,\"columnNumber\":4}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: L0 tutorial panel renders in actual HUD\\n    at ok (http://127.0.0.1:11564/verifier/hound-l02-import-game.ts:22:19)\\n    at Object.l0 (http://127.0.0.1:11564/verifier/hound-l02-import-game.ts:191:5)\",\"objectId\":\"5350549654750202111.2.1\"}}",
+  "partial": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 1,
+    "player": [
+      79.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 120,
+      "textures": 70
+    },
+    "frame": {
+      "cpu": 6.7999999998137355,
+      "calls": 128,
+      "triangles": 129925
+    },
+    "pin": null,
+    "l02": null
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 17939.39999999944
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\n孤立效应\nLEVEL 0\n教学关卡\nB0\n磁带\n0/6\n开阔区\n100%\nLevel 0「教学关卡」\nSurvival Difficulty: Class 1 · Safe / Secure / Unconfirmed Entities\n入口：天花板坠落\n1\n2\n3\n4\n5\n6\n7\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

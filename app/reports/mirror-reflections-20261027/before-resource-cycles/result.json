@@ -1,0 +1,210 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 14794,
+  "cdp": 14795,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:14794/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Tue, 27 Oct 2026 10:02:47 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 281,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 14794,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 122436.735376,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.347,
+        "sendEnd": 0.385,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 11.197,
+        "receiveHeadersEnd": 11.313
+      },
+      "responseTime": 1793095367843.855,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\mirror-reflections-20261027\\before-resource-cycles\\qa-1793095350845-16828",
+    "--remote-debugging-port=14795",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 70748,
+    "server": 50660
+  },
+  "appBootMs": 13463.385,
+  "entryMs": 2026.072799999998,
+  "firstPlayableMs": 21003.631800000003,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "pos": [
+      78.5,
+      79.5,
+      0
+    ],
+    "camera": [
+      78.5,
+      1.55,
+      79.5
+    ],
+    "yaw": 0,
+    "pitch": 0,
+    "mirrors": null,
+    "memory": {
+      "geometries": 661,
+      "textures": 158
+    },
+    "calls": 730,
+    "triangles": 381663,
+    "cpu": 7,
+    "checks": []
+  },
+  "resources": [
+    {
+      "level": 900,
+      "pos": [
+        6,
+        12.55,
+        0
+      ],
+      "camera": [
+        6,
+        1.55,
+        12.55
+      ],
+      "yaw": -4.71238898038469,
+      "pitch": 0.05046217401685577,
+      "mirrors": null,
+      "memory": {
+        "geometries": 704,
+        "textures": 241
+      },
+      "calls": 62,
+      "triangles": 31757,
+      "cpu": 0.8999999910593033,
+      "checks": []
+    },
+    {
+      "level": 900,
+      "pos": [
+        6,
+        12.55,
+        0
+      ],
+      "camera": [
+        6,
+        1.55,
+        12.55
+      ],
+      "yaw": -4.71238898038469,
+      "pitch": 0.05046217401685577,
+      "mirrors": null,
+      "memory": {
+        "geometries": 800,
+        "textures": 250
+      },
+      "calls": 62,
+      "triangles": 31757,
+      "cpu": 0.7000000029802322,
+      "checks": []
+    },
+    {
+      "level": 900,
+      "pos": [
+        6,
+        12.55,
+        0
+      ],
+      "camera": [
+        6,
+        1.55,
+        12.55
+      ],
+      "yaw": -4.71238898038469,
+      "pitch": 0.05046217401685577,
+      "mirrors": null,
+      "memory": {
+        "geometries": 800,
+        "textures": 252
+      },
+      "calls": 62,
+      "triangles": 31757,
+      "cpu": 1,
+      "checks": []
+    }
+  ],
+  "summary": {
+    "level": 900,
+    "pos": [
+      6,
+      12.55,
+      0
+    ],
+    "camera": [
+      6,
+      1.55,
+      12.55
+    ],
+    "yaw": -4.71238898038469,
+    "pitch": 0.05046217401685577,
+    "mirrors": null,
+    "memory": {
+      "geometries": 800,
+      "textures": 252
+    },
+    "calls": 62,
+    "triangles": 31757,
+    "cpu": 1,
+    "checks": []
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

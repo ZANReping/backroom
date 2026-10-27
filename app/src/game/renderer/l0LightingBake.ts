@@ -70,10 +70,20 @@ export function createL0LightSampler(a:L0Layout,neighbours:L0Layout[]){
   const inRoom=woods.some(w=>sx>=w.x&&sx<=w.x+w.w&&sz>=w.y&&sz<=w.y+w.h)
   let environment=environments.get(hk);if(!environment){environment=l0LayoutEnvironment(a,sx,sz);environments.set(hk,environment)}
   let contact=0
-  if(ny>.5){for(const w of wallBins.get(key(Math.floor(sx/CELL),Math.floor(sz/CELL)))??[]){if(w.bottom>.05)continue;const d=Math.hypot(Math.max(w.x-sx,0,sx-w.x-w.w),Math.max(w.y-sz,0,sz-w.y-w.h));contact=Math.max(contact,.22*Math.exp(-d/.16))}}
-  else if(ny<.5&&h>=0)contact=.22*Math.exp(-h/.16)
-  let value=(inRoom?.19:.105)*(1-environment.blackout)*(1-contact)
+  if(ny>.5){for(const w of wallBins.get(key(Math.floor(sx/CELL),Math.floor(sz/CELL)))??[]){if(w.bottom>.05)continue;const d=Math.hypot(Math.max(w.x-sx,0,sx-w.x-w.w),Math.max(w.y-sz,0,sz-w.y-w.h));contact=Math.max(contact,a.theme?.4*Math.exp(-d/.38):.22*Math.exp(-d/.16))}}
+  else if(a.theme&&ny<-.5){
+   // L0.2 吊顶：靠墙处柔和变暗（吊顶—墙交界的软阴影），远离墙不再整体压暗
+   for(const w of wallBins.get(key(Math.floor(sx/CELL),Math.floor(sz/CELL)))??[]){if(w.top<L0_HEIGHT-.01)continue;const d=Math.hypot(Math.max(w.x-sx,0,sx-w.x-w.w),Math.max(w.y-sz,0,sz-w.y-w.h));contact=Math.max(contact,.32*Math.exp(-d/.6))}
+  }
+  else if(ny<.5&&h>=0)contact=a.theme?Math.max(.4*Math.exp(-h/.34),.3*Math.exp(-(L0_HEIGHT-h)/.5)):.22*Math.exp(-h/.16) // L0.2：墙角 AO 更宽更深（地面—墙脚、墙顶—吊顶柔和衰减）
+  let value=(inRoom?.19:a.theme?.15:.105)*(1-environment.blackout)*(1-contact)
   for(const {samples}of nearby)for(const s of samples)if(!s.partial.some(w=>blocks(w,sx,sz,s.l.x,s.l.y,h+ny*.015)))value+=l0FixtureLight(s.l,sx,sz,h,nx,ny,nz)/4
+  if(a.theme&&ny>.5){
+   // L0.2：灯盘正下方的地毯略亮（多灯叠加后地面过于均匀，参考图灯下有一片柔和亮区）
+   let d2=99;const bx=Math.floor(sx/CELL),bz=Math.floor(sz/CELL)
+   for(let j=bz-1;j<=bz+1;j++)for(let i=bx-1;i<=bx+1;i++)for(const l of lampBins.get(key(i,j))??[])d2=Math.min(d2,(l.x-sx)**2+(l.y-sz)**2)
+   value+=.24*Math.exp(-d2/1.5)
+  }
   const redGain=1+environment.red*.35
   value*=(h<0?Math.exp(h/2.5):1)*redGain
   colors.set(k,value);return value

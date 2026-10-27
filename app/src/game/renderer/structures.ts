@@ -1,4 +1,5 @@
 import { l1PlanTile } from '../world/l1Plan'
+import { buildRemodelDoor } from './remodelSites'
 import { factionSignTexture, signStyleFor, highVoltageTexture, type SignStyle } from './factionSigns'
 import {isAlphaKind} from '../content/alphaDecor'
 import {buildAlphaDecor} from './alphaMeshes'
@@ -39,6 +40,7 @@ import { buildOutdoorTree } from './outdoorTrees'
 import { buildL7Structure } from './l7Meshes'
 import {l2Material} from './l2Materials'
 import {alignL2WallProp,buildL2Machine} from './l2WallProps'
+import { mirrorSurface } from './mirrorSurface'
 
 // 墙纸贴图盒（柱厅立柱用：UV 按面宽/柱高放大，与墙面 1m 一循环的世界空间密度一致）
 function wallpaperBox(w: number, h: number, d: number, def: LevelDef, x = 0, y = 0, z = 0): THREE.Mesh {
@@ -1970,7 +1972,9 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
     }
     case 'mirror': {
       grp.add(box(1.0, 2.2, 0.08, '#3a1e20', 0, 1.1, 0))
-      grp.add(glow(0.8, 1.9, 0.03, '#8a9aa5', 0, 1.15, 0.05))
+      const reflector = mirrorSurface(.8, 1.9)
+      reflector.position.set(0, 1.15, .067)
+      grp.add(reflector)
       break
     }
     case 'hoteldoor': {
@@ -4731,12 +4735,11 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       const onWall = m.tiles[ty * m.w + tx] !== 1
       const dirs = onWall ? neighborDirs(s, m, true) : neighborDirs(s, m, false)
       const use = dirs.length ? dirs.slice(0, 2) : [buildingDir(s, m)]
-      const glassMat = new THREE.MeshPhongMaterial({ color: '#14171c', specular: '#7c8b9a', shininess: 96 })
       for (const d of use) {
         const wg = new THREE.Group()
         wg.add(box(0.92, 1.5, 0.05, '#2c3036', 0, 0, 0)) // 细窗框
-        const glass = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.38, 0.03), glassMat)
-        glass.position.z = 0.03
+        const glass = mirrorSurface(.8, 1.38, 'blackglass')
+        glass.position.z = 0.046
         wg.add(glass)
         wg.add(box(0.92, 0.05, 0.07, '#3a3f46', 0, -0.75, 0.02)) // 窗台
         faceMount(wg, d, 0.03, 2.1, 0, onWall)
@@ -6391,6 +6394,9 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
 
 // ---------- 出口低模 ----------
 export function buildExit(kind: string, def: LevelDef, structure?: Structure): THREE.Group {
+  // 施工门（Level 0）由 renderer/remodelSites.ts 单独绘制；Level 0.2 返回门复用同一施工门模型（按出口实例的 l02.yaw 贴墙）
+  if (kind === 'remodeldoor') return new THREE.Group()
+  if (kind === 'remodelreturn') return buildRemodelDoor()
   if(def.id===101&&kind==='unlockeddoor')return buildAlphaDecor({kind:'alpha_entry_portal',x:-.9,y:-.12,w:1.8,h:.24,solid:true})
   if (def.id === 11 && (kind === 'l11roadback' || kind === 'countrypath')) {
     const marker = buildL11Structure({ kind: 'l11landmark', x: -.5, y: -.5, w: 1, h: 1, solid: false, data: { citySite: kind === 'countrypath' ? 'L10' : 'L9' } })!
@@ -6545,8 +6551,8 @@ export function buildExit(kind: string, def: LevelDef, structure?: Structure): T
     }
     case 'mirror': {
       grp.add(box(1.2, 2.4, 0.1, '#3a1e20', 0, 1.2, -0.2))
-      const mg = new THREE.Mesh(new THREE.BoxGeometry(1.0, 2.2, 0.04), pulseMat())
-      mg.position.set(0, 1.2, -0.14)
+      const mg = mirrorSurface(1.0, 2.2)
+      mg.position.set(0, 1.2, -.119)
       grp.add(mg)
       break
     }

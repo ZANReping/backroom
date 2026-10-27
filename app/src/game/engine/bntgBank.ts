@@ -6,7 +6,7 @@ import {addItem} from './inventory'
 import {audio} from '../core/audio'
 
 export type BntgPaymentMode='auto'|'credits'|'cash'
-export type BntgBankKind='deposit'|'withdraw'|'purchase'|'exchange'|'service'
+export type BntgBankKind='deposit'|'withdraw'|'purchase'|'exchange'|'service'|'sale'
 export interface BntgBankEntry{id:number;at:number;kind:BntgBankKind;delta:number;balance:number;cashDelta:number;detail:string}
 export interface BntgBankState{v:1;balance:number;sequence:number;history:BntgBankEntry[]}
 export interface BankResult{ok:boolean;message:string;entry?:BntgBankEntry}
@@ -16,7 +16,7 @@ export function restoreBntgBank(raw?:Partial<BntgBankState>):BntgBankState{
  const bank=freshBntgBank()
  if(!raw||!Number.isSafeInteger(raw.balance)||raw.balance!<0||raw.balance!>BNTG_BALANCE_MAX)return bank
  bank.balance=raw.balance!;bank.sequence=Number.isSafeInteger(raw.sequence)&&raw.sequence!>=0?Math.min(raw.sequence!,Number.MAX_SAFE_INTEGER-100):0
- const kinds:BntgBankKind[]=['deposit','withdraw','purchase','exchange','service']
+ const kinds:BntgBankKind[]=['deposit','withdraw','purchase','exchange','service','sale']
  bank.history=(Array.isArray(raw.history)?raw.history:[]).filter(e=>e&&Number.isSafeInteger(e.id)&&e.id>0&&e.id<=Number.MAX_SAFE_INTEGER-100&&Number.isFinite(e.at)&&kinds.includes(e.kind)&&Number.isSafeInteger(e.delta)&&Number.isSafeInteger(e.cashDelta)&&Number.isSafeInteger(e.balance)&&e.balance>=0&&e.balance<=BNTG_BALANCE_MAX&&typeof e.detail==='string').slice(-12).map(e=>({...e,detail:e.detail.slice(0,100)}))
  bank.sequence=Math.max(bank.sequence,...bank.history.map(e=>e.id));return bank
 }
@@ -43,12 +43,13 @@ export function bntgAtmAccessible(eng:Engine,id:string){
  if(d>2.6||Math.abs(p.z)>1||nx*(p.x-s.x-s.w/2)+ny*(p.y-s.y-s.h/2)<0)return false
  return d<.02||eng.los(p.x,p.y,x+(p.x-x)/d*.06,y+(p.y-y)/d*.06)
 }
-function stageInventory(eng:Engine){
+export function stageInventory(eng:Engine){
  const staged=Object.create(eng) as Engine
  staged.player={...eng.player,hotbar:eng.player.hotbar.map(s=>s?{...s}:null),backpack:eng.player.backpack.map(s=>s?{...s}:null)}
  staged.syncPassives=()=>{}
  return staged
 }
+export function removeStaged(staged:Engine,type:string,count:number){ return remove(staged,type,count) }
 function remove(staged:Engine,type:string,count:number){
  let left=count
  for(const slots of [staged.player.hotbar,staged.player.backpack])for(let i=0;i<slots.length&&left>0;i++){
@@ -57,6 +58,8 @@ function remove(staged:Engine,type:string,count:number){
  }
  return left===0
 }
+/** 把暂存背包写回并记一笔 B.N.T.G. 账（merchantTrade 的出售也走这里） */
+export function bntgCommit(eng:Engine,staged:Engine,kind:BntgBankKind,delta:number,cashDelta:number,detail:string):BankResult{ return commit(eng,staged,kind,delta,cashDelta,detail) }
 function commit(eng:Engine,staged:Engine,kind:BntgBankKind,delta:number,cashDelta:number,detail:string):BankResult{
  const balance=eng.bntgBank.balance+delta
  if(!Number.isSafeInteger(balance)||balance<0||balance>BNTG_BALANCE_MAX)return fail('账户金额超出可用范围。')

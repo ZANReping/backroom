@@ -1,0 +1,132 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 14673,
+  "cdp": 14674,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:14673/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sun, 25 Oct 2026 07:44:35 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 273,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 14673,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 12825.066409,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.448,
+        "sendEnd": 0.501,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 8.004,
+        "receiveHeadersEnd": 8.104
+      },
+      "responseTime": 1792914275304.708,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\creeper-import-20261025\\verified-realistic\\qa-1792914262764-9680",
+    "--remote-debugging-port=14674",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 54128,
+    "server": 55996
+  },
+  "appBootMs": 10890.9873,
+  "entryMs": 1976.844299999997,
+  "firstPlayableMs": 17903.008,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "memory": {
+      "geometries": 661,
+      "textures": 159
+    },
+    "calls": 586,
+    "triangles": 166963,
+    "renderCpu": 4.799999998882413,
+    "stage": 0,
+    "load": 0
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Natural Level 2 corridor has collision-safe test sightline\",\"lineNumber\":18,\"columnNumber\":23,\"scriptId\":\"761\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"ok\",\"scriptId\":\"761\",\"url\":\"http://127.0.0.1:14673/verifier/creeper-import-game.ts\",\"lineNumber\":17,\"columnNumber\":22},{\"functionName\":\"findPad\",\"scriptId\":\"761\",\"url\":\"http://127.0.0.1:14673/verifier/creeper-import-game.ts\",\"lineNumber\":72,\"columnNumber\":4},{\"functionName\":\"setup\",\"scriptId\":\"761\",\"url\":\"http://127.0.0.1:14673/verifier/creeper-import-game.ts\",\"lineNumber\":103,\"columnNumber\":18}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Natural Level 2 corridor has collision-safe test sightline\\n    at ok (http://127.0.0.1:14673/verifier/creeper-import-game.ts:18:23)\\n    at findPad (http://127.0.0.1:14673/verifier/creeper-import-game.ts:73:5)\\n    at Object.setup (http://127.0.0.1:14673/verifier/creeper-import-game.ts:104:19)\",\"objectId\":\"-2208989496170840294.2.1\"}}",
+  "partial": {
+    "level": 2,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "memory": {
+      "geometries": 666,
+      "textures": 183
+    },
+    "calls": 808,
+    "triangles": 469151,
+    "renderCpu": 5.700000001117587,
+    "stage": 0,
+    "load": 0
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 9583.299999998882
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 2\n废弃公共带\nB2\n磁带\n0/6\n整洁的廊道\n100%\n1\n2\n3\n4\n5\n6\n7\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n➤\n你感觉到明显的气流（3m）\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

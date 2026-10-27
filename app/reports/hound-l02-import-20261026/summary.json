@@ -1,0 +1,502 @@
+{
+  "date": "2026-10-26",
+  "target": "E:/ZAN/backroom/app",
+  "mainSeed": 424242,
+  "viewport": {
+    "width": 1920,
+    "height": 1080,
+    "dpr": 1,
+    "renderScale": 1,
+    "fov": 72,
+    "textureQuality": 2
+  },
+  "accepted": [
+    {
+      "label": "validated-realistic",
+      "mode": "realistic",
+      "ok": true,
+      "checks": 51,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "entryMs": 2293.898399999998,
+      "appBootMs": 14324.7186,
+      "firstPlayableMs": 22624.8817,
+      "l02Seed": 542556.3928,
+      "firstAppearances": [
+        {
+          "kind": "hostile",
+          "meshes": 8,
+          "triangles": 23001,
+          "appearanceMs": 1709.8999999994412,
+          "modelStepMaxMs": 5.400000000372529,
+          "frameMaxMs": 241.59999999999854,
+          "cpuMaxMs": 242.20000000018626
+        },
+        {
+          "kind": "neutral",
+          "meshes": 8,
+          "triangles": 22861,
+          "appearanceMs": 1137.199999999255,
+          "modelStepMaxMs": 3,
+          "frameMaxMs": 29.200000000000728,
+          "cpuMaxMs": 28.700000000186265
+        },
+        {
+          "kind": "ambusher",
+          "meshes": 8,
+          "triangles": 22788,
+          "appearanceMs": 1332.2000000001863,
+          "modelStepMaxMs": 4.8999999994412065,
+          "frameMaxMs": 29.099999999998545,
+          "cpuMaxMs": 26.5
+        }
+      ],
+      "benchmark": [
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "cpuMedian": 2.7000000001862645,
+          "cpuP95": 5.300000000745058,
+          "calls": 240,
+          "triangles": 129300
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "cpuMedian": 2.5,
+          "cpuP95": 4.5,
+          "calls": 240,
+          "triangles": 129300
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "cpuMedian": 2.300000000745058,
+          "cpuP95": 4.400000000372529,
+          "calls": 240,
+          "triangles": 129300
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "cpuMedian": 2.7000000001862645,
+          "cpuP95": 5,
+          "calls": 240,
+          "triangles": 129300
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "cpuMedian": 2.7000000001862645,
+          "cpuP95": 4.8999999994412065,
+          "calls": 240,
+          "triangles": 129300
+        }
+      ],
+      "resources": [
+        {
+          "geometries": 1394,
+          "textures": 258
+        },
+        {
+          "geometries": 1305,
+          "textures": 258
+        },
+        {
+          "geometries": 1309,
+          "textures": 258
+        }
+      ],
+      "runtimeErrors": [],
+      "failedRequests": [
+        {
+          "url": "http://127.0.0.1:7283/favicon.ico",
+          "status": 404
+        }
+      ],
+      "touch": null,
+      "codexCycle": null,
+      "ramp": null,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "label": "validated-classic",
+      "mode": "classic",
+      "ok": true,
+      "checks": 54,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "entryMs": 1657.8098999999966,
+      "appBootMs": 11998.8406,
+      "firstPlayableMs": 16838.7665,
+      "l02Seed": 542547.7926,
+      "firstAppearances": [
+        {
+          "kind": "hostile",
+          "meshes": 8,
+          "triangles": 23001,
+          "appearanceMs": 1220.800000000745,
+          "modelStepMaxMs": 3.5,
+          "frameMaxMs": 83.29999999999927,
+          "cpuMaxMs": 14.399999999441206
+        },
+        {
+          "kind": "neutral",
+          "meshes": 8,
+          "triangles": 22861,
+          "appearanceMs": 1023.7000000001863,
+          "modelStepMaxMs": 3.2000000001862645,
+          "frameMaxMs": 8.30000000000291,
+          "cpuMaxMs": 6.7999999998137355
+        },
+        {
+          "kind": "ambusher",
+          "meshes": 8,
+          "triangles": 22788,
+          "appearanceMs": 1034.199999999255,
+          "modelStepMaxMs": 2.7000000001862645,
+          "frameMaxMs": 8.400000000001455,
+          "cpuMaxMs": 6
+        }
+      ],
+      "benchmark": [
+        {
+          "median": 4.19999999999709,
+          "p95": 8.30000000000291,
+          "cpuMedian": 3.099999999627471,
+          "cpuP95": 5.1000000005587935,
+          "calls": 226,
+          "triangles": 129286
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.39999999999418,
+          "cpuMedian": 3.2000000001862645,
+          "cpuP95": 5.1000000005587935,
+          "calls": 226,
+          "triangles": 129286
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.39999999999418,
+          "cpuMedian": 3.5,
+          "cpuP95": 5.300000000745058,
+          "calls": 226,
+          "triangles": 129286
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.39999999999418,
+          "cpuMedian": 3.900000000372529,
+          "cpuP95": 5.2999999998137355,
+          "calls": 226,
+          "triangles": 129286
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.5,
+          "cpuMedian": 4.6000000005587935,
+          "cpuP95": 5.5,
+          "calls": 226,
+          "triangles": 129286
+        }
+      ],
+      "resources": [
+        {
+          "geometries": 1255,
+          "textures": 234
+        },
+        {
+          "geometries": 1220,
+          "textures": 236
+        },
+        {
+          "geometries": 1220,
+          "textures": 234
+        }
+      ],
+      "runtimeErrors": [],
+      "failedRequests": [
+        {
+          "url": "http://127.0.0.1:3035/favicon.ico",
+          "status": 404
+        }
+      ],
+      "touch": {
+        "desktopSimulation": true,
+        "width": 900,
+        "height": 600
+      },
+      "codexCycle": {
+        "type": "hound",
+        "steps": 12,
+        "seenForms": [
+          "hound-hostile",
+          "hound-neutral",
+          "hound-ambusher"
+        ],
+        "images": [
+          {
+            "view": 1,
+            "angle": 1,
+            "appearance": 0,
+            "form": "hound-hostile",
+            "pixels": 273
+          },
+          {
+            "view": 2,
+            "angle": 2,
+            "appearance": 0,
+            "form": "hound-hostile",
+            "pixels": 371
+          },
+          {
+            "view": 3,
+            "angle": 3,
+            "appearance": 0,
+            "form": "hound-hostile",
+            "pixels": 310
+          },
+          {
+            "view": 4,
+            "angle": 0,
+            "appearance": 1,
+            "form": "hound-neutral",
+            "pixels": 470
+          },
+          {
+            "view": 5,
+            "angle": 1,
+            "appearance": 1,
+            "form": "hound-neutral",
+            "pixels": 272
+          },
+          {
+            "view": 6,
+            "angle": 2,
+            "appearance": 1,
+            "form": "hound-neutral",
+            "pixels": 322
+          },
+          {
+            "view": 7,
+            "angle": 3,
+            "appearance": 1,
+            "form": "hound-neutral",
+            "pixels": 301
+          },
+          {
+            "view": 8,
+            "angle": 0,
+            "appearance": 2,
+            "form": "hound-ambusher",
+            "pixels": 428
+          },
+          {
+            "view": 9,
+            "angle": 1,
+            "appearance": 2,
+            "form": "hound-ambusher",
+            "pixels": 253
+          },
+          {
+            "view": 10,
+            "angle": 2,
+            "appearance": 2,
+            "form": "hound-ambusher",
+            "pixels": 300
+          },
+          {
+            "view": 11,
+            "angle": 3,
+            "appearance": 2,
+            "form": "hound-ambusher",
+            "pixels": 264
+          },
+          {
+            "view": 12,
+            "angle": 0,
+            "appearance": 3,
+            "form": "hound-hostile",
+            "pixels": 472
+          }
+        ],
+        "stats": {
+          "builds": 13,
+          "renders": 13,
+          "hits": 1,
+          "cached": 13,
+          "bytes": 1536252,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 8,
+            "textures": 4
+          }
+        }
+      },
+      "ramp": null,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "label": "validated-ramp",
+      "mode": "realistic",
+      "ok": true,
+      "checks": 31,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "entryMs": 2484.8809999999976,
+      "appBootMs": 12126.8693,
+      "firstPlayableMs": 19724.1178,
+      "l02Seed": 542466.1523,
+      "firstAppearances": [],
+      "benchmark": null,
+      "resources": null,
+      "runtimeErrors": [],
+      "failedRequests": [
+        {
+          "url": "http://127.0.0.1:3901/favicon.ico",
+          "status": 404
+        }
+      ],
+      "touch": null,
+      "codexCycle": null,
+      "ramp": {
+        "player": [
+          64.84874999999924,
+          71.975,
+          0
+        ],
+        "origin": [
+          -64,
+          -64
+        ],
+        "seed": 542466.1523
+      },
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    }
+  ],
+  "regression": [
+    {
+      "name": "check:hound",
+      "exit": 0,
+      "log": "check-hound.log"
+    },
+    {
+      "name": "check:hound-anim",
+      "exit": 0,
+      "log": "check-hound-anim.log"
+    },
+    {
+      "name": "check:hounds",
+      "exit": 0,
+      "log": "check-hounds.log"
+    },
+    {
+      "name": "check:hound-integration",
+      "exit": 0,
+      "log": "check-hound-integration.log"
+    },
+    {
+      "name": "check:hound-l02-integration",
+      "exit": 0,
+      "log": "check-hound-l02-integration.log"
+    },
+    {
+      "name": "check:creeper-integration",
+      "exit": 0,
+      "log": "check-creeper-integration.log"
+    },
+    {
+      "name": "check:entity-forms",
+      "exit": 0,
+      "log": "check-entity-forms.log"
+    },
+    {
+      "name": "check:entity-preparation",
+      "exit": 0,
+      "log": "check-entity-preparation.log"
+    },
+    {
+      "name": "check:l0-architecture",
+      "exit": 0,
+      "log": "check-l0-architecture.log"
+    },
+    {
+      "name": "check:l0-state",
+      "exit": 0,
+      "log": "check-l0-state.log"
+    },
+    {
+      "name": "check:l0-continuity",
+      "exit": 0,
+      "log": "check-l0-continuity.log"
+    },
+    {
+      "name": "check:l0-meshes",
+      "exit": 0,
+      "log": "check-l0-meshes.log"
+    },
+    {
+      "name": "check:phone-stat-lock",
+      "exit": 0,
+      "log": "check-phone-stat-lock.log"
+    },
+    {
+      "name": "check:merchant-trade",
+      "exit": 0,
+      "log": "check-merchant-trade.log"
+    },
+    {
+      "name": "check:warehouse-ui",
+      "exit": 0,
+      "log": "check-warehouse-ui.log"
+    },
+    {
+      "name": "check:retro-hands",
+      "exit": 0,
+      "log": "check-retro-hands.log"
+    }
+  ],
+  "finalBuild": [
+    {
+      "name": "check:hound-l02-integration",
+      "exit": 0,
+      "ms": 2689,
+      "log": "check-hound-l02-integration.log"
+    },
+    {
+      "name": "build",
+      "exit": 0,
+      "ms": 48086,
+      "log": "build.log"
+    }
+  ],
+  "limits": [
+    "Zenith Station and Ice Room remain task placeholders.",
+    "First appearance is not stutter-free; realistic early model samples overlap command-line regressions.",
+    "Five-round benchmark is fixed L2 single-hound, not a before/after or L02 full-collapse performance claim.",
+    "Three resource cycles show bounded variation, not a long-duration leak proof.",
+    "Touch is desktop simulation; no Android hardware or human audio acceptance.",
+    "Main save v1; L02 collapse is transient per visit."
+  ]
+}

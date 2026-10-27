@@ -1,0 +1,351 @@
+{
+  "run": "qa-1792928054542-45180",
+  "label": "layout-realistic",
+  "mode": "realistic",
+  "port": 13549,
+  "cdp": 13550,
+  "profile": "E:\\ZAN\\backroom\\app\\reports\\mobile-quest-ui-import-20261025\\layout-realistic\\qa-1792928054542-45180",
+  "levels": [
+    0
+  ],
+  "cases": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\mobile-quest-ui-import-20261025\\layout-realistic\\qa-1792928054542-45180",
+    "--remote-debugging-port=13550",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.86",
+    "revision": "@804d6b05f089b27af8342622a36558c49401a1d4",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.25"
+  },
+  "pids": {
+    "server": 40128,
+    "browser": 23140
+  },
+  "progress": {
+    "checks": [
+      "actual mobile HUD shows expanded MEG tracker and compact main quest",
+      "both cards fit and are touchable 01-meg-844",
+      "task cards avoid vitals, title and touch controls 01-meg-844",
+      "responsive task column placement 01-meg-844",
+      "physical touch collapses MEG tracker exactly once and saves preference",
+      "task touch does not move, attack or rotate the player",
+      "second physical touch expands MEG tracker",
+      "physical touch opens complete main checklist",
+      "both cards fit and are touchable 03-main-expanded-844",
+      "task cards avoid vitals, title and touch controls 03-main-expanded-844",
+      "responsive task column placement 03-main-expanded-844",
+      "main checklist automatically collapses after five seconds",
+      "keyboard Space opens checklist without jumping"
+    ],
+    "shots": [
+      "01-meg-844",
+      "02-meg-folded",
+      "03-main-expanded-844"
+    ],
+    "layouts": [
+      {
+        "label": "01-meg-844",
+        "col": "beside",
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "cards": [
+          {
+            "x": 156,
+            "y": 12,
+            "right": 370,
+            "bottom": 93.75,
+            "width": 214,
+            "height": 81.75,
+            "hit": true,
+            "kind": "faction"
+          },
+          {
+            "x": 156,
+            "y": 97,
+            "right": 370,
+            "bottom": 141.875,
+            "width": 214,
+            "height": 44.875,
+            "hit": true,
+            "kind": "main"
+          }
+        ],
+        "vitals": {
+          "x": 9.75,
+          "y": 9.75,
+          "right": 144.75,
+          "bottom": 139.375,
+          "width": 135,
+          "height": 129.625
+        },
+        "location": {
+          "x": 465.359375,
+          "y": 9.75,
+          "right": 638.640625,
+          "bottom": 36.25,
+          "width": 173.28125,
+          "height": 26.5
+        },
+        "nav": {
+          "x": 726.75,
+          "y": 9.75,
+          "right": 834.25,
+          "bottom": 181.25,
+          "width": 107.5,
+          "height": 171.5
+        },
+        "controls": [
+          {
+            "x": 756.25,
+            "y": 88.75,
+            "right": 792,
+            "bottom": 124.5,
+            "width": 35.75,
+            "height": 35.75,
+            "id": "backpack-top"
+          },
+          {
+            "x": 196,
+            "y": 266,
+            "right": 244,
+            "bottom": 314,
+            "width": 48,
+            "height": 48,
+            "id": "holster"
+          },
+          {
+            "x": 670,
+            "y": 308,
+            "right": 726,
+            "bottom": 364,
+            "width": 56,
+            "height": 56,
+            "id": "jump"
+          },
+          {
+            "x": 695.828125,
+            "y": 244.09375,
+            "right": 751.828125,
+            "bottom": 300.09375,
+            "width": 56,
+            "height": 56,
+            "id": "sprint"
+          },
+          {
+            "x": 758.78125,
+            "y": 216.0625,
+            "right": 814.78125,
+            "bottom": 272.0625,
+            "width": 56,
+            "height": 56,
+            "id": "crouch"
+          },
+          {
+            "x": 605.59375,
+            "y": 277.90625,
+            "right": 653.59375,
+            "bottom": 325.90625,
+            "width": 48,
+            "height": 48,
+            "id": "flashlight"
+          },
+          {
+            "x": 638.84375,
+            "y": 205.3125,
+            "right": 686.84375,
+            "bottom": 253.3125,
+            "width": 48,
+            "height": 48,
+            "id": "backpack"
+          },
+          {
+            "x": 752,
+            "y": 298,
+            "right": 828,
+            "bottom": 374,
+            "width": 76,
+            "height": 76,
+            "id": "attack"
+          }
+        ],
+        "scrollWidth": 844
+      },
+      {
+        "label": "03-main-expanded-844",
+        "col": "beside",
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "cards": [
+          {
+            "x": 156,
+            "y": 12,
+            "right": 370,
+            "bottom": 93.75,
+            "width": 214,
+            "height": 81.75,
+            "hit": true,
+            "kind": "faction"
+          },
+          {
+            "x": 156,
+            "y": 97,
+            "right": 370,
+            "bottom": 224.375,
+            "width": 214,
+            "height": 127.375,
+            "hit": true,
+            "kind": "main"
+          }
+        ],
+        "vitals": {
+          "x": 9.75,
+          "y": 9.75,
+          "right": 144.75,
+          "bottom": 139.375,
+          "width": 135,
+          "height": 129.625
+        },
+        "location": {
+          "x": 465.359375,
+          "y": 9.75,
+          "right": 638.640625,
+          "bottom": 36.25,
+          "width": 173.28125,
+          "height": 26.5
+        },
+        "nav": {
+          "x": 726.75,
+          "y": 9.75,
+          "right": 834.25,
+          "bottom": 181.25,
+          "width": 107.5,
+          "height": 171.5
+        },
+        "controls": [
+          {
+            "x": 756.25,
+            "y": 88.75,
+            "right": 792,
+            "bottom": 124.5,
+            "width": 35.75,
+            "height": 35.75,
+            "id": "backpack-top"
+          },
+          {
+            "x": 196,
+            "y": 266,
+            "right": 244,
+            "bottom": 314,
+            "width": 48,
+            "height": 48,
+            "id": "holster"
+          },
+          {
+            "x": 670,
+            "y": 308,
+            "right": 726,
+            "bottom": 364,
+            "width": 56,
+            "height": 56,
+            "id": "jump"
+          },
+          {
+            "x": 695.828125,
+            "y": 244.09375,
+            "right": 751.828125,
+            "bottom": 300.09375,
+            "width": 56,
+            "height": 56,
+            "id": "sprint"
+          },
+          {
+            "x": 758.78125,
+            "y": 216.0625,
+            "right": 814.78125,
+            "bottom": 272.0625,
+            "width": 56,
+            "height": 56,
+            "id": "crouch"
+          },
+          {
+            "x": 605.59375,
+            "y": 277.90625,
+            "right": 653.59375,
+            "bottom": 325.90625,
+            "width": 48,
+            "height": 48,
+            "id": "flashlight"
+          },
+          {
+            "x": 638.84375,
+            "y": 205.3125,
+            "right": 686.84375,
+            "bottom": 253.3125,
+            "width": 48,
+            "height": 48,
+            "id": "backpack"
+          },
+          {
+            "x": 752,
+            "y": 298,
+            "right": 828,
+            "bottom": 374,
+            "width": 76,
+            "height": 76,
+            "id": "attack"
+          }
+        ],
+        "scrollWidth": 844
+      }
+    ],
+    "environment": {
+      "seed": 424242,
+      "player": {
+        "x": 79.5,
+        "y": 79.5,
+        "z": 0,
+        "level": 0
+      },
+      "yaw": 0,
+      "pitch": 0,
+      "mobile": true,
+      "engineListeners": 2
+    }
+  },
+  "ok": false,
+  "failure": "Error: keyboard Enter closes checklist without attacking",
+  "failureState": {
+    "level": 0,
+    "paused": false,
+    "transition": null,
+    "ready": true,
+    "pending": false,
+    "root": false,
+    "text": "孤立效应\nL0 教学关卡 · 磁带 1/6\n你在一片嗡嗡声里醒来。地毯是湿的，空气里有股霉味。\n你带出来的东西散落在四周。\n开阔区\n100%\nMEG · 1/3 · 离开熟悉的灯光\n▴\n看得见的距离\nLevel 1 · 实际步行 60 米\n12 / 60 米\n任务 · 主线 · 六张磁带\n1/6 ▴\n■\n找回手机\n□\n找回背包\n□\n找回手电筒\n□\n找回水和能量棒\n□\n收集六张磁带（1/6）\n□\n送往 Level 11 档案馆\n1\n2\n3\n4\n5\n6\n7\n进入全屏\n不再提示\n取出"
+  },
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": []
+}

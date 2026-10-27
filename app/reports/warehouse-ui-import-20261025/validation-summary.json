@@ -1,0 +1,39 @@
+{
+  "warehouseChecks": 44,
+  "merchantChecks": 44,
+  "bankRegression": true,
+  "build": {
+    "passed": true,
+    "seconds": 39.23
+  },
+  "runs": {
+    "layout-final-realistic": {
+      "checks": 37,
+      "screenshots": 10,
+      "errors": 0,
+      "networkErrors": 0,
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    "accepted-classic": {
+      "checks": 38,
+      "screenshots": 11,
+      "errors": 0,
+      "networkErrors": 0,
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      }
+    }
+  },
+  "existingPackageEntriesRetained": true,
+  "concurrentScriptsPreserved": [
+    "check:creeper",
+    "check:creeper-integration",
+    "verify:creeper-import"
+  ]
+}

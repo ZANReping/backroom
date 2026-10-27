@@ -1,0 +1,142 @@
+{
+ "results": [
+  {
+   "name": "BRC 声望 = 60：对话里没有「施工许可」选项",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "BRC 声望 = 61：出现选项，点击后获得 1 张施工许可，选项消失（只发一张）",
+   "ok": true,
+   "detail": "{\"has61\": true, \"count\": 1, \"optionGone\": true}"
+  },
+  {
+   "name": "重复申请被拒（每局只发一张）",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "施工许可是关键物品（丢弃无效）",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "使用许可：生成施工点（门 + 路障），许可进入冷却",
+   "ok": true,
+   "detail": "{\"props\": 8, \"armed\": false, \"msg\": \"你把施工许可按在墙上。纸面上的钢印亮了一下——荧光灯的嗡鸣开始变小。 | 附近的墙上出现了一扇施工场所的门。许可需要「切换层级刷新」后才能再次使用。\"}"
+  },
+  {
+   "name": "改造完成：玩家处嗡鸣压到 0（改造强度 1），墙上出现施工门出口",
+   "ok": true,
+   "detail": "{\"before\": 0, \"after\": 1, \"doors\": 1}"
+  },
+  {
+   "name": "冷却：未切换层级前再次使用被拒（含原因提示）",
+   "ok": true,
+   "detail": "远处似乎有熟悉的声音在呼唤你的名字。你记不起那是谁。 | 许可上的登记章还没干——每次使用后需要「切换层级刷新」：离开 Level 0 再回来，才能再次使用。"
+  },
+  {
+   "name": "读档后施工点、施工门出口与路障碰撞仍在（许可仍在冷却）",
+   "ok": true,
+   "detail": "{\"sites\": 1, \"exits\": 1, \"props\": 8, \"armed\": false}"
+  },
+  {
+   "name": "交互施工门进入 Level 0.2（提示「进入 施工场所的门」）",
+   "ok": true,
+   "detail": "{\"kind\": \"exit\", \"label\": \"进入 施工场所的门\"}"
+  },
+  {
+   "name": "任务目标「发现『重塑的混乱』」完成",
+   "ok": true,
+   "detail": "{\"id\": \"l0_beyond\", \"revealed\": true, \"done\": false, \"rewarded\": false, \"obj\": [{\"id\": \"find_zenith_station\", \"done\": false, \"visible\": true, \"progress\": null}, {\"id\": \"find_remade_chaos\", \"done\": true, \"visible\": true, \"progress\": null}, {\"id\": \"find_ice_room\", \"done\": false, \"visible\": true, \"progress\": null}]}"
+  },
+  {
+   "name": "HUD 层级号显示「LEVEL 0.2」（不是内部 id 902）",
+   "ok": true,
+   "detail": "LEVEL 0.2"
+  },
+  {
+   "name": "L0.2 多角度截图",
+   "ok": true,
+   "detail": "6"
+  },
+  {
+   "name": "L0.2 无限布局：离出生点约 400 m 处仍生成隔墙",
+   "ok": true,
+   "detail": "{\"near\": 35, \"inf\": true, \"lvl\": 902, \"x\": 335.59700000000004, \"y\": -240}"
+  },
+  {
+   "name": "离开 Level 0 后许可已刷新（armed=true）",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "返回 L0 落在施工门旁（≤2.5 m）且门仍在",
+   "ok": true,
+   "detail": "dist=1.10"
+  },
+  {
+   "name": "切换层级后可再次使用许可",
+   "ok": true,
+   "detail": "None"
+  },
+  {
+   "name": "无运行时页面错误",
+   "ok": true,
+   "detail": "[]"
+  }
+ ],
+ "errors": [],
+ "log": [
+  "headless launch: True",
+  "game ready True",
+  "CHECK PASS BRC 声望 = 60：对话里没有「施工许可」选项 ",
+  "SHOT a1-dialog-rep60",
+  "paused? False",
+  "SHOT a2-dialog-rep61",
+  "CHECK PASS BRC 声望 = 61：出现选项，点击后获得 1 张施工许可，选项消失（只发一张） {\"has61\": true, \"count\": 1, \"optionGone\": true}",
+  "SHOT a3-dialog-after",
+  "paused? False",
+  "CHECK PASS 重复申请被拒（每局只发一张） ",
+  "CHECK PASS 施工许可是关键物品（丢弃无效） ",
+  "wall {\"mx\": 17.387, \"my\": 1.6270000000000004, \"nx\": 0, \"ny\": 1, \"sx\": 17.387, \"sy\": 5.027, \"dist\": 10.641639817246212, \"len\": 8}",
+  "SHOT b1-l0-before",
+  "SHOT b2-l0-before-diag",
+  "use permit: 你把施工许可按在墙上。纸面上的钢印亮了一下——荧光灯的嗡鸣开始变小。 | 附近的墙上出现了一扇施工场所的门。许可需要「切换层级刷新」后才能再次使用。",
+  "CHECK PASS 使用许可：生成施工点（门 + 路障），许可进入冷却 {\"props\": 8, \"armed\": false, \"msg\": \"你把施工许可按在墙上。纸面上的钢印亮了一下——荧光灯的嗡鸣开始变小。 | 附近的墙上出现了一扇施工场所的门。许可需要「切换层级刷新」后才能再次使用。\"}",
+  "SHOT b3-l0-transforming",
+  "CHECK PASS 改造完成：玩家处嗡鸣压到 0（改造强度 1），墙上出现施工门出口 {\"before\": 0, \"after\": 1, \"doors\": 1}",
+  "SHOT b4-l0-after",
+  "SHOT b5-l0-after-diag",
+  "SHOT b6-door-close",
+  "SHOT b7-zone-edge",
+  "CHECK PASS 冷却：未切换层级前再次使用被拒（含原因提示） 远处似乎有熟悉的声音在呼唤你的名字。你记不起那是谁。 | 许可上的登记章还没干——每次使用后需要「切换层级刷新」：离开 Level 0 再回来，才能再次使用。",
+  "SHOT b8-cooldown-toast",
+  "CHECK PASS 读档后施工点、施工门出口与路障碰撞仍在（许可仍在冷却） {\"sites\": 1, \"exits\": 1, \"props\": 8, \"armed\": false}",
+  "SHOT c1-door-after-load",
+  "interact target {\"kind\": \"exit\", \"label\": \"进入 施工场所的门\"}",
+  "SHOT c2-door-prompt",
+  "CHECK PASS 交互施工门进入 Level 0.2（提示「进入 施工场所的门」） {\"kind\": \"exit\", \"label\": \"进入 施工场所的门\"}",
+  "CHECK PASS 任务目标「发现『重塑的混乱』」完成 {\"id\": \"l0_beyond\", \"revealed\": true, \"done\": false, \"rewarded\": false, \"obj\": [{\"id\": \"find_zenith_station\", \"done\": false, \"visible\": true, \"progress\": null}, {\"id\": \"find_remade_chaos\", \"done\": true, \"visible\": true, \"progress\": null}, {\"id\": \"find_ice_room\", \"done\": false, \"visible\": true, \"progress\": null}]}",
+  "SHOT d0-l02-arrival",
+  "CHECK PASS HUD 层级号显示「LEVEL 0.2」（不是内部 id 902） LEVEL 0.2",
+  "wallEnd {\"cx\": 14, \"cy\": 27.05, \"tx\": 6, \"ty\": 29.2, \"dist\": 10.842163068318056}",
+  "SHOT e1-l02-wallend",
+  "wallEnd {\"cx\": 26.87, \"cy\": 40.08, \"tx\": 24.720000000000002, \"ty\": 32.08, \"dist\": 5.220900305502872}",
+  "SHOT e2-l02-wallend",
+  "wallEnd {\"cx\": 8.950000000000001, \"cy\": 60, \"tx\": 6.800000000000002, \"ty\": 68, \"dist\": 5.920540515865087}",
+  "SHOT e3-l02-wallend",
+  "SHOT e4-l02-office",
+  "SHOT e5-l02-ceiling",
+  "SHOT e6-l02-rail-close",
+  "CHECK PASS L0.2 多角度截图 6",
+  "CHECK PASS L0.2 无限布局：离出生点约 400 m 处仍生成隔墙 {\"near\": 35, \"inf\": true, \"lvl\": 902, \"x\": 335.59700000000004, \"y\": -240}",
+  "SHOT e7-l02-far",
+  "CHECK PASS 离开 Level 0 后许可已刷新（armed=true） ",
+  "CHECK PASS 返回 L0 落在施工门旁（≤2.5 m）且门仍在 dist=1.10",
+  "CHECK PASS 切换层级后可再次使用许可 None",
+  "SHOT f1-back-at-door",
+  "CHECK PASS 无运行时页面错误 []",
+  "console errors 0 []"
+ ]
+}

@@ -1,5 +1,6 @@
 // 物品定义（通用池 + 各层独特物品）
 import { CURABITUR_ITEMS } from './curabiturItems' // [L8-curabitur]
+import { levelTapeItemDefs } from './levelTapes' // 层级专属磁带（tape_l0…；外观表 levelTapes.json）
 export type ItemRarity = 'common' | 'uncommon' | 'rare' | 'epic'
 export const ITEM_RARITY_LABEL: Record<ItemRarity, string> = { common: '常见', uncommon: '少见', rare: '稀有', epic: '珍稀' }
 export const ITEM_RARITY_COLOR: Record<ItemRarity, string> = { common: 'var(--text-dim)', uncommon: '#8fd98f', rare: '#6fa8ff', epic: 'var(--amber)' }
@@ -36,6 +37,8 @@ export interface ItemDef {
   /** 可投掷：手持时左键掷出（explode=范围伤害 shock=电击+眩晕 noise=声响引怪 lure=引路者诱饵） */
   throw?: 'explode' | 'shock' | 'noise' | 'lure' | 'light'
   glyph: string // 绘制用
+  /** 关键收藏物（层级专属磁带等）：不可丢弃、不可寄存/交易。 */
+  keyItem?: boolean
 }
 
 const BOTTLED_DRINK_ITEMS = new Set(['almond', 'liquidpain', 'coffee', 'citywater', 'cashew', 'luckymilk', 'bottledwater'])
@@ -122,12 +125,17 @@ export const ITEMS: Record<string, ItemDef> = {
   // Level 6「Lights Out」——本层没有任何补给记载，只有前人留下的东西
   chalkstub: { type: 'chalkstub', name: '粉笔头', desc: '前人在墙上刻记号时留下的。黑暗中你只能靠手摸——在墙上留下记号，至少知道自己有没有走过。（手持右键：在面前的墙上画一道白色记号）', stack: 3, unique: 6, use: 'none', rarity: 'common', glyph: 'chalk' },
   megfolder: { type: 'megfolder', name: 'M.E.G. 文件夹', desc: '盖着 M.E.G. 徽记的牛皮纸文件夹。内含剪辑（no-clip）说明、常见实体图鉴与重要层级指南。约 36% 的新流浪者靠它离开了 Level 0。', stack: 2, use: 'sanity', value: 20, rarity: 'uncommon', glyph: 'folder' },
+  // 后室装修公司施工许可（engine/remodel.ts）：声望 > 60 时向其员工申请；只发一张；在 Level 0 使用后打开通往 Level 0.2 的施工门
+  brc_permit: { type: 'brc_permit', name: '施工许可', desc: '后室装修公司签发的施工许可单，蓝色复写纸，右下角压着一枚金色钢印。在 Level 0 任意处使用：周围会被「重塑」，墙上出现一扇施工场所的门。每次使用后需切换层级刷新（离开 Level 0 再回来）才能再次使用。', stack: 1, use: 'none', rarity: 'rare', anomalous: true, keyItem: true, glyph: 'folder' },
+  // Level 0.2 崩塌粉尘（engine/l02Collapse.ts）：头部装备时粉尘伤害 ×0.3
+  dustmask: { type: 'dustmask', name: '防尘口罩', desc: '一只折叠式防尘口罩，鼻夹上印着「后室装修公司 · 施工专用」。装在【头部】：在崩塌扬起的石膏粉尘里呼吸会轻松很多（粉尘伤害大幅降低）。', stack: 1, equip: 'head', passive: '粉尘伤害 -70%', rarity: 'uncommon', glyph: 'mask' },
 
   // Level 7「Thalassophobia」
   rope: { type: 'rope', name: '尼龙绳', desc: '一卷结实的尼龙绳。Wikidot 明确建议进入 Level 7 前携带绳索或梯子——否则掉进水里就再也爬不回入口房间。', stack: 1, unique: 7, equip: 'pocket', passive: '可攀回高处', rarity: 'uncommon', glyph: 'rope' },
   divemask: { type: 'divemask', name: '潜水面罩', desc: '海面上方的空气有种未知性质，能让人屏息约三十分钟。有了它，还能更久一点。', stack: 1, unique: 7, equip: 'head', passive: '延长屏息', rarity: 'uncommon', glyph: 'mask' },
   thingmeat: { type: 'thingmeat', name: '彼物之肉', desc: '油腻、富脂、黏滑，强烈的硫磺味。只能拿刀从 Level 7 那东西身上割下来。档案强调：必须生食——加热会唤醒里面休眠的寄生虫。吃下后口中的硫磺味 10 分钟不散，会把附近的东西引过来。', stack: 2, unique: 7, use: 'eat', value: 55, anomalous: true, rarity: 'rare', glyph: 'meat' },
   ashpile: { type: 'ashpile', name: '一捧细灰', desc: 'Level 9 街面上的一小堆灰色粉尘，细得能从指缝里漏下去。观察者的光束照中过什么东西之后，就会留下这样一堆。灰里有时还埋着那人身上的东西。', stack: 5, unique: 0, rarity: 'common', glyph: 'scrap' },
+  creepmeat: { type: 'creepmeat', name: '长白毛的尸鼠肉', desc: '从爬菌感染体身上掉下来的一条肉，切面上长着一层细细的白绒，闻起来像潮湿的地下室。能吃，但没人会劝你吃。', stack: 3, use: 'eat', value: 12, anomalous: true, rarity: 'common', glyph: 'meat' }, // [creeper] 吃下孢子负荷 +40
   ratmeat: { type: 'ratmeat', name: '尸鼠肉', desc: '从尸鼠身上割下的一条瘦肉，带着一股霉味和飞蛾翅粉的苦味。档案说它「在某种程度上」能当食物——生吃能顶饿，但有可能让你病一场。', stack: 3, use: 'eat', value: 18, anomalous: true, rarity: 'common', glyph: 'meat' },
   oddbook: { type: 'oddbook', name: '来源不明的书', desc: '入口房间书柜上的一本旧书。没有作者，没有出版信息。翻开，是一个在 Level 7 待过的人留下的记录。', stack: 1, unique: 7, use: 'doc', anomalous: true, rarity: 'rare', glyph: 'book' },
 
@@ -217,6 +225,7 @@ export const ITEMS: Record<string, ItemDef> = {
   // 来料加工（爱子经手）：玩家自带食材，餐馆代做
   grilledsteak: { type: 'grilledsteak', name: '烤兽肉排', desc: '来料加工：彼物之肉烤得外焦里嫩。档案警告生食才安全——但吃过这口的人都不打算回头。', stack: 2, use: 'eat', value: 85, rarity: 'uncommon', glyph: 'meat' },
   jambread: { type: 'jambread', name: '果酱面包', desc: '来料加工：干果与干菜熬成果酱，厚厚地抹在新烤的面包上。', stack: 2, use: 'eat', value: 45, rarity: 'common', glyph: 'bread' },
+  ...levelTapeItemDefs(), // 层级专属磁带（关键收藏物；不进掉落池）
 }
 
 // 通用物品掉落权重
@@ -234,6 +243,11 @@ export const UNIVERSAL_ITEMS: { type: string; w: number }[] = [
   { type: 'royalration', w: 0.3 }, // 皇家口粮：极其极其稀有
   { type: 'liquidpain', w: 0.25 }, // 液态痛苦：极其稀有，任意层级任何时间都可能找到
 ]
+
+/** 关键收藏物：不可丢弃、不可寄存/交易。 */
+export function isKeyItem(t: string | undefined | null): boolean {
+  return !!t && !!ITEMS[t]?.keyItem
+}
 
 export function itemName(t: string): string {
   return ITEMS[t]?.name ?? t

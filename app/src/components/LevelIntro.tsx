@@ -6,14 +6,14 @@ import LevelTitleOrnament from './LevelTitleOrnament'
 import './LevelIntro.css'
 import './LevelTitleTheme.css'
 
-interface Props { level: number; levelId?: number; name: string; flavor: string; seed: number; ready: boolean; onPhaseChange?: (phase: 'presenting' | 'holding' | 'exiting') => void; onDone: () => void }
+interface Props { level: number; levelId?: number; name: string; subtitle?: string; flavor: string; seed: number; ready: boolean; onPhaseChange?: (phase: 'presenting' | 'holding' | 'exiting') => void; onDone: () => void }
 const PRESENT_MIN = 2400, HOLD_AFTER_LAST = 300, EXIT_MS = 240
 
 function AnimatedText({ text, className, delay = 0, step = 40, style }: { text: string; className: string; delay?: number; step?: number; style?: CSSProperties }) {
   return <div className={className} style={style}>{[...text].map((char, i) => <span key={`${char}-${i}`} className="level-intro__char" style={{ animationDelay: `${delay + i * step}ms` }}>{char === ' ' ? '\u00a0' : char}</span>)}</div>
 }
 
-export default function LevelIntro({ level, levelId, name, flavor, seed, ready, onPhaseChange, onDone }: Props) {
+export default function LevelIntro({ level, levelId, name, subtitle, flavor, seed, ready, onPhaseChange, onDone }: Props) {
   const [phase, setPhase] = useState<'presenting' | 'holding' | 'exiting'>('presenting')
   const doneRef = useRef(onDone), phaseRef = useRef(onPhaseChange)
   const readyRef = useRef(ready), completedRef = useRef(false)
@@ -64,6 +64,7 @@ export default function LevelIntro({ level, levelId, name, flavor, seed, ready, 
     <LevelTitleOrnament theme={theme} />
     <AnimatedText text={line1} className="level-intro__level level-title__eyebrow font-mono2 text-[20px]" style={{ color: 'var(--title-accent, var(--exit))', letterSpacing: '0.3em' }} />
     <AnimatedText text={line2} className="level-intro__name level-title__name font-title mt-3 text-[40px]" delay={line2Start} style={{ color: 'var(--title-ink, var(--text))' }} />
+    {subtitle && <div className="level-title__sub mt-2" data-level-subtitle>{subtitle}</div>}
     <AnimatedText text={flavor} className="level-intro__flavor mt-3 text-[13px]" delay={flavorStart} step={30} style={{ color: 'var(--title-muted, var(--text-dim))' }} />
     <div className="font-mono2 mt-6 text-[10px]" style={{ color: 'var(--title-muted, var(--text-dim))' }}>SEED: {seedString(seed)}</div>
     <div className="level-intro__status text-[11px]" aria-live="polite">{ready ? '附近场景已就绪' : '正在准备附近场景…'}</div>

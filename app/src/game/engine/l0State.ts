@@ -8,6 +8,7 @@ import {genL0Architecture,l0At,l0Inside,l0Meeting,l0Hash,type L0SpaceState,type 
 import {type GameMap} from '../world/mapgen'
 import {look} from '../renderer/shared'
 import {audio} from '../core/audio'
+import {remodelHumDuck} from './remodel'
 import type {MpEvent} from '../net/protocol'
 export interface L0WorldSave {version:1;generationVersion:1|2|3;seed:number;space:L0SpaceState;chunks:[string,ChunkDynState][];taken:number[];explored:[string,number[]][];loops:number}
 export interface L0Pending {key:string;layout:L0Layout;revision:number;ready?:boolean;redProgress?:L0RedProgressMap;affected?:string[];closing?:L0RedGate[]}
@@ -170,7 +171,7 @@ export function tickL0(eng:Engine,dt:number){
  const state=inf.l0,a=l0At(m,eng.player.x,eng.player.y);eng.l0Blur=Math.max(0,eng.l0Blur-dt*.12)
  eng.l0Meeting=l0Meeting(m,eng.player.x,eng.player.y)
  const e=l0Sample(m,eng.player.x,eng.player.y)
- audio.setL0Ambience(eng.l0Meeting,(e?.blackout??0)>.5,(e?.red??0)>.5)
+ audio.setL0Ambience(eng.l0Meeting,(e?.blackout??0)>.5,(e?.red??0)>.5,remodelHumDuck(eng))
  if(inf.l0TestField&&l0FieldContains(inf.l0TestField,eng.player.x+inf.ox,eng.player.y+inf.oy))return
  if((e?.red??0)>.1){const key=e?.id??`${a?.cx},${a?.cy}`;if(!eng.redAnnounced.has(key)){eng.redAnnounced.add(key);eng.msg('墙纸开始泛红，地毯变得黏脚。围墙上还有许多通向黄室的开口。','lore')}}
  tickRedClosures(eng)

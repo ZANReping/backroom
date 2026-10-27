@@ -8,6 +8,7 @@ import { l0Sample } from '../world/l0Architecture'
 import { stableAt } from './career'
 import { dullerControlsPlayer } from './dullerAI'
 import { clumpControlsPlayer } from './clumpAI'
+import { houndControlsPlayer } from './houndAI'
 import { nwControlsPlayer } from './watchAI'
 import { armsControlsPlayer } from './armsAI'
 import { windowControlsPlayer, windowPull, windowSpeedMul } from './windowAI'
@@ -17,7 +18,8 @@ import { l1BuildingStyleAt } from '../world/l1Building'
 // 自 engine.ts step 内联段拆分，逻辑逐语句搬运；updateMovement 返回 null 表示本帧已死亡/终止（原 step 的 return）。
 import { bandOfZ, bandOfPlayerZ, groundHeightAt, structStandTopAt, ceilingHeightAt, l11HeadCeilingAt, l11MapWater, floorHeight, liquidSurfaceH, POOL_DEPTH, FLOOR_H } from '../world/mapgen'
 import { L11_WATER_SURFACE } from '../world/l11Hydrology'
-import { integrateMove, resolvePlayerPenetration, FIXED_STEP } from '../core/player'
+import { integrateMove, integrateVelocityMove, resolvePlayerPenetration, FIXED_STEP } from '../core/player'
+import { MV, directionLimit, strideFor, resetMoveVelocity } from './moveTuning' // [movefeel]
 import { stepSwimVelocity, absorbBlocked, tryClimbOut, stepClimbOut, stepBreathFx, o2Rate, stepCurrent, stepPressure, wallPull, SWIM } from './swim'
 import { WALL_H } from '../renderer/shared'
 import { levelDefOf, NORMAL_LEVELS } from '../levels'
@@ -41,6 +43,19 @@ type DiffMult = { dmg: number; drain: number }
 
 /** 移动主段（原 step「---- 移动 ----」至离水判定一整段；返回本帧输入向量模长 mag，null=中止本帧） */
 export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock: boolean): number | null {
+  // [movefeel] 传送 / 脚本挪位 / 换图检测：上帧末世界坐标与本帧起点相差过大 → 清空水平惯性
+  const mv = eng.mv, m0 = eng.map
+  if (m0) {
+    const wx = eng.player.x + (m0.inf?.ox ?? 0), wy = eng.player.y + (m0.inf?.oy ?? 0)
+    if (mv.lmap !== m0 || !(Math.hypot(wx - mv.lx, wy - mv.ly, eng.player.z - mv.lz) <= MV.TELEPORT_RESET)) resetMoveVelocity(mv)
+  }
+  const r = updateMovementInner(eng, dt, dm, introLock)
+  const m1 = eng.map
+  if (m1) { mv.lx = eng.player.x + (m1.inf?.ox ?? 0); mv.ly = eng.player.y + (m1.inf?.oy ?? 0); mv.lz = eng.player.z; mv.lmap = m1 }
+  return r
+}
+
+function updateMovementInner(eng: Engine, dt: number, dm: DiffMult, introLock: boolean): number | null {
   if (eng.levelDef.id === 7) stepL7Events(eng, dt)
   stepThingWorld(eng, dt) // [thing] 口臭气味 + 读焦油字
   audio.setDeepPressure(eng.levelDef.id === 7 && eng.submerged ? Math.min(1, Math.max(0, (-eng.player.z - 30) / 170)) : 0, dt)
@@ -50,9 +65,10 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   stepPressure(eng, eng.swim, dt) // [swim 阶段 3] 水压提示 + 减压病
   if (eng.over) return 0
   // A scripted wall crossing owns position temporarily; gravity must not snap onto a wall/upper floor.
-  if(bursterControlsPlayer(eng)||wranglerControlsPlayer(eng)||dullerControlsPlayer(eng)||clumpControlsPlayer(eng)||nwControlsPlayer(eng)||armsControlsPlayer(eng,dt)||windowControlsPlayer(eng,dt)){eng.seating=null;return 0}
+  if(bursterControlsPlayer(eng)||wranglerControlsPlayer(eng)||dullerControlsPlayer(eng)||clumpControlsPlayer(eng)||houndControlsPlayer(eng)||nwControlsPlayer(eng)||armsControlsPlayer(eng,dt)||windowControlsPlayer(eng,dt)){eng.seating=null;resetMoveVelocity(eng.mv);return 0}
   if (eng.devEnabled && eng.dev.fly) {
     eng.seating = null
+    resetMoveVelocity(eng.mv) // [movefeel] dev 飞行不带地面惯性
     eng.swim.out = null; eng.swim.vx = eng.swim.vy = eng.swim.vz = eng.swim.cx = eng.swim.cy = 0
     const mag = Math.hypot(eng.input.mx,eng.input.my), divisor = Math.max(1,mag)
     const speed = (eng.input.sprint ? 6 : 3.4)*(eng.dev.speed ? 1.8 : 1)
@@ -114,6 +130,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   syncLiquid()
   // v58：L7 门廊舱门异常重力拖拽演出——脚本化把玩家加速拖向落海点（期间锁定移动与垂直物理）
   if (eng.porchDrop) {
+    resetMoveVelocity(eng.mv) // [movefeel]
     const gd = eng.porchDrop
     gd.t += dt
     const k = Math.min(1, gd.t / 0.62)
@@ -146,14 +163,31 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   // v57o：L7 深水允许快速游泳（消耗体力，噪音更大——会吸引 tiny）
   // [swim] 所有深水都能冲刺划水（以前只有 L7）；水里下蹲=下潜，不妨碍冲刺
   const swimming = lq === 1
-  const wantSprint = eng.input.sprint && (!p.crouching || swimming) && mag > 0.1 && p.stamina > 1
-  if (eng.input.sprint && mag > 0.1 && p.stamina <= 1) {
+  // [movefeel] 地面冲刺：只在前进 ±50° 内生效；体力耗尽进入喘息（WINDED_T 秒且体力 ≥ WINDED_RESUME 才能再冲），
+  // 不再在体力 1 附近冲刺 / 走路来回闪。游泳冲刺仍按原规则（体力 > 1）。
+  const mvS = eng.mv
+  if (mvS.winded) { mvS.windedT -= dt; if (mvS.windedT <= 0 && p.stamina >= MV.WINDED_RESUME) mvS.winded = false }
+  const faceX = Math.cos(p.facing), faceY = Math.sin(p.facing)
+  const inF = mag > 1e-6 ? (eng.input.mx * faceX + eng.input.my * faceY) / mag : 1
+  const inS = mag > 1e-6 ? (eng.input.my * faceX - eng.input.mx * faceY) / mag : 0
+  const inCone = inF >= Math.cos(MV.SPRINT_CONE_DEG * Math.PI / 180) - 1e-6
+  const exhausted = swimming ? p.stamina <= 1 : mvS.winded || p.stamina <= 0
+  const wantSprint = eng.input.sprint && (!p.crouching || swimming) && mag > 0.1 && !exhausted && (swimming || inCone)
+  if (eng.input.sprint && mag > 0.1 && exhausted) {
     // 体力耗尽提示（节流 4 秒）
-    if (eng.statusMsgT.stamina <= 0) { eng.msg('体力耗尽——喘口气再游。', 'system'); eng.statusMsgT.stamina = 4 }
+    if (eng.statusMsgT.stamina <= 0) { eng.msg(swimming ? '体力耗尽——喘口气再游。' : '体力耗尽——喘口气。', 'system'); eng.statusMsgT.stamina = 4 }
   }
+  // 冲刺渐入 / 渐出（地面）：3.4 → 6.0 用 SPRINT_RAMP 秒
+  mvS.sprintK = swimming ? 0 : Math.max(0, Math.min(1, mvS.sprintK + (wantSprint ? 1 : -1) * dt / MV.SPRINT_RAMP))
   // [swim] 游泳冲刺的体力按划水次数扣（swim.ts），不再持续扣；水下体力恢复变慢，水面踩水正常恢复
-  if (wantSprint) { speed = 6.0; if (!swimming) p.stamina = Math.max(0, p.stamina - 22 * (eng.manmadeT > 0 ? 2 : 1) * dt) } // v51：人制品效应中体力消耗 ×2
-  else p.stamina = Math.min(100, p.stamina + (p.coffeeT > 0 ? 24 : 12) * (eng.inOutpost ? 2 : 1) * (eng.manmadeT > 0 ? 0.5 : 1) * (p.infection >= 100 ? 0.9 : 1) * (swimming && eng.submerged ? SWIM.SUB_STAMINA_REGEN : 1) * (eng.swim.bendsT > 0 ? SWIM.BENDS_STAMINA : 1) * dt) // v51：人制品效应中体力恢复 ×0.5；v55：疫疾一阶起 ×0.9
+  if (wantSprint) {
+    speed = swimming ? MV.RUN : MV.WALK + (MV.RUN - MV.WALK) * mvS.sprintK
+    if (!swimming) {
+      p.stamina = Math.max(0, p.stamina - MV.STAMINA_DRAIN * (eng.manmadeT > 0 ? 2 : 1) * dt) // v51：人制品效应中体力消耗 ×2
+      if (p.stamina <= 0) { mvS.winded = true; mvS.windedT = MV.WINDED_T }
+    }
+  } else if (!swimming && mvS.sprintK > 0) speed = MV.WALK + (MV.RUN - MV.WALK) * mvS.sprintK
+  if (!wantSprint) p.stamina = Math.min(100, p.stamina + (p.coffeeT > 0 ? 24 : 12) * (eng.inOutpost ? 2 : 1) * (eng.manmadeT > 0 ? 0.5 : 1) * (p.infection >= 100 ? 0.9 : 1) * (swimming && eng.submerged ? SWIM.SUB_STAMINA_REGEN : 1) * (eng.swim.bendsT > 0 ? SWIM.BENDS_STAMINA : 1) * dt) // v51：人制品效应中体力恢复 ×0.5；v55：疫疾一阶起 ×0.9
   if (p.crouching && !swimming) speed *= 0.5 // 蹲伏减速（L7 潜泳由下潜逻辑负责，不再额外砍半）
     const carpet=l0Sample(m,p.x,p.y)
     speed*=(1-.10*(carpet?.arch??0))*(1-.40*(carpet?.red??0))
@@ -232,13 +266,14 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     }
   }
   eng.statusMsgT.battery -= dt
-  if (updateSitting(eng, dt)) return 0
+  if (updateSitting(eng, dt)) { resetMoveVelocity(eng.mv); return 0 }
   // v13：电梯乘降 / 梯子攀爬进行中：锁定水平移动（垂直由对应逻辑驱动）
   // v51：脚滑漂移量足够时，即使松开方向键也会继续滑动
   l7CliffClimb = false
   // [swim] 撑上岸演出进行中：锁定移动与垂直物理
   const sw = eng.swim
   if (sw.out) {
+    resetMoveVelocity(eng.mv) // [movefeel]
     if (stepClimbOut(eng, sw, dt)) eng.msg('你撑着边缘爬出了水。', 'system')
     return mag
   }
@@ -252,7 +287,16 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   const swimH = swimNow ? Math.hypot(sw.vx, sw.vy) : 0
   const slipDrift = Math.hypot(eng.slipVx, eng.slipVy)
   const wpull0 = windowPull(eng) // [window] 窗户的诱引：站着不动也会被一点点拽过去（默念时为 0）
-  if ((mag > 0.1 || (eng.slipperyT > 0 && slipDrift > 0.05) || swimH > 0.02 || Math.hypot(wpull0.x, wpull0.y) > 0.01) && !eng.ride && !eng.climb && !introLock) {
+  // [movefeel] 游泳 / 电梯 / 梯子 / 开场锁定：不保留地面惯性（游泳有自己的速度模型）
+  if (swimNow || eng.ride || eng.climb || introLock) resetMoveVelocity(mvS)
+  // [movefeel] 目标速度 = 输入 × 速度（含全部原乘子）× 方向限速 × 落地减速
+  const dirK = swimming ? 1 : directionLimit(inF, inS)
+  if (mvS.landT > 0) mvS.landT = Math.max(0, mvS.landT - dt)
+  const landMul = mvS.landT > 0 && mvS.landDur > 0 ? 1 - (1 - MV.LAND_SPEED_MUL) * (mvS.landT / mvS.landDur) : 1
+  const coasting = !swimNow && Math.hypot(mvS.vx, mvS.vy) > MV.STOP_EPS
+  if (!swimNow && !coasting && mag <= 0.1) { mvS.vx = 0; mvS.vy = 0 }
+  let mvMoved = false
+  if ((mag > 0.1 || coasting || (eng.slipperyT > 0 && slipDrift > 0.05) || swimH > 0.02 || Math.hypot(wpull0.x, wpull0.y) > 0.01) && !eng.ride && !eng.climb && !introLock) {
     // 固定子步积分：dt 先入累加器，按 FIXED_STEP 切分子步逐次「移动→解碰撞」。
     // 高帧率不会积分抖动，低帧率不会大步长穿墙弹回；脚步声/噪音按实际位移计。
     const scale = mag > 0.1 ? Math.min(mag, 1) / mag : 0
@@ -272,8 +316,28 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     const dirY = swimNow ? (swimH > 1e-6 ? sw.vy / swimH : 0) : eng.input.my * scale + eng.slipVy + wpull.y
     const moveSpeed = swimNow ? swimH : speed
     const metric=eng.levelDef.id===1&&m.inf&&!eng.dev.noclip&&!stableAt(eng,p.x,p.y)?l1DistanceScale(m.inf.seed,p.x+m.inf.ox,p.y+m.inf.oy):1
+    mvMoved = true
     const acc0 = eng.moveIt.acc
-    const moved = integrateMove(m, p, dirX, dirY, moveSpeed*metric, dt, eng.moveIt, { noclip: eng.dev.noclip, z: eng.onStairs ? 0 : p.z, crouch: p.crouching, band: eng.onStairs ? 0 : band })
+    const moveOpts = { noclip: eng.dev.noclip, z: eng.onStairs ? 0 : p.z, crouch: p.crouching, band: eng.onStairs ? 0 : band }
+    let moved
+    if (swimNow) moved = integrateMove(m, p, dirX, dirY, moveSpeed*metric, dt, eng.moveIt, moveOpts)
+    else {
+      // [movefeel] 地面：速度趋近目标（加 / 减速度、反向、空中、湿地打滑），撞墙扣法向速度、沿墙 / 绕角滑动
+      const tk = (mag > 0.1 ? scale : 0) * speed * dirK * landMul
+      const air = mvS.jumped || mvS.airT > 0.06
+      const surf = wet && lq === 0 ? MV.WET_ACCEL : lq !== 0 ? MV.SHALLOW_ACCEL : 1
+      const v0x = mvS.vx, v0y = mvS.vy
+      const res = integrateVelocityMove(m, p, mvS, {
+        tx: eng.input.mx * tk, ty: eng.input.my * tk,
+        accel: air ? MV.AIR_ACCEL : MV.ACCEL * surf, decel: air ? MV.AIR_ACCEL : MV.DECEL * surf,
+        driftX: (eng.slipVx + wpull.x) * speed, driftY: (eng.slipVy + wpull.y) * speed, scale: metric,
+      }, dt, eng.moveIt, moveOpts)
+      moved = res.moved
+      if (dt > 1e-6) {
+        const aF = ((mvS.vx - v0x) * faceX + (mvS.vy - v0y) * faceY) / dt
+        mvS.accF += (aF - mvS.accF) * Math.min(1, dt * 10)
+      }
+    }
     const movedDist = Math.hypot(moved.x, moved.y)/metric
     if (swimNow && !eng.dev.noclip) {
       // 撑上岸：朝意图方向（没有水平速度时用输入方向）
@@ -317,10 +381,24 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     // 移动中（尤其侧移/后退）被覆写成移动方向，导致 inView 视锥错位、交互提示一会有一会无
     eng.stepAcc += movedDist
     p.steps += movedDist
+    // [movefeel] 实测水平速度（镜头摇晃幅度 / 步长）+ 落脚相位：整数步处播放脚步声（左右交替声像），镜头同相位下沉
+    const g0 = eng.levelDef.gen
+    if (dt > 1e-6) mvS.speed += (movedDist / dt - mvS.speed) * Math.min(1, dt * 12)
+    if (!swimNow && mvS.airT <= 0) {
+      const prevStride = mvS.stride
+      mvS.stride += movedDist / strideFor(mvS.speed, p.crouching)
+      if (Math.floor(mvS.stride) > Math.floor(prevStride)) {
+        const pan = (mvS.foot ? 1 : -1) * MV.STEP_PAN
+        mvS.foot ^= 1
+        const gain = p.crouching ? 0.45 : mvS.speed > (MV.WALK + MV.RUN) / 2 ? 1.2 : 1
+        if (wet&&eng.player.level===0) audio.splash(.1)
+        if (lq !== 0) audio.swim() // 浅水趟水声
+        else audio.footstep(g0 === 'garage' || g0 === 'grid' ? 'concrete' : g0 === 'pipes' ? 'metal' : 'carpet', pan, gain)
+      }
+    }
+    // 噪音事件（实体听觉）仍按原规则：每走 0.9 m 一次，半径 / 强度不变
     if (eng.stepAcc > 0.9) {
       eng.stepAcc = 0
-      const g0 = eng.levelDef.gen
-      if (wet&&eng.player.level===0) audio.splash(.1)
       if (lq === 1) {
         // [swim 阶段 3] 深水噪音分级：普通游很轻（水下 3m / 水面 5m）；冲刺划水的响动按每一下在 swim.ts 里发
         if (!wantSprint) {
@@ -329,8 +407,6 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
           eng.noiseEvent(p.x, p.y, eng.submerged ? SWIM.NOISE_SWIM_SUB : SWIM.NOISE_SWIM_SURF, false)
         }
       } else {
-        if (lq !== 0) audio.swim() // 浅水趟水声
-        else audio.footstep(g0 === 'garage' || g0 === 'grid' ? 'concrete' : g0 === 'pipes' ? 'metal' : 'carpet')
         eng.noise = Math.min(1, eng.noise + (wantSprint ? 0.5 : 0.15))
         if (wantSprint) eng.noiseEvent(p.x, p.y, 10, true)
         else eng.noiseEvent(p.x, p.y, p.crouching ? 1 : 4, false) // 蹲行近乎无声（肢团听不见）
@@ -342,6 +418,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
       if (eng.rippleT <= 0) { eng.rippleT = 0.22; eng.rippleParticles(p.x, p.y) }
     }
   }
+  if (!mvMoved) { const k = Math.min(1, dt * 12); mvS.speed -= mvS.speed * k; mvS.accF -= mvS.accF * Math.min(1, dt * 10) }
   eng.noise = Math.max(0, eng.noise - dt * 1.2)
   eng.playerNoiseT = Math.max(0, eng.playerNoiseT - dt)
 
@@ -425,7 +502,9 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   // ---- v7：垂直（跳跃/重力/高度档贴地）+ v13 深水浮沉 ----
   if (eng.ride || eng.climb || eng.onStairs) {
     // 垂直位置由电梯/梯子/可行走阶梯脚本驱动（onStairs 时由 updateStairs 绑定坡道高度）
+    mvS.airT = 0; mvS.jumped = false; mvS.jumpBuf = 0
   } else if (lq === 1) {
+    mvS.airT = 0; mvS.jumped = false; mvS.jumpBuf = 0
     // v57o 细化游泳：不按方向键时浮向水面（浮力平衡在 FLOAT_Z）；
     // 跳跃/上浮键=向上划水，下蹲键=主动下潜；非 L7 的小水池仍可下潜到池底。
     const l7Water = eng.levelDef.id === 7
@@ -505,20 +584,33 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   } else {
     // v26：地面高度 = 地形地面 与 可站立结构顶面（桌/床/箱等低矮家具）取高者
     const g = Math.max(groundHeightAt(m, p.x, p.y, gBand,p.z), structStandTopAt(m, p.x, p.y, p.z, gBand))
-    if (eng.input.jump && !introLock) {
-      eng.input.jump = false
-      // 贴地且未蹲伏才能起跳（蹲伏中无法发力）
-      if (!p.crouching && p.vz <= 0 && p.z <= g + 0.02) {
-        p.vz = 5.4 // 跳跃初速（重力 11 → 跳跃顶点 ≈1.32m，可跃上 +1.2m 高台）
-        p.z = g + 0.02
+    // [movefeel] 跳跃缓冲（JUMP_BUFFER）+ 土狼时间（COYOTE）：按早了不吞、走出边缘一瞬仍能跳
+    if (mvS.jumpBuf > 0) mvS.jumpBuf = Math.max(0, mvS.jumpBuf - dt)
+    if (eng.input.jump && !introLock) { eng.input.jump = false; mvS.jumpBuf = MV.JUMP_BUFFER }
+    if (introLock) mvS.jumpBuf = 0
+    {
+      const onGround = p.vz <= 0 && p.z <= g + 0.02
+      const coyote = !onGround && !mvS.jumped && p.vz <= 0 && mvS.airT <= MV.COYOTE
+      // 贴地（或土狼时间内）且未蹲伏才能起跳（蹲伏中无法发力）
+      if (mvS.jumpBuf > 0 && !p.crouching && (onGround || coyote)) {
+        p.vz = MV.JUMP_VZ // 跳跃初速（上升重力 11 → 跳跃顶点 ≈1.32m，可跃上 +1.2m 高台）
+        if (onGround) p.z = g + 0.02
+        mvS.jumpBuf = 0; mvS.jumped = true
         audio.footstep('concrete')
       }
     }
     if (p.z > g || p.vz > 0) {
-      // 滞空：重力积分
-      p.vz -= 11 * dt
+      // 滞空：重力积分（[movefeel] 上升 11 / 下落 15：顶点不变，落得更干脆）
+      p.vz -= (p.vz > 0 ? MV.GRAV_UP : MV.GRAV_DOWN) * dt
       p.z += p.vz * dt
       if (p.z <= g) {
+        // [movefeel] 落地按下落速度短暂减速
+        const fall = -p.vz
+        if (fall > MV.LAND_VZ_MIN) {
+          const k = Math.min(1, (fall - MV.LAND_VZ_MIN) / (MV.LAND_VZ_MAX - MV.LAND_VZ_MIN))
+          mvS.landDur = MV.LAND_T_MIN + (MV.LAND_T_MAX - MV.LAND_T_MIN) * k
+          mvS.landT = mvS.landDur
+        }
         // 落地（重着地震屏 + 脚步声）
         if (p.vz < -4) {
           camoSound(eng, p.x, p.y, 7) // [L8-camo] 跳跃落地声（只进迷彩爬行者的声音队列，不改其他实体的听觉）
@@ -532,6 +624,8 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
       p.z = g // 贴地跟随（坡道平滑上下）
       if (p.vz < 0) p.vz = 0
     }
+    if (p.z > g + 0.02 || p.vz > 0) mvS.airT += dt
+    else { mvS.airT = 0; mvS.jumped = false }
   }
   // v26：天花板碰撞——跳跃/上浮头顶不穿天花板（室外/挑高区按各自顶高；风道底 1.15m）
   if (!eng.ride && !eng.climb) {

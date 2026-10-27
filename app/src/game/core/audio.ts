@@ -48,6 +48,10 @@ export class GameAudio {
   private humBus:GainNode|null=null
   private manilaBus:GainNode|null=null
   private manilaNoteAt=0
+  // Level 0.2：空调低频风声总线 + 远处电钻/敲击定时器
+  private acBus:GainNode|null=null
+  private acNodes:AudioScheduledSourceNode[]=[]
+  private acTimer:ReturnType<typeof setTimeout>|null=null
   private manilaNote=0
   private whisperTimer = 0
   private heartTimer: ReturnType<typeof setInterval> | null = null
@@ -203,10 +207,66 @@ export class GameAudio {
     if(this.manilaBus&&this.ctx)this.manilaBus.gain.setTargetAtTime(0,this.ctx.currentTime,.4)
   }
 
-  /** Original restrained pentatonic piano; no sampled or third-party musical work. */
-  setL0Ambience(meeting:number,dark:boolean,red:boolean){
+  /** Level 0.2：空调低频风声（低通噪声 + 缓慢起伏）；远处偶尔电钻/敲击。全部程序合成。 */
+  startAirCon(){
+    this.ensure()
     const c=this.ctx;if(!c||!this.ambient)return
-    this.humBus?.gain.setTargetAtTime(dark?0:(1-meeting)*(red?.62:1),c.currentTime,.6)
+    this.stopAirCon()
+    this.acBus=c.createGain();this.acBus.gain.value=0;this.acBus.connect(this.ambient)
+    this.acBus.gain.setTargetAtTime(1,c.currentTime,1.5)
+    const n=this.noiseSrc(),lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=260;lp.Q.value=.4
+    const g=c.createGain();g.gain.value=.05;n.connect(lp).connect(g).connect(this.acBus);n.start()
+    const lfo=c.createOscillator(),lg=c.createGain();lfo.frequency.value=.07;lg.gain.value=.018;lfo.connect(lg).connect(g.gain);lfo.start()
+    const rumble=c.createOscillator(),rg=c.createGain();rumble.type='sine';rumble.frequency.value=38;rg.gain.value=.012;rumble.connect(rg).connect(this.acBus);rumble.start()
+    this.acNodes=[n,lfo,rumble]
+    const schedule=()=>{this.acTimer=setTimeout(()=>{this.constructionSfx();schedule()},9000+Math.random()*16000)}
+    schedule()
+  }
+  stopAirCon(){
+    for(const o of this.acNodes){try{o.stop()}catch{/* */}}
+    this.acNodes=[];this.acBus?.disconnect();this.acBus=null
+    if(this.acTimer){clearTimeout(this.acTimer);this.acTimer=null}
+  }
+  /** Level 0.2 崩塌音效（全程序合成）：creak=龙骨吱嘎预警、crack=隔墙开裂、rumble=地板下沉低频、tile=矿棉板落地、wall=隔墙倒地、floor=地板塌落。 */
+  collapseSfx(kind: 'creak' | 'crack' | 'rumble' | 'tile' | 'wall' | 'floor', vol = 1) {
+    const c = this.ctx, out = this.sfx ?? this.ambient
+    if (!c || !out) return
+    const t = c.currentTime, k = Math.max(0.05, Math.min(1, vol))
+    const env = (g: GainNode, peak: number, a: number, d: number) => { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak * k, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d) }
+    if (kind === 'creak') {
+      const o = c.createOscillator(), g = c.createGain(), f = c.createBiquadFilter(); o.type = 'sawtooth'; o.frequency.setValueAtTime(180 + Math.random() * 80, t); o.frequency.linearRampToValueAtTime(120 + Math.random() * 60, t + 0.7)
+      f.type = 'bandpass'; f.frequency.value = 700; f.Q.value = 6; env(g, 0.05, 0.08, 0.7); o.connect(f).connect(g).connect(out); o.start(t); o.stop(t + 0.85)
+      return
+    }
+    const n = this.noiseSrc(), lp = c.createBiquadFilter(), g = c.createGain(); lp.type = 'lowpass'
+    const spec = { crack: [2600, 0.18, 0.01, 0.35], rumble: [160, 0.16, 0.6, 1.6], tile: [1400, 0.16, 0.005, 0.28], wall: [700, 0.3, 0.01, 1.1], floor: [380, 0.34, 0.02, 1.8] }[kind]
+    lp.frequency.setValueAtTime(spec[0], t); lp.frequency.exponentialRampToValueAtTime(Math.max(60, spec[0] * 0.25), t + spec[2] + spec[3])
+    env(g, spec[1], spec[2], spec[3]); n.connect(lp).connect(g).connect(out); n.start(t); n.stop(t + spec[2] + spec[3] + 0.05)
+    if (kind === 'wall' || kind === 'floor' || kind === 'rumble') {
+      const o = c.createOscillator(), og = c.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(kind === 'rumble' ? 38 : 70, t); o.frequency.exponentialRampToValueAtTime(30, t + 1.2)
+      env(og, kind === 'rumble' ? 0.08 : 0.16, 0.02, kind === 'rumble' ? 1.6 : 1.0); o.connect(og).connect(out); o.start(t); o.stop(t + 1.8)
+    }
+  }
+  /** 远处施工声：电钻（带通噪声 + 锯齿颤音）或几下沉闷敲击。 */
+  constructionSfx(){
+    const c=this.ctx;if(!c||!this.acBus)return
+    const t=c.currentTime,pan=c.createStereoPanner();pan.pan.value=Math.random()*1.6-.8;pan.connect(this.acBus)
+    if(Math.random()<.5){
+      const dur=.8+Math.random()*1.6,n=this.noiseSrc(),bp=c.createBiquadFilter();bp.type='bandpass';bp.frequency.value=900+Math.random()*500;bp.Q.value=3
+      const saw=c.createOscillator();saw.type='sawtooth';saw.frequency.value=95+Math.random()*30;const sg=c.createGain();sg.gain.value=.006
+      const g=c.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.02,t+.08);g.gain.setValueAtTime(.02,t+dur-.1);g.gain.linearRampToValueAtTime(0,t+dur)
+      n.connect(bp).connect(g).connect(pan);saw.connect(sg).connect(g);n.start(t);saw.start(t);n.stop(t+dur+.05);saw.stop(t+dur+.05)
+    }else{
+      const hits=2+Math.floor(Math.random()*4)
+      for(let i=0;i<hits;i++){const at=t+i*(.32+Math.random()*.12),o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.setValueAtTime(140,at);o.frequency.exponentialRampToValueAtTime(55,at+.12);g.gain.setValueAtTime(.05,at);g.gain.exponentialRampToValueAtTime(.0001,at+.25);o.connect(g).connect(pan);o.start(at);o.stop(at+.3)}
+    }
+  }
+
+  /** Original restrained pentatonic piano; no sampled or third-party musical work. */
+  setL0Ambience(meeting:number,dark:boolean,red:boolean,remodel=0){
+    const c=this.ctx;if(!c||!this.ambient)return
+    // remodel：施工许可改造区内嗡鸣渐停（0..1）
+    this.humBus?.gain.setTargetAtTime(dark?0:(1-meeting)*(red?.62:1)*(1-remodel),c.currentTime,.6)
     if(this.bgmBus)this.bgmBus.gain.setTargetAtTime(.55*this.bgmVol*(1-meeting)*(dark?0:1),c.currentTime,1.2)
     if(!this.manilaBus){this.manilaBus=c.createGain();this.manilaBus.gain.value=0;this.manilaBus.connect(this.master??this.ambient)}
     this.manilaBus.gain.setTargetAtTime(meeting*.1*this.bgmVol,c.currentTime,1.2)
@@ -431,7 +491,8 @@ export class GameAudio {
   }
 
   // 脚步声（按地面类型滤波）
-  footstep(floor: 'carpet' | 'concrete' | 'metal') {
+  /** [movefeel] pan：左右脚声像（-1..1，0=居中）；gain：音量倍率（蹲行轻 / 跑步重） */
+  footstep(floor: 'carpet' | 'concrete' | 'metal', pan = 0, gain = 1) {
     if (!this.ctx || !this.sfx) return
     const n = this.noiseSrc()
     const f = this.ctx.createBiquadFilter()
@@ -439,9 +500,11 @@ export class GameAudio {
     if (floor === 'carpet') { f.type = 'lowpass'; f.frequency.value = 400 }
     else if (floor === 'concrete') { f.type = 'bandpass'; f.frequency.value = 900; f.Q.value = 2 }
     else { f.type = 'highpass'; f.frequency.value = 1800 }
-    g.gain.setValueAtTime(0.12, this.ctx.currentTime)
+    g.gain.setValueAtTime(0.12 * Math.max(0.05, gain), this.ctx.currentTime)
     g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.09)
-    n.connect(f).connect(g).connect(this.sfx)
+    const panner = pan && typeof this.ctx.createStereoPanner === 'function' ? this.ctx.createStereoPanner() : null
+    if (panner) { panner.pan.value = Math.max(-1, Math.min(1, pan)); n.connect(f).connect(g).connect(panner).connect(this.sfx) }
+    else n.connect(f).connect(g).connect(this.sfx)
     n.start(); n.stop(this.ctx.currentTime + 0.1)
   }
 

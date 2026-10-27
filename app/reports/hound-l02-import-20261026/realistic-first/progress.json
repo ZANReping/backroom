@@ -1,0 +1,450 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 12686,
+  "cdp": 12687,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:12686/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Mon, 26 Oct 2026 01:10:52 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 269,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 12686,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 4115.639252,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 1.022,
+        "sendEnd": 1.167,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 65.386,
+        "receiveHeadersEnd": 65.535
+      },
+      "responseTime": 1792977052303.275,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\hound-l02-import-20261026\\realistic-first\\qa-1792977038037-48116",
+    "--remote-debugging-port=12687",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 47508,
+    "server": 42592
+  },
+  "appBootMs": 13743.8689,
+  "entryMs": 2680.7259999999987,
+  "firstPlayableMs": 22722.412,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 661,
+      "textures": 158
+    },
+    "frame": {
+      "cpu": 14.900000000372529,
+      "calls": 798,
+      "triangles": 442703
+    },
+    "pin": null,
+    "l02": null
+  },
+  "setup": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 1,
+    "player": [
+      78.5,
+      94.5,
+      0.02
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 668,
+      "textures": 183
+    },
+    "frame": {
+      "cpu": 10.800000000279397,
+      "calls": 808,
+      "triangles": 469151
+    },
+    "pin": null,
+    "l02": null,
+    "pad": {
+      "wx": 14.5,
+      "wy": -1.5,
+      "axis": {
+        "x": 0,
+        "y": -1
+      }
+    }
+  },
+  "hostile": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 3,
+    "player": [
+      78.5,
+      94.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -0.32268776124501536,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 1112,
+      "textures": 224
+    },
+    "frame": {
+      "cpu": 6.899999999906868,
+      "calls": 241,
+      "triangles": 130114
+    },
+    "pin": null,
+    "l02": null,
+    "kind": "hostile",
+    "meshes": 8,
+    "tris": 23001,
+    "appearanceMs": 1733.1000000000931,
+    "frameMax": 141.5,
+    "cpuMax": 107.60000000009313
+  },
+  "neutral": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 5,
+    "player": [
+      78.5,
+      94.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -0.32268776124501536,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 1112,
+      "textures": 224
+    },
+    "frame": {
+      "cpu": 2.2000000001862645,
+      "calls": 241,
+      "triangles": 129974
+    },
+    "pin": null,
+    "l02": null,
+    "kind": "neutral",
+    "meshes": 8,
+    "tris": 22861,
+    "appearanceMs": 796.2999999998137,
+    "frameMax": 91.60000000000218,
+    "cpuMax": 89.89999999990687
+  },
+  "ambusher": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 7,
+    "player": [
+      78.5,
+      94.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -0.32268776124501536,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 1112,
+      "textures": 224
+    },
+    "frame": {
+      "cpu": 2.6000000000931323,
+      "calls": 241,
+      "triangles": 129901
+    },
+    "pin": null,
+    "l02": null,
+    "kind": "ambusher",
+    "meshes": 8,
+    "tris": 22788,
+    "appearanceMs": 756.3999999999069,
+    "frameMax": 87.59999999999854,
+    "cpuMax": 85.89999999990687
+  },
+  "pin": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 10,
+    "player": [
+      78.5,
+      94.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0.07320475970642765,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 1116,
+      "textures": 227
+    },
+    "frame": {
+      "cpu": 12.399999999906868,
+      "calls": 542,
+      "triangles": 698470
+    },
+    "pin": {
+      "progress": 0,
+      "struggle": 0,
+      "need": 8,
+      "left": 6.9625,
+      "max": 7,
+      "bite": 0.9166666666666666,
+      "flash": false,
+      "kind": "hostile"
+    },
+    "l02": null
+  },
+  "pinHalf": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 11,
+    "player": [
+      78.5,
+      94.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0.00000109759380724191,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 1116,
+      "textures": 227
+    },
+    "frame": {
+      "cpu": 2.7999999998137355,
+      "calls": 242,
+      "triangles": 129782
+    },
+    "pin": {
+      "progress": 0.4350199999999997,
+      "struggle": 3.4801599999999975,
+      "need": 8,
+      "left": 5.550100000000002,
+      "max": 7,
+      "bite": 0.009333333333331972,
+      "flash": false,
+      "kind": "hostile"
+    },
+    "l02": null
+  },
+  "escaped": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 13,
+    "player": [
+      78.5,
+      94.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -0.48401394776571766,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 1116,
+      "textures": 227
+    },
+    "frame": {
+      "cpu": 8.200000000186265,
+      "calls": 535,
+      "triangles": 704409
+    },
+    "pin": null,
+    "l02": null
+  },
+  "l0": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 15,
+    "player": [
+      79.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -0.5673797775336712,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 126,
+      "textures": 75
+    },
+    "frame": {
+      "cpu": 9,
+      "calls": 131,
+      "triangles": 132841
+    },
+    "pin": null,
+    "l02": null,
+    "quests": [
+      {
+        "id": "l0_tutorial",
+        "revealed": true,
+        "done": false,
+        "rewarded": false,
+        "obj": [
+          {
+            "id": "explore",
+            "done": false,
+            "visible": true,
+            "progress": 1
+          },
+          {
+            "id": "manila",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "photo_red",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "exit",
+            "done": false,
+            "visible": false
+          }
+        ]
+      },
+      {
+        "id": "l0_beyond",
+        "revealed": false,
+        "done": false,
+        "rewarded": false,
+        "obj": [
+          {
+            "id": "find_zenith_station",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "find_remade_chaos",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "find_ice_room",
+            "done": false,
+            "visible": true
+          }
+        ]
+      }
+    ]
+  }
+}

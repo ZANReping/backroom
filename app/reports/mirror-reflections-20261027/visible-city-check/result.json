@@ -1,0 +1,171 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 4297,
+  "cdp": 4298,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:4297/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Tue, 27 Oct 2026 09:44:33 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 366,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 4297,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 121342.586367,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.585,
+        "sendEnd": 0.628,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 207.268,
+        "receiveHeadersEnd": 207.498
+      },
+      "responseTime": 1793094273890.917,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\mirror-reflections-20261027\\visible-city-check\\qa-1793094238790-58084",
+    "--remote-debugging-port=4298",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 56496,
+    "server": 47116
+  },
+  "appBootMs": 34387.428100000005,
+  "entryMs": 3552.921300000002,
+  "firstPlayableMs": 46921.3298,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "pos": [
+      78.5,
+      79.5,
+      0
+    ],
+    "camera": [
+      78.5,
+      1.55,
+      79.5
+    ],
+    "yaw": 0,
+    "pitch": 0,
+    "mirrors": {
+      "surfaces": 0,
+      "visible": 0,
+      "planes": 0,
+      "targets": 0,
+      "updates": 0,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 661,
+      "textures": 159
+    },
+    "calls": 730,
+    "triangles": 381663,
+    "cpu": 14.399999991059303,
+    "checks": []
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: City camera has physical body clearance and an unobstructed ray to actual sealed glass\",\"lineNumber\":32,\"columnNumber\":23,\"scriptId\":\"789\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"ok\",\"scriptId\":\"789\",\"url\":\"http://127.0.0.1:4297/verifier/mirror-game.ts\",\"lineNumber\":31,\"columnNumber\":22},{\"functionName\":\"city\",\"scriptId\":\"789\",\"url\":\"http://127.0.0.1:4297/verifier/mirror-game.ts\",\"lineNumber\":202,\"columnNumber\":4}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: City camera has physical body clearance and an unobstructed ray to actual sealed glass\\n    at ok (http://127.0.0.1:4297/verifier/mirror-game.ts:32:23)\\n    at Object.city (http://127.0.0.1:4297/verifier/mirror-game.ts:203:5)\",\"objectId\":\"-7707468680663629777.2.1\"}}",
+  "partial": {
+    "level": 11,
+    "pos": [
+      90.5,
+      90.5,
+      0
+    ],
+    "camera": [
+      90.5,
+      1.55,
+      90.5
+    ],
+    "yaw": 0,
+    "pitch": 0,
+    "mirrors": {
+      "surfaces": 66,
+      "visible": 0,
+      "planes": 0,
+      "targets": 0,
+      "updates": 0,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 1092,
+      "textures": 109
+    },
+    "calls": 1564,
+    "triangles": 3536173,
+    "cpu": 9.600000008940697,
+    "checks": [
+      {
+        "ok": false,
+        "label": "City camera has physical body clearance and an unobstructed ray to actual sealed glass"
+      }
+    ]
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 31014.19999998808
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 11\n不夜城\nB11 · 地表\n磁带\n0/6\nL11 城市\n北向上\n住宅\n办公\n商业\n工业\n公共\n道路\n步行岸道\n水系\n公园\n未探索\n多层住宅区\n100%\nLevel 11「不夜城」\nSurvival Difficulty: Class 2 · Safe / Unsecure / Low Entity Count · 无人城市，实体生态稀疏\n入口：Level 9 箭头公路 / Level 10 乡间小路\n出口线索：城市边缘分出一条乡间小路，沿着它可以回到 Level 10。\n1\n2\n3\n4\n5\n6\n7\n空格\n跳跃\nC\n蹲伏\nF\n手电\n左Alt\n取出主手\n➤\n你感觉到一丝气流（21m）\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

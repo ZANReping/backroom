@@ -144,6 +144,13 @@ export class WallOcclusion {
     this.geometryEpoch++
   }
 
+  /** Main-view visibility certificates do not apply to an eye behind a mirror. */
+  reflectionScope(): () => void {
+    const hidden: THREE.Object3D[] = []
+    for (const c of this.candidates.values()) if (!c.root.visible) { hidden.push(c.root); c.root.visible = true }
+    return () => { for (const root of hidden) root.visible = false }
+  }
+
   clear() {for(const owner of this.records.keys())this.remove(owner);this.activeWalls=[]}
 
   changed(root: THREE.Object3D) {

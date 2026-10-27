@@ -1,0 +1,459 @@
+{
+  "date": "2026-10-26",
+  "target": "E:/ZAN/backroom/app",
+  "source": {
+    "name": "L0.2-第五轮升级包.zip",
+    "sha256": "3863885c2c8a939e1aca924de2591263ef397e01a0e405408982d76f8ddf90b2",
+    "base": "983cde3",
+    "head": "6334e68",
+    "code": "4ab3e51"
+  },
+  "settings": {
+    "seed": 20261025,
+    "width": 1920,
+    "height": 1080,
+    "dpr": 1,
+    "fov": 72,
+    "textureQuality": 2,
+    "renderScale": 100,
+    "flashlight": false,
+    "dynamicResolution": false,
+    "dynamicExposure": false
+  },
+  "runs": [
+    {
+      "label": "validated-realistic",
+      "mode": "realistic",
+      "ok": true,
+      "checks": 17,
+      "round5Checks": 77,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "seed": 20261025,
+      "initialMenuEntryMs": 3425.8848999999973,
+      "rounds": [
+        {
+          "median": 8.39999999999418,
+          "p95": 16.800000000017462,
+          "cpuMedian": 7.200000002980232,
+          "cpuP95": 11.600000001490116,
+          "calls": 100,
+          "triangles": 235883
+        },
+        {
+          "median": 8.39999999999418,
+          "p95": 16.699999999982538,
+          "cpuMedian": 7.5,
+          "cpuP95": 11,
+          "calls": 94,
+          "triangles": 280493
+        },
+        {
+          "median": 8.5,
+          "p95": 16.70000000001164,
+          "cpuMedian": 8.099999994039536,
+          "cpuP95": 11.199999995529652,
+          "calls": 99,
+          "triangles": 324521
+        },
+        {
+          "median": 8.400000000023283,
+          "p95": 16.60000000000582,
+          "cpuMedian": 7.800000004470348,
+          "cpuP95": 11.300000004470348,
+          "calls": 108,
+          "triangles": 361259
+        },
+        {
+          "median": 8.5,
+          "p95": 16.699999999982538,
+          "cpuMedian": 8.100000001490116,
+          "cpuP95": 11.699999995529652,
+          "calls": 108,
+          "triangles": 361259
+        }
+      ],
+      "resources": [
+        {
+          "geometries": 284,
+          "textures": 106
+        },
+        {
+          "geometries": 282,
+          "textures": 106
+        },
+        {
+          "geometries": 282,
+          "textures": 106
+        }
+      ],
+      "errors": [],
+      "failedRequests": [
+        {
+          "url": "http://127.0.0.1:13256/favicon.ico",
+          "status": 404
+        }
+      ],
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "label": "validated-classic",
+      "mode": "classic",
+      "ok": true,
+      "checks": 17,
+      "round5Checks": 77,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "seed": 20261025,
+      "initialMenuEntryMs": 2101.0063999999984,
+      "rounds": [
+        {
+          "median": 8.19999999999709,
+          "p95": 12.5,
+          "cpuMedian": 5.200000002980232,
+          "cpuP95": 8.200000002980232,
+          "calls": 80,
+          "triangles": 280479
+        },
+        {
+          "median": 8.19999999999709,
+          "p95": 12.60000000000582,
+          "cpuMedian": 5.5999999940395355,
+          "cpuP95": 8.600000001490116,
+          "calls": 85,
+          "triangles": 324507
+        },
+        {
+          "median": 8.19999999999709,
+          "p95": 12.39999999999418,
+          "cpuMedian": 5.699999995529652,
+          "cpuP95": 8,
+          "calls": 110,
+          "triangles": 405273
+        },
+        {
+          "median": 8.19999999999709,
+          "p95": 12.60000000000582,
+          "cpuMedian": 5.300000004470348,
+          "cpuP95": 9.199999995529652,
+          "calls": 110,
+          "triangles": 405273
+        },
+        {
+          "median": 4.2999999999883585,
+          "p95": 8.5,
+          "cpuMedian": 2.100000001490116,
+          "cpuP95": 5.700000002980232,
+          "calls": 110,
+          "triangles": 405273
+        }
+      ],
+      "resources": [
+        {
+          "geometries": 286,
+          "textures": 82
+        },
+        {
+          "geometries": 284,
+          "textures": 82
+        },
+        {
+          "geometries": 284,
+          "textures": 82
+        }
+      ],
+      "errors": [],
+      "failedRequests": [
+        {
+          "url": "http://127.0.0.1:11659/favicon.ico",
+          "status": 404
+        }
+      ],
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "label": "steady-realistic",
+      "mode": "realistic",
+      "ok": true,
+      "checks": 1,
+      "round5Checks": 2,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "seed": 20261025,
+      "initialMenuEntryMs": 3525.6232999999993,
+      "rounds": [
+        {
+          "median": 12.5,
+          "p95": 16.599999999998545,
+          "cpuMedian": 2.2999999970197678,
+          "cpuP95": 4,
+          "calls": 125,
+          "triangles": 405527
+        },
+        {
+          "median": 12.400000000001455,
+          "p95": 16.599999999998545,
+          "cpuMedian": 2.1999999955296516,
+          "cpuP95": 2.600000001490116,
+          "calls": 125,
+          "triangles": 405527
+        },
+        {
+          "median": 12.400000000001455,
+          "p95": 16.60000000000582,
+          "cpuMedian": 2.100000001490116,
+          "cpuP95": 2.5,
+          "calls": 125,
+          "triangles": 405527
+        },
+        {
+          "median": 12.5,
+          "p95": 16.69999999999709,
+          "cpuMedian": 2.100000001490116,
+          "cpuP95": 2.6999999955296516,
+          "calls": 124,
+          "triangles": 405287
+        },
+        {
+          "median": 12.5,
+          "p95": 16.60000000000582,
+          "cpuMedian": 2.100000001490116,
+          "cpuP95": 2.5,
+          "calls": 124,
+          "triangles": 405287
+        }
+      ],
+      "completeWindow": 25,
+      "expectedChunks": 25,
+      "warmMs": 9853.60000000149,
+      "errors": [],
+      "failedRequests": [
+        {
+          "url": "http://127.0.0.1:1429/favicon.ico",
+          "status": 404
+        }
+      ],
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "label": "steady-classic",
+      "mode": "classic",
+      "ok": true,
+      "checks": 1,
+      "round5Checks": 2,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "seed": 20261025,
+      "initialMenuEntryMs": 2447.8500999999997,
+      "rounds": [
+        {
+          "median": 8.299999999999272,
+          "p95": 12.5,
+          "cpuMedian": 1.9000000059604645,
+          "cpuP95": 2.4000000059604645,
+          "calls": 110,
+          "triangles": 405273
+        },
+        {
+          "median": 8.299999999995634,
+          "p95": 12.400000000001455,
+          "cpuMedian": 1.7999999970197678,
+          "cpuP95": 2.2000000029802322,
+          "calls": 110,
+          "triangles": 405273
+        },
+        {
+          "median": 8.30000000000291,
+          "p95": 12.599999999998545,
+          "cpuMedian": 1.8000000044703484,
+          "cpuP95": 2.399999998509884,
+          "calls": 110,
+          "triangles": 405273
+        },
+        {
+          "median": 8.299999999995634,
+          "p95": 12.599999999998545,
+          "cpuMedian": 1.9000000059604645,
+          "cpuP95": 2.600000001490116,
+          "calls": 111,
+          "triangles": 405513
+        },
+        {
+          "median": 8.30000000000291,
+          "p95": 12.5,
+          "cpuMedian": 2,
+          "cpuP95": 4.5999999940395355,
+          "calls": 111,
+          "triangles": 405513
+        }
+      ],
+      "completeWindow": 25,
+      "expectedChunks": 25,
+      "warmMs": 6923.20000000298,
+      "errors": [],
+      "failedRequests": [
+        {
+          "url": "http://127.0.0.1:12099/favicon.ico",
+          "status": 404
+        }
+      ],
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "label": "legacy-regression",
+      "mode": "realistic",
+      "ok": true,
+      "checks": 32,
+      "round5Checks": 0,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "seed": 542469.4493,
+      "initialMenuEntryMs": 2801.6081999999988,
+      "errors": [],
+      "failedRequests": [
+        {
+          "url": "http://127.0.0.1:5514/favicon.ico",
+          "status": 404
+        }
+      ],
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "label": "detail-closeups",
+      "mode": "realistic",
+      "ok": true,
+      "checks": 1,
+      "round5Checks": 14,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "seed": 20261025,
+      "initialMenuEntryMs": 2844.166699999998,
+      "errors": [],
+      "failedRequests": [
+        {
+          "url": "http://127.0.0.1:5575/favicon.ico",
+          "status": 404
+        }
+      ],
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "label": "tool-closeup",
+      "mode": "realistic",
+      "ok": true,
+      "checks": 1,
+      "round5Checks": 5,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "initialMenuEntryMs": 3580.850400000003,
+      "errors": [],
+      "failedRequests": [
+        {
+          "url": "http://127.0.0.1:13047/favicon.ico",
+          "status": 404
+        }
+      ],
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    }
+  ],
+  "checks": [
+    {
+      "name": "check:l02-round5",
+      "exit": 0,
+      "ms": 1770,
+      "log": "check-l02-round5.log"
+    },
+    {
+      "name": "check:hound-l02-integration",
+      "exit": 0,
+      "ms": 1941,
+      "log": "check-hound-l02-integration.log"
+    },
+    {
+      "name": "check:l0-architecture",
+      "exit": 0,
+      "ms": 1701,
+      "log": "check-l0-architecture.log"
+    },
+    {
+      "name": "check:l0-meshes",
+      "exit": 0,
+      "ms": 3271,
+      "log": "check-l0-meshes.log"
+    },
+    {
+      "name": "check:l0-presentation",
+      "exit": 0,
+      "ms": 1357,
+      "log": "check-l0-presentation.log"
+    },
+    {
+      "name": "check:foyer-entry",
+      "exit": 0,
+      "ms": 1175,
+      "log": "check-foyer-entry.log"
+    },
+    {
+      "name": "check:phone-stat-lock",
+      "exit": 0,
+      "ms": 1544,
+      "log": "check-phone-stat-lock.log"
+    },
+    {
+      "name": "build",
+      "exit": 0,
+      "ms": 60036,
+      "log": "build.log"
+    }
+  ],
+  "limits": [
+    "Original package screenshots and QA used SwiftShader; they are reference evidence only.",
+    "Before entry uses a derived seed; do not claim exact architectural pixel comparison with after fixed seed.",
+    "Steady frame benchmarks wait for all 25 chunks; validated flow timing includes far streaming.",
+    "Touch is Windows desktop simulation, not Android hardware.",
+    "No maximum-collapse simultaneous stress benchmark or long-duration leak claim.",
+    "Zenith Station and Ice Room remain locked placeholders."
+  ]
+}

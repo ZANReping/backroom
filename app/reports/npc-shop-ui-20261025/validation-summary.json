@@ -1,0 +1,35 @@
+{
+  "source": "backroom-shop-ui.zip",
+  "merchantChecks": 44,
+  "arbitragePairs": 2556,
+  "ferrenChecks": 76,
+  "runs": {
+    "accepted-realistic": {
+      "checks": 46,
+      "screenshots": 18,
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      },
+      "browserErrors": 0,
+      "networkErrors": 0
+    },
+    "accepted-classic": {
+      "checks": 46,
+      "screenshots": 18,
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      },
+      "browserErrors": 0,
+      "networkErrors": 0
+    }
+  },
+  "productionBuild": {
+    "passed": true,
+    "seconds": 46.96
+  },
+  "packageConfigPreserved": true
+}

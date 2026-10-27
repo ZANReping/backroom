@@ -1,3 +1,4 @@
+import { inMirrorCapture } from './mirrorSurface'
 import { getReflectK } from './shared'
 import * as THREE from 'three'
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js'
@@ -98,6 +99,7 @@ export class L1WaterReflection {
       const original=mirror.onBeforeRender.bind(mirror)
       let projectionX=NaN,projectionY=NaN
       mirror.onBeforeRender=(renderer,...args)=>{
+          if (inMirrorCapture()) return
         if(time===-1)return
         // A resized viewport / changed FOV needs a matching reflection on its
         // first frame. Throttle motion updates, never reuse another lens.

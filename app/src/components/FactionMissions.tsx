@@ -67,7 +67,7 @@ export function FactionNpcMissions({ faction, npcId, engine = singleton }: { fac
     <h3>{config.short} / 连续任务线</h3>
     {handoffs.map(m => { const s = m.stages[state.missions[m.id].stage], o = s.objective; return <div key={m.id} className="space-y-2"><strong>{m.title} · {s.title}</strong><p>{s.story}</p>{o.kind === 'rite' && <p>{engine.jerryTamed ? '杰瑞已被驯服，本次仪式不会增加教化。' : `确认后教化 +${o.influence}（当前 ${Math.round(engine.indoctrination)}/100）。可先离开，不参加不会自动扣除物资。`}</p>}<button className="menu-btn px-3 py-2" onClick={() => act(() => submitFactionStage(engine, m.id, npcId))}>{o.kind === 'deliver' ? '确认交付物资' : o.kind === 'rite' ? '确认参加蓝羽仪式' : '交谈并签收记录'}</button></div> })}
     {offers.map(m => { const lock = factionMissionLock(engine, m.id); return <details key={m.id}><summary className="cursor-pointer py-2">{config.tiers[m.tier - 1]} / {m.title}{lock ? ' · 前置未满足' : ' · 可接取'}</summary><p className="my-2">{m.brief}</p><p>{m.stages.length} 阶段 · {rewardText(m)}</p>{lock ? <p className="my-2">{lock}</p> : <button className="menu-btn my-2 px-3 py-2" onClick={() => act(() => acceptFactionMission(engine, m.id, npcId))}>接取任务线「{m.title}」</button>}</details> })}
-    <FactionCareerPanel faction={faction} engine={engine} />{note && <p role="status">{note}</p>}
+    {note && <p role="status">{note}</p>}
   </section>
 }
 export function FactionStationTasks({ faction, engine = singleton }: { faction: NewFaction; engine?: Engine }) {

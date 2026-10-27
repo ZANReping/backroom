@@ -206,7 +206,7 @@ export function* buildL11Building(s:Structure):Generator<void,THREE.Group,unknow
   const spec=l11Archetype(b.archetype),industrial=spec.group==='industrial',ceiling=l11Material(industrial?'concrete':'paint',industrial?'#bcb9ad':'#e4e0d4',true)
   try{
     for(let detail=0;detail<3;detail++){
-      const g=new THREE.Group(),a=new CityBatch(detail===0),plants=new CityBatch(),m=buildingMaterials(b);groups.push(g)
+      const g=new THREE.Group(),a=new CityBatch(detail===0,detail===0),plants=new CityBatch(),m=buildingMaterials(b);groups.push(g)
       if(b.archetype==='unfinished-frame'||b.archetype==='barred-brick'){
         addL11ExitParts(a,[...l11SpecialBuildingParts(b),...l11ShaftParts(b)],undefined,b.archetype==='unfinished-frame')
         if(!detail)a.solids.push(...l11ExitDoorSolid(b))

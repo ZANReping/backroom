@@ -1,4 +1,5 @@
 import {createTradersMap} from './tradersWorld'
+import { l02FloorAt, l02CeilingAt } from './l02Collapse'
 import {settlementColliders} from './settlementColliders'
 import { object70Keep, object70Sid } from '../decorations/object70'
 import {isL5DecorKind,L5_DECOR_DEFS} from '../content/l5Decor'
@@ -24,6 +25,7 @@ import './infiniteL8' // v59：注册 Level 8 无限有机洞穴与生态分区�
 import './infiniteL9' // v61：注册 Level 9 无限郊区、住宅街与第九大道引导路线生成器
 import './infiniteL10' // v62：注册 Level 10 无限农田、连续道路与湖泊生成器
 import './infiniteL11'
+import './l02Layout' // Level 0.2「重塑的混乱」无限生成器（副作用注册）
 import { l11MetroRamp, l11SpaceAt } from './l11Layout'
 import { l11MetroColliders,L11_METRO_CEILING } from './l11Metro'
 import { l11CanalAt,l11BridgeDeck } from './l11Hydrology'
@@ -317,9 +319,10 @@ function* l11BridgeCollidersAt(m:GameMap,x:number,y:number,r=0){
 }
 export function floorHeight(m: GameMap, x: number, y: number, band: FloorBand = bandOfZ(0),feet?:number): number {
   const city=l11MapSpace(m,x,y,band,feet);if(city)return city.height
-  if(band===0&&m.inf?.l0){
+  if(band===0&&(m.inf?.l0||m.inf?.l02)){
     const wx=x+m.inf.ox,wy=y+m.inf.oy,a=m.inf.chunks.get(`${Math.floor(wx/32)},${Math.floor(wy/32)}`)?.l0
     if(a){
+      if(a.theme==='l02'){const h=l02FloorAt(wx,wy,feet);if(h!==null)return h} // Level 0.2 塌陷口/未完工房屋（world/l02Collapse.ts）
       if(a.pits.some(r=>wx>=r.x&&wx<r.x+r.w&&wy>=r.y&&wy<r.y+r.h))return -10
       const puddle=a.puddles.find(r=>wx>=r.x&&wx<r.x+r.w&&wy>=r.y&&wy<r.y+r.h)
       return puddle?-puddle.depth:0
@@ -1156,6 +1159,8 @@ export function ceilingHeightAt(m: GameMap, x: number, y: number, wallH: number,
   if (band === 0 && m.caveVolumeId !== undefined) return caveCeilingAt(m, x, y)
   if (!hasCeiling(m, tx, ty)) return Infinity
   if(m.inf?.l0)return 2.7
+  // Level 0.2：吊顶碰撞（world/l02Collapse.ts；掉了板的格子露出设备层，略高）。此前 L0.2 不走 inf.l0 分支，回落到 WALL_H.rooms=3.0 m，跳跃时头/相机穿进吊顶
+  if(m.inf?.l02)return l02CeilingAt(x+m.inf.ox,y+m.inf.oy)
   if (band === 0 && m.l1Architecture) return l1RoofAt(m,x,y,wallH,true)
   if (band === 0 && m.inf && [18,19,20,51].includes(m.tint[i])) return l3RoofAt(m,x,y)
   if (band === 0 && m.organicCave && m.caveCeil) return caveCeilingAt(m, x, y)

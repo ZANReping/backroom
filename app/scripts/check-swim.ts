@@ -333,7 +333,7 @@ const L7MAX = 3.4 * 0.72, POOLMAX = 3.4 * 0.56
   for (let i = 0; i < 30; i++) ARMS.advanceArms(st, 1 / 30, { swimming: true, busy: true, speed: 0, maxSpeed: 2.45, sprintStroke: false, sinceStroke: 9, strokeT: 0.62, moving: false })
   ok(st.k < 0.05, '使用物品 / 攻击时手臂让位（权重回到 0）')
   const rs = readFileSync('src/game/renderer/renderer.ts', 'utf8')
-  ok(/advanceArms\(/.test(rs) && /strokeFov/.test(rs) && /swimCamK/.test(rs) && /engine\.inLiquid !== 1 \? 5 : 0/.test(rs), '渲染层接入：蛙泳手臂、划水 FOV、游泳镜头，且水里不吃冲刺 FOV')
+  ok(/advanceArms\(/.test(rs) && /strokeFov/.test(rs) && /swimCamK/.test(rs) && /engine\.inLiquid !== 1 \? 5 : 0|const on = engine\.inLiquid !== 1 &&/.test(rs) /* [movefeel] 冲刺 FOV 改为渐入，水里仍不吃 */, '渲染层接入：蛙泳手臂、划水 FOV、游泳镜头，且水里不吃冲刺 FOV')
   const hud = readFileSync('src/components/HUD.tsx', 'utf8')
   const finish = readFileSync('src/game/renderer/photoPass.ts', 'utf8')
   ok(/swimBreathVisuals/.test(rs) && /swimBreath/.test(finish) && !/anim-o2Pulse/.test(hud) && /▲ 上浮/.test(hud), '渲染与 HUD 接入：屏气效果只作用游戏画面，升降指示与深度计保持可读')

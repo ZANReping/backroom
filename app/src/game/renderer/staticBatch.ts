@@ -1,3 +1,4 @@
+import { isMirrorSurface, copyMirrorSurface } from './mirrorSurface'
 import * as THREE from 'three'
 import { materialBatchKey } from './materialBatch'
 import { cloneRenderGeometry } from './renderGeometry'
@@ -77,11 +78,12 @@ export function* batchStaticRootsJob(target: THREE.Group, roots: THREE.Object3D[
     const meshes: THREE.Mesh[] = []
     root.traverse((o) => {
       const mesh = o as THREE.Mesh
-      if (!mesh.isMesh || !mesh.visible || !mesh.geometry || Array.isArray(mesh.material)) return
+      if (!mesh.isMesh || (!mesh.visible && !isMirrorSurface(mesh)) || !mesh.geometry || Array.isArray(mesh.material)) return
       meshes.push(mesh)
     })
     for (const mesh of meshes) {
       yield
+      if (isMirrorSurface(mesh)) { const reflected = copyMirrorSurface(mesh); owned.add(reflected.geometry); staged.push(reflected); continue }
       const mat = mesh.material as THREE.Material
       const part: StaticMeshPart = {
         geometry: mesh.geometry,

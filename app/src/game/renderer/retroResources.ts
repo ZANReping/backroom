@@ -19,9 +19,10 @@ export function disposeCharacterModel(root: THREE.Object3D) {
   const geometries = new Set<THREE.BufferGeometry>(), materials = new Set<THREE.Material>(), skeletons = new Set<THREE.Skeleton>()
   root.traverse(o => {
     const mesh = o as THREE.Mesh, skin = o as THREE.SkinnedMesh
-    if (mesh.geometry) geometries.add(mesh.geometry)
+    if (mesh.geometry && mesh.geometry.userData.entityShared !== true) geometries.add(mesh.geometry)
     if (skin.isSkinnedMesh) skeletons.add(skin.skeleton)
-    if (mesh.material) for (const mat of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) materials.add(mat)
+    if (mesh.material) for (const mat of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) if (mat.userData.entityShared !== true) materials.add(mat)
+    if ((mesh as THREE.InstancedMesh).isInstancedMesh) (mesh as THREE.InstancedMesh).dispose()
   })
   for (const geometry of geometries) geometry.dispose()
   for (const skeleton of skeletons) skeleton.dispose()

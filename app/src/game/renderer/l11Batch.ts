@@ -1,10 +1,12 @@
+import { addBatchedMirrorOverlays } from './mirrorSurface'
 import * as THREE from 'three'
 import type { Polygon, Point } from '../world/l11Geometry'
 import { l11BoxSolid,l11MeshSolid,l11PlateSolid,transformL11Solid,type L11Solid,type SolidPoint } from '../world/l11Solid'
 export class CityBatch {
   readonly solids:L11Solid[]=[]
   private capture:boolean
-  constructor(capture=false){this.capture=capture}
+  private mirrorSurfaces:boolean
+  constructor(capture=false, mirrorSurfaces=false){this.capture=capture;this.mirrorSurfaces=mirrorSurfaces}
   private buckets = new Map<THREE.Material, { p:number[]; n:number[]; uv:number[]; idx:number[] }>()
   private quadTarget=new THREE.Vector3()
   private quadFirst=new THREE.Vector3()
@@ -88,6 +90,7 @@ export class CityBatch {
       geo.setAttribute('position',new THREE.Float32BufferAttribute(b.p,3));geo.setAttribute('normal',new THREE.Float32BufferAttribute(b.n,3))
       geo.setAttribute('uv',new THREE.Float32BufferAttribute(b.uv,2));geo.setIndex(b.idx);geo.computeBoundingSphere()
       const mesh=new THREE.Mesh(geo,mat);mesh.castShadow=!mat.transparent;mesh.receiveShadow=true;group.add(mesh)
+      if(this.mirrorSurfaces&&mat.userData.l11Surface==="sealedglass")addBatchedMirrorOverlays(group,geo)
     }
     this.buckets.clear()
   }

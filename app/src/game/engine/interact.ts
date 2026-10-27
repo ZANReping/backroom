@@ -1,5 +1,7 @@
+import { creepNpcRefuse } from './creeperAI' // [creeper]
 import { usableAxe, wearSlot, slotDur, slotMaxDur } from './melee'
 import { openVending, vm36OpenBack } from './vendingAI'
+import { l02FixLabel, l02Interact } from './l02Collapse'
 import { DUR_DOOR } from '../content/melee'
 import { actualRank, fieldTargets, recordField } from './career'
 import {bntgAtmAccessible} from './bntgBank'
@@ -215,6 +217,11 @@ export function structureInteractionProfile(s: Structure): StructureInteractionP
     case 'megsign': lo = 0.2; hi = 2.55; horizontalRadius = 0.52; break
     case 'megdoc': lo = s.data?.ontable ? (s.data?.l0Furniture ? 0.97 : s.data?.manila ? 1.09 : 0.75) : 0; hi = s.data?.ontable ? (s.data?.l0Furniture ? 1.07 : s.data?.manila ? 1.19 : 0.84) : 0.1; horizontalRadius = 0.2; break
     case 'invitation': lo = 0; hi = 0.14; horizontalRadius = 0.25; break
+    case 'l02fix': { // Level 0.2 设施：插座贴墙低处、板夹靠墙放地上、洗手台/马桶
+      const f = s.data?.fix, h = Number(s.data?.h ?? 0.335)
+      if (f === 'outlet') { lo = h - 0.09; hi = h + 0.09; horizontalRadius = 0.16 } else if (f === 'clipboard') { lo = 0; hi = 0.45; horizontalRadius = 0.24 } else if (f === 'sink') { lo = 0.6; hi = 0.95; horizontalRadius = 0.32 } else { lo = 0.1; hi = 0.8; horizontalRadius = 0.3 }
+      break
+    }
     case 'lightswitch': lo = 1.05; hi = 1.55; horizontalRadius = 0.22; break
     case 'braille': lo = 1.2; hi = 1.44; horizontalRadius = 0.22; break
     case 'graffiti': lo = 0.45; hi = 2.35; horizontalRadius = 0.52; break
@@ -705,6 +712,7 @@ export function scanInteract(eng: Engine) {
     else if (s.kind === 'graffiti') consider('graffiti', DECOR_VIEWS.graffiti.label, s, d, true)
     else if (s.kind === 'statue') consider('statue', DECOR_VIEWS.statue.label, s, d, true)
     else if (s.kind === 'bigpainting') consider('bigpainting', DECOR_VIEWS.bigpainting.label, s, d, true) // v53b：L3 大幅画作
+    else if (s.kind === 'l02fix') { const label = l02FixLabel(eng, s); if (label) consider('l02fix', label, s, d, true) }
     else if (s.kind === 'megdoc') consider('megdoc', s.data?.doc === 'backrooms_basics' ? '阅读马尼拉玛丽基金会文件' : '阅读 M.E.G. 文档', s, d, true)
     else if (s.kind === 'landmark') consider('landmark', '查看 定居点地标', s, d, true)
     else if (s.kind === 'invitation') consider('landmark', '阅读 烫金邀请函', s, d, true) // v55b：邀请函=地标式可交互装饰（弹地标卡前往原住民）
@@ -849,6 +857,7 @@ export function doInteract(eng: Engine) {
     }
     case 'exit': {
       const e = t.e
+      if (e?.def.kind === 'remodeldoor') eng.remodelPendingSite = e.remodelSite
       if (e) eng.takeExit(e.def)
       break
     }
@@ -1282,6 +1291,7 @@ export function doInteract(eng: Engine) {
       audio.uiTick()
       break
     }
+    case 'l02fix': { if (t.s) l02Interact(eng, t.s); break }
     case 'megdoc': {
       // M.E.G. 文档：打开文档视图（App 侧记录到图鉴「文档」分类）
       const s = t.s && t.s.kind === 'megdoc' ? t.s : null
@@ -1308,6 +1318,7 @@ export function doInteract(eng: Engine) {
       if (!n.def.workLoop) n.facing = Math.atan2(p.y - n.y, p.x - n.x)
       audio.uiTick()
       { const r = thingBreathRemark(eng, n.def.name); if (r) eng.msg(r, 'system') } // [thing] 硫磺口臭
+      if (creepNpcRefuse(eng, n.def.name)) break // [creeper] 4 阶：NPC 看见你的手，拒绝交易
       eng.emit({ kind: 'dialog', text: n.id })
       break
     }

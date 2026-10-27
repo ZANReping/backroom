@@ -1,0 +1,47 @@
+{
+  "checks": [
+    "actual look-at E conversation suanpan",
+    "separate warehouse pauses and renders 48 slots suanpan",
+    "quantity-three deposit updates both inventories once",
+    "successful storage action persists immediately",
+    "quantity-two withdrawal merges into carried ammunition",
+    "double-click transfers only the clicked whole stack",
+    "bubbling drop moves one whole stack without a second parent transfer",
+    "move-all preserves all twenty rounds",
+    "sorting preserves loaded gun, medical charges and berry origin",
+    "warehouse keyboard down follows eight-column grid",
+    "keyboard Enter transfers the selected whole slot",
+    "warehouse sheet fits meg 390x844"
+  ],
+  "shots": [
+    "01-meg-warehouse",
+    "02-meg-selected-details",
+    "03-meg-sorted"
+  ],
+  "entries": [
+    {
+      "x": 67.39999999999999,
+      "y": 59.55,
+      "z": 0.02,
+      "id": "suanpan"
+    }
+  ],
+  "layouts": [
+    {
+      "skin": "meg",
+      "width": 390,
+      "height": 844,
+      "x": 0,
+      "right": 390,
+      "top": 0,
+      "bottom": 844,
+      "sw": 388,
+      "cw": 388,
+      "action": {
+        "top": 929.5,
+        "bottom": 971.5,
+        "reachable": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,934 @@
+{
+  "seed": 424242,
+  "mode": "classic",
+  "port": 4933,
+  "cdp": 4934,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:4933/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sun, 25 Oct 2026 07:30:02 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 277,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 4933,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 11952.754961,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.939,
+        "sendEnd": 0.964,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 13.125,
+        "receiveHeadersEnd": 13.27
+      },
+      "responseTime": 1792913402998.381,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\creeper-import-20261025\\final-classic\\qa-1792913384629-20728",
+    "--remote-debugging-port=4934",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 54044,
+    "server": 33836
+  },
+  "appBootMs": 13007.2911,
+  "entryMs": 1877.6623999999974,
+  "firstPlayableMs": 18316.704599999997,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "memory": {
+      "geometries": 589,
+      "textures": 135
+    },
+    "calls": 572,
+    "triangles": 166949,
+    "renderCpu": 6,
+    "stage": 0,
+    "load": 0
+  },
+  "setup": {
+    "level": 2,
+    "checks": 1,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 913,
+      "textures": 181
+    },
+    "calls": 289,
+    "triangles": 138275,
+    "renderCpu": 3.5,
+    "stage": 0,
+    "load": 0,
+    "natural": [
+      {
+        "host": "rat",
+        "stage": 3,
+        "x": 105.5,
+        "y": 48.5
+      },
+      {
+        "host": "rat",
+        "stage": 1,
+        "x": 81.5,
+        "y": 117.5
+      }
+    ],
+    "pad": {
+      "x": 78.5,
+      "y": 66.5,
+      "axis": {
+        "x": 0,
+        "y": -1
+      },
+      "d": 13.509256086106296,
+      "wx": 14.5,
+      "wy": 2.5
+    }
+  },
+  "rat1": {
+    "level": 2,
+    "checks": 4,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1066,
+      "textures": 192
+    },
+    "calls": 309,
+    "triangles": 144129,
+    "renderCpu": 3,
+    "stage": 0,
+    "load": 0,
+    "host": "rat",
+    "model": {
+      "tris": 5280,
+      "draws": 26
+    },
+    "key": "[\"rat\",1,\"hairless\",\"wolf\",17]"
+  },
+  "rat4": {
+    "level": 2,
+    "checks": 7,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1077,
+      "textures": 192
+    },
+    "calls": 341,
+    "triangles": 182685,
+    "renderCpu": 2.5,
+    "stage": 0,
+    "load": 0,
+    "host": "rat",
+    "model": {
+      "tris": 43598,
+      "draws": 51
+    },
+    "key": "[\"rat\",4,\"hairless\",\"wolf\",17]"
+  },
+  "spider4": {
+    "level": 2,
+    "checks": 10,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1087,
+      "textures": 193
+    },
+    "calls": 369,
+    "triangles": 157381,
+    "renderCpu": 5.400000000372529,
+    "stage": 0,
+    "load": 0,
+    "host": "arachnid",
+    "model": {
+      "tris": 18478,
+      "draws": 73
+    },
+    "key": "[\"arachnid\",4,\"common\",\"blindcave\",17]"
+  },
+  "human": {
+    "level": 2,
+    "checks": 13,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1079,
+      "textures": 194
+    },
+    "calls": 353,
+    "triangles": 238155,
+    "renderCpu": 2.799999998882413,
+    "stage": 0,
+    "load": 0,
+    "host": "human",
+    "model": {
+      "tris": 98978,
+      "draws": 61
+    },
+    "key": "[\"human\",5,\"common\",\"wolf\",13]"
+  },
+  "humanAttack": {
+    "level": 2,
+    "checks": 14,
+    "player": [
+      78.5,
+      67.85101551436284,
+      0
+    ],
+    "memory": {
+      "geometries": 1079,
+      "textures": 194
+    },
+    "calls": 299,
+    "triangles": 147399,
+    "renderCpu": 2.099999999627471,
+    "stage": 0,
+    "load": 50,
+    "hp": 56,
+    "start": [
+      78.5,
+      63.9
+    ],
+    "lunge": {
+      "clip": "lunge",
+      "t": 0.7417999999999996,
+      "pos": [
+        78.5,
+        64.4489373520444
+      ]
+    },
+    "entity": [
+      78.5,
+      67.29101551436284
+    ],
+    "mode": "attack"
+  },
+  "death": {
+    "level": 2,
+    "checks": 19,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1082,
+      "textures": 196
+    },
+    "calls": 349,
+    "triangles": 189373,
+    "renderCpu": 2.299999998882413,
+    "stage": 0,
+    "load": 0,
+    "deathT": 2.6959000000000066,
+    "spores": 1
+  },
+  "spores": {
+    "level": 2,
+    "checks": 22,
+    "player": [
+      78.5,
+      95.9,
+      0
+    ],
+    "memory": {
+      "geometries": 607,
+      "textures": 211
+    },
+    "calls": 54,
+    "triangles": 121845,
+    "renderCpu": 1.700000001117587,
+    "stage": 0,
+    "load": 3.031250000000008,
+    "spores": 1
+  },
+  "burn": {
+    "level": 2,
+    "checks": 23,
+    "player": [
+      78.5,
+      95.9,
+      0
+    ],
+    "memory": {
+      "geometries": 607,
+      "textures": 211
+    },
+    "calls": 54,
+    "triangles": 121845,
+    "renderCpu": 1.300000000745058,
+    "stage": 0,
+    "load": 3.031250000000008
+  },
+  "decor": {
+    "level": 2,
+    "checks": 24,
+    "player": [
+      91.74,
+      91.75999999999999,
+      -0.9988223999999929
+    ],
+    "memory": {
+      "geometries": 679,
+      "textures": 174
+    },
+    "calls": 382,
+    "triangles": 132081,
+    "renderCpu": 3,
+    "stage": 0,
+    "load": 0,
+    "mount": {
+      "id": "2:1,-2:27,28",
+      "wx": 59.04,
+      "wy": -35.04,
+      "z": 1.55,
+      "rot": 1.5707963267948966,
+      "seed": 582371
+    },
+    "visibleDecor": 1
+  },
+  "meat": {
+    "level": 2,
+    "checks": 26,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 665,
+      "textures": 224
+    },
+    "calls": 313,
+    "triangles": 139529,
+    "renderCpu": 2.600000001490116,
+    "stage": 0,
+    "load": 0
+  },
+  "stage2": {
+    "level": 2,
+    "checks": 28,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 665,
+      "textures": 224
+    },
+    "calls": 313,
+    "triangles": 147469,
+    "renderCpu": 3.099999999627471,
+    "stage": 2,
+    "load": 0,
+    "overlayStage": 2,
+    "handObjects": 3
+  },
+  "stage3": {
+    "level": 2,
+    "checks": 30,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 668,
+      "textures": 224
+    },
+    "calls": 316,
+    "triangles": 170285,
+    "renderCpu": 2.199999999254942,
+    "stage": 3,
+    "load": 0,
+    "overlayStage": 3,
+    "handObjects": 4
+  },
+  "stage4": {
+    "level": 2,
+    "checks": 32,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 679,
+      "textures": 224
+    },
+    "calls": 317,
+    "triangles": 167295,
+    "renderCpu": 2.199999999254942,
+    "stage": 4,
+    "load": 0,
+    "overlayStage": 4,
+    "handObjects": 5
+  },
+  "heldWeapon": {
+    "level": 2,
+    "checks": 34,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 684,
+      "textures": 227
+    },
+    "calls": 320,
+    "triangles": 170211,
+    "renderCpu": 2.400000000372529,
+    "stage": 4,
+    "load": 0
+  },
+  "gun": {
+    "level": 2,
+    "checks": 36,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 709,
+      "textures": 231
+    },
+    "calls": 343,
+    "triangles": 197933,
+    "renderCpu": 5.400000000372529,
+    "stage": 4,
+    "load": 0
+  },
+  "gunAim": {
+    "level": 2,
+    "checks": 37,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 716,
+      "textures": 231
+    },
+    "calls": 283,
+    "triangles": 138949,
+    "renderCpu": 2.5,
+    "stage": 4,
+    "load": 0
+  },
+  "devForms": {
+    "level": 2,
+    "checks": 43,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 719,
+      "textures": 234
+    },
+    "calls": 313,
+    "triangles": 141167,
+    "renderCpu": 2.099999999627471,
+    "stage": 0,
+    "load": 0,
+    "rows": [
+      {
+        "form": "creeper-rat",
+        "host": "rat"
+      },
+      {
+        "form": "creeper-spider",
+        "host": "arachnid"
+      },
+      {
+        "form": "creeper-human",
+        "host": "human"
+      }
+    ]
+  },
+  "resources": {
+    "level": 2,
+    "checks": 54,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 719,
+      "textures": 234
+    },
+    "calls": 314,
+    "triangles": 141179,
+    "renderCpu": 3.700000001117587,
+    "stage": 0,
+    "load": 0,
+    "rounds": [
+      {
+        "geometries": 719,
+        "textures": 234
+      },
+      {
+        "geometries": 719,
+        "textures": 234
+      },
+      {
+        "geometries": 719,
+        "textures": 234
+      }
+    ]
+  },
+  "bench": {
+    "level": 2,
+    "checks": 57,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 751,
+      "textures": 234
+    },
+    "calls": 356,
+    "triangles": 238647,
+    "renderCpu": 4.099999999627471,
+    "stage": 0,
+    "load": 0,
+    "rounds": [
+      {
+        "median": 8.19999999999709,
+        "p95": 12.5,
+        "cpuMedian": 5.099999999627471,
+        "cpuP95": 6.900000000372529,
+        "calls": 356,
+        "triangles": 238647
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 8.30000000000291,
+        "cpuMedian": 2.899999998509884,
+        "cpuP95": 4,
+        "calls": 356,
+        "triangles": 238647
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 8.30000000000291,
+        "cpuMedian": 3,
+        "cpuP95": 3.799999998882413,
+        "calls": 356,
+        "triangles": 238647
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 8.400000000008731,
+        "cpuMedian": 2.900000000372529,
+        "cpuP95": 6.5,
+        "calls": 356,
+        "triangles": 238647
+      },
+      {
+        "median": 8.299999999988358,
+        "p95": 12.5,
+        "cpuMedian": 5.099999999627471,
+        "cpuP95": 7.099999999627471,
+        "calls": 356,
+        "triangles": 238647
+      }
+    ]
+  },
+  "cureSetup": {
+    "level": 2,
+    "checks": 58,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 733,
+      "textures": 235
+    },
+    "calls": 300,
+    "triangles": 140101,
+    "renderCpu": 2.800000000745058,
+    "stage": 1,
+    "load": 0,
+    "hp": 89.99075100000009
+  },
+  "cure": {
+    "level": 2,
+    "checks": 60,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 733,
+      "textures": 235
+    },
+    "calls": 302,
+    "triangles": 140153,
+    "renderCpu": 2.400000000372529,
+    "stage": 0,
+    "load": 0,
+    "hp": 64.99062200000009
+  },
+  "cureTouch": {
+    "desktopSimulation": true,
+    "level": 2,
+    "checks": 63,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 754,
+      "textures": 236
+    },
+    "calls": 261,
+    "triangles": 135233,
+    "renderCpu": 5.200000001117587,
+    "stage": 0,
+    "load": 0,
+    "hp": 64.96499900000015
+  },
+  "codexPrepare": {
+    "stats": {
+      "builds": 0,
+      "renders": 0,
+      "hits": 0,
+      "cached": 0,
+      "bytes": 0,
+      "queued": 0,
+      "active": null,
+      "studio": false,
+      "memory": null
+    },
+    "level": 2,
+    "seed": 424242
+  },
+  "codex": {
+    "type": "creeper",
+    "status": "ready",
+    "pixels": 411,
+    "silhouette": {
+      "w": 36,
+      "h": 26
+    },
+    "bounds": {
+      "x": 1153.671875,
+      "y": 561.625,
+      "w": 274.328125,
+      "h": 324.328125
+    },
+    "stats": {
+      "builds": 1,
+      "renders": 1,
+      "hits": 0,
+      "cached": 1,
+      "bytes": 174452,
+      "queued": 0,
+      "active": null,
+      "studio": true,
+      "memory": {
+        "geometries": 36,
+        "textures": 5
+      }
+    }
+  },
+  "codexCycle": {
+    "type": "creeper",
+    "steps": 12,
+    "seenForms": [
+      "creeper-rat",
+      "creeper-spider",
+      "creeper-human"
+    ],
+    "images": [
+      {
+        "view": 1,
+        "angle": 1,
+        "appearance": 0,
+        "form": "creeper-rat",
+        "pixels": 251
+      },
+      {
+        "view": 2,
+        "angle": 2,
+        "appearance": 0,
+        "form": "creeper-rat",
+        "pixels": 290
+      },
+      {
+        "view": 3,
+        "angle": 3,
+        "appearance": 0,
+        "form": "creeper-rat",
+        "pixels": 255
+      },
+      {
+        "view": 4,
+        "angle": 0,
+        "appearance": 1,
+        "form": "creeper-spider",
+        "pixels": 503
+      },
+      {
+        "view": 5,
+        "angle": 1,
+        "appearance": 1,
+        "form": "creeper-spider",
+        "pixels": 519
+      },
+      {
+        "view": 6,
+        "angle": 2,
+        "appearance": 1,
+        "form": "creeper-spider",
+        "pixels": 508
+      },
+      {
+        "view": 7,
+        "angle": 3,
+        "appearance": 1,
+        "form": "creeper-spider",
+        "pixels": 505
+      },
+      {
+        "view": 8,
+        "angle": 0,
+        "appearance": 2,
+        "form": "creeper-human",
+        "pixels": 288
+      },
+      {
+        "view": 9,
+        "angle": 1,
+        "appearance": 2,
+        "form": "creeper-human",
+        "pixels": 282
+      },
+      {
+        "view": 10,
+        "angle": 2,
+        "appearance": 2,
+        "form": "creeper-human",
+        "pixels": 278
+      },
+      {
+        "view": 11,
+        "angle": 3,
+        "appearance": 2,
+        "form": "creeper-human",
+        "pixels": 227
+      },
+      {
+        "view": 12,
+        "angle": 0,
+        "appearance": 3,
+        "form": "creeper-rat",
+        "pixels": 408
+      }
+    ],
+    "stats": {
+      "builds": 13,
+      "renders": 13,
+      "hits": 1,
+      "cached": 13,
+      "bytes": 2125340,
+      "queued": 0,
+      "active": null,
+      "studio": true,
+      "memory": {
+        "geometries": 36,
+        "textures": 7
+      }
+    }
+  },
+  "cleaned": {
+    "level": 2,
+    "checks": 64,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 754,
+      "textures": 236
+    },
+    "calls": 287,
+    "triangles": 139417,
+    "renderCpu": 3,
+    "stage": 0,
+    "load": 0,
+    "allChecks": [
+      "Natural Level 2 corridor has collision-safe test sightline",
+      "Creeper visible after CPU/GPU preparation",
+      "Correct host and infection stage use the live renderer",
+      "No GL error after rat appearance",
+      "Creeper visible after CPU/GPU preparation",
+      "Correct host and infection stage use the live renderer",
+      "No GL error after rat appearance",
+      "Creeper visible after CPU/GPU preparation",
+      "Correct host and infection stage use the live renderer",
+      "No GL error after arachnid appearance",
+      "Creeper visible after CPU/GPU preparation",
+      "Correct host and infection stage use the live renderer",
+      "No GL error after human appearance",
+      "Human approaches and attacks repeatedly through actual engine steps",
+      "Creeper visible after CPU/GPU preparation",
+      "Correct host and infection stage use the live renderer",
+      "No GL error after rat appearance",
+      "Infected host retains its death animation",
+      "Actual kill drops modeled infected meat",
+      "Expired infected corpse is removed from renderer",
+      "Fungal spore survives the host corpse",
+      "Nearby live spore cluster adds hidden infection load",
+      "Fire-salt effect removes spores",
+      "Natural loaded L2 chunks have an approachable zombie-spider wall corner",
+      "Infected meat uses its dedicated model in the real hand",
+      "Real hotbar loads the dedicated infected-meat pixel icon",
+      "Stage 2 attaches visible overlay to actual viewmodel",
+      "No numeric infection burden displayed in HUD",
+      "Stage 3 attaches visible overlay to actual viewmodel",
+      "No numeric infection burden displayed in HUD",
+      "Stage 4 attaches visible overlay to actual viewmodel",
+      "No numeric infection burden displayed in HUD",
+      "Infected hand can still hold current melee model",
+      "Fungus follows held-weapon grip",
+      "Infected player uses current firearm model",
+      "Firearm support hand also shows infection",
+      "ADS fades do not leave floating fungal overlay",
+      "Original dev summon accepts creeper-rat",
+      "Creeper visible after CPU/GPU preparation",
+      "Original dev summon accepts creeper-spider",
+      "Creeper visible after CPU/GPU preparation",
+      "Original dev summon accepts creeper-human",
+      "Creeper visible after CPU/GPU preparation",
+      "Creeper visible after CPU/GPU preparation",
+      "Creeper visible after CPU/GPU preparation",
+      "Creeper visible after CPU/GPU preparation",
+      "Creeper visible after CPU/GPU preparation",
+      "Creeper visible after CPU/GPU preparation",
+      "Creeper visible after CPU/GPU preparation",
+      "Creeper visible after CPU/GPU preparation",
+      "Creeper visible after CPU/GPU preparation",
+      "Creeper visible after CPU/GPU preparation",
+      "Repeated creeper removals keep GPU geometry stable",
+      "Repeated creeper removals keep GPU textures stable",
+      "Creeper visible after CPU/GPU preparation",
+      "Correct host and infection stage use the live renderer",
+      "No GL error after human appearance",
+      "Original special action exposes cauterization",
+      "Cauterization keeps lighter",
+      "Actual input pays cauterization HP cost once",
+      "Original special action exposes cauterization",
+      "Cauterization keeps lighter",
+      "Actual input pays cauterization HP cost once",
+      "GL remains healthy after models, overlays and worlds"
+    ]
+  },
+  "summary": {
+    "level": 2,
+    "checks": 64,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 754,
+      "textures": 236
+    },
+    "calls": 287,
+    "triangles": 139417,
+    "renderCpu": 2.799999998882413,
+    "stage": 0,
+    "load": 0
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

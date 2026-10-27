@@ -17,6 +17,8 @@ export type L0Surface = 'wall'|'dots'|'cream'|'khaki'|'red'|'manila'|'pit'
 export interface L0Rect {x:number;y:number;w:number;h:number}
 export interface L0Wall extends L0Rect {bottom:number;top:number;surface:L0Surface;redFace?:'nx'|'px'|'nz'|'pz';redGate?:string;redZone?:string}
 export interface L0Layout {
+  /** 主题：'l02'=Level 0.2「重塑的混乱」（复用 L0 管线，换材质/防撞条，无红室/熄灯等环境效果）。 */
+  theme?:'l02'
   testField?:L0Rect // Runtime-only developer clearing in world coordinates.
   seed:number;cx:number;cy:number;region:L0Region;baseRegion:L0BaseRegion;effectOverride?:L0Effect;revision:number;reference:boolean
   walls:L0Wall[];pits:L0Rect[];puddles:(L0Rect&{depth:number})[]

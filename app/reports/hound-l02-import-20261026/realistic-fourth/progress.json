@@ -1,0 +1,234 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 7720,
+  "cdp": 7721,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:7720/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Mon, 26 Oct 2026 01:23:59 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 295,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 7720,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 4902.631253,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.985,
+        "sendEnd": 1.054,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 10.118,
+        "receiveHeadersEnd": 10.243
+      },
+      "responseTime": 1792977839240.008,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\hound-l02-import-20261026\\realistic-fourth\\qa-1792977825556-14812",
+    "--remote-debugging-port=7721",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 51640,
+    "server": 49360
+  },
+  "appBootMs": 13295.9663,
+  "entryMs": 1972.4598000000005,
+  "firstPlayableMs": 20944.0988,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 661,
+      "textures": 158
+    },
+    "frame": {
+      "cpu": 7.400000000372529,
+      "calls": 800,
+      "triangles": 442783
+    },
+    "pin": null,
+    "l02": null
+  },
+  "setup": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 1,
+    "player": [
+      78.5,
+      94.5,
+      0.02
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 668,
+      "textures": 182
+    },
+    "frame": {
+      "cpu": 8.900000000372529,
+      "calls": 732,
+      "triangles": 384727
+    },
+    "pin": null,
+    "l02": null,
+    "pad": {
+      "wx": 14.5,
+      "wy": -1.5,
+      "axis": {
+        "x": 0,
+        "y": -1
+      }
+    }
+  },
+  "l0": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 3,
+    "player": [
+      79.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 120,
+      "textures": 70
+    },
+    "frame": {
+      "cpu": 5.599999999627471,
+      "calls": 128,
+      "triangles": 129925
+    },
+    "pin": null,
+    "l02": null,
+    "quests": [
+      {
+        "id": "l0_tutorial",
+        "revealed": true,
+        "done": false,
+        "rewarded": false,
+        "obj": [
+          {
+            "id": "explore",
+            "done": false,
+            "visible": true,
+            "progress": 1
+          },
+          {
+            "id": "manila",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "photo_red",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "exit",
+            "done": false,
+            "visible": false
+          }
+        ]
+      },
+      {
+        "id": "l0_beyond",
+        "revealed": false,
+        "done": false,
+        "rewarded": false,
+        "obj": [
+          {
+            "id": "find_zenith_station",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "find_remade_chaos",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "find_ice_room",
+            "done": false,
+            "visible": true
+          }
+        ]
+      }
+    ]
+  }
+}

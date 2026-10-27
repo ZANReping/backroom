@@ -1,11 +1,13 @@
 // 物品低模（自包含，仅依赖 three）——地面/投掷物/手持展示用的小模型 + 稀有度光环底座。
 // 实体模型在 entitiesMesh.ts。
 import * as THREE from 'three'
+import { buildCreepMeat } from './creeperItem'
 import { buildSixItemMesh } from './sixItemMesh'
 import { buildFlashlightMesh } from './flashlightMesh'
 import { buildBandageMesh, buildCannedFoodMesh } from './supplyMesh'
 import { buildBatteryMesh, buildWaterThermosMesh } from './provisionsMesh'
-import { buildDetailedItemMesh } from './detailItemsMesh'
+import { buildDetailedItemMesh, buildLevelTapeMesh } from './detailItemsMesh'
+import { levelTapeLook } from '../content/levelTapes'
 import { buildMeleeGroundMesh } from './meleeMesh'
 import { isMelee } from '../content/melee'
 import { buildFiresaltMesh } from './firesaltMesh'
@@ -18,6 +20,7 @@ import { velvetCakeGeometry } from './partygoerMesh'
 import { buildCurabiturItemMesh, isCurabiturItem } from './curabiturRender' // [L8-curabitur]
 import { glowSprite } from './curabiturMesh'
 
+import { buildPermitMesh, buildDustMaskMesh } from './l02ItemModels'
 import { buildFoyerBackpack, buildFoyerPhone, buildFoyerSnack, buildFoyerWater, type ItemMatFactory } from './foyerItemModels'
 
 /** 前厅随身物品（手机/瓶装水/能量棒/背包）在其他层级地面上的版本：Lambert + 像素贴图 + 与其它地面物品一致的弱自发光。 */
@@ -48,6 +51,7 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     grp.add(gm); grp.userData.itemType = meleeBase; grp.userData.meleeRig=gm.userData.meleeRig
   }
   else if (type === 'dryshrimp' || type === 'liveshrimp' || type === 'friedshrimp') grp.add(buildShrimpItemMesh(type))
+  else if(type==='creepmeat')grp.add(buildCreepMeat())
   else if (isRefinedItemType(type)) {
     const model = buildRefinedItemMesh(type)
     // 2026-10-23：受眷胶 / 受眷孢子改用细化模型（relic 图集），保留原来的发光光晕（挂在模型下，手持版一起带上）
@@ -56,6 +60,7 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     grp.add(model)
   }
   else if (isCurabiturItem(type)) grp.add(buildCurabiturItemMesh(type))
+  else if (levelTapeLook(type)) grp.add(buildLevelTapeMesh(levelTapeLook(type)!.palette))
   else switch (type) {
     // Six detailed models share UV atlases; their factory emits at most three material batches.
     case 'luckymilk': case 'capacitor': case 'skeleton': case 'rabbit': case 'pockets': case 'fuyouyu':
@@ -124,6 +129,8 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
       break
     }
     case 'snackbar': grp.add(buildFoyerSnack(foyerGroundMats)); break // 前厅：能量棒（圆角包装 + 锯齿封口）
+    case 'brc_permit': grp.add(buildPermitMesh()); break // L0.2 施工许可：板夹 + 蓝色复写纸许可单 + 长尾夹（l02ItemModels）
+    case 'dustmask': grp.add(buildDustMaskMesh()); break // L0.2 防尘口罩：杯形滤布 + 鼻夹 + 松紧带
     default: em(0.2, 0.2, 0.2, '#d6cfae'); grp.userData.fallback = 1 // v40：标记通用 fallback（mesh-smoke 断言零 fallback）
   }
   // 发光描边底座（按稀有度/类别配色）
@@ -137,7 +144,7 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     suit: '#9a8fd0', gloves: '#9a8fd0', rabbit: '#c9a0d0', lighter: '#c9a0d0', // 装备：紫
     silverware: '#d8d8e0', wallpaper: '#c9b458',
     // v23 新增：Level 6–11 / Level 601
-    driedfruit: '#8fd98f', thingmeat: '#8fd98f', ratmeat: '#8fd98f', wheatgrain: '#8fd98f', citywater: '#8fd98f', // 补给：绿
+    driedfruit: '#8fd98f', thingmeat: '#8fd98f', ratmeat: '#8fd98f', creepmeat: '#8fd98f', wheatgrain: '#8fd98f', citywater: '#8fd98f', // 补给：绿
     uvlamp: '#b06ad9', xenonmarble: '#66e0d0', // 光源：紫外紫 / 氙气蓝绿
     timber: '#d96a4a', nails: '#d96a4a', // 武器/工具：红
     housekey: '#7fb0c9', // 钥匙：冰蓝
@@ -166,8 +173,9 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     grilledsteak: '#8fd98f', jambread: '#8fd98f', // 菜肴：补给绿
     memoryjuice: '#e0a050', laughrepellent: '#cfe8e6', babelbalm: '#e86060', // 批发市场 v2：液体 / 润唇膏
     outdoorkit: '#e8e2d2', traumakit: '#e8e2d2', saltbox: '#e8823c', // 医疗：白 / 火盐：橙
+    brc_permit: '#c9b458', dustmask: '#9a8fd0', // L0.2：施工许可（纸物）/ 防尘口罩（装备）
   }
-  const gc = ITEM_GLOW[meleeBase] ?? ITEM_GLOW[type] ?? '#e8b93c'
+  const gc = ITEM_GLOW[meleeBase] ?? ITEM_GLOW[type] ?? (levelTapeLook(type) ? ITEM_GLOW.tape : '#e8b93c')
   if (opts?.halo !== false) {
     // This zero-thickness plane ring does not need separate front/back draws.
     const halo = new THREE.Mesh(new THREE.RingGeometry(0.18, 0.26, 10), new THREE.MeshBasicMaterial({ color: gc, transparent: true, opacity: 0.45, side: THREE.DoubleSide, forceSinglePass: true }))

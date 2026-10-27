@@ -7,7 +7,7 @@ type Screen='home'|'amount'|'confirm'|'processing'|'receipt'|'balance'|'statemen
 type Operation='deposit'|'withdraw'
 const number=(n:number)=>n.toLocaleString('zh-CN')
 const date=(n:number)=>new Date(n).toLocaleString('zh-CN',{hour12:false,timeZone:'Asia/Shanghai'})
-const titles={deposit:'存款',withdraw:'取款',purchase:'商户消费',exchange:'货币兑换',service:'服务付款'}
+const titles={deposit:'存款',withdraw:'取款',purchase:'商户消费',exchange:'货币兑换',service:'服务付款',sale:'商户回收'}
 function TerminalIcon({kind}:{kind:'deposit'|'withdraw'|'balance'|'statement'}){
  return <svg aria-hidden="true" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.6">
   {kind==='deposit'||kind==='withdraw'?<><path d="M5 20v7h22v-7M9 23h14"/>{kind==='deposit'?<path d="M16 3v15m-5-5 5 5 5-5"/>:<path d="M16 19V4m-5 5 5-5 5 5"/>}</>:kind==='balance'?<><path d="M4 9h24v17H4zM4 13h24M22 18h6v5h-6z"/><path d="m6 9 17-5v5"/></>:<><path d="M8 3h16v26l-4-2-4 2-4-2-4 2zM12 9h8M12 14h8M12 19h5"/></>}

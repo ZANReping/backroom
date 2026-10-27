@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-25",
+  "targetRoot": "E:\\ZAN\\backroom",
+  "accepted": {
+    "verified-realistic": {
+      "ok": true,
+      "checks": 42,
+      "screenshots": 14,
+      "consoleErrors": 0,
+      "networkErrors": 0,
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      },
+      "environment": {
+        "seed": 424242,
+        "player": {
+          "x": 79.5,
+          "y": 79.5,
+          "z": 0,
+          "level": 0
+        },
+        "yaw": 0,
+        "pitch": 0,
+        "mobile": true,
+        "engineListeners": 2
+      }
+    },
+    "verified-classic": {
+      "ok": true,
+      "checks": 42,
+      "screenshots": 14,
+      "consoleErrors": 0,
+      "networkErrors": 0,
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      },
+      "environment": {
+        "seed": 424242,
+        "player": {
+          "x": 79.5,
+          "y": 79.5,
+          "z": 0,
+          "level": 0
+        },
+        "yaw": 0,
+        "pitch": 0,
+        "mobile": true,
+        "engineListeners": 2
+      }
+    }
+  },
+  "productionBuild": "PASS",
+  "buildLog": "build.log",
+  "deviceScope": "Desktop Chrome touch and orientation emulation; no Android/iOS hardware claim"
+}

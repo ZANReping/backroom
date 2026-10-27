@@ -1,0 +1,130 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 1141,
+  "cdp": 1142,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:1141/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Tue, 27 Oct 2026 09:57:11 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 306,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 1141,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 122099.849574,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.532,
+        "sendEnd": 0.57,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 103.772,
+        "receiveHeadersEnd": 103.961
+      },
+      "responseTime": 1793095031050.627,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\mirror-reflections-20261027\\before-realistic-steady\\qa-1793095013232-29292",
+    "--remote-debugging-port=1142",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 71192,
+    "server": 53936
+  },
+  "appBootMs": 14813.086799999997,
+  "entryMs": 2019.9922000000006,
+  "firstPlayableMs": 22739.8562,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "pos": [
+      78.5,
+      79.5,
+      0
+    ],
+    "camera": [
+      78.5,
+      1.55,
+      79.5
+    ],
+    "yaw": 0,
+    "pitch": 0,
+    "mirrors": null,
+    "memory": {
+      "geometries": 661,
+      "textures": 159
+    },
+    "calls": 586,
+    "triangles": 166963,
+    "cpu": 4.899999991059303,
+    "checks": []
+  },
+  "foyer": {
+    "level": 900,
+    "pos": [
+      6,
+      12.55,
+      0
+    ],
+    "camera": [
+      6,
+      1.55,
+      12.55
+    ],
+    "yaw": -4.71238898038469,
+    "pitch": 0.05046217401685577,
+    "mirrors": null,
+    "memory": {
+      "geometries": 644,
+      "textures": 230
+    },
+    "calls": 62,
+    "triangles": 31757,
+    "cpu": 0.7999999970197678,
+    "checks": []
+  }
+}

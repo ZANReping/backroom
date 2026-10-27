@@ -1,6 +1,9 @@
 import { SAT_NEST_CHANCE, findSatelliteNest, wildMothForm, mainNestDesc, registerNest, satelliteColony } from './mothNests'
 import {genL0Architecture,l0RegionOf,newL0Space,l0RestoredDropPosition,type L0Layout,type L0SpaceState} from './l0Architecture'
 import {applyL0TestField} from './l0TestField'
+import {applyRemodelSites} from './remodelSites'
+import {applyL02Collapse} from './l02Collapse'
+import {L02_ID} from './l02Layout'
 import { newL1Dynamics, restoreL1Container, rememberL1Container, type L1Dynamics } from './l1Dynamics'
 import {l1RestoredDropPosition} from './l1Architecture'
 import {RS,h32,regionHost} from './infiniteSeed'
@@ -18,6 +21,7 @@ import { canOccupy, PLAYER_RADIUS } from '../core/player'
 import { preparedL11, prefetchL11 } from './l11ChunkCache'
 import { takePreparedChunk, prefetchChunks } from './chunkCache'
 import { makeEntity, canSpawnNaturally, type Entity } from '../entities'
+import { CHUNK_SPAWN_HOOKS } from './chunkHooks' // [creeper] Entity 17：尸鼠 / 蛛形纲按比例替换成感染体（engine/creeperAI 登记）
 import type { NpcState } from '../content/npcs'
 import type { GameMap } from './mapgen'
 import { fixHanging, HANGING_KINDS, waterItemZForTile } from './mapgen'
@@ -124,6 +128,8 @@ export interface InfiniteState {
   cityReferences?: Map<string, number>
   l0Pending?: import("../engine/l0State").L0Pending
   l0?: L0SpaceState
+  /** Level 0.2 窗口（floorHeight / canOccupy 走 L0 布局分支以读取塌陷口地面；初始化时置位）。 */
+  l02?: boolean
   mothAlerts?: { all: boolean; nests: Record<string, boolean> }
   mothNests?: Record<string, import('./mothNests').MothNestDesc> // 死亡飞蛾巢穴登记（主巢 + 卫星巢，世界坐标）
   mothEggs?: Record<string, number> // 每个巢道具已被打破的卵数（键 = 巢 id + ':' + 道具 key）
@@ -216,7 +222,9 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
   }
   const rawSource = prepared ?? (def.id === 0 ? genL0Architecture(def,inf.seed,cx,cy,undefined,inf.l0?.revisions[key]??0,inf.l0?.redProgress) : def.id === 11 ? preparedL11(def, inf.seed, cx, cy, inf.cityRevisions?.[key] ?? 0)
     : (!inf.plague ? takePreparedChunk(def, inf.seed, cx, cy) : undefined) ?? infiniteImplFor(def.id).genRaw(def, inf.seed, cx, cy, inf.plague ? 'red' : undefined))
-  const raw = def.id === 0 ? applyL0TestField(rawSource, inf.l0TestField) : rawSource
+  // Level 0 施工点（施工许可）：门出口与路障碰撞随区块注入，重访/读档后仍在
+  // Level 0.2 崩塌：倒塌的隔墙段切掉碰撞、塌陷口下的房屋加碰撞（本次进入有效，窗口平移/重载区块时重新应用）
+  const raw = def.id === 0 ? applyRemodelSites(applyL0TestField(rawSource, inf.l0TestField), cx, cy) : def.id === L02_ID ? applyL02Collapse(rawSource, cx, cy) : rawSource
   const st = inf.state.get(key)
   // v83：Object 70（容器「尸体」）生成概率减半——按世界坐标确定性哈希保留约一半，不改动生成器随机序列
   const structures: Structure[] = raw.structures.filter((s) => s.kind !== 'corpse' || object70Keep(def.id, s.x, s.y)).map((s) => {
@@ -289,6 +297,8 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
     // v58：「7 层之物」全窗口唯一——已有活体在载时，新 chunk 的个体不再挂载（本层同时只存在一只）
     return !(e.def.type === 'thething' && [...inf.chunks.values()].some((c) => c.entities.some((q) => q.def.type === 'thething' && !q.dead)))
   })
+  // [creeper] 爬菌 Entity 17：L2/L3/L8（L5 锅炉房）按世界坐标确定性哈希把尸鼠 / 蛛形纲换成感染体，并极罕见地注入爬菌人
+  if (!inf.plague) for (const hook of CHUNK_SPAWN_HOOKS) hook(def.id, inf.seed, cx, cy, CS, raw.tiles as ArrayLike<number>, entities, ox, oy)
   // v39：chunk NPC（BRC 员工；定义由 raw 内嵌，工作点即岗位锚点，面向工作面）
   const npcs: NpcState[] = (raw.npcs ?? []).map((sp) => ({
     id: sp.def.id, def: sp.def,
@@ -494,6 +504,7 @@ export function generateInfinite(def: LevelDef, seed: number, firstVisit = true)
     inf: {
       seed, ox: -WIN_R * CS, oy: -WIN_R * CS,
       l0: def.id===0?newL0Space():undefined,
+      l02: def.id===L02_ID,
       chunks: new Map(), explored: new Map(), state: new Map(),
       taken: new Set(), regionExits: new Map(), regionExitMiss: new Set(), rev: 0,
     },
@@ -513,7 +524,7 @@ export function generateInfinite(def: LevelDef, seed: number, firstVisit = true)
     if (x < 0 || y < 0 || x >= W || y >= W) return true
     // L2 racks use fractional footprints. Validate the actual player centre
     // (loadLevel adds .5), including body radius, rather than the tile corner.
-    if(def.id===0||def.id===2)return !canOccupy(m,x+.5,y+.5,PLAYER_RADIUS,{z:0})
+    if(def.id===0||def.id===2||def.id===902/* Level 0.2 */)return !canOccupy(m,x+.5,y+.5,PLAYER_RADIUS,{z:0})
     const i = y * W + x
     if (spawnFloor === 1) {
       if (m.up[i] !== 1 || m.upWall[i] === 1) return true

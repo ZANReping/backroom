@@ -1,0 +1,35 @@
+{
+  "checks": [
+    "dialog omits complete growth panel nightingale",
+    "normal conversation choices remain nightingale",
+    "MEG task acceptance stays in NPC conversation",
+    "actual MEG mission accept still works",
+    "growth remains available from existing codex meg",
+    "dialog omits complete growth panel vesper",
+    "normal conversation choices remain vesper",
+    "BNTG task acceptance stays in NPC conversation",
+    "warehouse conversation option remains",
+    "actual BNTG mission accept still works",
+    "growth remains available from existing codex bntg"
+  ],
+  "shots": [
+    "dialog-meg",
+    "codex-meg",
+    "dialog-bntg",
+    "codex-bntg"
+  ],
+  "entries": [
+    {
+      "x": 31.55,
+      "y": 31,
+      "z": 0.02,
+      "id": "nightingale"
+    },
+    {
+      "x": 47.599999999999994,
+      "y": 8.2,
+      "z": 0.02,
+      "id": "vesper"
+    }
+  ]
+}

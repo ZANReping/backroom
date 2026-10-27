@@ -1,0 +1,227 @@
+/* 商店界面：公共骨架 + 每个团体一套皮肤（.shop--<id>）。纹理全部用 CSS 渐变画，没有外部图片。
+   字体：Google Fonts（index.html 引入）Ma Shan Zheng（黑板粉笔）/ Long Cang（马克笔手写）/ ZCOOL XiaoWei（酒店衬线）/
+   Special Elite（打字机拉丁字）/ Limelight（装饰艺术标题），均为 SIL OFL；缺省回退到项目已有字体。 */
+.shop-root{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.72)}
+.shop-sheet{position:relative;width:min(980px,100%);max-height:min(720px,96dvh);display:flex;flex-direction:column;overflow:hidden;
+ --ink:#e6e2c8;--dim:#a39f88;--paper:#17150f;--edge:#3b3626;--acc:var(--fac);--row:rgba(255,255,255,.03);--rowon:rgba(255,255,255,.09);--good:#8fd98f;--bad:#e06a5a;
+ color:var(--ink);background:var(--paper);border:1px solid var(--edge);box-shadow:0 18px 60px rgba(0,0,0,.6)}
+.shop-deco{position:absolute;inset:0;pointer-events:none}
+.shop-head{position:relative;display:flex;align-items:center;gap:14px;padding:16px 20px 10px}
+.shop-emblem{flex:none;display:grid;place-items:center;width:58px;height:58px;font-weight:900;font-size:15px;letter-spacing:.04em;color:var(--acc);border:2px solid var(--acc);border-radius:50%}
+.shop-titles{min-width:0;flex:1}
+.shop-kicker{font-size:11px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase}
+.shop-title{margin:2px 0 1px;font-size:26px;line-height:1.1;font-weight:800;color:var(--ink)}
+.shop-keeper{font-size:12px;color:var(--dim)}
+.shop-wallet{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.shop-wallet span{display:flex;flex-direction:column;align-items:flex-end;padding:4px 10px;border:1px solid var(--edge);min-width:64px}
+.shop-wallet i{font-style:normal;font-size:10px;color:var(--dim)}
+.shop-wallet b{font-size:17px;font-variant-numeric:tabular-nums}
+.shop-tabs{position:relative;display:flex;align-items:center;gap:6px;padding:0 20px 8px;border-bottom:1px solid var(--edge)}
+.shop-tabs>button{padding:6px 14px;font-size:14px;color:var(--dim);border:1px solid transparent;background:none}
+.shop-tabs>button.on{color:var(--ink);border-color:var(--acc);background:var(--rowon)}
+.shop-tabs em{font-style:normal;font-size:10px;margin-left:5px;opacity:.7}
+.shop-tabs-gap{flex:1}
+.shop-perk{font-size:11px;color:var(--good)}
+.shop-tabs .shop-key{display:flex;align-items:center;gap:5px;padding:4px 8px;font-size:12px;color:var(--dim)}
+.shop-key kbd{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 3px;font:700 11px/1 'JetBrains Mono',monospace;color:var(--paper);background:var(--dim);border-radius:3px}
+.shop-body{position:relative;flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(250px,1fr)}
+.shop-list{overflow-y:auto;padding:10px 12px 10px 20px;display:flex;flex-direction:column;gap:4px;max-height:58dvh}
+.shop-row{display:flex;align-items:center;gap:10px;padding:6px 10px;text-align:left;background:var(--row);border:1px solid transparent;color:var(--ink)}
+.shop-row:hover{background:var(--rowon)}
+.shop-row.on{border-color:var(--acc);background:var(--rowon)}
+.shop-row.off{opacity:.45}
+.shop-glyph{flex:none;display:grid;place-items:center;width:34px;height:34px}
+.shop-name{flex:1;min-width:0;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.shop-tagx{font-size:10px;padding:1px 5px;border:1px solid var(--acc);color:var(--acc)}
+.shop-price{flex:none;font:600 13px 'JetBrains Mono',monospace;color:var(--acc);max-width:46%;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.shop-detail{display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:14px 20px 14px 14px;border-left:1px solid var(--edge);overflow-y:auto;max-height:58dvh}
+.shop-big{display:grid;place-items:center;height:96px;background:var(--row);border:1px solid var(--edge)}
+.shop-dname{font-size:20px;font-weight:800}
+.shop-meta{font-size:11px;color:var(--dim)}
+.shop-desc{margin:0;font-size:12.5px;line-height:1.6;color:var(--ink);opacity:.86}
+.shop-give{display:flex;flex-direction:column;gap:2px;font-size:12px}
+.shop-give .short{color:var(--bad)}
+.shop-qty,.shop-pay{display:flex;gap:6px;align-items:center}
+.shop-qty button,.shop-pay button{padding:3px 10px;font-size:12px;border:1px solid var(--edge);color:var(--ink);background:var(--row)}
+.shop-pay button.on{border-color:var(--acc);color:var(--acc)}
+.shop-qty span{min-width:64px;text-align:center;font:600 13px 'JetBrains Mono',monospace}
+.shop-act{margin-top:auto;padding:11px 14px;font-size:15px;font-weight:800;color:var(--paper);background:var(--acc);border:none;letter-spacing:.06em}
+.shop-act:disabled{opacity:.35;cursor:default}
+.shop-warn{font-size:11px;color:var(--bad)}
+.shop-empty{padding:30px 10px;text-align:center;color:var(--dim);font-size:13px}
+.shop-refuse{padding:48px 24px;text-align:center;font-size:18px;color:var(--ink)}
+.shop-refuse small{display:block;margin-top:8px;font-size:12px;color:var(--dim)}
+.shop-foot{position:relative;display:flex;align-items:center;gap:10px;padding:8px 20px 12px;border-top:1px solid var(--edge);flex-wrap:wrap}
+.shop-fx{display:flex;gap:6px}
+.shop-fx button{padding:4px 10px;font-size:11.5px;border:1px solid var(--edge);color:var(--ink);background:var(--row)}
+.shop-notice{font-size:12px;color:var(--good);animation:shopIn .25s ease-out}
+.shop-notice.bad{color:var(--bad)}
+.shop-motto{margin-left:auto;font-size:11px;letter-spacing:.12em;color:var(--dim)}
+@keyframes shopIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (max-width:720px){.shop-body{grid-template-columns:1fr}.shop-detail{border-left:none;border-top:1px solid var(--edge)}.shop-list,.shop-detail{max-height:34dvh}.shop-wallet{display:none}}
+
+/* ===== B.N.T.G.：商行收银台——墨绿账本纸、条码价签、压印币浮雕、底部收银条 ===== */
+.shop--bntg .shop-sheet{--paper:#14241c;--ink:#e3efe5;--dim:#9bb8a4;--edge:#2f5140;--acc:#7db591;--row:rgba(125,181,145,.06);--rowon:rgba(125,181,145,.16);
+ font-family:'JetBrains Mono','Noto Sans SC',monospace;
+ background:repeating-linear-gradient(0deg,transparent 0 27px,rgba(125,181,145,.09) 27px 28px),linear-gradient(90deg,transparent 0 46px,rgba(196,90,70,.25) 46px 47px,transparent 47px),#14241c}
+.shop--bntg .shop-emblem{border-radius:50%;color:#e9d48a;border:3px double #c9b066;background:radial-gradient(circle at 35% 30%,#3d5a3f,#1c2e22 70%);box-shadow:inset 0 0 0 4px #1c2e22,inset 0 0 0 5px #c9b06688;font-size:13px}
+.shop--bntg .shop-title{font-family:'Noto Serif SC',serif;letter-spacing:.06em}
+.shop--bntg .shop-row{border-left:3px solid #2f5140;background:linear-gradient(90deg,var(--row),transparent)}
+.shop--bntg .shop-row.on{border-color:#7db591;border-left-color:#e9d48a}
+.shop--bntg .shop-price{padding:2px 8px 2px 18px;color:#14241c;background:linear-gradient(90deg,#14241c 0 1px,transparent 1px 3px,#14241c 3px 5px,transparent 5px 6px,#14241c 6px 7px,transparent 7px 10px,#14241c 10px 11px,transparent 11px) left/13px 100% no-repeat,#e3efe5;clip-path:polygon(8px 0,100% 0,100% 100%,8px 100%,0 50%)}
+.shop--bntg .shop-act{background:#e9d48a;color:#14241c;font-family:'JetBrains Mono',monospace}
+.shop--bntg .shop-foot{background:#e9eee6;color:#203528;border-top:none;--dim:#4c6655;--edge:#b9c9bd;--ink:#203528;--row:#fff;
+ -webkit-mask:radial-gradient(circle 5px at 8px 0,transparent 98%,#000) -8px 0/16px 100%;mask:radial-gradient(circle 5px at 8px 0,transparent 98%,#000) -8px 0/16px 100%;padding-top:14px}
+.shop--bntg .shop-notice{color:#2a7a45}.shop--bntg .shop-notice.bad{color:#b2402c}
+
+/* ===== M.E.G.：军需领用单——军绿文件夹 + 牛皮纸表格 + 打字机字 + 红色「已核发」章 ===== */
+.shop--meg .shop-sheet{--paper:#e9dfc3;--ink:#2b2a22;--dim:#6b6450;--edge:#b8aa83;--acc:#7a2a1e;--row:transparent;--rowon:rgba(122,42,30,.07);--good:#3c6a2a;--bad:#a3271b;
+ font-family:'Special Elite','Courier New','Noto Serif SC',monospace;background:#e9dfc3;border:14px solid #4b5434;border-top-width:22px;box-shadow:0 0 0 1px #2e3420,0 18px 60px rgba(0,0,0,.6)}
+.shop--meg .shop-deco{background:repeating-linear-gradient(0deg,transparent 0 37px,rgba(70,90,120,.18) 37px 38px);top:118px}
+.shop--meg .shop-emblem{border-radius:0;border:2px solid #2b2a22;color:#2b2a22;font-size:12px;width:64px}
+.shop--meg .shop-title{font-family:'Special Elite','Noto Serif SC',serif;text-decoration:underline;text-underline-offset:5px}
+.shop--meg .shop-wallet span{border-style:dashed}
+.shop--meg .shop-row{border-bottom:1px solid #b8aa83;border-radius:0}
+.shop--meg .shop-row.on{border:1px solid #7a2a1e;background:rgba(122,42,30,.06)}
+.shop--meg .shop-price{color:#2b2a22;font-family:'Special Elite',monospace}
+.shop--meg .shop-detail{border-left:1px dashed #8d815f}
+.shop--meg .shop-big{background:#f3ecd8}
+.shop--meg .shop-act{background:none;color:#a3271b;border:3px solid #a3271b;border-radius:4px;transform:rotate(-2deg);font-family:'Special Elite','Noto Sans SC',monospace;font-size:17px;letter-spacing:.2em;box-shadow:inset 0 0 0 2px #e9dfc3,inset 0 0 0 3px #a3271b55}
+.shop--meg .shop-act:not(:disabled):active{transform:rotate(-2deg) scale(.96)}
+.shop--meg .shop-notice{padding:2px 10px;border:2px solid currentColor;transform:rotate(-3deg);font-weight:700;animation:shopStamp .3s cubic-bezier(.2,1.6,.4,1)}
+@keyframes shopStamp{from{opacity:0;transform:rotate(-3deg) scale(1.8)}to{opacity:1;transform:rotate(-3deg) scale(1)}}
+.shop--meg .shop-key kbd{color:#e9dfc3;background:#4b5434}
+
+/* ===== 首都共同体：首都百货——海军蓝 + 金色装饰艺术、霓虹灯泡边框、橱窗格 ===== */
+.shop--capital .shop-sheet{--paper:#101a33;--ink:#f3e9cc;--dim:#a9a58c;--edge:#c9a54a66;--acc:#e7c25b;--row:rgba(231,194,91,.05);--rowon:rgba(231,194,91,.14);
+ background:radial-gradient(ellipse at 50% -20%,#2a3d75 0,transparent 60%),#101a33;border:2px solid #e7c25b}
+.shop--capital .shop-deco{inset:6px;border:1px solid #e7c25b55;background:radial-gradient(circle,#ffe9a0 0 2px,transparent 2.5px) 0 0/18px 18px repeat-x,radial-gradient(circle,#ffe9a0 0 2px,transparent 2.5px) 0 100%/18px 18px repeat-x;filter:drop-shadow(0 0 3px #ffd56a)}
+.shop--capital .shop-head{padding-top:26px;background:repeating-conic-gradient(from -90deg at 50% 120%,#e7c25b14 0 6deg,transparent 6deg 12deg)}
+.shop--capital .shop-title{font-family:'Limelight','Noto Serif SC',serif;font-weight:400;font-size:30px;color:#e7c25b;text-shadow:0 0 12px #e7c25b66}
+.shop--capital .shop-emblem{border-radius:0;transform:rotate(45deg);width:46px;height:46px;font-size:20px}
+.shop--capital .shop-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));align-content:start}
+.shop--capital .shop-row{flex-direction:column;align-items:center;gap:4px;padding:10px 6px 0;border:1px solid #e7c25b44;background:linear-gradient(180deg,#1b2a52,#101a33)}
+.shop--capital .shop-row.on{border-color:#e7c25b;box-shadow:0 0 14px #e7c25b44 inset}
+.shop--capital .shop-name{text-align:center;white-space:normal;font-size:13px}
+.shop--capital .shop-price{align-self:stretch;max-width:none;text-align:center;padding:3px;color:#101a33;background:#e7c25b}
+.shop--capital .shop-act{background:linear-gradient(180deg,#f2d27a,#c9a03c);color:#101a33}
+
+/* ===== 阿丽亚娜集团：诊所处方单——白底蓝线、Rx、绿十字 ===== */
+.shop--ariane .shop-sheet{--paper:#f6f8fb;--ink:#1d2a3a;--dim:#5f7184;--edge:#c7d3e0;--acc:#2a6fb0;--row:#fff;--rowon:#e8f1fb;--good:#1f7a4a;--bad:#c0392b;
+ font-family:'Noto Sans SC',sans-serif;background:#f6f8fb;border:none;border-top:8px solid #2a6fb0}
+.shop--ariane .shop-emblem{border-radius:10px;color:#fff;background:#2fa66a;border:none;font-size:32px}
+.shop--ariane .shop-title::before{content:'℞ ';color:#2a6fb0;font-family:'Noto Serif SC',serif}
+.shop--ariane .shop-row{border:1px solid #dbe4ee;border-radius:6px}
+.shop--ariane .shop-row.on{border-color:#2a6fb0;box-shadow:0 1px 0 #2a6fb0}
+.shop--ariane .shop-tagx{border-radius:3px;background:#2a6fb0;color:#fff;border:none}
+.shop--ariane .shop-price{color:#2a6fb0;font-family:'Noto Sans SC',sans-serif;font-weight:500}
+.shop--ariane .shop-big{background:#fff;border-radius:8px}
+.shop--ariane .shop-act{border-radius:6px;background:#2a6fb0;color:#fff}
+.shop--ariane .shop-tabs>button.on{border-radius:6px 6px 0 0;border-bottom-color:transparent;background:#fff}
+.shop--ariane .shop-key kbd{color:#fff;background:#5f7184}
+
+/* ===== Tom 餐馆：黑板菜单——粉笔字、木框、粉笔灰 ===== */
+.shop--tom .shop-sheet{--paper:#23302a;--ink:#f1f0e6;--dim:#b9c0b3;--edge:#ffffff2e;--acc:#f6d77c;--row:transparent;--rowon:rgba(255,255,255,.06);
+ font-family:'Ma Shan Zheng','Long Cang','Noto Sans SC',cursive;border:16px solid #6b4a2b;border-image:linear-gradient(135deg,#7c5634,#4d331c 40%,#8a6240 60%,#563820) 1;
+ background:radial-gradient(ellipse at 30% 20%,#ffffff14,transparent 50%),radial-gradient(ellipse at 80% 90%,#ffffff10,transparent 45%),#23302a}
+.shop--tom .shop-title{font-family:'Ma Shan Zheng','Noto Sans SC',cursive;font-weight:400;font-size:34px;color:#f6d77c}
+.shop--tom .shop-emblem{border:2px dashed #f1f0e6;color:#f1f0e6;font-family:'Ma Shan Zheng',cursive}
+.shop--tom .shop-row{font-size:17px}
+.shop--tom .shop-name{font-size:19px}
+.shop--tom .shop-price{flex:1;font-family:'Ma Shan Zheng',cursive;font-size:16px;color:#f6d77c;background:radial-gradient(circle,#ffffff66 1px,transparent 1.6px) 0 70%/8px 4px repeat-x;text-align:right}
+.shop--tom .shop-row .shop-name{flex:none}
+.shop--tom .shop-row.on{border:2px solid #f1f0e6aa;border-radius:40% 8px 50% 6px/8px 50% 6px 40%}
+.shop--tom .shop-tagx{border-radius:50%;border-color:#f6d77c}
+.shop--tom .shop-big{background:transparent;border:2px dashed #ffffff44}
+.shop--tom .shop-act{background:none;border:2px solid #f6d77c;color:#f6d77c;font-family:'Ma Shan Zheng',cursive;font-size:20px;font-weight:400;border-radius:12px 4px 14px 5px}
+.shop--tom .shop-key kbd{background:#f1f0e6;color:#23302a}
+
+/* ===== 家常酒店：客房服务菜单——酒红丝绒 + 烫金细线、居中衬线、点线引导 ===== */
+.shop--homely .shop-sheet{--paper:#3a0f17;--ink:#f6e7cf;--dim:#c9a98a;--edge:#c9a14a55;--acc:#d8b25a;--row:transparent;--rowon:rgba(216,178,90,.1);
+ font-family:'ZCOOL XiaoWei','Noto Serif SC',serif;background:repeating-linear-gradient(90deg,#ffffff05 0 2px,transparent 2px 5px),radial-gradient(ellipse at 50% 0,#5c1a26,#2c0a10 75%);border:1px solid #d8b25a}
+.shop--homely .shop-deco{inset:8px;border:1px solid #d8b25a88;outline:1px solid #d8b25a44;outline-offset:3px}
+.shop--homely .shop-head{flex-direction:column;text-align:center;padding-top:26px}
+.shop--homely .shop-titles{text-align:center}
+.shop--homely .shop-emblem{font-family:'ZCOOL XiaoWei',serif;font-size:26px;border:1px solid #d8b25a;width:52px;height:52px;box-shadow:0 0 0 4px #3a0f17,0 0 0 5px #d8b25a66}
+.shop--homely .shop-title{font-family:'ZCOOL XiaoWei','Noto Serif SC',serif;font-weight:400;letter-spacing:.3em;color:#d8b25a}
+.shop--homely .shop-wallet{justify-content:center}
+.shop--homely .shop-tabs{justify-content:center}
+.shop--homely .shop-row{padding:8px 14px}
+.shop--homely .shop-name{flex:none;max-width:60%}
+.shop--homely .shop-price{flex:1;color:#d8b25a;font-family:'ZCOOL XiaoWei',serif;background:linear-gradient(90deg,transparent,transparent) ;border-bottom:none;text-align:right;
+ background-image:radial-gradient(circle,#d8b25a99 1px,transparent 1.4px);background-size:7px 3px;background-repeat:repeat-x;background-position:0 72%}
+.shop--homely .shop-row.on{border:none;border-top:1px solid #d8b25a;border-bottom:1px solid #d8b25a}
+.shop--homely .shop-act{background:none;border:1px solid #d8b25a;color:#d8b25a;font-weight:400;letter-spacing:.4em}
+.shop--homely .shop-act:not(:disabled):hover{background:#d8b25a;color:#3a0f17}
+
+/* ===== 原住民：纸板货摊——瓦楞纸纹理、马克笔手写、胶带贴的价签、歪歪扭扭 ===== */
+.shop--originals .shop-sheet{--paper:#b98d5a;--ink:#2a1d10;--dim:#5a4126;--edge:#7d5a33;--acc:#1e1a16;--row:rgba(255,240,210,.18);--rowon:rgba(255,240,210,.38);--good:#2f5f1f;--bad:#8a1f12;
+ font-family:'Long Cang','Ma Shan Zheng','Noto Sans SC',cursive;border:none;border-radius:3px;transform:rotate(-.4deg);
+ background:repeating-linear-gradient(90deg,#00000010 0 2px,transparent 2px 7px),linear-gradient(180deg,#c49a66,#ad7f4c)}
+.shop--originals .shop-deco{background:linear-gradient(45deg,transparent 0 47%,#00000012 47% 53%,transparent 53%) 0 0/60% 100% no-repeat}
+.shop--originals .shop-title{font-family:'Long Cang','Ma Shan Zheng',cursive;font-weight:400;font-size:36px;transform:rotate(-2deg)}
+.shop--originals .shop-emblem{border:3px solid #2a1d10;color:#2a1d10;font-size:28px;border-radius:46% 54% 50% 50%/55% 45% 55% 45%}
+.shop--originals .shop-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;align-content:start}
+.shop--originals .shop-row{position:relative;flex-direction:column;gap:2px;padding:14px 8px 8px;background:#f2e3c4;box-shadow:2px 3px 0 #0000002e;border:none}
+.shop--originals .shop-row:nth-child(odd){transform:rotate(-1.6deg)}.shop--originals .shop-row:nth-child(even){transform:rotate(1.2deg)}
+.shop--originals .shop-row::before{content:'';position:absolute;top:-7px;left:50%;width:46px;height:14px;transform:translateX(-50%) rotate(-3deg);background:#e8e1c4cc;box-shadow:0 1px 1px #0002}
+.shop--originals .shop-row.on{outline:3px solid #2a1d10;outline-offset:2px}
+.shop--originals .shop-name{white-space:normal;text-align:center;font-size:20px}
+.shop--originals .shop-price{max-width:none;text-align:center;font-family:'Long Cang',cursive;font-size:17px;color:#8a1f12;white-space:normal}
+.shop--originals .shop-detail{border-left:2px dashed #5a4126}
+.shop--originals .shop-big{background:#f2e3c4;transform:rotate(1deg)}
+.shop--originals .shop-act{background:#2a1d10;color:#f2e3c4;font-family:'Long Cang',cursive;font-size:22px;font-weight:400;transform:rotate(-1deg)}
+.shop--originals .shop-key kbd{background:#2a1d10;color:#f2e3c4}
+
+/* ===== 其他（流浪者等）：旧帆布摊 ===== */
+.shop--generic .shop-sheet{--paper:#1d1a14;--acc:#e8b93c;background:repeating-linear-gradient(45deg,#ffffff04 0 3px,transparent 3px 6px),#1d1a14}
+
+/* 版式修正：大标题与店员行留空；首都百货的灯泡边框不压页脚 */
+.shop--meg .shop-title{margin-bottom:6px}
+.shop--originals .shop-title{margin:0 0 8px}
+.shop--capital .shop-foot{padding-bottom:22px}
+.shop--capital .shop-list{padding-bottom:16px}
+
+/* Bound both scrolling panes to the available sheet height; checkout stays outside them. */
+.shop-sheet{max-height:min(720px,calc(100dvh - 32px))}
+.shop-head,.shop-tabs,.shop-foot{flex-shrink:0}
+.shop-body{grid-template-rows:minmax(0,1fr);overflow:hidden}
+.shop-list{min-height:0;max-height:none}
+.shop-detail{min-height:0;max-height:none;overflow:hidden}
+.shop-detail-info{min-height:0;flex:1;display:flex;flex-direction:column;gap:8px;overflow-y:auto;padding:2px 4px 4px 0}
+.shop-detail-info>*{flex-shrink:0}
+.shop-act{flex-shrink:0;min-height:44px}
+.shop-root:focus{outline:none}
+.shop-root button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+@media(max-width:720px){
+ .shop-body{grid-template-rows:minmax(100px,.85fr) minmax(180px,1.15fr)}
+ .shop-tabs{flex-wrap:wrap;padding:0 10px 8px;gap:4px}
+ .shop-tabs>button{padding:6px 8px}
+ .shop-head{padding:12px 14px 10px;gap:10px}
+ .shop-root .shop-title{font-size:23px;overflow-wrap:anywhere}
+ .shop-keeper{overflow-wrap:anywhere}
+ .shop-detail{padding:10px 14px}
+ .shop-root .shop-big{height:64px}
+ .shop-fx{flex-wrap:wrap}
+ .shop-foot{padding:8px 12px 12px}
+ .shop-motto{letter-spacing:.04em}
+}
+@media(max-height:560px){
+ .shop-root .shop-head{flex-direction:row;text-align:left;padding:6px 12px;gap:8px}
+ .shop-root .shop-titles{text-align:left}
+ .shop-root .shop-title{font-size:20px;letter-spacing:.04em}
+ .shop-root .shop-emblem{width:36px;height:36px;font-size:12px}
+ .shop-wallet span{padding:2px 6px}
+ .shop-wallet b{font-size:14px}
+ .shop-tabs{padding:0 12px 5px;gap:4px;flex-wrap:wrap}
+ .shop-tabs>button{padding:4px 8px;font-size:12px}
+ .shop-body{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+ .shop-detail{padding:6px 12px;min-height:0}
+ .shop-root .shop-big{display:none}
+ .shop-dname{font-size:16px}
+ .shop-foot{padding:7px 12px;gap:4px}
+ .shop-root .shop-foot{padding-bottom:7px}
+ .shop-motto{display:none}
+ .shop-act{padding:7px 10px;min-height:40px}
+}
+@media(prefers-reduced-motion:reduce){.shop-root *,.shop-root *::before,.shop-root *::after{animation:none!important;transition:none!important}}

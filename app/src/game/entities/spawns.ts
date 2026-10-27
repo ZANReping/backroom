@@ -21,7 +21,8 @@ export const ENTITY_EVENT_SPAWNS: Record<string, number[]> = {
   windowent: [2, 4, 12], // [window] 只占据 L2 / L4 / L601 的普通窗户（windowAI），不在生成池
   vendingmachine: [2], // 人制品售货机：L2 走廊尽头（生成器定点放置）
   nguithr: [1, 2, 3, 8], // Nguithr'xurh：L1/L2/L3 天花板结巢（生成器定点放置，含 2–3 只的群居巢点）；L8 巨臂林地极少；L5 走生成池（稀有）
-  tiny: [7], // v58：小小——仅 L7 环形场定点生成（唯一可对话个体；生成池保留 w 仅为图鉴归属）
+  tiny: [7],
+  creeper: [2, 3, 5, 8], // [creeper] 爬菌 Entity 17：替换 L2/L3/L8 的尸鼠、蛛形纲生成（L5 只在锅炉房），不在生成池 // v58：小小——仅 L7 环形场定点生成（唯一可对话个体；生成池保留 w 仅为图鉴归属）
 }
 
 let cache: Record<string, EntitySpawn[]> | null = null

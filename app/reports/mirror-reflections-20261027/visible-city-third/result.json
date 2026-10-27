@@ -1,0 +1,290 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 5657,
+  "cdp": 5658,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:5657/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Tue, 27 Oct 2026 09:51:14 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 129,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 5657,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 121743.169432,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.388,
+        "sendEnd": 0.433,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 95.308,
+        "receiveHeadersEnd": 95.465
+      },
+      "responseTime": 1793094674362.022,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\mirror-reflections-20261027\\visible-city-third\\qa-1793094655366-38120",
+    "--remote-debugging-port=5658",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 43320,
+    "server": 23732
+  },
+  "appBootMs": 17236.727199999998,
+  "entryMs": 2909.4637000000002,
+  "firstPlayableMs": 26118.6554,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "pos": [
+      78.5,
+      79.5,
+      0
+    ],
+    "camera": [
+      78.5,
+      1.55,
+      79.5
+    ],
+    "yaw": 0,
+    "pitch": 0,
+    "mirrors": {
+      "surfaces": 0,
+      "visible": 0,
+      "planes": 0,
+      "targets": 0,
+      "updates": 0,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 661,
+      "textures": 159
+    },
+    "calls": 730,
+    "triangles": 381663,
+    "cpu": 7.5999999940395355,
+    "checks": []
+  },
+  "city": {
+    "level": 11,
+    "pos": [
+      70.02181815107663,
+      90.65000000596046,
+      0.08
+    ],
+    "camera": [
+      70.02181815107663,
+      1.6300000000000001,
+      90.65000000596046
+    ],
+    "yaw": -3.141592653589793,
+    "pitch": 1.0242648630231637,
+    "mirrors": {
+      "surfaces": 80,
+      "visible": 6,
+      "planes": 2,
+      "targets": 2,
+      "updates": 38,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 1025,
+      "textures": 123
+    },
+    "calls": 946,
+    "triangles": 2686436,
+    "cpu": 11.199999988079071,
+    "checks": [
+      {
+        "ok": true,
+        "label": "City camera has physical body clearance and an unobstructed ray to actual sealed glass"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      }
+    ],
+    "fixture": {
+      "x": 38.02181815107663,
+      "y": 58.650000005960464,
+      "z": 0.08,
+      "target": [
+        38.02181815107663,
+        62.150000005960464,
+        7.383333524068196
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "attempts": 1,
+      "hitMaterial": [
+        "l11-sealedglass:#29424c:false:realistic"
+      ]
+    },
+    "origin": [
+      -32,
+      -32
+    ]
+  },
+  "summary": {
+    "level": 11,
+    "pos": [
+      70.02181815107663,
+      90.65000000596046,
+      0.08
+    ],
+    "camera": [
+      70.02181815107663,
+      1.6300000000000001,
+      90.65000000596046
+    ],
+    "yaw": -3.141592653589793,
+    "pitch": 1.0242648630231637,
+    "mirrors": {
+      "surfaces": 104,
+      "visible": 6,
+      "planes": 2,
+      "targets": 2,
+      "updates": 56,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 1055,
+      "textures": 123
+    },
+    "calls": 1104,
+    "triangles": 2875995,
+    "cpu": 20.700000002980232,
+    "checks": [
+      {
+        "ok": true,
+        "label": "City camera has physical body clearance and an unobstructed ray to actual sealed glass"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      }
+    ]
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

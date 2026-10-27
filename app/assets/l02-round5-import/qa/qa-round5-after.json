@@ -1,0 +1,155 @@
+{
+ "mode": "after",
+ "results": [
+  {
+   "name": "7 开发者面板：「Level 0.2」分区默认收起",
+   "ok": true,
+   "detail": "{\"open\": false, \"title\": \"Level 0.2\", \"btnVisible\": false}"
+  },
+  {
+   "name": "7 开发者面板：展开后按钮可见",
+   "ok": true,
+   "detail": "{\"open\": true, \"btnVisible\": true}"
+  },
+  {
+   "name": "9 施工单据版式：四类单据各自版式、签名栏、页脚来源小字（≤10px）、无文字溢出（1280×720）",
+   "ok": true,
+   "detail": "{\"brc_permit\": {\"kind\": \"permit\", \"stamp\": true, \"sign\": 2, \"form\": \"施 工 许 可 证\", \"srcSize\": 9, \"srcText\": \"游戏内设定（依据 Backrooms 中文维基 Level 0.2 页面的「后室\", \"over\": [], \"inView\": true}, \"brc_slogan\": {\"kind\": \"log\", \"stamp\": true, \"sign\": 2, \"form\": \"施 工 日 志\", \"srcSize\": 9, \"srcText\": \"据 Backrooms 中文维基《Level 0.2 - “重塑的混乱”》恢复的\", \"over\": [], \"inView\": true}, \"brc_took\": {\"kind\": \"workorder\", \"stamp\": true, \"sign\": 3, \"form\": \"工 作 单\", \"srcSize\": 9, \"srcText\": \"据 Backrooms 中文维基《Level 0.2 - “重塑的混乱”》恢复的\", \"over\": [], \"inView\": true}, \"brc_report\": {\"kind\": \"inspect\", \"stamp\": false, \"sign\": 2, \"form\": \"巡 检 记 录 表\", \"srcSize\": 9, \"srcText\": \"据 Backrooms 中文维基《Level 0.2 - “重塑的混乱”》恢复的\", \"over\": [], \"inView\": true}}"
+  },
+  {
+   "name": "9 印章：许可证/日志/工作单带印章",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "9 移动端 390×844：单据在视口内、无文字溢出",
+   "ok": true,
+   "detail": "{\"brc_permit\": {\"kind\": \"permit\", \"stamp\": true, \"sign\": 2, \"form\": \"施 工 许 可 证\", \"srcSize\": 9, \"srcText\": \"游戏内设定（依据 Backrooms 中文维基 Level 0.2 页面的「后室\", \"over\": [], \"inView\": true}, \"brc_took\": {\"kind\": \"workorder\", \"stamp\": true, \"sign\": 3, \"form\": \"工 作 单\", \"srcSize\": 9, \"srcText\": \"据 Backrooms 中文维基《Level 0.2 - “重塑的混乱”》恢复的\", \"over\": [], \"inView\": true}, \"brc_report\": {\"kind\": \"inspect\", \"stamp\": false, \"sign\": 2, \"form\": \"巡 检 记 录 表\", \"srcSize\": 9, \"srcText\": \"据 Backrooms 中文维基《Level 0.2 - “重塑的混乱”》恢复的\", \"over\": [], \"inView\": true}}"
+  },
+  {
+   "name": "5 经施工门进入 L0.2 的主题过场卡（「Level 0.2 · 重塑的混乱」+ 副标题，theme=remodel）",
+   "ok": true,
+   "detail": "{\"kind\": \"cutscene\", \"theme\": \"remodel\", \"text\": \"—— 门在你身后合拢 —— Level 0.2 · 重塑的混乱 Level 0 的子层级 · 后室装修公司施工区 · 结构不稳定 正在准备附近场景…\", \"sub\": true}"
+  },
+  {
+   "name": "3 灯盘与 Level 0 同参数（#f7f4dd / r 4.2 / ×0.42），间距 3.6×4.2 m 晶格",
+   "ok": true,
+   "detail": "{\"n\": 1400, \"xs\": [1.8, 1.8000000000000003], \"zs\": [2.1], \"colors\": [\"#f7f4dd\"], \"r\": [4.2], \"mul\": [0.42]}"
+  },
+  {
+   "name": "4 吊顶碰撞：强跳（vz=9）头顶/相机不超过吊顶下 12 cm",
+   "ok": true,
+   "detail": "{\"maxZ\": 1.03, \"eyeMax\": 2.58, \"forced\": 0.975, \"ceil\": 2.7}"
+  },
+  {
+   "name": "4 吊顶碰撞：被抬到 z=2.4（爬到高处/穿出）时压回吊顶以下",
+   "ok": true,
+   "detail": "{\"maxZ\": 1.03, \"eyeMax\": 2.58, \"forced\": 0.975, \"ceil\": 2.7}"
+  },
+  {
+   "name": "4 掉板处可略高（露出设备层，≤ 2.7+0.45−0.12）",
+   "ok": true,
+   "detail": "{\"eyeMax\": 3.03}"
+  },
+  {
+   "name": "1 倒墙后原位无残留：墙高范围内无未被丢弃的烘焙三角形、无贴墙小件、无碰撞体",
+   "ok": true,
+   "detail": "{\"wall\": {\"x\": 11.890000000000002, \"y\": 22.97, \"w\": 0.22, \"h\": 3.0580207927019254, \"axis\": \"y\", \"dir\": 1, \"t0\": 11.999900000000059, \"freeEnds\": [true, false], \"rail\": false}, \"res\": {\"tris\": 0, \"examples\": [], \"mounts\": 0, \"colliders\": 0}}"
+  },
+  {
+   "name": "1 独立短墙（两端自由端）整面倒：原位无墙端面/护角/墙顶横带残留、无碰撞体",
+   "ok": true,
+   "detail": "{\"wall\": {\"x\": 6.049999999999998, \"y\": 19.97, \"w\": 2.9799999999999995, \"h\": 0.22, \"axis\": \"x\", \"dir\": -1, \"t0\": 17.016600000000082, \"freeEnds\": [true, true], \"rail\": false}, \"res\": {\"tris\": 0, \"examples\": [], \"mounts\": 0, \"colliders\": 0}}"
+  },
+  {
+   "name": "8 返回门自然生成：入口 130 m 内 ≥2 扇，最近一扇 40–110 m，播报指向最近一扇",
+   "ok": true,
+   "detail": "{\"doors\": [{\"x\": -40, \"y\": -15.92, \"dist\": 64}, {\"x\": -48, \"y\": 24.08, \"dist\": 65}, {\"x\": 76, \"y\": -11.92, \"dist\": 66}, {\"x\": 52, \"y\": 72.08, \"dist\": 67}, {\"x\": 84, \"y\": 20.08, \"dist\": 68}, {\"x\": 20, \"y\": -55.92, \"dist\": 72}], \"hint\": \"门在身后合上，消失在墙里。施工单背面潦草地写着：「最近的一扇返回 Level 0 的门在入口西北方向，约 64 米。」\"}"
+  },
+  {
+   "name": "8 本层出口全部是返回门（可同时存在多扇）",
+   "ok": true,
+   "detail": "['remodelreturn'] ×5"
+  },
+  {
+   "name": "8 第二扇返回门 E 键可进入并回到 L0",
+   "ok": true,
+   "detail": "door={'x': -48, 'y': 24.08, 'dist': 65}"
+  },
+  {
+   "name": "5 图鉴 L0 页底部「子层级」：重塑的混乱=已发现，其余占位=锁定，无溢出",
+   "ok": true,
+   "detail": "[{\"id\": \"zenith_station\", \"state\": \"locked\", \"text\": \"天顶站 锁定 尚未开放的子层级。\", \"over\": false}, {\"id\": \"remade_chaos\", \"state\": \"found\", \"text\": \"Level 0.2 · 重塑的混乱 已发现 Level 0.2「重塑的混乱」。后\", \"over\": false}, {\"id\": \"ice_room\", \"state\": \"locked\", \"text\": \"冰室 锁定 尚未开放的子层级。\", \"over\": false}]"
+  },
+  {
+   "name": "5 调试直入（LevelIntro 进入卡）同样是 remodel 主题 + 副标题",
+   "ok": true,
+   "detail": "{\"kind\": \"intro\", \"theme\": \"remodel\", \"text\": \"LEVEL 0.2 「重塑的混乱」 Level 0 的子层级 · 后室装修公司施工区 · 结构不稳定 米白的隔墙，干燥的酒红地毯，冷白的灯盘一排排亮着。没有嗡鸣——只有空调的低风声。这里看起来像刚装修完，又像根本没装修完。 SEED: DD\", \"sub\": true}"
+  },
+  {
+   "name": "页面/控制台无错误",
+   "ok": true,
+   "detail": "[]"
+  }
+ ],
+ "errors": [],
+ "log": [
+  "headless launch: True after",
+  "L0 ready True",
+  "SHOT i3-L0-ceiling",
+  "CHECK PASS 7 开发者面板：「Level 0.2」分区默认收起 {\"open\": false, \"title\": \"Level 0.2\", \"btnVisible\": false}",
+  "SHOT i7-dev-collapsed",
+  "CHECK PASS 7 开发者面板：展开后按钮可见 {\"open\": true, \"btnVisible\": true}",
+  "SHOT i7-dev-open",
+  "SHOT i9-doc-permit",
+  "SHOT i9-doc-log",
+  "SHOT i9-doc-workorder",
+  "SHOT i9-doc-inspect",
+  "CHECK PASS 9 施工单据版式：四类单据各自版式、签名栏、页脚来源小字（≤10px）、无文字溢出（1280×720） {\"brc_permit\": {\"kind\": \"permit\", \"stamp\": true, \"sign\": 2, \"form\": \"施 工 许 可 证\", \"srcSize\": 9, \"srcText\": \"游戏内设定（依据 Backrooms 中文维基 Level 0.2 页面的「后室\", \"over\": [], \"inView\": true}, \"brc_slogan\": {\"kind\": \"log\", \"stamp\": true, \"sign\": 2, \"form\": \"施 工 日 志\", \"srcSize\": 9, \"srcText\": \"据 Backrooms 中文维基《Level 0.2 - “重塑的混乱”》恢复的\", \"over\": [], \"inView\": true}, \"brc_took\": {\"kind\": \"workorder\", \"stamp\": true, \"sign\": 3, \"form\": \"工 作 单\", \"srcSize\": 9, \"srcText\": \"据 Backrooms 中文维基《Level 0.2 - “重塑的混乱”》恢复的\", \"over\": [], \"inView\": true}, \"brc_report\": {\"kind\": \"inspect\", \"stamp\": false, \"sign\": 2, \"form\": \"巡 检 记 录 表\", \"srcSize\": 9, \"srcText\": \"据 Backrooms 中文维基《Level 0.2 - “重塑的混乱”》恢复的\", \"over\": [], \"inView\": true}}",
+  "CHECK PASS 9 印章：许可证/日志/工作单带印章 ",
+  "SHOT i9-doc-permit-mobile",
+  "SHOT i9-doc-workorder-mobile",
+  "SHOT i9-doc-inspect-mobile",
+  "CHECK PASS 9 移动端 390×844：单据在视口内、无文字溢出 {\"brc_permit\": {\"kind\": \"permit\", \"stamp\": true, \"sign\": 2, \"form\": \"施 工 许 可 证\", \"srcSize\": 9, \"srcText\": \"游戏内设定（依据 Backrooms 中文维基 Level 0.2 页面的「后室\", \"over\": [], \"inView\": true}, \"brc_took\": {\"kind\": \"workorder\", \"stamp\": true, \"sign\": 3, \"form\": \"工 作 单\", \"srcSize\": 9, \"srcText\": \"据 Backrooms 中文维基《Level 0.2 - “重塑的混乱”》恢复的\", \"over\": [], \"inView\": true}, \"brc_report\": {\"kind\": \"inspect\", \"stamp\": false, \"sign\": 2, \"form\": \"巡 检 记 录 表\", \"srcSize\": 9, \"srcText\": \"据 Backrooms 中文维基《Level 0.2 - “重塑的混乱”》恢复的\", \"over\": [], \"inView\": true}}",
+  "use permit 你把施工许可按在墙上。纸面上的钢印亮了一下——荧光灯的嗡鸣开始变小。 | 附近的墙上出现了一扇施工场所的门。许可需要「切换层级刷新」后才能再次使用。",
+  "take remodeldoor True",
+  "SHOT i5-title-card",
+  "CHECK PASS 5 经施工门进入 L0.2 的主题过场卡（「Level 0.2 · 重塑的混乱」+ 副标题，theme=remodel） {\"kind\": \"cutscene\", \"theme\": \"remodel\", \"text\": \"—— 门在你身后合拢 —— Level 0.2 · 重塑的混乱 Level 0 的子层级 · 后室装修公司施工区 · 结构不稳定 正在准备附近场景…\", \"sub\": true}",
+  "L02 ready True",
+  "seed 20261025",
+  "hint 门在身后合上，消失在墙里。施工单背面潦草地写着：「最近的一扇返回 Level 0 的门在入口西北方向，约 64 米。」",
+  "SHOT i3-L02-ceiling",
+  "SHOT i3-L02-ceiling-up",
+  "CHECK PASS 3 灯盘与 Level 0 同参数（#f7f4dd / r 4.2 / ×0.42），间距 3.6×4.2 m 晶格 {\"n\": 1400, \"xs\": [1.8, 1.8000000000000003], \"zs\": [2.1], \"colors\": [\"#f7f4dd\"], \"r\": [4.2], \"mul\": [0.42]}",
+  "CHECK PASS 4 吊顶碰撞：强跳（vz=9）头顶/相机不超过吊顶下 12 cm {\"maxZ\": 1.03, \"eyeMax\": 2.58, \"forced\": 0.975, \"ceil\": 2.7}",
+  "CHECK PASS 4 吊顶碰撞：被抬到 z=2.4（爬到高处/穿出）时压回吊顶以下 {\"maxZ\": 1.03, \"eyeMax\": 2.58, \"forced\": 0.975, \"ceil\": 2.7}",
+  "SHOT i4-jump-apex",
+  "CHECK PASS 4 掉板处可略高（露出设备层，≤ 2.7+0.45−0.12） {\"eyeMax\": 3.03}",
+  "SHOT i2-plenum",
+  "CHECK PASS 1 倒墙后原位无残留：墙高范围内无未被丢弃的烘焙三角形、无贴墙小件、无碰撞体 {\"wall\": {\"x\": 11.890000000000002, \"y\": 22.97, \"w\": 0.22, \"h\": 3.0580207927019254, \"axis\": \"y\", \"dir\": 1, \"t0\": 11.999900000000059, \"freeEnds\": [true, false], \"rail\": false}, \"res\": {\"tris\": 0, \"examples\": [], \"mounts\": 0, \"colliders\": 0}}",
+  "SHOT i1-wall-down",
+  "SHOT i1-wall-down-up",
+  "free wall {'cx': 7.539999999999998, 'cy': 20.08, 'len': 2.92, 'horiz': True, 'd': 2.0894483755883275, 'w': {'x': 6.079999999999998, 'y': 20, 'w': 2.92, 'h': 0.16}}",
+  "CHECK PASS 1 独立短墙（两端自由端）整面倒：原位无墙端面/护角/墙顶横带残留、无碰撞体 {\"wall\": {\"x\": 6.049999999999998, \"y\": 19.97, \"w\": 2.9799999999999995, \"h\": 0.22, \"axis\": \"x\", \"dir\": -1, \"t0\": 17.016600000000082, \"freeEnds\": [true, true], \"rail\": false}, \"res\": {\"tris\": 0, \"examples\": [], \"mounts\": 0, \"colliders\": 0}}",
+  "SHOT i1-free-wall-down",
+  "doors [{'x': -40, 'y': -15.92, 'dist': 64}, {'x': -48, 'y': 24.08, 'dist': 65}, {'x': 76, 'y': -11.92, 'dist': 66}, {'x': 52, 'y': 72.08, 'dist': 67}, {'x': 84, 'y': 20.08, 'dist': 68}, {'x': 20, 'y': -55.92, 'dist': 72}, {'x': 88, 'y': 72.08, 'dist': 91}, {'x': -80, 'y': -7.92, 'dist': 99}, {'x': -12, 'y': 116.08, 'dist': 104}, {'x': 136, 'y': 20.08, 'dist': 120}, {'x': 104, 'y': -75.92, 'dist': 127}]",
+  "CHECK PASS 8 返回门自然生成：入口 130 m 内 ≥2 扇，最近一扇 40–110 m，播报指向最近一扇 {\"doors\": [{\"x\": -40, \"y\": -15.92, \"dist\": 64}, {\"x\": -48, \"y\": 24.08, \"dist\": 65}, {\"x\": 76, \"y\": -11.92, \"dist\": 66}, {\"x\": 52, \"y\": 72.08, \"dist\": 67}, {\"x\": 84, \"y\": 20.08, \"dist\": 68}, {\"x\": 20, \"y\": -55.92, \"dist\": 72}], \"hint\": \"门在身后合上，消失在墙里。施工单背面潦草地写着：「最近的一扇返回 Level 0 的门在入口西北方向，约 64 米。」\"}",
+  "SHOT i8-door-nearest",
+  "CHECK PASS 8 本层出口全部是返回门（可同时存在多扇） ['remodelreturn'] ×5",
+  "SHOT i8-door-second",
+  "CHECK PASS 8 第二扇返回门 E 键可进入并回到 L0 door={'x': -48, 'y': 24.08, 'dist': 65}",
+  "SHOT i5-codex-sublevels",
+  "CHECK PASS 5 图鉴 L0 页底部「子层级」：重塑的混乱=已发现，其余占位=锁定，无溢出 [{\"id\": \"zenith_station\", \"state\": \"locked\", \"text\": \"天顶站 锁定 尚未开放的子层级。\", \"over\": false}, {\"id\": \"remade_chaos\", \"state\": \"found\", \"text\": \"Level 0.2 · 重塑的混乱 已发现 Level 0.2「重塑的混乱」。后\", \"over\": false}, {\"id\": \"ice_room\", \"state\": \"locked\", \"text\": \"冰室 锁定 尚未开放的子层级。\", \"over\": false}]",
+  "SHOT i5-title-intro",
+  "CHECK PASS 5 调试直入（LevelIntro 进入卡）同样是 remodel 主题 + 副标题 {\"kind\": \"intro\", \"theme\": \"remodel\", \"text\": \"LEVEL 0.2 「重塑的混乱」 Level 0 的子层级 · 后室装修公司施工区 · 结构不稳定 米白的隔墙，干燥的酒红地毯，冷白的灯盘一排排亮着。没有嗡鸣——只有空调的低风声。这里看起来像刚装修完，又像根本没装修完。 SEED: DD\", \"sub\": true}",
+  "SHOT i2-restroom",
+  "SHOT i2-sink",
+  "SHOT i2-toilet",
+  "SHOT i2-router",
+  "SHOT i2-clipboard",
+  "SHOT i2-house",
+  "SHOT i2-house-2",
+  "SHOT i6-rooms-view",
+  "CHECK PASS 页面/控制台无错误 []"
+ ]
+}

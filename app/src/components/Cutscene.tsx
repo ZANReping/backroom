@@ -512,13 +512,15 @@ export default function Cutscene(props: {
   kind: CutKind
   cutIn?: CutIn
   toName?: string
+  /** 标题下的副标题（LevelDef.titleSub） */
+  subtitle?: string
   levelId?: number
   caption?: string
   ready?: boolean
   onStageChange?: (stage: 'out' | 'loading' | 'in') => void
   onDone?: () => void
 }): JSX.Element {
-  const { kind, cutIn, toName, levelId, caption, onDone, ready = true, onStageChange } = props
+  const { kind, cutIn, toName, subtitle, levelId, caption, onDone, ready = true, onStageChange } = props
   const theme = levelTitleTheme(levelId)
   const themed = theme !== 'default'
   const ref = useRef<HTMLCanvasElement>(null)
@@ -659,6 +661,7 @@ export default function Cutscene(props: {
               {toName}
             </div>
           )}
+          {toName && subtitle && <div className="level-title__sub" data-level-subtitle>{subtitle}</div>}
           <div role="status" style={{ fontSize: 12, color: 'var(--title-muted, var(--text-dim))' }}>
             {ready ? '附近场景已就绪' : '正在准备附近场景…'}
           </div>

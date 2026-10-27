@@ -8,6 +8,7 @@ const THEMES: Readonly<Record<number, string>> = {
   105: 'office', 106: 'meg', 107: 'trade', 108: 'blue',
   109: 'meg', 110: 'meg', 111: 'hotel', 112: 'hotel',
   113: 'cave', 114: 'cave', 115: 'meg', 116: 'wheat', 274: 'blue',
+  902: 'remodel', // Level 0.2「重塑的混乱」：米白隔墙 + 深红棕防撞条 + 施工警示条
 }
 
 export function levelTitleTheme(levelId?: number): string {

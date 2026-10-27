@@ -37,6 +37,7 @@ import { tinyHear, updateTiny } from './tinyAI'
 import { updateWindowEntity } from './windowAI'
 import { updateVm36 } from './vendingAI'
 import { updateFerren } from './ferrenAI'
+import { updateCreeper,creeperHear } from './creeperAI' // [creeper]
 import { thingHear, updateThing, THINGM } from './thingAI'
 
 // [vending] 旧版「看过背面后背对它即活化」已取消（背面是安全的辨认方式）；活化只由攻击触发，见 vendingAI
@@ -55,6 +56,7 @@ export function noiseEvent(eng: Engine, x: number, y: number, radius: number, sp
   for (const e of eng.map!.entities) {
     if (e.dead || e.def.stationary) continue
     // [tiny] 小小：断续的明显响动（快速游泳、投掷物落水、爆炸、破门…）记恼怒，两次追杀；石卡祖笛另走 tinyKazoo（tinyAI）
+    if(e.def.type==='creeper'){creeperHear(eng,e,x,y,radius);continue}
     if (e.def.type === 'tiny') { tinyHear(eng, e, x, y, radius, sprint); continue }
     if (e.def.type === 'thething' && thingHear(eng, e, x, y, radius, sprint)) continue
     if (e.def.type === 'camocrawler') continue
@@ -372,6 +374,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     if (def.type === 'camocrawler') { updateCamo(eng, e, dt, d, dmgMult); break generic } // [L8-camo] 迷彩爬行者专属 AI（伪装/听声/群猎/砸地/引开）
     if (def.type === 'arachnid') { updateArachnid(eng, e, dt, d, dmgMult); break generic } // [L8-arachnid] 蛛形纲 17 变种专属 AI
     if (def.type === 'corpserat') { updateRat(eng, e, dt, d, dmgMult); break generic }
+    if (def.type === 'creeper') { updateCreeper(eng, e, dt, d, dmgMult); break generic } // [creeper] Entity 17 感染体 / 爬菌人（creeperAI）
     if (def.type === 'dryshrimp') { updateShrimp(eng, e, dt, d); break generic } // v81：旱虾专属 AI（两栖游荡/有丝分裂/受惊/诱饵）
     // —— 特殊行为 ——
     // 笑魇：只在黑暗中逼近；手电照亮时后退

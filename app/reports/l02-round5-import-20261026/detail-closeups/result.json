@@ -1,0 +1,539 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 5575,
+  "cdp": 5576,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:5575/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Mon, 26 Oct 2026 10:35:58 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 271,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 5575,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 38022.029163,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.5,
+        "sendEnd": 0.546,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 11.312,
+        "receiveHeadersEnd": 11.42
+      },
+      "responseTime": 1793010958466.937,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l02-round5-import-20261026\\detail-closeups\\qa-1793010944794-58836",
+    "--remote-debugging-port=5576",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 60628,
+    "server": 63716
+  },
+  "appBootMs": 13113.211299999999,
+  "entryMs": 2844.166699999998,
+  "firstPlayableMs": 22217.7498,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 661,
+      "textures": 159
+    },
+    "frame": {
+      "cpu": 11.199999995529652,
+      "calls": 800,
+      "triangles": 442783
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0
+  },
+  "fixedScene": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      80,
+      80,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.1112158270654806,
+      "pitch": 0.004287438357623136,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 125,
+      "textures": 73
+    },
+    "frame": {
+      "cpu": 5.799999997019768,
+      "calls": 69,
+      "triangles": 189709
+    },
+    "pin": null,
+    "l02": {
+      "t": 0.11660000000000219,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 2,
+    "meshes": 211
+  },
+  "props": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      88.45,
+      72.9,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 0.3252348608537834,
+      "pitch": -0.13145735511572593,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 226,
+      "textures": 77
+    },
+    "frame": {
+      "cpu": 5.199999995529652,
+      "calls": 123,
+      "triangles": 190529
+    },
+    "pin": null,
+    "l02": {
+      "t": 2.3083000000000062,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 4,
+    "models": {
+      "router": 18,
+      "clipboard": 2,
+      "toilet": 10,
+      "stall": 11,
+      "sink": 16
+    }
+  },
+  "sinkView": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      77.55,
+      69.3,
+      0
+    ],
+    "origin": [
+      -128,
+      -128
+    ],
+    "look": {
+      "yaw": -4.08836592740793,
+      "pitch": -0.4265560317424979,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 212,
+      "textures": 77
+    },
+    "frame": {
+      "cpu": 2.899999998509884,
+      "calls": 70,
+      "triangles": 156741
+    },
+    "pin": null,
+    "l02": {
+      "t": 4.979300000000001,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 5
+  },
+  "tileSetup": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      75.8,
+      78.4,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -0.4899573262537267,
+      "pitch": 0.6889243882148618,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 247,
+      "textures": 80
+    },
+    "frame": {
+      "cpu": 7.0999999940395355,
+      "calls": 90,
+      "triangles": 330581
+    },
+    "pin": null,
+    "l02": {
+      "t": 2.8996999999999966,
+      "stage": 0,
+      "dust": 0.19575024518626127,
+      "stopped": true,
+      "stats": {
+        "tiles": 1,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 9,
+    "plenumBatches": 8,
+    "tile": {
+      "x": 12,
+      "y": 12.6,
+      "w": 1.2,
+      "h": 0.6,
+      "t0": 0.016599999999998546
+    }
+  },
+  "houseSetup": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      80,
+      82,
+      -2.7
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0.8926770190458493,
+      "pitch": 0.03243669877888874,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 277,
+      "textures": 88
+    },
+    "frame": {
+      "cpu": 4.600000001490116,
+      "calls": 84,
+      "triangles": 180853
+    },
+    "pin": null,
+    "l02": {
+      "t": 127.82909999999974,
+      "stage": 3,
+      "dust": 0.6374965971044981,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 13,
+    "hole": {
+      "id": 1,
+      "open": {
+        "x": 13.2,
+        "y": 15.9,
+        "w": 5.6,
+        "h": 4.2
+      },
+      "house": {
+        "x": 11.899999999999999,
+        "y": 14.6,
+        "w": 8.2,
+        "h": 6.800000000000001
+      },
+      "ramp": {
+        "x": 13.2,
+        "y": 18.85,
+        "w": 5.6,
+        "h": 1.25
+      },
+      "rampDir": "nx",
+      "depth": 2.7,
+      "t0": 125.1,
+      "dropped": true
+    }
+  },
+  "houseTools": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      77.5,
+      80.5,
+      -2.7
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0.6498704494119489,
+      "pitch": -0.7456738463548792,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 277,
+      "textures": 88
+    },
+    "frame": {
+      "cpu": 3.100000001490116,
+      "calls": 59,
+      "triangles": 168439
+    },
+    "pin": null,
+    "l02": {
+      "t": 128.8205999999996,
+      "stage": 3,
+      "dust": 0.7168174999662056,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 2
+      }
+    },
+    "round5Checks": 14
+  },
+  "cleaned": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 1,
+    "player": [
+      77.5,
+      80.5,
+      -2.7
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0.6498704494119489,
+      "pitch": -0.7456738463548792,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 277,
+      "textures": 88
+    },
+    "frame": {
+      "cpu": 10,
+      "calls": 59,
+      "triangles": 168439
+    },
+    "pin": null,
+    "l02": {
+      "t": 129.50369999999924,
+      "stage": 3,
+      "dust": 0.6370530857903898,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 3
+      }
+    },
+    "allChecks": [
+      "GL remains healthy after hound/L0/L02 round trip"
+    ],
+    "round5Checks": 14,
+    "allRound5Checks": [
+      "Guaranteed spawn router provides actual Wi-Fi",
+      "Interior L02 has no visible sky",
+      "Fixed scene includes a real restroom",
+      "Real restroom uses detailed batched toilet and sink models",
+      "Close-up has a real restroom",
+      "Guaranteed spawn router provides actual Wi-Fi",
+      "Interior L02 has no visible sky",
+      "Non-light ceiling tile falls through the live controller",
+      "Fallen tile exposes modeled ducts, sprinkler and cable tray",
+      "Guaranteed spawn router provides actual Wi-Fi",
+      "Interior L02 has no visible sky",
+      "Controller schedules actual floor collapse in a clear area",
+      "Detailed unfinished house is present in the actual scene",
+      "Construction details have a real collapsed house"
+    ]
+  },
+  "summary": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 1,
+    "player": [
+      77.5,
+      80.5,
+      -2.7
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0.6498704494119489,
+      "pitch": -0.7456738463548792,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 277,
+      "textures": 88
+    },
+    "frame": {
+      "cpu": 10,
+      "calls": 59,
+      "triangles": 168439
+    },
+    "pin": null,
+    "l02": {
+      "t": 129.51629999999923,
+      "stage": 3,
+      "dust": 0.6356726680211683,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 3
+      }
+    },
+    "round5Checks": 14
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

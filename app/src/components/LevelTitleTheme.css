@@ -116,6 +116,12 @@
 [data-title-theme='blue'] { --title-accent: #aabdf5; --title-ink: #d9e3ff; --title-muted: #99a6c9; --title-font: var(--title-serif); --title-spacing: .18em; --title-motion: titleVelvet; }
 [data-title-theme='blue'] .level-title__ornament i:nth-child(2) { width: 20px; height: 24px; border: 1px solid currentColor; background: transparent; border-radius: 50% 50% 0 0; transform: none; }
 
+/* Level 0.2「重塑的混乱」：米白石膏板 + 深红棕防撞条；装饰换成一段施工警示斜纹（黄黑）夹在两道细线之间 */
+[data-title-theme='remodel'] { --title-accent: #d6b07a; --title-ink: #efe9d6; --title-muted: #a9a08c; --title-font: system-ui, 'Noto Sans CJK SC', sans-serif; --title-weight: 300; --title-spacing: .16em; --title-motion: titleOffice; }
+[data-title-theme='remodel'] .level-title__ornament { width: 104px; height: 8px; flex-basis: 8px; border-top: 1px solid #7a3b2c; border-bottom: 1px solid #7a3b2c; background: repeating-linear-gradient(135deg, #d9b23a 0 6px, #2a2622 6px 12px); opacity: .85; }
+[data-title-theme='remodel'] .level-title__ornament i { display: none; }
+.level-title__sub { font-size: 12px; line-height: 1.7; letter-spacing: .12em; max-width: min(560px, 100%); overflow-wrap: anywhere; color: var(--title-muted, var(--text-dim)); }
+
 @keyframes titleSettle { from { opacity: .15; transform: translateY(5px); } to { opacity: 1; transform: none; } }
 @keyframes titleSlide { from { opacity: .15; transform: translateX(-9px); } to { opacity: 1; transform: none; } }
 @keyframes titlePower { 0% { opacity: .15; transform: translateX(-2px); } 38% { opacity: .8; transform: translateX(1px); } 60% { opacity: .6; transform: none; } 100% { opacity: 1; transform: none; } }

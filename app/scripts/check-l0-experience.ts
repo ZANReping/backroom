@@ -27,12 +27,12 @@ for(const seed of seeds){
  const m=generateLevel(LEVELS[0],seed,true),spawn={x:m.spawn.x+.5,y:m.spawn.y+.5}
  assert(canOccupy(m,spawn.x,spawn.y,PLAYER_RADIUS,{z:0}),`spawn blocked: ${seed}`)
  const starter=m.items.filter(it=>it.id<0x200000)
- assert.equal(starter.length,4);assert.equal(starter.filter(it=>it.type==='flashlight').length,1)
+ assert.equal(starter.length,3);assert.deepEqual(starter.map(it=>it.type).sort(),['almond','bandage','flashlight']);assert.equal(starter.filter(it=>it.type==='flashlight').length,1)
  for(const it of starter){assert(canOccupy(m,it.x,it.y,PLAYER_RADIUS,{z:0}));assert(Math.hypot(it.x-spawn.x,it.y-spawn.y)<9)}
  restitch(m);assert(starter.every(it=>m.items.includes(it)),`first stitch lost supplies: ${seed}`)
 }
 assert(!generateLevel(LEVELS[0],781,false).items.some(it=>it.id<0x200000&&it.type==='flashlight'))
-checks.push('100 seeds: safe spawn, four accessible supplies, one flashlight, no loss on restitch; revisit generates none')
+checks.push('100 seeds: safe spawn, three accessible supplies, one flashlight, no loss on restitch; revisit generates none')
 
 const e=new Engine();e.seed=20261006;e.loadLevel(0,{mapSeed:e.seed,firstVisit:true});e.introT=0
 const base=e.map!,size=120,count=size*size

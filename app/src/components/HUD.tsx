@@ -38,6 +38,9 @@ import { bindLabelFor } from '@/game/core/keybinds'
 import { IconHP, IconStamina, IconHunger, IconThirst, IconSanity, IconBattery, IconPause, IconMap, IconInteract, IconCrouch, IconIsolation, IconPlant } from './icons'
 import { PHENOMENA, rarityText } from '@/game/content/phenomena'
 import MegQuestTracker from './MegQuestTracker'
+import MobileQuestChip from './MobileQuestChip'
+import LevelQuestPanel from './LevelQuestPanel'
+import { L0_SUBLEVELS, l0SublevelName } from '@/game/content/l0Sublevels'
 import AlphaMapPanel from './AlphaMapPanel'
 import TradersMapPanel from './TradersMapPanel'
 import {drawTradersMap} from '@/game/content/tradersMap'
@@ -50,11 +53,13 @@ import { drawMapPlayer } from '@/game/content/mapPlayer'
 import { mapSight } from '@/game/world/mapSight'
 import { jerryOverlay, jerryLureMarks } from '@/game/engine/jerryAI'
 import ArachnidHud from './arachnidHud' // [L8-arachnid]
+import HoundPinHud from './houndPinHud' // [hound] 扑倒压制挣脱进度条
 import { armsOverlay, armsStruggleTap } from '@/game/engine/armsAI'
 import { nguithrOverlay } from '@/game/engine/nguithrAI'
 import { windowOverlay } from '@/game/engine/windowAI' // [window]
 import { specialAction } from '@/game/engine/special' // [window] 特殊交互键
 import { ferrenOverlay } from '@/game/engine/ferrenAI' // [ferren] 切行闪白 / 作息提示
+import { creepOverlay } from '@/game/engine/creeperAI' // [creeper] 爬菌病程的画面症状（无数值）
 import { hudAllowed, hudRevealing, type HudKey } from '@/game/engine/hud'
 import { foyerQuest } from '@/game/engine/foyer'
 import { landingQuest } from '@/game/engine/foyerLanding'
@@ -381,12 +386,33 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
   const swim = engine.swimInfo()
   // v40：据点是主层级的子层级——顶部信息栏的层级号显示主层级（如 Alpha 基地显示 LEVEL 1 而非 LEVEL 101）
   const outpostDef = Object.values(OUTPOSTS).find((o) => o.levelId === p.level)
-  const dispId = outpostDef?.parent ?? def.id
+  const dispId = outpostDef?.parent ?? levelNo(def.id) // Level 0.2：内部 id 902 → 显示 0.2
   const titleTheme = levelTitleTheme(p.level)
   const interact = engine.getInteract()
   const now = Date.now()
   // 移动端横屏：小地图默认折叠，点击展开为半透明大地图浮层
   const landscape = isMobile && typeof window !== 'undefined' && window.innerWidth > window.innerHeight
+  // 任务追踪：桌面在右上列；移动端主线清单收成可展开的一行，横屏与 MEG/阵营追踪叠成一列放到顶部中间，不再压住右侧按钮
+  const questStack = <>
+    {H('quest') && !inFoyer && <LevelQuestPanel engine={engine} isMobile={isMobile} />}
+    {H('quest') && <MegQuestTracker engine={engine} mobileLandscape={isMobile && landscape} collapsible={isMobile} />}
+    {fq && (isMobile ? <MobileQuestChip quest={fq} reveal={rv('quest')} /> : (
+          <div className={`hud-panel hud-foyer-quest font-mono2 px-2.5 py-1.5 text-[11px]${rv('quest')}`} data-foyer-quest style={{ maxWidth: isMobile ? 190 : 230 }}>
+            <div className="mb-0.5 text-[10px] tracking-widest" style={{ color: 'var(--amber)' }}>任务 · {fq.title}</div>
+            {fq.items.map((it, i) => (
+              <div key={i} className="flex items-start gap-1.5" style={{ color: it.done ? 'var(--text-dim)' : 'var(--text)', textDecoration: it.done ? 'line-through' : 'none', opacity: it.done ? 0.6 : 1 }}>
+                <span>{it.done ? '■' : '□'}</span><span>{it.text}</span>
+              </div>
+            ))}
+          </div>
+    ))}
+  </>
+  const shortLandscape = isMobile && landscape && typeof window !== 'undefined' && window.innerHeight < 376
+  // 状态条竖排（横屏宽度 ≥768，Tailwind md）时，任务列放进左上状态条与顶部关卡名之间；状态条横排时仍在关卡名下方偏右
+  const questBeside = isMobile && landscape && typeof window !== 'undefined' && window.innerWidth >= 768
+  const questColStyle: React.CSSProperties = questBeside
+    ? { position: 'fixed', top: 12, left: 156, width: 'min(214px, calc(100vw - 630px))', minWidth: 150 }
+    : { position: 'fixed', top: 48, right: shortLandscape ? 256 : 208, width: shortLandscape ? 'clamp(110px, calc(100vw - 430px), 200px)' : 'min(220px, 35vw)' }
   const [mapOpen, setMapOpen] = useState(false)
   // v29b：快捷栏 touchstart 直触后抑制紧随其后的合成 click（React 根委托为 passive，不能 preventDefault）
   const hotbarTouchT = useRef(0)
@@ -733,18 +759,13 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
             ))}
           </span>
         </div>}
-        {H('quest') && <MegQuestTracker engine={engine} mobileLandscape={isMobile && landscape} />}
-        {fq && (
-          <div className={`hud-panel hud-foyer-quest font-mono2 px-2.5 py-1.5 text-[11px]${rv('quest')}`} data-foyer-quest style={{ maxWidth: isMobile ? 190 : 230 }}>
-            <div className="mb-0.5 text-[10px] tracking-widest" style={{ color: 'var(--amber)' }}>任务 · {fq.title}</div>
-            {fq.items.map((it, i) => (
-              <div key={i} className="flex items-start gap-1.5" style={{ color: it.done ? 'var(--text-dim)' : 'var(--text)', textDecoration: it.done ? 'line-through' : 'none', opacity: it.done ? 0.6 : 1 }}>
-                <span>{it.done ? '■' : '□'}</span><span>{it.text}</span>
-              </div>
-            ))}
-          </div>
-        )}
+        {!(isMobile && landscape) && questStack}
       </div>
+      {isMobile && landscape && (H('quest') || fq) && (
+        <div className="hud-mobile-quests pointer-events-none flex flex-col gap-1" data-mobile-quests data-quest-col={questBeside ? 'beside' : 'below'} style={questColStyle}>
+          {questStack}
+        </div>
+      )}
 
       {/* 左下：消息日志（桌面；开发者面板展开时右移让位，v10） */}
       {!isMobile && H('log') && (
@@ -811,6 +832,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
       )}
 
       {/* 手机相机快门闪白 */}
+      {p.level === 902 && (engine.l02?.dust ?? 0) > 0.02 && <div data-l02-dust className="pointer-events-none fixed inset-0 z-[31]" style={{ background: 'radial-gradient(ellipse at center, rgba(205,198,182,.55) 0%, rgba(176,168,150,.85) 100%)', opacity: Math.min(0.55, (engine.l02?.dust ?? 0) * 0.75) }} />}
       {engine.photoFlashT > 0 && <div className="pointer-events-none fixed inset-0 z-[45]" style={{ background: '#fff', opacity: Math.min(0.85, engine.photoFlashT / 0.35 * 0.85) }} />}
       {(() => { const fd = inFoyer ? foyerFadeView(engine) : null; return fd ? <div data-foyer-fade className="pointer-events-none fixed inset-0 z-[46] flex items-center justify-center" style={{ background: `rgba(0,0,0,${fd.k})` }}><span className="text-sm tracking-[0.3em] text-neutral-300" style={{ opacity: fd.k }}>{fd.text}</span></div> : null })()}
       {/* v57o：水下视野额外蓝绿晕影（与渲染层雾/低通叠加） */}
@@ -860,6 +882,19 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
             )}
           </>
         )
+      })()}
+      {/* [creeper] 爬菌（Entity 17）病程：HUD 不显示病程，只有画面症状——1 阶伤口抽痛时边缘一下暗红搏动；3 阶高烧：暖色热浪浸染 + 轻微晃动模糊；
+          4 阶：血红暗角常驻并随心跳搏动（另见第一人称手臂菌斑 / 手指痉挛） */}
+      {(() => {
+        const co = creepOverlay(engine)
+        if (co.throb <= 0.01 && co.heat <= 0 && co.vignette <= 0) return null
+        const t = engine.time
+        const wob = co.heat > 0 ? (0.6 + 0.6 * Math.sin(t * 2.3)) * co.heat : 0
+        return <>
+          {co.throb > 0.01 && <div data-creep-throb={co.throb.toFixed(2)} className="pointer-events-none fixed inset-0 z-[31]" style={{ boxShadow: `inset 0 0 ${120 + 80 * co.throb}px ${30 + 40 * co.throb}px rgba(120,10,6,${(0.55 * co.throb).toFixed(3)})` }} />}
+          {co.heat > 0 && <div data-creep-heat className="pointer-events-none fixed inset-0 z-[30]" style={{ background: `rgba(255,120,40,${(0.06 + 0.05 * Math.sin(t * 1.7)) * co.heat})`, backdropFilter: `blur(${wob.toFixed(2)}px) saturate(${(1 + 0.25 * co.heat).toFixed(2)})`, WebkitBackdropFilter: `blur(${wob.toFixed(2)}px)`, transform: `translate(${(Math.sin(t * 3.1) * 1.5 * co.heat).toFixed(2)}px, ${(Math.sin(t * 2.4 + 1) * 1.2 * co.heat).toFixed(2)}px)` }} />}
+          {co.vignette > 0 && <div data-creep-vignette className="pointer-events-none fixed inset-0 z-[31]" style={{ boxShadow: `inset 0 0 ${200 + 30 * Math.sin(t * 5.2)}px ${70 + 12 * Math.sin(t * 5.2)}px rgba(110,0,0,0.62)` }} />}
+        </>
       })()}
       {/* 派对客转化：视力变差（近视模糊，越往视野边缘越糊）+ 视野边缘泛起金黄的皮革色；没有数值，只有画面表现 */}
       {(() => {
@@ -927,7 +962,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
           </>}
           {wo.murmur && <div data-window-murmur className="pointer-events-none fixed inset-x-0 top-[70%] z-[33] text-center text-[16px] italic" style={{ color: 'rgba(236,232,220,0.92)', textShadow: '0 1px 6px #000', letterSpacing: '0.08em' }}>「{wo.line}」</div>}
           {!wo.murmur && !wo.grabbed && wo.hint && <div className="pointer-events-none fixed inset-x-0 top-[70%] z-[33] text-center text-[13px]" style={{ color: 'rgba(230,226,200,0.8)', textShadow: '0 1px 6px #000' }}>{wo.hint.replace('【特殊交互】', isMobile ? '「' + (sa?.label ?? '默念') + '」按钮' : '【' + bindLabelFor('special') + '】')}</div>}
-          {!isMobile && sa && !wo.murmur && !wo.grabbed && <div data-special-prompt={sa.id} className="hud-panel pointer-events-none fixed left-1/2 top-[76%] z-[33] -translate-x-1/2 px-3 py-1 text-[12px]" style={{ color: 'var(--text)' }}>【{bindLabelFor('special')}】{sa.hold ? '按住 ' : ''}{sa.label}<span style={{ color: 'var(--text-dim)' }}> · {sa.hint}</span></div>}
+          {!isMobile && sa && sa.id !== 'houndPin' && !wo.murmur && !wo.grabbed && <div data-special-prompt={sa.id} className="hud-panel pointer-events-none fixed left-1/2 top-[76%] z-[33] -translate-x-1/2 px-3 py-1 text-[12px]" style={{ color: 'var(--text)' }}>【{bindLabelFor('special')}】{sa.hold ? '按住 ' : ''}{sa.label}<span style={{ color: 'var(--text-dim)' }}> · {sa.hint}</span></div>}
         </>
       })()}
       {/* [ferren] Ferren（Entity 92）：切行带人的闪白 + 走近时的作息提示（他此刻在做什么） */}
@@ -966,6 +1001,8 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
       })()}
       {/* 缠丝麻痹（死亡飞蛾守卫）——视野模糊（毛玻璃覆盖层） */}
       <ArachnidHud engine={engine} />
+      {/* [hound] 猎犬扑倒压制：挣脱进度 / 被咬红闪 / 剩余压制时间（只在被压住时显示） */}
+      <HoundPinHud engine={engine} isMobile={isMobile} />
       {engine.webbedT > 0 && (
         <div className="pointer-events-none fixed inset-0 z-[30]" style={{ backdropFilter: 'blur(3px) brightness(0.92)', WebkitBackdropFilter: 'blur(3px) brightness(0.92)' }} />
       )}
@@ -1474,6 +1511,42 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                     ))}
                   </div>
                 </DevSection>
+                {/* 层级任务调试：模拟发现事件（天顶站／冰室仍为占位；真实 L0.2 入口见下方）+ 任务进度一览 */}
+                {p.level === 0 && (
+                  <DevSection label={`L0 子层级（模拟进入 · 当前：${p.levelQuests?.sublevel ? l0SublevelName(p.levelQuests.sublevel) : '主体'}）`}>
+                    <div className="flex flex-wrap gap-1" data-dev-sublevels>
+                      {L0_SUBLEVELS.map((sl) => (
+                        <DevBtn key={sl.id} active={p.levelQuests?.sublevel === sl.id} onClick={() => engine.enterL0Sublevel(sl.id)}>{sl.name}</DevBtn>
+                      ))}
+                      <DevBtn onClick={() => engine.leaveL0Sublevel()}>回到主体</DevBtn>
+                    </div>
+                    <div className="mt-1 font-mono2 text-[10px] leading-snug" style={{ color: 'var(--text-dim)' }}>
+                      {engine.levelQuests.debug(engine).map((q) => (
+                        <div key={q.id}>{q.id}：{q.done ? '完成' : q.revealed ? '进行中' : '未出现'}{q.rewarded ? '（已领奖）' : ''} · {q.obj.map((o) => `${o.done ? '■' : o.visible ? '□' : '·'}${o.id}${o.progress !== undefined ? `(${o.progress})` : ''}`).join(' ')}</div>
+                      ))}
+                    </div>
+                  </DevSection>
+                )}
+                {/* 施工许可 / Level 0.2「重塑的混乱」调试（engine/remodel.ts）：第五轮改为默认收起的可展开分区，标题「Level 0.2」 */}
+                <details className="mb-2" data-dev-l02-section>
+                  <summary className="cursor-pointer select-none" style={{ color: 'var(--amber)' }}>Level 0.2</summary>
+                  <div className="mb-1 mt-1 text-[10px] text-neutral-400" style={{ overflowWrap: 'anywhere' }}>施工许可：BRC 声望 {engine.rep.brc ?? 0} · 许可{p.remodel?.permitIssued ? (p.remodel.armed ? '可用' : '冷却中') : '未发放'} · 施工点 {p.remodel?.sites.length ?? 0}</div>
+                  <div className="flex flex-wrap gap-1" data-dev-remodel>
+                    <DevBtn onClick={() => engine.devRemodel('rep')}>声望设为 61</DevBtn>
+                    <DevBtn onClick={() => engine.devRemodel('permit')}>发放许可</DevBtn>
+                    <DevBtn onClick={() => engine.devRemodel('rearm')}>重置冷却</DevBtn>
+                    <DevBtn onClick={() => engine.devRemodel('clear')}>清除施工点</DevBtn>
+                    <DevBtn active={p.level === 902} onClick={() => engine.devRemodel('enter')}>直接进 L0.2</DevBtn>
+                    <DevBtn onClick={() => engine.devRemodel('back')}>回 L0 施工门旁</DevBtn>
+                  </div>
+                  {p.level === 902 && engine.l02 && (
+                    <div className="mt-1 flex flex-wrap items-center gap-1" data-dev-l02-stage>
+                      <span className="text-[10px] text-neutral-400">崩塌 t={Math.round(engine.l02.t)}s · 阶段 {engine.l02.stage}{engine.l02.stopped ? '（已停止）' : engine.l02.lull ? '（喘息）' : ''} · 粉尘 {engine.l02.dust.toFixed(2)}：</span>
+                      {[0, 1, 2, 3, 4].map((n) => <DevBtn key={n} active={engine.l02?.stage === n} onClick={() => engine.devL02Stage(n)}>跳到崩塌阶段 {n}</DevBtn>)}
+                      <DevBtn onClick={() => engine.devL02Stage(-1)}>停止崩塌</DevBtn>
+                    </div>
+                  )}
+                </details>
                 <DevSection label="据点跳转">
                   <div className="grid grid-cols-2 gap-1">
                     {Object.values(OUTPOSTS).map((o) => {
@@ -1626,7 +1699,7 @@ const GLYPH_COLOR: Record<string, string> = {
   skeleton: '#b08d46', silverware: '#d8d8e0', sedative: '#9adfff', flashlight: '#f0d060',
   // ===== v25：v23/v25 新增物品专属配色（各自独特，一眼可辨） =====
   chalkstub: '#f0f0f8', megfolder: '#bf9b5f', rope: '#a8854e', divemask: '#4ac9c9',
-  thingmeat: '#c95a6a', ratmeat: '#b0645a', velvetcake: '#b3243c', oddbook: '#8a6ac9', cavingsuit: '#d97a2e', xenonmarble: '#66e0d0',
+  thingmeat: '#c95a6a', ratmeat: '#b0645a', creepmeat:'#d1cbbb', velvetcake: '#b3243c', oddbook: '#8a6ac9', cavingsuit: '#d97a2e', xenonmarble: '#66e0d0',
   driedfruit: '#b86a2e', uvlamp: '#b48aff', stonekazoo: '#9a8a72', pockets: '#78cfcc',
   housekey: '#c9c9d2', wheatgrain: '#d9c25a', nails: '#7d8896', timber: '#96682e',
   presses: '#cfa12e', pamphlet: '#7ac9b0', jerryflyer:'#4268d6', fakelog:'#b8a77a', citywater: '#3aa0d8', endnote: '#8a7a6a',
@@ -1670,7 +1743,7 @@ const PIXEL_ICON: Record<string, true> = {
   memoryjuice: true, laughrepellent: true, babelbalm: true, outdoorkit: true, traumakit: true, saltbox: true, // 批发市场 v2
   dbshotgun: true, shell_buck: true, shell_bird: true, shell_clump: true, // 鎏金兵械库
   leverrifle: true, revolver: true, musket: true, trapdoor: true, cart_4440: true, cart_paper: true, cart_4570: true,
-  ratmeat: true, // v79 尸鼠肉
+  ratmeat: true, creepmeat:true, // 尸鼠肉与长白毛的尸鼠肉
   firesalt: true, liquidpain: true, // v50 火盐晶体 / 液态痛苦
   // v51：Object 5 糖果（散装 + 袋装）
   candysilver: true, candybullet: true, candygun: true, candystanley: true,
@@ -1685,6 +1758,9 @@ const PIXEL_ICON: Record<string, true> = {
   acidcallus: true, ashpile: true, // 2026-10-23：酸性胼胝 / 一捧细灰
   curabiturgel: true, curabiturspore: true, curabiturrepellent: true, // 2026-10-23：受眷鸟三件
   phone: true, bottledwater: true, snackbar: true, foyerpack: true, // 前厅随身物品（gen-item-icons.py draw_phone 等，打磨轮）
+  brc_permit: true, // 施工许可（gen-item-icons.py draw_brc_permit）
+  dustmask: true, // 防尘口罩（gen-item-icons.py draw_dustmask）
+  tape_l0: true, // 层级专属磁带（外观表 content/levelTapes.json，gen-item-icons.py draw_level_tape）
 }
 // v14：网络素材贴图图标（game-icons.net，CC BY 3.0，见 public/textures/icons/SOURCES.md）；
 // 不在表内或加载失败的物品回退手绘 SVG。

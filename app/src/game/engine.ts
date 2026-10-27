@@ -1,8 +1,12 @@
+import { newMoveFeel, resetMoveVelocity, type MoveFeelState } from './engine/moveTuning' // [movefeel]
 import {ensureTradersAt} from './world/tradersWorld'
 import { beginFoyerRun, updateFoyer, enterFoyer } from './engine/foyer'
 import { applyFoyerLanding, landingActive, updateFoyerLanding, resetFoyerPresentation } from './engine/foyerLanding'
 import { phoneState, updatePhone, togglePhoneTorch, type PhoneState } from './engine/phone'
 import type { TutorialDirector } from './engine/tutorial'
+import { LevelQuestDirector, levelQuestState, resetQuestPulses, type LevelQuestState, type QuestEvent } from './engine/levelQuests'
+import { LEVEL_QUESTS, LEVEL_QUEST_PROBES } from './content/levelQuests'
+import { L0_SUBLEVELS, l0SublevelName } from './content/l0Sublevels'
 import type { HudKey } from './engine/hud'
 import { FOYER_ID } from './world/foyerLayout'
 import { heldMelee, updateMeleeInput, normalizeMeleeInventory, type MeleePending } from './engine/melee'
@@ -29,9 +33,11 @@ import { armsInputLock, armsPlayerTick, freshArmsRun, type ArmsRunState } from '
 import { freshWinRun, type WinRunState } from './engine/windowAI'
 import { freshVendRun, stepVending, type VendRunState, type VendTarget } from './engine/vendingAI'
 import { freshFerrenRun, restoreFerren, stepFerrenWorld, type FerrenRunState } from './engine/ferrenAI'
+import { freshCreepRun, restoreCreep, stepCreepWorld, type CreepRunState } from './engine/creeperAI' // [creeper]
 import { freshNgRun, nguithrInputLock, nguithrPlayerTick, updateNguithrEntity, type NguithrRunState } from './engine/nguithrAI'
 import type { ExitDef, FloorBand, LightSource, Structure } from './core/types'
 import { audio } from './core/audio'
+import { specialAction } from './engine/special'
 import { ROCK_SONG_IDS, musicName, setRadioCfg } from './core/midi'
 import { seedString } from './core/rng'
 import { type NpcState, type NpcDef } from './content/npcs'
@@ -56,11 +62,15 @@ import * as warehouse from './engine/warehouse'
 import * as bntgBank from './engine/bntgBank'
 import * as ambient from './engine/ambient'
 import * as dev from './engine/dev'
+import * as remodel from './engine/remodel'
+import * as l02c from './engine/l02Collapse'
+import { L02_ID } from './world/l02Layout'
 import { devOperateExit } from './engine/devExits'
 import * as unstuck from './engine/unstuck'
 import { loadSaveSnapshot, type SaveSnapshot } from './engine/save'
 import { canPrepareChunks, prepareChunkWindow } from './world/chunkCache'
 import type { L11WorldSave } from './engine/l11State'
+import { HD, houndPinner } from './engine/houndAI'
 
 // v53：对外契约再导出（原 engine.ts 直接导出的符号保持不变）
 export { SAVE_KEY, loadSaveSnapshot, clearSaveSnapshot, listSaveSlots, readSaveSlot, SAVE_SLOT_KEYS, SAVE_SLOT_LABELS } from './engine/save'
@@ -92,7 +102,7 @@ export interface Projectile {
   water?: boolean
 }
 export interface HudEvent {
-  kind: 'vending' | 'bank' | 'faction' | 'facility' | 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'floorchange' | 'dead' | 'victory' | 'levelchange' | 'lootpanel' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'radioheard' | 'mpevent'
+  kind: 'vending' | 'bank' | 'faction' | 'facility' | 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'floorchange' | 'dead' | 'victory' | 'levelchange' | 'lootpanel' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'shop' | 'radioheard' | 'mpevent'
   cutIn?: string
   dest?: number | 'random' | 'win'
   text?: string
@@ -113,6 +123,10 @@ export interface PlayerState {
   phone?: PhoneState
   /** 前厅时钟：自 23:40 起经过的游戏秒数。 */
   prologueClock?: number
+  /** 层级任务进度（engine/levelQuests.ts；缺省=空进度）。 */
+  levelQuests?: LevelQuestState
+  /** 后室装修公司施工许可 / Level 0 施工点（engine/remodel.ts；缺省=未申请）。 */
+  remodel?: import('./engine/remodel').RemodelState
   // v7 数据契约：z 轴高度系统
   z: number // 脚底高度（米，随地面高度档/坡道/跳跃变化）
   vz: number // 垂直速度（重力积分）
@@ -240,6 +254,22 @@ export class Engine {
   foyer?: import('./engine/foyer').FoyerRuntime
   /** 前厅教程（TutorialDirector；离开前厅后为 null）。 */
   tutorial: TutorialDirector | null = null
+  /** 层级任务（LevelQuestDirector；数据见 content/levelQuests.ts，进度存 player.levelQuests）。 */
+  levelQuests = new LevelQuestDirector(LEVEL_QUESTS, LEVEL_QUEST_PROBES)
+  /** 层级任务事件入口（离开层级/拍照/进入子层级等）。 */
+  questEvent(ev: QuestEvent) { this.levelQuests.event(this, ev) }
+  /** 进入 Level 0 子层级（子层级尚未制作：目前由开发调试入口调用；以后真正的子层级入口也调这里）。 */
+  enterL0Sublevel(id: string): boolean {
+    if (this.player.level !== 0 || !L0_SUBLEVELS.some((s) => s.id === id)) return false
+    const st = levelQuestState(this)
+    st.sublevel = id
+    if (!st.sublevelsSeen.includes(id)) st.sublevelsSeen.push(id)
+    this.msg(`你进入了「${l0SublevelName(id)}」。`, 'lore')
+    this.questEvent({ t: 'enterSublevel', id })
+    return true
+  }
+  /** 离开子层级（回到 Level 0 主体）。 */
+  leaveL0Sublevel() { const st = levelQuestState(this); if (st.sublevel) { this.msg(`离开了「${l0SublevelName(st.sublevel)}」。`, 'lore'); st.sublevel = null } }
   /** 设置「始终显示全部 HUD」（App 同步；只影响显示，不改写解锁记录）。 */
   hudShowAll = false
   /** HUD 区块首次解锁的时间戳（performance.now；浮现动画用，不入存档）。 */
@@ -274,6 +304,8 @@ export class Engine {
   redAnnounced = new Set<string>() // 本层已播报预警的红室 chunk（chunkKey）
   // 固定子步移动积分器（帧间保留时间余数，保证高低帧率位移一致）
   moveIt: MoveIntegrator = createIntegrator()
+  /** [movefeel] 水平速度 / 冲刺渐入 / 喘息 / 土狼与跳跃缓冲 / 落脚相位（engine/moveTuning.ts；不入存档） */
+  mv: MoveFeelState = newMoveFeel()
   // 攻击挥动动画计时（渲染层读取做手部挥砍/准心收缩）
   attackAnimT = 0
   // 当前攻击动画的完整时长；动画与攻击间隔共用同一节奏。
@@ -410,6 +442,7 @@ export class Engine {
   thingBreathPingT = 0 // [thing] 下一次口臭气味的倒计时
   thingMeatCd = 0 // [thing] 两块彼物之肉之间的割肉冷却
   manmadeT = 0 // v51：人制品效应剩余秒数（5 分钟：拒食他物/治疗减半/恒显饥饿特效/体力恢复减半消耗加倍/受伤 -10%）
+  creepRun: CreepRunState = freshCreepRun() // [creeper] Entity 17：孢子负荷（隐藏）/ 病程 / 包扎窗口 / 孢子团（写存档 creep）
   ferrenRun: FerrenRunState = freshFerrenRun() // [ferren] Entity 92：作息时钟（写存档 ferren）/ 摸摸冷却 / 被子 / 切行闪白
   vendRun: VendRunState = freshVendRun() // [vending] 售货机：成瘾 / 受害者 / 普通机运行时状态（只在内存，不写存档）
   vendUi: VendTarget | null = null // [vending] 交互界面当前对着的售货机
@@ -537,9 +570,11 @@ export class Engine {
     if(this.map?.traders)this.map=null // A fresh run must not recapture the previous Traders world.
     this.tutorial = null; this.foyer = undefined; resetFoyerPresentation(); this.specialPressed = false
     this.hudRevealAt = {}; this.phoneScreenOn = false; this.phoneThumbs.clear()
+    resetQuestPulses()
     this.seed = seed
     this.difficulty = difficulty
     this.saveSlot = slot
+    this.mv = newMoveFeel() // 移动瞬态不跨新开局或存档读取复用
     this.player = this.freshPlayer()
     this.gun = newGunRun(); this.gunFx.length = 0; this.input.aimHeld = false
     this.over = false; this.victory = false; this.transition = null
@@ -619,6 +654,7 @@ export class Engine {
       this.jerryOath = snap.jerryOath ?? ((snap.jerryAgreed ?? []).length > 0)
       this.homelyApplied = snap.homelyApplied ?? false // v55：家常酒店入住申请
       this.ferrenRun = restoreFerren(snap.ferren) // [ferren] 作息时间轴
+      this.creepRun = restoreCreep(snap.creep) // [creeper] 孢子负荷 / 病程
       // v56：恢复电台配置与收听记录（旧档缺省=随层级变化/空）
       this.radio = snap.radio ?? { mode: 'follow', fixed: null, perLevel: {} }
       this.radio.perLevel = this.radio.perLevel ?? {}
@@ -643,6 +679,7 @@ export class Engine {
       this.player.level = snap.level
       if (snap.level === FOYER_ID) enterFoyer(this, false)
       normalizeMeleeInventory(this)
+      remodel.syncRemodelAfterLoad(this) // 施工点按恢复后的玩家状态重新注入 L0 区块
       // v59：旧版据点布局的坐标落在已移除的小房间/墙体中，统一迁移到新布局的安全出生点。
       // 布局版本 2 保留世界坐标恢复及既有安全校正逻辑。
       const legacySettlement = (snap.level===101 && snap.alphaLayout!==5) || (snap.level===102 && snap.bntgLayout!==4) || (snap.settlementLayout !== 2 && [101,103,104,116].includes(snap.level))
@@ -748,6 +785,17 @@ export class Engine {
     return { depth, breath: this.breathT, limit: movement.breathLimit(this), submerged: this.submerged, edge }
   }
   takeExit(def: ExitDef) { level.takeExit(this, def) }
+  /** 施工许可（engine/remodel.ts）：对话申请 / 使用 / 调试。 */
+  canRequestBrcPermit() { return remodel.canRequestPermit(this) }
+  requestBrcPermit() { return remodel.requestPermit(this) }
+  /** 交互即将进入的施工门所属施工点（interact → takeExit 之间传递）。 */
+  remodelPendingSite: string | undefined = undefined
+  /** 下一次 loadLevel(0) 落在施工门旁（从 Level 0.2 返回）。 */
+  arriveRemodel = false
+  /** Level 0.2 崩塌运行时（engine/l02Collapse.ts；进入本层时重置，不存档）。 */
+  l02: import('./engine/l02Collapse').L02Runtime | null = null
+  /** [DEV] Level 0.2：跳到崩塌阶段 n（n<0=停止崩塌）。 */
+  devL02Stage(n: number) { l02c.devL02Stage(this, n) }
   tinyBlocksLittleDoor(exit?: GameMap['exits'][number]): boolean { return level.tinyBlocksLittleDoor(this, exit) }
   updateStairs(dt: number) { level.updateStairs(this, dt) }
   switchL6Floor(target: -1 | 0, reason: 'stairs' | 'pit' = 'stairs') { return level.switchL6Floor(this, target, reason) }
@@ -769,6 +817,12 @@ export class Engine {
   isLit(x: number, y: number): boolean { return entityAI.isLit(this, x, y) }
   noiseEvent(x: number, y: number, radius: number, sprint: boolean) { entityAI.noiseEvent(this, x, y, radius, sprint) }
   lookingAt(e: Entity): boolean { return entityAI.lookingAt(this, e) }
+  /** [hound] 玩家视线射线：眼睛位置（窗口坐标 + 高度）与准星三维方向（猎犬直视判定用） */
+  crosshairRay(): { x: number; y: number; z: number; dx: number; dy: number; dz: number } {
+    const p = this.player, d = combat.crosshairDirection()
+    const eye = houndPinner(this) ? HD.PIN_EYE : this.seating ? 1.1 : HD.EYE_H - (p.crouching ? HD.EYE_CROUCH : 0)
+    return { x: p.x, y: p.y, z: p.z + eye, dx: d.x, dy: d.y, dz: d.z }
+  }
   los(x0: number, y0: number, x1: number, y1: number): boolean { return entityAI.los(this, x0, y0, x1, y1) }
   updateEntities(dt: number, dmgMult: number) { entityAI.updateEntities(this, dt, dmgMult) }
   wanderTarget(e: Entity) { entityAI.wanderTarget(this, e) }
@@ -962,7 +1016,7 @@ export class Engine {
   findUnstuckDestination(): unstuck.UnstuckDestination | null { return unstuck.findUnstuckDestination(this) }
 
   private step(dt: number) {
-    if (!this.map || this.paused || this.over) return
+    if (!this.map || this.paused || this.over) { resetMoveVelocity(this.mv); return }
     if (this.transition?.preparing && !this.transition.prepared) return
     dt = Math.min(dt, 0.05)
     this.time += dt
@@ -976,6 +1030,7 @@ export class Engine {
     runEffectTicks(this, dt, 'pre')
     // [vending] 售货机：普通机出货片段 / 成瘾 / 界面有效性（E36 本体在实体循环 updateVm36）
     stepVending(this, dt)
+    stepCreepWorld(this, dt) // [creeper] Entity 17：孢子负荷 / 病程 / 1 阶 X 烧灼（先于 Ferren 取 X 上升沿）
     stepFerrenWorld(this, dt) // [ferren] Entity 92：作息时钟 / 冷却 / 闪白 / X 交互
     // v51：人制品效应计时（5 分钟）+ Nguithr'xurh 镇静剂麻痹计时（EFFECTS 注册表 post 组）
     runEffectTicks(this, dt, 'post')
@@ -1027,6 +1082,8 @@ export class Engine {
       const skip = Math.hypot(this.input.mx, this.input.my) > 0.1 || this.input.jump || this.input.attack
       this.introT = skip ? 0 : Math.max(0, this.introT - dt)
     }
+    this.levelQuests.update(this, dt) // 层级任务（内部节流）
+    remodel.tickRemodel(this) // 施工许可改造渐变
     armsPlayerTick(this, dt) // 手臂：挣扎衰减 / 挣脱判定（输入计数在 movement 的 armsControlsPlayer）
     nguithrPlayerTick(this, dt) // Nguithr'xurh：镇静计时 + 摇晃身体挣脱（读取跳跃/横移输入，须在移动结算之前）
     const introLock = this.introT > 0 || jerryInputLock(this) || nguithrInputLock(this) || armsInputLock(this) // 杰瑞木僵/信众击晕/残响失神/Nguithr 重度镇静：锁定移动、攻击与跳跃
@@ -1038,6 +1095,7 @@ export class Engine {
     // ---- 生存消耗（engine/survival.ts；返回 true=本帧已死亡）----
     if (this.updateSurvival(dt, dm, mag)) return
     updatePhone(this, dt)
+    if (p.level === L02_ID) { l02c.tickL02(this, dt); if (this.over) return } // Level 0.2 崩塌 / 粉尘 / 插座 / Wi‑Fi
     if (this.photoFlashT > 0) this.photoFlashT = Math.max(0, this.photoFlashT - dt)
     if (p.level === FOYER_ID) updateFoyer(this, dt)
     else if (landingActive(this)) updateFoyerLanding(this, dt)
@@ -1090,6 +1148,13 @@ export class Engine {
 
     // ---- 交互检测 ----
     this.scanInteract()
+    // 特殊交互键（X）：对着商人 = 打开商店（独立于 E 交谈）；当前没有可用的特殊动作时丢弃这次点按，免得走到商人跟前自动弹出
+    if (this.specialPressed) {
+      const sa = specialAction(this)
+      const n = this.interactTarget?.npc
+      if (sa?.id === 'trade' && n) { this.specialPressed = false; if (!n.def.workLoop) n.facing = Math.atan2(this.player.y - n.y, this.player.x - n.x); audio.uiTick(); this.emit({ kind: 'shop', text: n.id }) }
+      else if (!sa) this.specialPressed = false
+    }
     if (this.input.interact) {
       this.input.interact = false
       this.doInteract()
@@ -1118,6 +1183,15 @@ export class Engine {
 
   // ---------- 开发者模式 API（engine/dev.ts；仅供开发者面板/冒烟测试调用）----------
   devJump(id: number) { dev.devJump(this, id) }
+  /** [DEV] 施工许可 / Level 0.2 调试入口（HUD 调试面板「世界」页）。 */
+  devRemodel(op: 'rep' | 'permit' | 'rearm' | 'clear' | 'enter' | 'back') {
+    if (op === 'enter') {
+      if (this.player.level === 0) remodel.remodelBeforeEnter(this, undefined)
+      this.transition = null; this.loadLevel(L02_ID); this.emit({ kind: 'transition', anim: 'intro' }); return
+    }
+    if (op === 'back') { this.arriveRemodel = (this.player.remodel?.sites.length ?? 0) > 0; this.transition = null; this.loadLevel(0); this.emit({ kind: 'transition', anim: 'intro' }); return }
+    remodel.devRemodel(this, op)
+  }
   devJumpOutpost(outpostId: string): boolean { return dev.devJumpOutpost(this, outpostId) }
   devForward(): { fx: number; fy: number } { return dev.devForward(this) }
   devFindSpot(cx: number, cy: number, maxR = 6, band: FloorBand = this.player.floor): { x: number; y: number } | null { return dev.devFindSpot(this, cx, cy, maxR, band) }

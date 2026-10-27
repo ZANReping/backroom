@@ -70,6 +70,9 @@ export interface LevelDef {
   displayId?: number
   /** 层级短标签（缺省=`Level ${displayId ?? id}`）。据点等专有名称层级用（如「Alpha 基地」） */
   label?: string
+  /** 过场进入卡的完整标题（缺省=label 或「Level N · 名称」）与副标题（第五轮：Level 0.2 用） */
+  titleName?: string
+  titleSub?: string
   /** 进入本层即获得完整地图（据点：规模有限且对居民开放） */
   fullMap?: boolean
   /** 官方生存难度分级（Survival Difficulty，wiki 卡片） */
@@ -111,6 +114,10 @@ export interface ExitInstance {
   l11?: {id:string;buildingId:string;blockId:string;angle:number;width:number}
   /** L1 portal approach and carved wall use the same explicit mounting frame. */
   l1?: {wallDir:number}
+  /** Level 0 施工门（后室装修公司施工许可）所属施工点 id（world/remodelSites.ts）。 */
+  remodelSite?: string
+  /** Level 0.2 返回门：贴墙朝向（门面法线 = (sin yaw, cos yaw)）。 */
+  l02?: { yaw: number }
 }
 
 export type StructKind = import('../content/tradeDecor').TradeKind | import('../content/l5Decor').L5DecorKind | import('../content/alphaDecor').AlphaKind | import('../content/l11Decor').L11DecorKind | 'settlementprop' | 'settlementstation' | 'l4stairs' | 'l4prop'
@@ -120,6 +127,7 @@ export type StructKind = import('../content/tradeDecor').TradeKind | import('../
   | 'desk' | 'door' | 'ballroom' | 'lightgrid' | 'wet'   | 'graffiti' | 'crate'
   | 'corpse' | 'ladder' | 'vent' | 'mirror' | 'elevator' | 'frontdesk' | 'bed' | 'sconce'
   | 'socket' // 墙上插板（L0 装饰：米色插座面板）
+  | 'l02fix' // Level 0.2 设施（插座/板夹/路由器/洗手间；data.fix，模型见 renderer/l02Scene.ts）
   | 'rebar' // 突出墙壁的锈蚀钢筋（L1：靠近划伤，wikidot/Fandom 破伤风梗）
   // v6 新增：层级特色生成物与预制结构内容
   | 'hoteldoor' // 可交互房门（开关/上锁，撬棍/万能钥匙）

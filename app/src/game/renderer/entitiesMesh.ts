@@ -33,6 +33,7 @@ import { buildShrimpMesh } from './shrimpMesh'
 import { buildPartygoerMesh } from './partygoerMesh'
 import {buildJerryMesh} from './jerryMesh'
 import { buildFerrenMesh } from './ferrenMesh' // [ferren]
+import { buildCreeperEntityMesh } from './creeperRender' // [creeper]
 import { buildNWMesh } from './watchRender'
 import { ENTITIES } from '../entities'
 import { box, cyl, glow, litMaterial, mulberry } from './shared'
@@ -43,6 +44,7 @@ import { buildArachnidEntityMesh } from './arachnidRender' // [L8-arachnid]
 import { buildWindowEntity } from './windowMesh' // [window]
 import { buildVendingMachineJob } from './vendingMesh' // [vending]
 import { vendingSeedOfEntity } from '../content/vendingLayout'
+import { mirrorSurface } from './mirrorSurface'
 
 // ---------- 实体低模（骨骼式分组：四肢/头独立 pivot，可程序化动画）----------
 // 朝向约定：模型正面 = +X（updateEntities 用 rotation.y = -e.facing 对齐移动/玩家方向）。
@@ -54,6 +56,8 @@ type PartMap = Record<string, THREE.Object3D>
 // v53：实体建模变体（L3 高智能实体：无面灵错位面部器官/石器工具、尸鼠水豚形态；seed=实体 id，保证重建一致）
 // ratMorph：尸鼠按层级固定形态——L2 灰白廊道种群 / L3 水豚（capybara 优先）/ L5 酒店正装（小西装+领结）/ 其余层级深褐（旧档「死亡鼠」）
 export interface EntityMeshOpts {
+  /** [creeper] 爬菌 Entity 17：宿主 / 阶段 / 尸鼠形态 / 蛛形纲外形 / 种子（creeperRender.buildCreeperEntityMesh） */
+  creep?: import('./creeperRender').CreepMeshOpts
   /** [window] 窗户 Entity 2：窗型 / 生命阶段 / 种子 */
   windowStyle?: import('./windowMesh').WindowStyle
   windowLife?: 'occupied' | 'newborn' | 'dying' | 'gone'
@@ -80,6 +84,7 @@ export interface EntityMeshOpts {
   arachnidMother?: boolean // [L8-arachnid] 幼蛛潮带母蛛
   smilerKind?: import('../entities/smilers').SmilerKind // v61：笑魇变种
   houndNeutral?: boolean // v62：L11 中立猎犬
+  houndKind?: 'hostile' | 'neutral' | 'ambusher' // 猎犬重制：形态（ambusher 更瘦长低伏、爪更长）
   wretchKind?: import('../entities/wretches').WretchKind
   l3clump?: boolean // v64：L3 高智能肢团（v65：更大的肉团、更粗的肢体、独立持械臂）
   wranglerKind?: 'male' | 'female' | 'juvenile' // 牧蛇变种（wranglerAI 首个 tick 决定）
@@ -200,6 +205,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
   if (type === 'windowent') return buildWindowEntityMesh(opts) // [window] 重制窗户 Entity 2（windowMesh；动画 windowAnim，摆位 windowRender）
   if (type === 'arms') return buildArmsEntityMesh(opts?.arms?.count,opts?.arms?.seed) // 手臂重制：风口 + 1–3 条蒙皮长臂（armsMesh），动画由 renderer.updateArmsMesh 按 AI 状态驱动
   if(type==='jerry')return buildJerryMesh()
+  if (type === 'creeper') return buildCreeperEntityMesh(opts?.creep) // [creeper] 爬菌 Entity 17：感染体（尸鼠 / 蛛形纲 1–4 阶）/ 爬菌人
   if (type === 'ferren') return buildFerrenMesh() // [ferren] 重制 Ferren（Entity 92，貂色雪貂）
   if (type === 'nguithr') return buildNguithrEntityMesh(opts?.nguithr?.scale,opts?.nguithr?.sacs.length,opts?.nguithr?.seed) // 重制 Nguithr'xurh：避日目蒙皮模型（58 骨，3 次绘制）+ 程序化动画；巢由渲染层按 AI 的巢种子补建
   if (type === 'watcher' || type === 'strider' || type === 'mangled') return buildNWMesh(type) // 重制邻里守望 / 残缺者（WATCH-REMAKE.md）
@@ -211,7 +217,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
   if (type === 'dryshrimp') return buildShrimpMesh(opts?.seed ?? 0) // v81：重制旱虾（奇虾体型，鳍片划水着色器动画）
   if (type === 'camocrawler') return buildCamoEntity(opts?.seed) // [L8-camo] 重制四臂潜伏者（共享伪装统一量 + 手上巨石）
   if (type === 'arachnid') return buildArachnidEntityMesh(opts) // [L8-arachnid] 重制 17 变种（arachnidMesh）
-  if (type === 'hound') return buildHoundMesh(!!opts?.houndNeutral, opts?.seed ?? 0) // v62：重制猎犬
+  if (type === 'hound') return buildHoundMesh(!!opts?.houndNeutral, opts?.seed ?? 0, opts?.houndKind) // 猎犬重制（阶段 1）：三形态
   if (type === 'corpserat') return buildRatMesh(opts?.ratMorph ?? (opts?.capybara ? 'capybara' : opts?.ceilingCrawler ? 'cave' : 'common'), opts?.seed ?? 0, !!opts?.ceilingCrawler)
   if (type === 'wretch') return buildWretchMesh(opts?.seed ?? 0, opts?.wretchKind)
   if (type === 'skinstealer') return buildSkinStealerMesh(opts?.seed ?? 0) // v77：重制窃皮者（真身）
@@ -487,11 +493,17 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
     case 'mirrorself': { // 镜中人：苍白「你」+ 胸前镜片 + 纯黑眼
       humanoid(1.75, 0.9, '#d8ccc0')
       eyes(1.63, 0.08, '#0c0507', 0.05)
-      const shard = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.36, 0.02),
-        new THREE.MeshLambertMaterial({ color: '#dfeaf2', emissive: 0xdfeaf2, emissiveIntensity: 0.35 }))
-      shard.position.set(0, 1.15, 0.14)
-      face(shard); grp.add(shard)
-      grp.add(box(0.2, 0.3, 0.02, '#c8d4dc', 0.05, 1.1, -0.14)) // 背部碎镜
+      // 胸前碎镜：保留暗灰背板厚度，反射面独立挂载，避免实体本身自发光。
+      grp.add(box(0.28, 0.36, 0.02, '#424a50', 0, 1.15, 0.14))
+      const shard = face(mirrorSurface(0.28, 0.36))
+      shard.position.set(0, 1.15, 0.1505)
+      grp.add(shard)
+      // 背部碎镜：原背板保留，镜面朝向 -Z。
+      grp.add(box(0.2, 0.3, 0.02, '#c8d4dc', 0.05, 1.1, -0.14))
+      const rearShard = mirrorSurface(0.2, 0.3)
+      rearShard.rotation.y = Math.PI
+      rearShard.position.set(0.05, 1.1, -0.1505)
+      grp.add(rearShard)
       break
     }
     // v64：'clump' 已在函数开头交给 clumpMesh.buildClumpMesh（旧版方块模型移除）

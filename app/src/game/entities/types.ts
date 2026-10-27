@@ -12,6 +12,7 @@ export type RefinedEntityForm =
   | 'corpserat-brown' | 'corpserat-gray' | 'corpserat-hotel' | 'corpserat-capybara' | 'corpserat-ceiling'
   | 'arachnid-spider' | 'arachnid-scorpion' | 'arachnid-tick' | 'arachnid-mite' | 'arachnid-herbivore'
   | `arachnid-${import('../engine/arachnidStats').ArachnidKind}` // [L8-arachnid] 17 个重制变种
+  | 'creeper-rat' | 'creeper-spider' | 'creeper-human' // [creeper] Entity 17：尸鼠 / 蛛形纲感染体、爬菌人
 export type EntityForm = MothForm | import('./smilers').SmilerKind | RefinedEntityForm
 
 export interface EntityCodex {
@@ -91,6 +92,9 @@ export interface EntityDef {
   arachnidVariant?: import('../engine/arachnidStats').ArachnidKind // [L8-arachnid] 重制变种（缺省时按 arachnidMorph 映射）
   arachnidNest?: string // [L8-arachnid] 所属符文蛛巢 id
   arachnidMother?: boolean // [L8-arachnid] 幼蛛潮带母蛛
+  // ===== [creeper] 爬菌 Entity 17 =====
+  creepHost?: 'rat' | 'arachnid' | 'human' // 感染体宿主 / 爬菌人
+  creepStage?: number // 感染体阶段 1–4（爬菌人 5）
   // ===== v25：栖息地（生成位置过滤）=====
   // indoor=仅室内瓦片（m.outdoor=0）；outdoor=仅室外瓦片（m.outdoor=1，如小巷/街道/田野/海面）；
   // any（缺省）=随意。生成时无符合瓦片则降级 any 并计数告警。
@@ -171,6 +175,7 @@ export interface Entity {
   hd?: import('../engine/houndAI').HoundState // v62：猎犬（含 L11 中立变种）运行时状态（不入存档/联机）
   sm?: import('./smilers').SmilerState // v61：笑魇变种与 AI 运行时状态（不入存档/联机）
   th?: import('../engine/thingAI').ThingState // 七层之物：身体链、休眠、割肉、惊逃
+  cr?: import('../engine/creeperAI').CreepEntState // [creeper] Entity 17：感染体 / 爬菌人运行时状态（片段 / 记仇 / 扑击根位移；不入存档/联机）
   fr?: import('../engine/ferrenAI').FerrenEntState // [ferren] Entity 92：作息行为 / 片段 / 切行（不入存档/联机；作息时钟在 eng.ferrenRun）
   vm?: import('../engine/vendingAI').Vm36State // [vending] Entity 36：库存 / 出货片段 / 活化状态机（不入存档/联机）
   win?: import('../engine/windowAI').WinEntState // [window] 窗户 Entity 2：挂墙位姿 / 三态 / 片段（不入存档/联机）

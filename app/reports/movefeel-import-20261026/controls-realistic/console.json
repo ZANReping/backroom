@@ -1,0 +1,3314 @@
+[
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121274.16,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121274.332,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121274.421,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121274.493,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121274.576,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121274.645,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121400.216,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121400.326,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121400.502,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121400.598,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121400.676,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121400.749,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121528.643,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121528.738,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121528.826,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121528.867,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121528.909,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121528.943,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121657.697,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121657.81,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121657.853,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121657.889,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121657.923,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  },
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+      },
+      {
+        "type": "string",
+        "value": "code-path"
+      }
+    ],
+    "executionContextId": 3,
+    "timestamp": 1792981121657.957,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4570,
+          "columnNumber": 24
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "validateFragmentProps",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4567,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "updateElement",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4706,
+          "columnNumber": 15
+        },
+        {
+          "functionName": "updateSlot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4796,
+          "columnNumber": 103
+        },
+        {
+          "functionName": "reconcileChildrenArray",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 4938,
+          "columnNumber": 27
+        },
+        {
+          "functionName": "reconcileChildFibersImpl",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5170,
+          "columnNumber": 87
+        },
+        {
+          "functionName": "",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 5236,
+          "columnNumber": 34
+        },
+        {
+          "functionName": "reconcileChildren",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 7181,
+          "columnNumber": 122
+        },
+        {
+          "functionName": "beginWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 8742,
+          "columnNumber": 19
+        },
+        {
+          "functionName": "runWithFiberInDEV",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 996,
+          "columnNumber": 71
+        },
+        {
+          "functionName": "performUnitOfWork",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12560,
+          "columnNumber": 97
+        },
+        {
+          "functionName": "workLoopSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12423,
+          "columnNumber": 42
+        },
+        {
+          "functionName": "renderRootSync",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 12407,
+          "columnNumber": 12
+        },
+        {
+          "functionName": "performWorkOnRoot",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 11765,
+          "columnNumber": 188
+        },
+        {
+          "functionName": "performWorkOnRootViaSchedulerTask",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 13504,
+          "columnNumber": 8
+        },
+        {
+          "functionName": "performWorkUntilDeadline",
+          "scriptId": "17",
+          "url": "http://127.0.0.1:10765/reports/movefeel-import-20261026/controls-realistic/qa-1792981074521-52220/vite-cache/deps/react-dom_client.js?v=81b518af",
+          "lineNumber": 35,
+          "columnNumber": 49
+        }
+      ]
+    }
+  }
+]

@@ -19,7 +19,8 @@ export interface GameSettings {
   vcrStrength: number // VCR 色差与跟踪失真强度 0–100
   vcrScanlines: boolean // VCR 后处理中的动态隔行扫描线（独立于静态屏幕扫描线）
   shake: boolean
-  headBob: boolean // v54：真实视角摇晃
+  headBob: boolean // v54：真实视角摇晃（[movefeel] 默认开：简化版，幅度 MV.BOB_LIGHT）
+  headBobStrong: boolean // [movefeel] 真实视角摇晃「强」= 完整幅度
   realWater: boolean // v57t：真实水体效果（海面涌浪起伏+程序化波光/天空反射；默认关闭=纯色平水面）
   flicker: number // 旧设置兼容，固定为 0
   eyeAdaptation:boolean // 快明适应、慢暗适应
@@ -80,7 +81,7 @@ export interface GameSettings {
 
 export const defaultSettings: GameSettings = {
   difficulty: 'normal', autoSprint: false,
-  grain: true, shake: true, headBob: false, realWater: false, flicker: 0, eyeAdaptation:true, renderResolution: 'native', renderScale: 100, dynamicRes: true, dynamicResTarget: 60, shadows: true, fogOfWar: true,
+  grain: true, shake: true, headBob: true, headBobStrong: false, realWater: false, flicker: 0, eyeAdaptation:true, renderResolution: 'native', renderScale: 100, dynamicRes: true, dynamicResTarget: 60, shadows: true, fogOfWar: true,
   maxPixelRatio: 2, sceneLightLimit: 16, chunkBudgetMs: 3, loadingBudgetMs: 6, hudRefreshRate: 8,
   textureQuality: 1, detailDistance: 100, wallOcclusion: true, particleDensity: 100, shadowUpdateRate: 1, cameraFov: 72,
   vcrFx: false, vcrStrength: 100, vcrScanlines: true,
@@ -112,7 +113,7 @@ export const GRAPHICS_PRESETS: Record<GraphicsPreset, Partial<GameSettings>> = {
     textureQuality: 0, detailDistance: 65, wallOcclusion: true, particleDensity: 25, shadowUpdateRate: 0,
     shadows: false, shadowQuality: 0, farLights: false, lightMode: 'classic', sunShadows: false, fogOfWar: true, fogScale: 85,
     lightShadows: 0, ambientOcclusion: 0, bloomFx: false, realWater: false, grain: false, vcrFx: false,
-    vcrStrength: 60, vcrScanlines: false, shake: false, headBob: false, vignetteStrength: 0, scanlineStrength: 0,
+    vcrStrength: 60, vcrScanlines: false, shake: false, headBob: false, headBobStrong: false, vignetteStrength: 0, scanlineStrength: 0,
     colorGrade: 'neutral', exposure: 100,
   },
   balanced: {
@@ -120,7 +121,7 @@ export const GRAPHICS_PRESETS: Record<GraphicsPreset, Partial<GameSettings>> = {
     textureQuality: 1, detailDistance: 100, wallOcclusion: true, particleDensity: 70, shadowUpdateRate: 1,
     shadows: true, shadowQuality: 1, farLights: false, lightMode: 'classic', sunShadows: true,
     lightShadows: 1, ambientOcclusion: 1, bloomFx: true, bloomStrength: 35, reflectivity: 60, realWater: false,
-    grain: true, grainStrength: 12, vcrFx: false, vcrStrength: 100, vcrScanlines: true, shake: true, headBob: false,
+    grain: true, grainStrength: 12, vcrFx: false, vcrStrength: 100, vcrScanlines: true, shake: true, headBob: true, headBobStrong: false,
     flicker: 0, eyeAdaptation:true,vignetteStrength: 18, scanlineStrength: 0, colorGrade: 'neutral', exposure: 100,
   },
   immersive: {
@@ -129,7 +130,7 @@ export const GRAPHICS_PRESETS: Record<GraphicsPreset, Partial<GameSettings>> = {
     shadows: true, farLights: true, lightMode: 'realistic', shadowQuality: 2,
     sunShadows: true, lightShadows: 2, bloomFx: true, bloomStrength: 45, reflectivity: 80,
     realWater: true, grain: true, grainStrength: 16, vcrFx: false, vcrStrength: 100, vcrScanlines: true, shake: true,
-    headBob: true, flicker: 0,eyeAdaptation:true, vignetteStrength: 18, scanlineStrength: 0,
+    headBob: true, headBobStrong: true, flicker: 0,eyeAdaptation:true, vignetteStrength: 18, scanlineStrength: 0,
     colorGrade: 'neutral', exposure: 100,
   },
   mobile: {
@@ -138,7 +139,7 @@ export const GRAPHICS_PRESETS: Record<GraphicsPreset, Partial<GameSettings>> = {
     sceneLightLimit: 8, chunkBudgetMs: 1.5, loadingBudgetMs: 4, hudRefreshRate: 4, fogOfWar: true, fogScale: 85,
     detailDistance: 65, wallOcclusion: true, particleDensity: 25, textureQuality: 0, shadows: false, shadowQuality: 0,
     farLights: false, lightMode: 'classic', sunShadows: false, lightShadows: 0, ambientOcclusion: 0, bloomFx: false,
-    realWater: false, grain: false, vcrFx: false, vcrScanlines: false, shake: false, headBob: false,
+    realWater: false, grain: false, vcrFx: false, vcrScanlines: false, shake: false, headBob: true, headBobStrong: false,
   },
 }
 
@@ -495,6 +496,7 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                   )}
                   <Toggle k="shake" label="受伤与低生命屏幕震动" value={settings.shake} onSet={setBool} />
                   <Toggle k="headBob" label="真实行走视角（起伏、侧摆、落地回弹）" value={settings.headBob} onSet={setBool} />
+                  {settings.headBob && <Toggle k="headBobStrong" label="强烈摇晃（完整幅度；关闭为简化版）" value={settings.headBobStrong} onSet={setBool} />}
                   <Toggle k="eyeAdaptation" label="人眼动态曝光" value={settings.eyeAdaptation} onSet={setBool} />
                   <p className="text-[11px]" style={{color:'var(--text-dim)'}}>进入亮处快速适应，进入暗处缓慢适应；无光处仍保持黑暗。</p>
                   <div className="mt-2 border-l-2 pl-2 text-[11px] leading-relaxed" style={{ borderColor: 'var(--amber)', color: 'var(--text-dim)' }}>暗角、调色和视角效果只改变视觉呈现；不会改变实体感知、照明范围或游戏难度。</div>

@@ -1,7 +1,7 @@
 {
   "pass": true,
   "checks": [
-    "100 seeds: safe spawn, four accessible supplies, one flashlight, no loss on restitch; revisit generates none",
+    "100 seeds: safe spawn, three accessible supplies, one flashlight, no loss on restitch; revisit generates none",
     "Visibility reaches 60m / obeys 12m fog cap, view direction, near circle and thin wall/open-door occlusion",
     "Asymmetric exposure: fast bright adaptation, slow dark adaptation, capped gain, temporary glare, toggle reset",
     "Built-in equality, manual deviation, custom round trip, minimum quality values, corrupt input and non-graphics exclusion",
@@ -10,8 +10,8 @@
     "Existing document ID resolves to the Foundation letter and its dedicated UI style"
   ],
   "mapCpu": {
-    "median": 0.2767999999996391,
-    "p95": 0.495600000000195,
+    "median": 0.4981999999999971,
+    "p95": 0.7014999999992142,
     "samples": 100,
     "scenario": "120x120 empty map, 60m range, forced uncached rays; Node CPU only"
   }

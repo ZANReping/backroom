@@ -1,3 +1,4 @@
+import { creeperKilled, creeperMeleeKill, creepFistMult, creepBurnAt } from './creeperAI' // [creeper]
 import { facelingAgeOf } from './facelingAI'
 import { isVm36, vm36Struck, vm36Shocked, vm36KillGuard } from './vendingAI'
 import { FACELING_AGE_HEIGHT } from '../entities/facelingTraits'
@@ -186,6 +187,7 @@ export function killCheck(eng: Engine, e: Entity) {
   if (e.hp > 0 || e.dead) return
   const p = eng.player, m = eng.map!
   e.dead = true; e.deathT = 1.4
+  creeperKilled(eng, e) // [creeper] 尸体停留 3.2 s、原地孢子团、感染尸鼠掉长白毛的肉
   curabiturKilled(eng, e) // [L8-curabitur] 受眷鸟：坠落尸体停留 9s + 掉落受眷胶
   if (e.def.type === 'clump') releaseClumpPlayer(eng, e)
   if (e.def.type === 'strider') nwKilled(eng, e)
@@ -277,7 +279,7 @@ export function attack(eng: Engine) {
   // v32：滋水枪——左键喷射储罐液体
   if (held?.type === 'squirtgun') { eng.squirt(); return }
   audio.swing()
-  const r = strike(eng, eng.dev.oneHit ? 99999 : held ? (ITEMS[held.type].weapon ?? 8) : 8)
+  const r = strike(eng, eng.dev.oneHit ? 99999 : held ? (ITEMS[held.type].weapon ?? 8) : 8 * creepFistMult(eng)) // [creeper] 4 阶长指甲：徒手伤害 ×2.25
   void r
 }
 
@@ -375,6 +377,7 @@ export function strike(eng: Engine, dmgIn: number, melee?: MeleeStrike): { hit: 
     if (e.def.passive && !e.def.noRetaliate) { e.provoked = true; e.targetEnt = undefined; e.state = 'chase'; e.stateT = 0 } // 激怒无面灵（被攻击才反击；Ferren 绝不反击不进 chase）
     if (e.def.type === 'corpserat' && e.provoked) eng.provokeRatPack(e) // v44：尸鼠群体激怒——周围同伴一同反击同一目标
     eng.killCheck(e)
+    if (e.dead) creeperMeleeKill(eng, e) // [creeper] 近战打死感染体：2 m 内被孢子溅到（远程击杀不走这里）
   }
   if (hit) { audio.hit(); eng.camShake = Math.min(1, eng.camShake + (melee?.heavy ? 0.3 : 0.15)) }
   else if (mothEggSwing(eng)) { audio.hit() }
@@ -721,6 +724,7 @@ export function landProjectile(eng: Engine, pr: Projectile, x: number, y: number
         if (e.def.type === 'jerry') { eng.hurtJerryRep(); if (!e.dead) jerryHurt(eng, e) } // v47：伤害鹉主 → 信众哗然 -50；重制：尖啸反扑
         n++
       }
+      creepBurnAt(eng, x, y) // [creeper] 火焰烧掉附近的孢子团 / 僵尸蜘蛛（含刚被炸死的感染体留下的）
       wranglerFireEggs(eng, x, y)
       eng.msg(n > 0 ? `汽油罐轰然炸开——火焰吞没了 ${n} 个实体。` : '汽油罐轰然炸开，火焰很快熄灭了。', n > 0 ? 'damage' : 'system')
       break

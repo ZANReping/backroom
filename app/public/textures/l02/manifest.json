@@ -1,0 +1,354 @@
+[
+ {
+  "material": "carpet",
+  "files": {
+   "albedo": "carpet.jpg",
+   "normal": "carpet-normal.jpg",
+   "orm": "carpet-orm.jpg"
+  },
+  "size": {
+   "albedo": [
+    1024,
+    1024
+   ],
+   "normal": [
+    1024,
+    1024
+   ],
+   "orm": [
+    512,
+    512
+   ]
+  },
+  "albedoMean": [
+   112.0,
+   48.0,
+   44.0
+  ],
+  "normalConvention": "OpenGL +Y",
+  "orm": "R=AO G=roughness B=宏观磨损掩码（0.5 中性，>0.5 人流磨损，<0.5 旧渍）",
+  "sources": [
+   {
+    "file": "Carpet013/Carpet013_2K-JPG_Color.jpg",
+    "sha256": "4b3f4898a0d10f1c2ca1f3773ada25b1855d19d3bf212815ed01145db6a83b2b"
+   },
+   {
+    "file": "Carpet013/Carpet013_2K-JPG_NormalGL.jpg",
+    "sha256": "e8fb33c8c2c7e118a6e7e1538fe9352a7bc9f9beae9b4d125f1d6070067fe5c1"
+   },
+   {
+    "file": "Carpet013/Carpet013_2K-JPG_Roughness.jpg",
+    "sha256": "42b7fd35ed61ad75fc8777e6fde26d31250e2aada7e9caeeaf31bab095d1b5de"
+   },
+   {
+    "file": "Carpet013/Carpet013_2K-JPG_AmbientOcclusion.jpg",
+    "sha256": "976038ac011bd0c08f9f122052ec665c2d7bfafa7fdb29e29a133519db7aef5f"
+   },
+   {
+    "file": "Carpet013/Carpet013_2K-JPG_Displacement.jpg",
+    "sha256": "cb3ece7f45aa866c56b142fb2b37448a4898733a5b343a0c0801492da7fef3c9"
+   }
+  ],
+  "process": "ambientCG Carpet013 2K：缩放到 512 px 平铺 2×2 → 1024²（=1.5 m）；亮度比例上色到旧均值 [112,48,44]（对比 0.55）；法线 ×1.15；ORM.B 为程序宏观磨损掩码（周期低频人流带 + 6 处旧渍，0.5 中性），运行时以 4.8 m 周期采样驱动磨损变浅偏灰/绒头倒伏/旧渍"
+ },
+ {
+  "material": "ceiling",
+  "files": {
+   "albedo": "ceiling.jpg",
+   "normal": "ceiling-normal.jpg",
+   "orm": "ceiling-orm.jpg"
+  },
+  "size": {
+   "albedo": [
+    1024,
+    512
+   ],
+   "normal": [
+    1536,
+    768
+   ],
+   "orm": [
+    1024,
+    512
+   ]
+  },
+  "albedoMean": [
+   192.0,
+   180.0,
+   132.0
+  ],
+  "normalConvention": "OpenGL +Y",
+  "orm": "R=AO G=roughness B=height",
+  "sources": [
+   {
+    "file": "OC4K/OfficeCeiling001_4K-JPG_Color.jpg",
+    "sha256": "498db357799082adc78ba116a02602fe72b40fa7e5854d417c1f2becd19667bc"
+   },
+   {
+    "file": "OC4K/OfficeCeiling001_4K-JPG_NormalGL.jpg",
+    "sha256": "66246074baa0c6fc833b3a175f2f687401eea6f3d9254a810eafa5c0eaf1cc3c"
+   },
+   {
+    "file": "OC4K/OfficeCeiling001_4K-JPG_Roughness.jpg",
+    "sha256": "0a78154b2d1eebe67c2719f3a366b88c041397c0d267318921ad0e34fde48bd3"
+   },
+   {
+    "file": "OC4K/OfficeCeiling001_4K-JPG_AmbientOcclusion.jpg",
+    "sha256": "445c54e8fc656d1c8ed192e113e5ddc1472fdaa1952383ff003034369750fc2a"
+   },
+   {
+    "file": "OC4K/OfficeCeiling001_4K-JPG_Displacement.jpg",
+    "sha256": "9e56fd400ae37644fe3a43b6f16e62aa41ce4b6099f36ec0b437e52ff0629b2c"
+   }
+  ],
+  "process": "ambientCG OfficeCeiling001 4K（6×6 块 64 cm 矿棉板）：裁两块宽一块高 = 一张 1200×600 板（四周各半条龙骨，平铺后成整条），中间竖龙骨用同排另一块板内部羽化覆盖；工作分辨率 2048×1024（输出 albedo/ORM 1024×512、法线 1536×768）；albedo ×(0.72+0.28·AO) 使孔洞略暗；龙骨两侧企口加细 AO 阴影；法线 ×1.3；亮度比例上色到 Level 0 吊顶均值 [192,180,132]（暖米黄，对比 1.0）"
+ },
+ {
+  "material": "wall",
+  "files": {
+   "albedo": "wall.jpg",
+   "normal": "wall-normal.jpg",
+   "orm": "wall-orm.jpg"
+  },
+  "size": {
+   "albedo": [
+    1024,
+    1024
+   ],
+   "normal": [
+    1024,
+    1024
+   ],
+   "orm": [
+    512,
+    512
+   ]
+  },
+  "albedoMean": [
+   227.0,
+   223.0,
+   205.0
+  ],
+  "normalConvention": "OpenGL +Y",
+  "orm": "R=AO G=roughness B=height",
+  "sources": [
+   {
+    "file": "Wallpaper001A/Wallpaper001A_2K-JPG_Color.jpg",
+    "sha256": "6eca101abcf312d9e4579c20ad07d9ce6c4e5e76cdc4f0abd5456d15fb996d6b"
+   },
+   {
+    "file": "Wallpaper001A/Wallpaper001A_2K-JPG_NormalGL.jpg",
+    "sha256": "bb709a58fc41dbc31814358e098a66f0ad3a9e755879576eca62b0ae7b92070b"
+   },
+   {
+    "file": "Wallpaper001A/Wallpaper001A_2K-JPG_Roughness.jpg",
+    "sha256": "0ca21e724a0a29c20505e6827fb667ab652db434bb9147399aaf1a1063461318"
+   },
+   {
+    "file": "Wallpaper001A/Wallpaper001A_2K-JPG_Displacement.jpg",
+    "sha256": "638e8107bdc800ba17f870e07b5c9461372a53f0b7c1337f42056eb401178550"
+   }
+  ],
+  "process": "ambientCG Wallpaper001A 2K（压纹墙纸/乳胶漆面）1× 缩放到 1024²（=1.11 m）；法线 ×1.25 叠加程序低频大波 + 竖向滚刷波；AO 由置换图凹处派生（σ=2）；albedo ×(0.85+0.15·AO)；亮度比例上色到旧均值 [227,223,205]"
+ },
+ {
+  "material": "trim",
+  "files": {
+   "albedo": "trim.jpg",
+   "normal": "trim-normal.jpg",
+   "orm": "trim-orm.jpg"
+  },
+  "size": {
+   "albedo": [
+    512,
+    512
+   ],
+   "normal": [
+    512,
+    512
+   ],
+   "orm": [
+    256,
+    256
+   ]
+  },
+  "albedoMean": [
+   227.0,
+   223.0,
+   205.0
+  ],
+  "normalConvention": "OpenGL +Y",
+  "orm": "R=AO G=roughness B=height",
+  "sources": [
+   {
+    "file": "Rubber004/Rubber004_2K-JPG_Color.jpg",
+    "sha256": "9d560551d0beae1726f98c8a72a12441a01e28413417ebd0c8229bcec20dbcfc"
+   },
+   {
+    "file": "Rubber004/Rubber004_2K-JPG_NormalGL.jpg",
+    "sha256": "59242ba156992a6cf9f8cb461be117667f8e14d0aad5a6a801f6fc825223d4df"
+   },
+   {
+    "file": "Rubber004/Rubber004_2K-JPG_Roughness.jpg",
+    "sha256": "84486ce9e73fa0dc4c70ec86ab33e94e409ebdd8ad194f164abf554a167ccdc7"
+   },
+   {
+    "file": "Rubber004/Rubber004_2K-JPG_Displacement.jpg",
+    "sha256": "de4b3a207b0a6ca65b5ccc57ac5ed547cafd9c5d28da48d54feb25780170f609"
+   }
+  ],
+  "process": "ambientCG Rubber004 2K 平铺 2×2 → 512²（=1.33 m）；亮度比例上色到旧均值 [227,223,205]（对比 0.35，运行时 tint 乘成深红棕）；AO 由置换图派生"
+ },
+ {
+  "material": "osb",
+  "files": {
+   "albedo": "osb.jpg",
+   "normal": "osb-normal.jpg",
+   "orm": "osb-orm.jpg"
+  },
+  "size": {
+   "albedo": [
+    1024,
+    1024
+   ],
+   "normal": [
+    1024,
+    1024
+   ],
+   "orm": [
+    512,
+    512
+   ]
+  },
+  "albedoMean": [
+   181.1,
+   144.0,
+   97.8
+  ],
+  "normalConvention": "OpenGL +Y",
+  "orm": "R=AO G=roughness B=height",
+  "sources": [
+   {
+    "file": "osb_diff.jpg",
+    "sha256": "88c17de0b8e445a7ae6eb51b20ef95fc31a4430c6df1fdda9f22cfb6cec228eb"
+   },
+   {
+    "file": "osb_nor_gl.jpg",
+    "sha256": "a23832ea5892a0bf44da2f36bd37bebc675e83e2fe2cf48c8dd3007dd9660804"
+   },
+   {
+    "file": "osb_rough.jpg",
+    "sha256": "af503c448a30e25d49fdd73564047135bc3b0da51d70ccab023e9a1f94f84196"
+   },
+   {
+    "file": "osb_ao.jpg",
+    "sha256": "672d1f5ad12024ccc1ba60bbfc84ea9bfdc28cbc7224dd014563869638499892"
+   },
+   {
+    "file": "osb_disp.jpg",
+    "sha256": "edd5170f89647d446f6812e1add909e8ffbd6c1866bd86f83c23bc34b2d3532c"
+   }
+  ],
+  "process": "Poly Haven oriented_strand_board 2K（2.51 m）：裁 1000 px ≈1.22 m 缩放到 1024²；通道增益到 [184,146,98]；四周 2.5 px 锯边板缝（颜色/AO/高度/法线）；印字两行 + “THIS SIDE UP”（DejaVu Sans Bold，油墨 α0.82，随刨花亮度斑驳）"
+ },
+ {
+  "material": "stud",
+  "files": {
+   "albedo": "stud.jpg",
+   "normal": "stud-normal.jpg",
+   "orm": "stud-orm.jpg"
+  },
+  "size": {
+   "albedo": [
+    1024,
+    1024
+   ],
+   "normal": [
+    512,
+    512
+   ],
+   "orm": [
+    512,
+    512
+   ]
+  },
+  "albedoMean": [
+   204.7,
+   171.3,
+   118.0
+  ],
+  "normalConvention": "OpenGL +Y",
+  "orm": "R=AO G=roughness B=height",
+  "sources": [
+   {
+    "file": "Wood049/Wood049_2K-JPG_Color.jpg",
+    "sha256": "447ca1455fa88d37465319638f1c99107f02f50fcf491d3c15314658d21e4d5e"
+   },
+   {
+    "file": "Wood049/Wood049_2K-JPG_NormalGL.jpg",
+    "sha256": "8f2d5697c79927c85a10e48e82701a7054df77166d4654a2931e650f7f4c77f6"
+   },
+   {
+    "file": "Wood049/Wood049_2K-JPG_Roughness.jpg",
+    "sha256": "bb20736bb4b18533cce8c1f36ea8fff7216653b3516ec60f1aedb83362151691"
+   },
+   {
+    "file": "Wood049/Wood049_2K-JPG_Displacement.jpg",
+    "sha256": "63af2340eb3de73e5a98383ca2ee303b8e4f813eac0f08ef7dfd538acb88998c"
+   }
+  ],
+  "process": "ambientCG Wood049 2K（80 cm）旋转 90° 使顺纹竖直（法线同步旋转）→ 1024²（=0.6 m）；通道增益到 SPF 浅色 [206,172,118] 并降低木纹对比；AO 由置换图派生；竖排等级印章（DejaVu Sans Bold，α0.55）"
+ },
+ {
+  "material": "insul",
+  "files": {
+   "albedo": "insul.jpg",
+   "normal": "insul-normal.jpg",
+   "orm": "insul-orm.jpg"
+  },
+  "size": {
+   "albedo": [
+    512,
+    512
+   ],
+   "normal": [
+    1024,
+    1024
+   ],
+   "orm": [
+    512,
+    512
+   ]
+  },
+  "albedoMean": [
+   219.9,
+   180.3,
+   101.2
+  ],
+  "normalConvention": "OpenGL +Y",
+  "orm": "R=AO G=roughness B=height",
+  "sources": [
+   {
+    "file": "Fabric084/Fabric084_2K-JPG_Color.jpg",
+    "sha256": "125894dd55ecab42867b1ffe607992da0897d69a6c86272b29040c5f2f7a2a60"
+   },
+   {
+    "file": "Fabric084/Fabric084_2K-JPG_NormalGL.jpg",
+    "sha256": "6a28558a97ab88ea21dbbfef0ce26974b036db8727db5095637019f58483e0f7"
+   },
+   {
+    "file": "Fabric084/Fabric084_2K-JPG_Roughness.jpg",
+    "sha256": "6728fbcda0dd585bbdbe79ab4f7a9282d7af89d2f16965640ad707772819af7b"
+   },
+   {
+    "file": "Fabric084/Fabric084_2K-JPG_AmbientOcclusion.jpg",
+    "sha256": "6a9c4d31a89f528f3e902e4ab79d60b5b9055cd3289a1dbe72ba72327417582b"
+   },
+   {
+    "file": "Fabric084/Fabric084_2K-JPG_Displacement.jpg",
+    "sha256": "ab359e71497a6de327f2a59f3cc8117d3fc557baabdb5fd7ca6928bb0b50f9a1"
+   }
+  ],
+  "process": "ambientCG Fabric084 2K（30 cm 绒面）平铺 2×2 → 1024²（=0.6 m）；亮度比例上色到玻璃棉粉黄 [228,188,104]（对比 1.6）+ 低频色差；法线 ×1.4；两侧 8% 牛皮纸翻边（程序纸纹、折痕 AO）与订书钉（程序绘制）"
+ }
+]

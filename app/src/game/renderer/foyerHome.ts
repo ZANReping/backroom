@@ -13,6 +13,7 @@ import { FoyerBaker, bakeShell, bakeVertices, foyerCorridor, foyerCorridorIrr, f
 import { buildFoyerDetails } from './foyerDetails'
 import { buildFoyerBackpack, buildFoyerPhone, buildFoyerSnack, buildFoyerWater, foyerItemTex, type ItemMatFactory } from './foyerItemModels'
 import { buildFoyerStairDoor } from './foyerStairDoor'
+import { mirrorSurface } from './mirrorSurface'
 
 type Mat = THREE.Material
 /** 楼道灯罩：熄灭时为暗灰乳白（游戏内实际曝光较高，取 ≈0.02 以免熄灯时灯罩仍显得发白），点亮时为冷白（HDR 值，经 ACES 后接近纯白）。 */
@@ -154,6 +155,12 @@ export class Ctx {
   /** 平面：默认竖直朝 +z。 */
   plane(mat: Mat, w: number, h: number, x: number, y: number, z: number, ry = 0, rx = 0) {
     this.add(mat, new THREE.PlaneGeometry(w, h), x, y, z, ry, rx)
+  }
+  /** Real scene reflector; kept out of static material batches. */
+  mirror(w: number, h: number, x: number, y: number, z: number, ry = 0, rx = 0) {
+    const mesh = mirrorSurface(w, h)
+    mesh.applyMatrix4(this.mtx(x, y, z, ry, rx))
+    this.root.add(mesh)
   }
   /** 圆角软垫（用压扁的圆角盒近似）。 */
   cushion(mat: Mat, w: number, h: number, d: number, x: number, y: number, z: number, r = 0.05, ry = 0, rx = 0) {
@@ -985,7 +992,7 @@ export class FoyerScene {
         c.box(M.chrome(), 0.02, 0.02, 0.12, 0, 1.04, back + 0.12)
         // 镜柜 + 灯带
         c.box(M.white(), W, 0.7, 0.12, 0, 1.18, back + 0.06)
-        c.plane(M.mirror(), W - 0.04, 0.66, 0, 1.53, back + 0.121)
+        c.mirror(W - 0.04, 0.66, 0, 1.53, back + 0.121)
         c.box(this.mats.basic('vanitylight', { color: '#fff8ea' }), W - 0.1, 0.02, 0.03, 0, 1.9, back + 0.08)
         // 牙刷杯
         c.cyl(this.mats.lit('cup', { color: '#93b7be', roughness: 0.3 }), 0.035, 0.03, 0.1, W / 2 - 0.12, 0.88, back + 0.1)
@@ -1260,7 +1267,7 @@ export class FoyerScene {
       case 'mirror': {
         // 贴墙镜（下沿高于鞋柜台面 1.03m，不与鞋柜相交）
         c.box(M.brass(), W + 0.03, 1.2, 0.02, 0, 1.08, back + 0.01)
-        c.plane(M.mirror(), W - 0.02, 1.16, 0, 1.68, back + 0.021)
+        c.mirror(W - 0.02, 1.16, 0, 1.68, back + 0.021)
         break
       }
       case 'coathook': {

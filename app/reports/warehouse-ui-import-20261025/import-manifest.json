@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-25",
+  "root": "E:/ZAN/backroom",
+  "source": "C:\\Users\\ZANRe\\Downloads\\backroom-warehouse-ui.zip",
+  "archiveSha256": "6da43dda223c98de4c984e98bfffae2145d7d548e3d9fc82e3dc31791b6df169",
+  "merge": "warehouse increment only; no rollback of prior shop fixes",
+  "preservedConcurrentScripts": [
+    "check:creeper",
+    "check:creeper-integration",
+    "verify:creeper-import"
+  ],
+  "files": [
+    {
+      "path": "app/WAREHOUSE-UI.md",
+      "beforeSha256": null,
+      "afterSha256": "b63f9ad75effd66c4decec53470a965c01da2abf864486e486579887cacb543a",
+      "incomingSha256": "c087f99a70de4c2bae1fdad03af06f2974a41c2c612ae317fe6848de1593df4b"
+    },
+    {
+      "path": "app/package.json",
+      "beforeSha256": "51ffa449f02810fed0fdd7f70e432a40bf03f72edcdcd61a66d8a60163cacaf2",
+      "afterSha256": "2e492f9e9d05215f7ae4e4fc5786643501c1d63bb2f8e42f40d58cce1fa19493",
+      "incomingSha256": "5f6a1030f30b729d6473a8accb1963ecf21aab1563887211980eb25608a53708"
+    },
+    {
+      "path": "app/scripts/check-warehouse-ui.ts",
+      "beforeSha256": null,
+      "afterSha256": "ddbacdad5d362cd5c6d82b728136c5556e925bac6c36a24b8bfe25dc2b19feae",
+      "incomingSha256": "6720ec2427eab4a1e083b94b29e1a4085536e625ee81e103403af8c6501f4d5b"
+    },
+    {
+      "path": "app/src/components/DialogOverlay.tsx",
+      "beforeSha256": "bbab2587fbaeb468623936ff01d968a4bad531f05f814b0b8671c6db5cb67536",
+      "afterSha256": "2a73e776f3a20b6e48c9a8deb93b28796091af89a45a73b4efdc9c235db1adc5",
+      "incomingSha256": "72d6321e6b39c2fcce30ddd9d6936031a0a6cc7cf3ce1402e8f1370bc1bf822e"
+    },
+    {
+      "path": "app/src/components/warehouse/WarehouseOverlay.css",
+      "beforeSha256": null,
+      "afterSha256": "b7ccabc304b21de5e032254823652fd579544a1fcb1dd710d35e0d4268c8490a",
+      "incomingSha256": "5e252ba9755402cf169e214b6367268689fe0e4e8e5e1c9b868f1e82f3292840"
+    },
+    {
+      "path": "app/src/components/warehouse/WarehouseOverlay.tsx",
+      "beforeSha256": null,
+      "afterSha256": "ae3ab5395a49701a4a3a692328254efc9fe165a6b8bf8ede87e8d103c980ff90",
+      "incomingSha256": "fb73d1aaf5db96e8da6dbf9b40de581b4832c2296b3a22c1171b5b74c22c6ba0"
+    },
+    {
+      "path": "app/src/game/engine/warehouse.ts",
+      "beforeSha256": "d0dcebb5d3110c69db8ded356f26011d70392cf8b846a76a622c374a4c7d0876",
+      "afterSha256": "5dd361d5b6d4559afa4b13332064d41bd5e6ca5c18368ec2a929f3d14990763f",
+      "incomingSha256": "454d28e57087a8c4d76e3c3a4b76db2a9c1386bf78016fff591296302a6f3743"
+    },
+    {
+      "path": "app/src/proto/shopUiProto.tsx",
+      "beforeSha256": "a9b1f9da54b9a9ad22824798cb8297a7efa985d0cf7329755b871171e7df445c",
+      "afterSha256": "f980ba6ba262a0abac9ee9fe611006e6f705fc504d632e3d3a9427edaa785416",
+      "incomingSha256": "f980ba6ba262a0abac9ee9fe611006e6f705fc504d632e3d3a9427edaa785416"
+    },
+    {
+      "path": "app/scripts/check-merchant-trade.ts",
+      "beforeSha256": "50446e43b660ca6f02918c411a15924ba53b5bc2b1a924d5ddf6c44e5e77ea3a",
+      "afterSha256": "1cc0d1d804b0b32485c28137a5dfa6415b902d99665100ea26a228f14c660adb",
+      "incomingSha256": null
+    },
+    {
+      "path": "info.md",
+      "beforeSha256": "5f38683e03e212bfdb2fe4474334dce31494ab610514cdf48c5df835ace000a1",
+      "afterSha256": "0083f43be44adceb366187ca2b9ef75241d05c16912631a34c9b82e36dff1342",
+      "incomingSha256": null
+    }
+  ]
+}

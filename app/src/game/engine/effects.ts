@@ -14,6 +14,7 @@ import { freshNgRun } from './nguithrAI'
 import { freshWinRun, stepWindowWorld } from './windowAI'
 import { freshVendRun } from './vendingAI'
 import { freshFerrenRun } from './ferrenAI'
+import { freshCreepRun } from './creeperAI'
 import {audio} from '../core/audio'
 
 export interface EffectDef {
@@ -80,6 +81,7 @@ export const EFFECTS: EffectDef[] = [
     if (eng.webbedT > 0) eng.webbedT -= dt
   } },
   { id: 'arms-run', field: 'armsRun', def: () => freshArmsRun(), cat: 'misc', resetOnNewRun: true, resetOnLevel: true, mount: 'armsAI.armsPlayerTick（engine.step 移动前）+ movement 的 armsControlsPlayer（被抓/管道/坠落接管位置；不写存档）' },
+  { id:'creeper-run',field:'creepRun',def:()=>freshCreepRun(),cat:'misc',resetOnNewRun:true,saveKey:'creep',mount:'creeperAI.stepCreepWorld；换层保留，存档 captureCreep / restoreCreep' },
   { id: 'ferren-run', field: 'ferrenRun', def: () => freshFerrenRun(), cat: 'misc', resetOnNewRun: true, saveKey: 'ferren', mount: 'ferrenAI.stepFerrenWorld（engine.step；作息时钟任何层级都走；save.snapshot 写 captureFerren，newRun 读档 restoreFerren）' },
   { id: 'vend-run', field: 'vendRun', def: () => freshVendRun(), cat: 'addiction', resetOnNewRun: true, mount: 'vendingAI.stepVending（engine.step；成瘾跨层保留；普通机状态换层时 level.ts 清空；不写存档）' },
   { id: 'window-run', field: 'winRun', def: () => freshWinRun(), cat: 'misc', resetOnNewRun: true, resetOnLevel: true, tickPhase: 'post', mount: 'windowAI.stepWindowWorld（普通窗户登记/生成实体/新生态/默念；不写存档）', tick(eng, dt) { stepWindowWorld(eng, dt) } },

@@ -6,6 +6,7 @@ import { audio } from '@/game/core/audio'
 import ManilaLetter from './ManilaLetter'
 import MissingNotice from './MissingNotice'
 import ForumPage from './ForumPage'
+import BrcDocument from './BrcDocument'
 
 const SERIF = "'SimSun','Songti SC',serif"
 
@@ -60,7 +61,7 @@ export default function DocOverlay({ docId, onClose }: { docId: string; onClose:
             </button>
           </div>
         </div>
-      ) : doc.style === 'missing' ? <MissingNotice doc={doc} onClose={onClose}/> : doc.style === 'foundation' ? <ManilaLetter doc={doc} onClose={onClose}/> : doc.style === 'note' ? (
+      ) : doc.style === 'missing' ? <MissingNotice doc={doc} onClose={onClose}/> : doc.style === 'foundation' ? <ManilaLetter doc={doc} onClose={onClose}/> : doc.style === 'brc' && doc.brc ? <BrcDocument doc={doc} onClose={onClose} /> : doc.style === 'note' ? (
         /* 手写纸条风格：泛黄横线纸 + 斜体，无红头/落款（v34：L1 迎新纸条） */
         <div
           className="anim-slideUp relative flex max-h-[86dvh] w-full max-w-[620px] flex-col overflow-hidden rounded-sm"
@@ -76,6 +77,7 @@ export default function DocOverlay({ docId, onClose }: { docId: string; onClose:
           <div className="overflow-y-auto px-8 pb-2 pt-6" style={{ fontFamily: doc.font === 'zhimangxing' ? "'Zhi Mang Xing',cursive" : SERIF }}>
             {doc.body.map((sec, i) => (
               <section key={i}>
+                {doc.heads && sec.head && <h3 data-doc-head="1" style={{ color: '#3b3122', fontSize: doc.font === 'zhimangxing' ? 21 : 16, fontWeight: 700, fontStyle: 'normal', letterSpacing: '.08em', lineHeight: '28px', margin: 0 }}>{sec.head}</h3>}
                 {sec.paras.map((para, j) => (
                   <p key={j} className="text-justify" style={{ color: '#4d4331', fontSize: doc.font === 'zhimangxing' ? 19 : 15, lineHeight: '28px', fontStyle: doc.font === 'zhimangxing' ? 'normal' : 'italic', margin: 0, marginBottom: 28 }}>
                     {para}

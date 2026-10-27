@@ -10,6 +10,7 @@
 import { l11MapSpace, caveVolumeFieldAt, floorHeight, structBlocksCircle, structBlocksPoint, structEscapePoints, bandOfZ, stairServesBand, walkableAt, STEP_UP, l4CubicleEscapePoints, type GameMap } from '../world/mapgen'
 import type { FloorBand } from './types'
 import { mangledLegBlocks, mangledLegEscapePoints } from './mangledCollision'
+import { MV, approachVelocity } from '../engine/moveTuning' // [movefeel]
 
 export const PLAYER_RADIUS = 0.32
 export const FIXED_STEP = 1 / 120 // 固定物理子步（秒）
@@ -89,7 +90,7 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
     }
     // 高度档：目标地面高于脚底 STEP_UP 以上不可直接踏上（跳跃抬高 z 后放行）
     // （溢出格按主层地面计——悬在一层上空时一层地面远低于脚底，不再误拦）
-    const g = floorHeight(m, sx, sy, spill ? 0 : band)
+    const g = floorHeight(m, sx, sy, spill ? 0 : band, m.inf?.l0 || m.inf?.l02 ? z : undefined) // L0/L0.2：脚底高度用于 L0.2 楼板下方的房屋地面
     if (g - z > STEP_UP) {
       // L7 陡崖防卡死：贴在陡坡上时，半径 0.32m 的上坡一侧采样点高出脚底远超 STEP_UP，
       // 旧逻辑连沿坡横移、往下坡退都会被拦，玩家只能原地上浮。海床瓦片改为「不变差就放行」。
@@ -183,4 +184,91 @@ export function integrateMove(
     tx += d.x; ty += d.y
   }
   return { x: tx, y: ty }
+}
+
+// ---- [movefeel] B 碰撞滑动 + A 速度积分 ----
+
+/**
+ * 带滑动的单子步移动：先走原 moveStep（轴分离 + L7 海床滑移 + 嵌入恢复 + L4 隔间逃逸，逻辑不变），
+ * 两轴都被挡住时再补两种滑动——
+ * - 直走（接近轴向）被门框 / 桌角卡住：横向找 ≤ MV.CORNER_NUDGE 的让位，绕过凸角（横移速度 ≤ 原速度）；
+ * - 斜走撞上角点 / 斜面 / 圆形碰撞体：把位移转 ±20°/±40°/±60°/±80° 投影到切线（长度 × cos）继续走。
+ * L7 海床（m.l7SeaTerrain）已有自己的等高线滑移，不再叠加。
+ */
+export function moveStepSlide(m: GameMap, pos: Vec2, dx: number, dy: number, r = PLAYER_RADIUS, opts: OccupyOpts = {}): Vec2 & { nudge?: boolean } {
+  const x0 = pos.x, y0 = pos.y
+  const d = moveStep(m, pos, dx, dy, r, opts)
+  if (d.x || d.y || m.l7SeaTerrain || !(dx || dy)) return d
+  if (pos.x !== x0 || pos.y !== y0) return d // 嵌入恢复 / 隔间逃逸已挪位：本子步不再追加
+  const len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len
+  const axial = Math.min(Math.abs(ux), Math.abs(uy)) < 0.2
+  if (axial) {
+    // 凸角让位：左右两侧找最小可行偏移 δ（≤0.12 m），本子步横移 min(δ, len)
+    const nx = -uy, ny = ux
+    const deltas = [0.25 * len, 0.5 * len, len, 0.04, 0.08, MV.CORNER_NUDGE].filter((v, i, a) => v <= MV.CORNER_NUDGE + 1e-9 && a.indexOf(v) === i).sort((a, b) => a - b)
+    for (const dl of deltas) for (const sgn of [1, -1]) {
+      if (!canOccupy(m, x0 + nx * dl * sgn + dx, y0 + ny * dl * sgn + dy, r, opts)) continue
+      const step = Math.min(dl, len)
+      if (step >= dl - 1e-9) { pos.x = x0 + nx * dl * sgn + dx; pos.y = y0 + ny * dl * sgn + dy; return { x: pos.x - x0, y: pos.y - y0, nudge: true } }
+      const lx = x0 + nx * step * sgn, ly = y0 + ny * step * sgn
+      if (canOccupy(m, lx, ly, r, opts)) { pos.x = lx; pos.y = ly; return { x: lx - x0, y: ly - y0, nudge: true } }
+    }
+    return d
+  }
+  // 切线投影：斜向撞上角点 / 斜面 / 圆柱
+  for (const deg of [20, -20, 40, -40, 60, -60, 80, -80]) {
+    const a = deg * Math.PI / 180, c = Math.cos(a), s = Math.sin(a)
+    const rx = (dx * c - dy * s) * c, ry = (dx * s + dy * c) * c
+    if (canOccupy(m, x0 + rx, y0 + ry, r, opts)) { pos.x = x0 + rx; pos.y = y0 + ry; return { x: rx, y: ry } }
+  }
+  return d
+}
+
+/** 速度积分的目标与参数（每帧由 movement 给出） */
+export interface VelocityTarget {
+  tx: number; ty: number // 目标水平速度（m/s）
+  accel: number; decel: number // 本帧加 / 减速度（m/s²）
+  driftX?: number; driftY?: number // 不受惯性约束的附加速度（脚滑漂移、窗户诱引，m/s）
+  scale?: number // 位移缩放（L1 度量扭曲）
+}
+export interface VelocityMoveResult { moved: Vec2; blockedX: boolean; blockedY: boolean }
+
+/**
+ * [movefeel] 以固定子步推进一帧「有速度」的移动：每个子步先让 vel 趋近目标速度，再走带滑动的碰撞，
+ * 撞墙时扣掉对应轴的速度（不再顶着墙满速）。返回本帧实际位移（脚步 / 噪音按它计，撞墙不虚增）。
+ */
+export function integrateVelocityMove(
+  m: GameMap, pos: Vec2, vel: { vx: number; vy: number }, tgt: VelocityTarget, frameDt: number, it: MoveIntegrator,
+  opts: { noclip?: boolean; radius?: number; z?: number; crouch?: boolean; band?: FloorBand } = {},
+): VelocityMoveResult {
+  const r = opts.radius ?? PLAYER_RADIUS, h = FIXED_STEP, k = tgt.scale ?? 1
+  const ox = tgt.driftX ?? 0, oy = tgt.driftY ?? 0
+  it.acc = Math.min(it.acc + frameDt, FIXED_STEP * MAX_SUBSTEPS)
+  let tx = 0, ty = 0, bx = false, by = false
+  while (it.acc >= FIXED_STEP - 1e-9) {
+    it.acc = Math.max(0, it.acc - FIXED_STEP)
+    const nv = approachVelocity(vel.vx, vel.vy, tgt.tx, tgt.ty, tgt.accel, tgt.decel, h)
+    vel.vx = nv[0]; vel.vy = nv[1]
+    if (Math.abs(vel.vx) + Math.abs(vel.vy) < 1e-9 && !ox && !oy) continue
+    const dx = (vel.vx + ox) * k * h, dy = (vel.vy + oy) * k * h
+    if (opts.noclip) { pos.x += dx; pos.y += dy; tx += dx; ty += dy; continue }
+    const d = moveStepSlide(m, pos, dx, dy, r, { z: opts.z, crouch: opts.crouch, band: opts.band })
+    tx += d.x; ty += d.y
+    // 撞墙扣法向速度
+    const want = Math.hypot(dx, dy), got = Math.hypot(d.x, d.y)
+    if (want > 1e-7 && !d.nudge && Math.abs(d.x - dx) + Math.abs(d.y - dy) > want * 0.02) { // 绕凸角让位是几何微调：保留原速度继续前进
+      if (!ox && !oy && got > 1e-9) {
+        // 被挡后实际走出的位移（沿墙 / 绕角 / 切线）就是新速度方向；大小不超过原速度
+        const vl = Math.hypot(vel.vx, vel.vy), nx = d.x / (k * h), ny = d.y / (k * h), nl = Math.hypot(nx, ny)
+        const s = nl > vl ? vl / nl : 1
+        vel.vx = nx * s; vel.vy = ny * s
+        bx = Math.abs(d.x) < Math.abs(dx) * MV.BLOCK_KEEP; by = Math.abs(d.y) < Math.abs(dy) * MV.BLOCK_KEEP
+      } else {
+        // 有附加漂移（脚滑 / 窗户诱引）或完全被挡：逐轴按实际比例收掉同向速度
+        if (Math.abs(dx) > 1e-7 && d.x * Math.sign(dx) < Math.abs(dx) * MV.BLOCK_KEEP && Math.sign(vel.vx) === Math.sign(dx)) { vel.vx *= Math.max(0, d.x / dx); bx = true }
+        if (Math.abs(dy) > 1e-7 && d.y * Math.sign(dy) < Math.abs(dy) * MV.BLOCK_KEEP && Math.sign(vel.vy) === Math.sign(dy)) { vel.vy *= Math.max(0, d.y / dy); by = true }
+      }
+    }
+  }
+  return { moved: { x: tx, y: ty }, blockedX: bx, blockedY: by }
 }

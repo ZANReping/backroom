@@ -13,8 +13,9 @@ const eq = (a: unknown, b: unknown, msg: string) => { assert.deepEqual(a, b, msg
 
 const parents = Object.keys(ENTITY_FORMS)
 const forms = parents.flatMap(type => entityForms(type).map(form => ({ type, form })))
-eq(forms.length, 49, 'forms registry includes all 17 arachnids and the herbivore form')
-eq(parents.length, 10, 'forms registry has 10 parent entities')
+eq(forms.length, 52, 'forms registry retains existing forms and includes three creeper hosts')
+eq(parents.length, 11, 'forms registry has 11 parent entities')
+eq(entityForms('creeper').map(f=>f.traits?.creepHost),['rat','arachnid','human'],'creeper variants record all three hosts')
 eq(entityForms('duller').length, 0, 'duller has no registered subforms')
 eq(entityForms('clump').length, 2, 'clump has common and intelligent subforms')
 eq(entityForms('faceling').length, 2, 'faceling has common and hostile subforms')

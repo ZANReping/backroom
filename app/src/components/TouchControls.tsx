@@ -1,4 +1,5 @@
 // 移动端虚拟摇杆 + 动作按钮组（浮点摇杆，≥48px 触摸目标，safe-area 适配；支持自定义按键布局）
+import { MV, stickResponse } from '@/game/engine/moveTuning' // [movefeel]
 import { useRef, useState, useCallback, useEffect } from 'react'
 import type { Engine } from '@/game/engine'
 import { look } from '@/game/core/renderer3d'
@@ -29,7 +30,11 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
   const stickId = useRef<number | null>(null)
   const lookId = useRef<number | null>(null)
   const lookLast = useRef({ x: 0, y: 0 })
-  const rimT = useRef(0)
+  const rimTimer = useRef<number | null>(null)
+  const clearRimTimer = useCallback(() => {
+    if (rimTimer.current !== null) window.clearTimeout(rimTimer.current)
+    rimTimer.current = null
+  }, [])
   const sprinting = useRef(false)
   const side = settings.leftHanded ? 'right' : 'left'
   const btnOpacity = settings.btnOpacity / 100
@@ -53,14 +58,14 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
         // 自定义布局：摇杆固定在所配置的位置（静态摇杆）
         setOrigin(stickCustom ? { x: stickCustom.x * window.innerWidth, y: stickCustom.y * window.innerHeight } : { x: t.clientX, y: t.clientY })
         setKnob({ x: 0, y: 0 })
-        rimT.current = 0
+        clearRimTimer()
       } else if (lookId.current === null && !zoneOk) {
         // 右半屏（左手模式为左半屏）拖动 = 旋转视角
         lookId.current = t.identifier
         lookLast.current = { x: t.clientX, y: t.clientY }
       }
     }
-  }, [side, stickCustom])
+  }, [side, stickCustom, clearRimTimer])
 
   const onTouchMove = useCallback((e: React.TouchEvent) => {
     for (const t of Array.from(e.changedTouches)) {
@@ -81,22 +86,30 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
       const max = stickMax
       if (d > max) { dx = (dx / d) * max; dy = (dy / d) * max }
       setKnob({ x: dx, y: dy })
-      const dead = 12
-      if (d > dead) {
-        engine.input.mx = dx / max
-        engine.input.my = dy / max
+      // [movefeel] 死区 MV.STICK_DEAD + 幂响应曲线：小推慢走，推满才是全速；方向保持推杆方向
+      const r = Math.min(1, d / max), k = stickResponse(r)
+      const directionD = Math.hypot(dx, dy) // 越过摇杆半径后仍归一化到满推，避免推得越远反而越慢
+      if (k > 0 && directionD > 0) {
+        engine.input.mx = (dx / directionD) * k
+        engine.input.my = (dy / directionD) * k
       } else {
         engine.input.mx = 0; engine.input.my = 0
       }
-      if (d / max > 0.9) {
-        rimT.current += 0.016
-        if (rimT.current > 0.4 && !sprinting.current) { sprinting.current = true; setSprintRing(true) }
-      } else if (sprinting.current && d / max < 0.75) {
-        sprinting.current = false; setSprintRing(false); rimT.current = 0
+      if (r > MV.STICK_RUN) {
+        if (!sprinting.current && rimTimer.current === null) {
+          rimTimer.current = window.setTimeout(() => {
+            rimTimer.current = null
+            if (stickId.current === null) return
+            sprinting.current = true; setSprintRing(true); engine.input.sprint = true
+          }, MV.STICK_SPRINT_DELAY * 1000)
+        }
+      } else {
+        clearRimTimer()
+        if (sprinting.current && r < MV.STICK_RUN_RELEASE) { sprinting.current = false; setSprintRing(false) }
       }
       engine.input.sprint = sprinting.current || sprintHold
     }
-  }, [origin, engine, stickMax, sprintHold, settings.sensitivity])
+  }, [origin, engine, stickMax, sprintHold, settings.sensitivity, clearRimTimer])
 
   const endStick = useCallback((e: React.TouchEvent) => {
     for (const t of Array.from(e.changedTouches)) {
@@ -106,17 +119,19 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
     for (const t of Array.from(e.changedTouches)) {
       if (t.identifier === stickId.current) {
         stickId.current = null
+        clearRimTimer()
         setOrigin(null); setKnob({ x: 0, y: 0 })
         engine.input.mx = 0; engine.input.my = 0
         sprinting.current = false; setSprintRing(false)
         engine.input.sprint = sprintHold
       }
     }
-  }, [engine, sprintHold])
+  }, [engine, sprintHold, clearRimTimer])
 
   useEffect(() => {
     engine.input.sprint = sprinting.current || sprintHold
   }, [sprintHold, engine])
+  useEffect(() => () => { clearRimTimer(); sprinting.current = false; engine.input.sprint = false }, [engine, clearRimTimer])
 
   // v29b：滚轮模拟——循环切换快捷栏选中槽（与 PC 滚轮逻辑一致）
   const cycleSlot = (dir: 1 | -1) => {

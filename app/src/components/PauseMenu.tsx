@@ -1,6 +1,6 @@
 // 暂停菜单
 // v54：「保存游戏」——展开手动槽位选择（3 个手动槽；自动槽不可手选），保存到所选槽并绑定为当前槽
-import { Fragment, useState } from 'react'
+import React, { useState } from 'react'
 import { audio } from '@/game/core/audio'
 import { engine } from '@/game/engine'
 import { listSaveSlots, SAVE_SLOT_LABELS, type SaveSlotId } from '@/game/engine/save'
@@ -106,7 +106,7 @@ export default function PauseMenu({ onResume, onSettings, onHowTo, onRadio, show
         ) : (
           <>
             {items.map(([label, fn], i) => (
-              <Fragment key={label}>
+              <React.Fragment key={label}>
                 {label === '保存并退出到标题' && <div className="title-menu-sep" aria-hidden />}
                 <button
                   className={`menu-btn title-menu-btn pause-btn anim-slideUp ${label === '继续' ? 'menu-btn--primary' : ''} ${label === '保存并退出到标题' ? 'is-exit' : ''}`}
@@ -129,7 +129,7 @@ export default function PauseMenu({ onResume, onSettings, onHowTo, onRadio, show
                     <span className="menu-label">{radioItem[0]}</span>
                   </button>
                 )}
-              </Fragment>
+              </React.Fragment>
             ))}
             {savedTo && (
               <div className="font-mono2 text-[11px]" style={{ color: 'var(--exit)' }}>

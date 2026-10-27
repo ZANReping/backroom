@@ -60,8 +60,8 @@ export default function PhoneOverlay({ engine, isMobile, onClose, onCamera }: Pr
             <div className="flex items-center justify-between px-5 pt-2 text-[11px]" style={{ color: '#e9edf2' }}>
               <span>{time}</span>
               <span className="flex items-center gap-1.5" data-phone-battery>
-                {ph.noSignal ? <span data-phone-nosignal style={{ color: '#e25' }}>无信号</span> : <span style={{ letterSpacing: -1 }}>▂▄▆</span>}
-                {ph.docked ? '⚡' : ''}{batt}%
+                {ph.wifi ? <span data-phone-wifi style={{ color: '#7ee2a0' }}>Wi‑Fi ◠</span> : ph.noSignal ? <span data-phone-nosignal style={{ color: '#e25' }}>无信号</span> : <span style={{ letterSpacing: -1 }}>▂▄▆</span>}
+                {ph.docked || ph.charging ? <span data-phone-charging>⚡</span> : ''}{batt}%
                 <span className="relative inline-block h-[9px] w-[20px] rounded-[2px] border" style={{ borderColor: '#e9edf2' }}><i className="absolute left-[1px] top-[1px] bottom-[1px] block rounded-[1px]" style={{ width: `${Math.max(4, batt) * 0.16}px`, background: batt <= 15 ? '#e25' : '#e9edf2' }} /></span>
               </span>
             </div>
@@ -72,7 +72,13 @@ export default function PhoneOverlay({ engine, isMobile, onClose, onCamera }: Pr
                     <div className="text-[54px] font-extralight leading-none tracking-tight">{time}</div>
                     <div className="mt-1 text-[12px]" style={{ color: '#aab3c0' }}>{ph.noSignal ? '周五 · 时间未同步' : '周五 · 夜间'}</div>
                   </div>
-                  {ph.noSignal ? (
+                  {ph.wifi ? (
+                    <div className="mt-6 rounded-xl px-3 py-2 text-[11px]" style={{ background: 'rgba(255,255,255,.07)' }} data-phone-forum-wifi>
+                      <div style={{ color: '#7ee2a0' }}>已连接 Wi‑Fi「BRC-工地-临时」</div>
+                      <div style={{ color: '#f2c94c' }}>边界论坛 · 刷新成功</div>
+                      <div style={{ color: '#c8ced8' }}>「谁在后室里连上过 Wi‑Fi？装修公司那层？天花板会掉，别贪网。」</div>
+                    </div>
+                  ) : ph.noSignal ? (
                     <div className="mt-6 rounded-xl px-3 py-2 text-[11px]" style={{ background: 'rgba(255,255,255,.07)' }} data-phone-forum-offline>
                       <div className="flex items-center justify-between"><span style={{ color: '#f2c94c' }}>边界论坛</span>
                         <button data-phone-forum-refresh onClick={tap(() => setRefreshFail((n) => n + 1))} className="rounded px-1.5 text-[10px]" style={{ background: 'rgba(255,255,255,.1)', color: '#c8ced8' }}>↻ 刷新</button></div>

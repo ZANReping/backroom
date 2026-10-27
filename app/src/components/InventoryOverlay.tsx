@@ -56,6 +56,7 @@ import L11MapPanel from './L11MapPanel'
 // （物品显示稀有度已由 IOTS 罕见度取代，见 codexScores.ITEM_IOTS / IOTS_FREQ_COLORS）
 import { PHENOMENA, rarityText } from '@/game/content/phenomena'
 import { IconIsolation, IconPlant, IconStamina } from './icons'
+import { L0_SUBLEVELS } from '@/game/content/l0Sublevels'
 
 // 现象图标映射（phenomena.ts 中 def.icon → 具体 SVG 组件）
 const PHEN_ICON = { isolation: IconIsolation, plant: IconPlant, flicker: IconStamina } as const
@@ -658,9 +659,40 @@ function CodexDetail({ detail, onBack }: { detail: { kind: 'entity' | 'item' | '
                 ))}
               </div>
             )}
+            {lv.id === 0 && <L0SublevelBlock />}
           </div>
         )
       })()}
+    </div>
+  )
+}
+
+// 图鉴 L0 档案页底部「子层级」：已制作的子层级进入过（图鉴 level_<id>）才显示「已发现」与简介；未制作的占位子层级标「锁定」。
+function L0SublevelBlock() {
+  const codex = loadCodex()
+  return (
+    <div className="mt-3 border-t pt-3" style={{ borderColor: 'var(--panel-edge)' }} data-codex-sublevels>
+      <div className="font-mono2 mb-2 text-[11px]" style={{ color: 'var(--amber)' }}>子层级</div>
+      <div className="grid gap-2">
+        {L0_SUBLEVELS.map((s) => {
+          const def = s.level !== undefined ? levelDefOf(s.level) : undefined
+          const state = !def ? 'locked' : codex[`level_${s.level}`] ? 'found' : 'unfound'
+          const tag = state === 'found' ? '已发现' : state === 'unfound' ? '未发现' : '锁定'
+          return (
+            <div key={s.id} className="border p-2" data-sublevel-id={s.id} data-state={state} style={{ borderColor: 'var(--panel-edge)', opacity: state === 'found' ? 1 : 0.6 }}>
+              <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
+                <div className="font-title min-w-0 text-[14px]" style={{ color: state === 'found' ? 'var(--amber)' : 'var(--text)', overflowWrap: 'anywhere' }}>
+                  {state === 'found' ? `${s.label ?? ''} · ${s.name}` : state === 'unfound' ? `${s.label ?? ''} · ？？？` : s.name}
+                </div>
+                <span className="font-mono2 shrink-0 border px-1.5 py-0.5 text-[10px]" style={{ borderColor: 'var(--panel-edge)', color: state === 'found' ? 'var(--exit)' : 'var(--text-dim)' }}>{tag}</span>
+              </div>
+              <div className="mt-0.5 text-[11px] leading-snug" style={{ color: 'var(--text-dim)', overflowWrap: 'anywhere' }}>
+                {state === 'found' ? (def!.lore ?? def!.flavor) : state === 'unfound' ? '尚未进入。（后室装修公司的施工许可也许能打开一扇门。）' : '尚未开放的子层级。'}
+              </div>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
@@ -988,7 +1020,9 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                     {selDef.type === 'saltbox' && !isEquipW(sel.w) && (
                       <button className="menu-btn flex-1 py-1.5 text-center text-[13px]" onClick={() => { engine.unpackSaltBox(sel.w, sel.i); setSel(null); refresh() }}>分解 ×5</button>
                     )}
-                    <button className="menu-btn flex-1 py-1.5 text-center text-[13px]" onClick={() => { engine.dropSlot(sel.w, sel.i); setSel(null); refresh() }}>丢弃</button>
+                    {selDef.keyItem
+                      ? <span className="flex-1 py-1.5 text-center text-[12px]" data-key-item style={{ color: 'var(--amber)' }}>关键收藏物 · 不可丢弃</span>
+                      : <button className="menu-btn flex-1 py-1.5 text-center text-[13px]" onClick={() => { engine.dropSlot(sel.w, sel.i); setSel(null); refresh() }}>丢弃</button>}
                   </div>
                 </div>
               ) : (

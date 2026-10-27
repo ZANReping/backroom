@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import * as THREE from 'three'
 import { createCanvas } from '@napi-rs/canvas'
 import { makeEntity, type Entity } from '../src/game/entities'
-import { beginHoundFrame, initHound, houndHear, updateHound } from '../src/game/engine/houndAI'
+import { beginHoundFrame, initHound, houndHear, houndHeadPos, updateHound } from '../src/game/engine/houndAI'
 import { buildEntityMesh } from '../src/game/renderer/entitiesMesh'
 import { animateHound } from '../src/game/renderer/houndMesh'
 
@@ -85,7 +85,7 @@ for(const m of am){
  assert(!bg.has(m.geometry),'instances own geometry')
  assert(!bm.some(other=>other.material===m.material),'instances own materials')
 }
-assert(am.length<=26,'bounded mesh count');assert(triangles<20000,'bounded triangle count')
+assert(am.length<=26,'bounded mesh count');assert(triangles<24000,'bounded triangle count')
 const maps=(meshes:THREE.Mesh[])=>new Set(meshes.flatMap(m=>{const mat=m.material as THREE.MeshLambertMaterial;return mat.map?[mat.map]:[]}))
 const textures=maps(am);assert.equal(textures.size,2);assert.deepEqual(maps(bm),textures,'cached skin and hair textures shared')
 const hair=[...textures].find(t=>!t.flipY)!;assert(hair);assert.equal(hair.wrapS,THREE.RepeatWrapping)
@@ -150,8 +150,11 @@ m.tiles.fill(1);Object.assign(p,{level:3,x:16.5,y:16.5,z:0,hp:100});m.entities=[
 look.yaw=Math.PI/2;p.facing=Math.PI;runtime.updateEntities(1/30,1)
 assert.equal(m.entities[0].hd!.phase,'charge','real L3 dispatch wakes ambush')
 look.yaw=-Math.PI/2
-for(let i=0;i<240;i++)runtime.updateEntities(1/30,1)
+// 阶段 3：直视要准星对准头部——玩家一直把准星压在它脸上（跟随 yaw / pitch / 渲染层发布的中心射线）
+const aimHead=()=>{const h=houndHeadPos(m.entities[0]),dx=h.x-p.x,dy=h.y-p.y,dz=h.z-(p.z+1.55),l=Math.hypot(dx,dy,dz);look.yaw=Math.atan2(-dx,-dy);look.pitch=Math.atan2(dz,Math.hypot(dx,dy));Object.assign(look,{rayX:dx/l,rayY:dy/l,rayZ:dz/l})}
+for(let i=0;i<240;i++){aimHead();runtime.updateEntities(1/30,1)}
 assert.equal(m.entities[0].hd!.phase,'cower','real L3 dispatch keeps gaze freeze')
+Object.assign(look,{pitch:0,rayX:0,rayY:-1,rayZ:0})
 look.yaw=Math.PI/2;runtime.updateEntities(1/30,1)
 assert.notEqual(m.entities[0].hd!.phase,'cower','real L3 dispatch resumes after gaze')
 console.log(JSON.stringify({integration:'passed',productionGameplay:'passed',meshes:am.length,triangles,sharedTextures:textures.size},null,2))

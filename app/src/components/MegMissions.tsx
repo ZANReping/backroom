@@ -89,7 +89,6 @@ export function MegNpcMissions({ npcId }: { npcId: string }) {
       return <details key={m.id}><summary className="cursor-pointer py-2">{MEG_TIER_NAMES[m.tier - 1]} / {m.title}{lock ? ' · 前置未满足' : ' · 可接取'}</summary><p className="mb-2 leading-relaxed">{m.brief}</p><p className="mb-2">{m.stages.length} 阶段 · 结案声望 +{m.rep} · 天鹰币 ×{m.coins} · {m.items.map(id => ITEMS[id]?.name ?? id).join('、')}</p>{lock ? <p className="opacity-70">{lock}</p> : <button className="menu-btn px-3 py-2" onClick={() => act(() => acceptMegMission(engine, m.id, npcId))}>接取任务线「{m.title}」</button>}</details>
     })}</div>
     {!offers.length && !handoffs.length && <p>本次没有新的外勤交接。完整档案可在团体终端查看。</p>}
-    <div className="mt-3"><MegCareerPanel /></div>
     {note && <p role="status" className="mt-2 leading-relaxed">{note}</p>}
   </section>
 }

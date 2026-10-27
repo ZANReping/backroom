@@ -1,0 +1,1586 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 3901,
+  "cdp": 3902,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:3901/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Mon, 26 Oct 2026 02:11:53 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 279,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 3901,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 7777.23283,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.288,
+        "sendEnd": 0.308,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 7.46,
+        "receiveHeadersEnd": 7.637
+      },
+      "responseTime": 1792980713666.752,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\hound-l02-import-20261026\\validated-ramp\\qa-1792980701025-9576",
+    "--remote-debugging-port=3902",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 38088,
+    "server": 24492
+  },
+  "appBootMs": 12126.8693,
+  "entryMs": 2484.8809999999976,
+  "firstPlayableMs": 19724.1178,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 661,
+      "textures": 157
+    },
+    "frame": {
+      "cpu": 9.299999999813735,
+      "calls": 586,
+      "triangles": 166963
+    },
+    "pin": null,
+    "l02": null
+  },
+  "setup": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 1,
+    "player": [
+      78.5,
+      94.5,
+      0.02
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 668,
+      "textures": 182
+    },
+    "frame": {
+      "cpu": 7.900000000372529,
+      "calls": 586,
+      "triangles": 166963
+    },
+    "pin": null,
+    "l02": null,
+    "pad": {
+      "wx": 14.5,
+      "wy": -1.5,
+      "axis": {
+        "x": 0,
+        "y": -1
+      }
+    }
+  },
+  "l0": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 3,
+    "player": [
+      79.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 120,
+      "textures": 70
+    },
+    "frame": {
+      "cpu": 5.3999999994412065,
+      "calls": 128,
+      "triangles": 129925
+    },
+    "pin": null,
+    "l02": null,
+    "quests": [
+      {
+        "id": "l0_tutorial",
+        "revealed": true,
+        "done": false,
+        "rewarded": false,
+        "obj": [
+          {
+            "id": "explore",
+            "done": false,
+            "visible": true,
+            "progress": 1
+          },
+          {
+            "id": "manila",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "photo_red",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "exit",
+            "done": false,
+            "visible": false
+          }
+        ]
+      },
+      {
+        "id": "l0_beyond",
+        "revealed": false,
+        "done": false,
+        "rewarded": false,
+        "obj": [
+          {
+            "id": "find_zenith_station",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "find_remade_chaos",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "find_ice_room",
+            "done": false,
+            "visible": true
+          }
+        ]
+      }
+    ]
+  },
+  "permit": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 9,
+    "player": [
+      77.237,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -1.5707963267948966,
+      "pitch": -0.44794209416966174,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 295,
+      "textures": 82
+    },
+    "frame": {
+      "cpu": 2.1000000005587935,
+      "calls": 216,
+      "triangles": 266959
+    },
+    "pin": null,
+    "l02": null,
+    "site": {
+      "id": "rm27_141_286",
+      "x": 16.526999999999994,
+      "y": 28.5685,
+      "r": 6,
+      "door": {
+        "x": 14.126999999999995,
+        "y": 28.5685,
+        "yaw": 1.5707963267948966
+      },
+      "t0": 2.699799999999993,
+      "props": [
+        {
+          "kind": "barricade",
+          "x": 15.826999999999995,
+          "y": 27.2185,
+          "yaw": 3.141592653589793
+        },
+        {
+          "kind": "barricade",
+          "x": 15.826999999999995,
+          "y": 29.9185,
+          "yaw": 3.141592653589793
+        },
+        {
+          "kind": "cone",
+          "x": 16.826999999999995,
+          "y": 27.6185,
+          "yaw": 0
+        },
+        {
+          "kind": "cone",
+          "x": 16.826999999999995,
+          "y": 29.5185,
+          "yaw": 0.6
+        },
+        {
+          "kind": "cone",
+          "x": 14.576999999999995,
+          "y": 27.0185,
+          "yaw": 1.1
+        },
+        {
+          "kind": "cone",
+          "x": 14.576999999999995,
+          "y": 30.1685,
+          "yaw": 2.3
+        },
+        {
+          "kind": "sign",
+          "x": 17.426999999999996,
+          "y": 26.5685,
+          "yaw": 1.9207963267948966
+        },
+        {
+          "kind": "worklamp",
+          "x": 14.676999999999996,
+          "y": 26.2685,
+          "yaw": 1.0707963267948966
+        }
+      ]
+    }
+  },
+  "doorSetup": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 10,
+    "player": [
+      79.327,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -4.71238898038469,
+      "pitch": -0.33667481938672655,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 406,
+      "textures": 86
+    },
+    "frame": {
+      "cpu": 1.900000000372529,
+      "calls": 195,
+      "triangles": 271557
+    },
+    "pin": null,
+    "l02": null,
+    "interact": "进入 施工场所的门"
+  },
+  "entered": {
+    "level": 902,
+    "seed": 542466.1523,
+    "checks": 13,
+    "player": [
+      80.5,
+      80.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -4.71238898038469,
+      "pitch": -0.33667481938672655,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 259,
+      "textures": 92
+    },
+    "frame": {
+      "cpu": 6,
+      "calls": 106,
+      "triangles": 293663
+    },
+    "pin": null,
+    "l02": {
+      "t": 1.2625999999999964,
+      "stage": 0,
+      "dust": 0,
+      "stopped": false,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "fixtures": [
+      {
+        "fix": "router",
+        "fx": -58.0768,
+        "fy": -59.72,
+        "yaw": 0,
+        "sid": 2156555357
+      },
+      {
+        "fix": "outlet",
+        "fx": -27.587,
+        "fy": -51.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1597488846
+      },
+      {
+        "fix": "outlet",
+        "fx": 4.413,
+        "fy": -35.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2849925157
+      },
+      {
+        "fix": "outlet",
+        "fx": 4.413,
+        "fy": -59.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 4228518204
+      },
+      {
+        "fix": "router",
+        "fx": 2.5111999999999997,
+        "fy": -43.72,
+        "yaw": 0,
+        "sid": 1215213702
+      },
+      {
+        "fix": "clipboard",
+        "fx": 11.2032,
+        "fy": -55.6,
+        "yaw": 0,
+        "doc": "brc_took",
+        "sid": 2059987053
+      },
+      {
+        "fix": "outlet",
+        "fx": 32.493,
+        "fy": -55.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3590529540
+      },
+      {
+        "fix": "outlet",
+        "fx": 48.413000000000004,
+        "fy": -55.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 417262878
+      },
+      {
+        "fix": "outlet",
+        "fx": 76.493,
+        "fy": -35.89,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 2772135935
+      },
+      {
+        "fix": "outlet",
+        "fx": -63.507,
+        "fy": -11.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3212320462
+      },
+      {
+        "fix": "outlet",
+        "fx": -55.586999999999996,
+        "fy": -23.889999999999997,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3316785629
+      },
+      {
+        "fix": "router",
+        "fx": -49.7952,
+        "fy": -11.719999999999999,
+        "yaw": 0,
+        "sid": 851681327
+      },
+      {
+        "fix": "outlet",
+        "fx": -15.586999999999998,
+        "fy": -27.889999999999997,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1019101145
+      },
+      {
+        "fix": "clipboard",
+        "fx": 14.2048,
+        "fy": -23.599999999999998,
+        "yaw": 0,
+        "doc": "brc_report",
+        "sid": 853984123
+      },
+      {
+        "fix": "outlet",
+        "fx": 40.413000000000004,
+        "fy": -23.889999999999997,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 1273667574
+      },
+      {
+        "fix": "router",
+        "fx": 45.232,
+        "fy": -15.719999999999997,
+        "yaw": 0,
+        "sid": 1494918530
+      },
+      {
+        "fix": "outlet",
+        "fx": 76.493,
+        "fy": -27.889999999999997,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3118543923
+      },
+      {
+        "fix": "outlet",
+        "fx": 84.413,
+        "fy": -23.889999999999997,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 4096732454
+      },
+      {
+        "fix": "toilet",
+        "fx": 87.2,
+        "fy": -23.55,
+        "yaw": 0,
+        "i": 0,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.45,
+        "sid": 4006474121
+      },
+      {
+        "fix": "stall",
+        "fx": 86.4,
+        "fy": -23.2,
+        "yaw": 0,
+        "i": 0,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 647702531
+      },
+      {
+        "fix": "toilet",
+        "fx": 88.8,
+        "fy": -23.55,
+        "yaw": 0,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.45,
+        "sid": 3921842795
+      },
+      {
+        "fix": "stall",
+        "fx": 88,
+        "fy": -23.2,
+        "yaw": 0,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 865113386
+      },
+      {
+        "fix": "stall",
+        "fx": 89.6,
+        "fy": -23.2,
+        "yaw": 0,
+        "i": 2,
+        "end": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 1192038934
+      },
+      {
+        "fix": "sink",
+        "fx": 84.35,
+        "fy": -22.4,
+        "yaw": 1.5707963267948966,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.85,
+        "sid": 3958596423
+      },
+      {
+        "fix": "sink",
+        "fx": 84.35,
+        "fy": -21.2,
+        "yaw": 1.5707963267948966,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.85,
+        "sid": 1807067248
+      },
+      {
+        "fix": "restroom",
+        "fx": 87,
+        "fy": -22,
+        "yaw": 0,
+        "rx": 84,
+        "ry": -24,
+        "rw": 6,
+        "rh": 4,
+        "dx": 87.9,
+        "dw": 1.1,
+        "sid": 665037445
+      },
+      {
+        "fix": "outlet",
+        "fx": -47.586999999999996,
+        "fy": 4.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 774905887
+      },
+      {
+        "fix": "outlet",
+        "fx": -59.586999999999996,
+        "fy": 16.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 88510638
+      },
+      {
+        "fix": "outlet",
+        "fx": -19.587,
+        "fy": 4.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 476101322
+      },
+      {
+        "fix": "outlet",
+        "fx": -23.587,
+        "fy": 8.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1230742612
+      },
+      {
+        "fix": "outlet",
+        "fx": 4.413,
+        "fy": 16.19,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 1877197519
+      },
+      {
+        "fix": "router",
+        "fx": 6.0076,
+        "fy": 16.36,
+        "yaw": 0,
+        "sid": 771223050
+      },
+      {
+        "fix": "outlet",
+        "fx": 56.413000000000004,
+        "fy": 4.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2439433089
+      },
+      {
+        "fix": "outlet",
+        "fx": 40.413000000000004,
+        "fy": 8.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2787086301
+      },
+      {
+        "fix": "router",
+        "fx": 34.2632,
+        "fy": 24.28,
+        "yaw": 0,
+        "sid": 1861342016
+      },
+      {
+        "fix": "clipboard",
+        "fx": 58.102399999999996,
+        "fy": 20.400000000000002,
+        "yaw": 0,
+        "doc": "brc_slogan",
+        "sid": 299719497
+      },
+      {
+        "fix": "outlet",
+        "fx": 64.493,
+        "fy": 8.11,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 2928285100
+      },
+      {
+        "fix": "outlet",
+        "fx": 64.493,
+        "fy": 12.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2740571060
+      },
+      {
+        "fix": "router",
+        "fx": 66.536,
+        "fy": 12.280000000000001,
+        "yaw": 0,
+        "sid": 2897163159
+      },
+      {
+        "fix": "outlet",
+        "fx": -43.586999999999996,
+        "fy": 40.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 451113295
+      },
+      {
+        "fix": "outlet",
+        "fx": -55.586999999999996,
+        "fy": 44.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 766393541
+      },
+      {
+        "fix": "router",
+        "fx": -38.4352,
+        "fy": 60.28,
+        "yaw": 0,
+        "sid": 661907905
+      },
+      {
+        "fix": "outlet",
+        "fx": 12.413,
+        "fy": 40.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1972105716
+      },
+      {
+        "fix": "router",
+        "fx": 9.1296,
+        "fy": 44.28,
+        "yaw": 0,
+        "sid": 2029405086
+      },
+      {
+        "fix": "clipboard",
+        "fx": 14.768,
+        "fy": 40.4,
+        "yaw": 0,
+        "doc": "brc_report",
+        "sid": 3719451083
+      },
+      {
+        "fix": "outlet",
+        "fx": 32.493,
+        "fy": 36.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3043461631
+      },
+      {
+        "fix": "clipboard",
+        "fx": 38.512,
+        "fy": 60.4,
+        "yaw": 0,
+        "doc": "brc_report",
+        "sid": 2999696360
+      },
+      {
+        "fix": "outlet",
+        "fx": 76.413,
+        "fy": 36.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2054027291
+      },
+      {
+        "fix": "outlet",
+        "fx": 84.413,
+        "fy": 36.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1676365842
+      },
+      {
+        "fix": "outlet",
+        "fx": 84.413,
+        "fy": 40.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 4155031776
+      },
+      {
+        "fix": "router",
+        "fx": 94.64,
+        "fy": 60.28,
+        "yaw": 0,
+        "sid": 3295371008
+      },
+      {
+        "fix": "clipboard",
+        "fx": 81.8208,
+        "fy": 56.4,
+        "yaw": 0,
+        "doc": "brc_slogan",
+        "sid": 464948644
+      },
+      {
+        "fix": "outlet",
+        "fx": -15.507,
+        "fy": 92.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 4174109022
+      },
+      {
+        "fix": "router",
+        "fx": 24.284000000000002,
+        "fy": 76.35999999999999,
+        "yaw": 0,
+        "sid": 137039144
+      },
+      {
+        "fix": "router",
+        "fx": 57.168,
+        "fy": 68.27999999999999,
+        "yaw": 0,
+        "sid": 486924825
+      },
+      {
+        "fix": "outlet",
+        "fx": 80.413,
+        "fy": 88.03,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3536193629
+      },
+      {
+        "fix": "outlet",
+        "fx": 76.493,
+        "fy": 92.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3441709518
+      }
+    ]
+  },
+  "stage3": {
+    "level": 902,
+    "seed": 542466.1523,
+    "checks": 14,
+    "player": [
+      80.5,
+      80.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -4.71238898038469,
+      "pitch": -0.33667481938672655,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 269,
+      "textures": 92
+    },
+    "frame": {
+      "cpu": 6,
+      "calls": 116,
+      "triangles": 344263
+    },
+    "pin": null,
+    "l02": {
+      "t": 125.86249999999987,
+      "stage": 3,
+      "dust": 0.10463863558264494,
+      "stopped": false,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    }
+  },
+  "fall": {
+    "level": 902,
+    "seed": 542466.1523,
+    "checks": 17,
+    "player": [
+      70.5,
+      70.5,
+      -2.7
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -1.8925468811915387,
+      "pitch": -0.7193683154419426,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 350,
+      "textures": 100
+    },
+    "frame": {
+      "cpu": 2,
+      "calls": 79,
+      "triangles": 210783
+    },
+    "pin": null,
+    "l02": {
+      "t": 129.7788999999982,
+      "stage": 3,
+      "dust": 0.7570319045083337,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 2
+      }
+    },
+    "hole": {
+      "id": 1,
+      "open": {
+        "x": 3.7,
+        "y": 4.4,
+        "w": 5.6,
+        "h": 4.2
+      },
+      "house": {
+        "x": 2.4000000000000004,
+        "y": 3.1000000000000005,
+        "w": 8.2,
+        "h": 6.800000000000001
+      },
+      "ramp": {
+        "x": 3.7,
+        "y": 7.350000000000001,
+        "w": 5.6,
+        "h": 1.25
+      },
+      "rampDir": "nx",
+      "depth": 2.7,
+      "t0": 126.48739999999988,
+      "dropped": true
+    }
+  },
+  "house": {
+    "level": 902,
+    "seed": 542466.1523,
+    "checks": 17,
+    "player": [
+      70.5,
+      70.5,
+      -2.7
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.158798930342464,
+      "pitch": 0.5559084000152367,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 376,
+      "textures": 101
+    },
+    "frame": {
+      "cpu": 2.5,
+      "calls": 118,
+      "triangles": 309891
+    },
+    "pin": null,
+    "l02": {
+      "t": 131.3288999999968,
+      "stage": 3,
+      "dust": 0.7011289484952391,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 5
+      }
+    },
+    "hole": {
+      "id": 1,
+      "open": {
+        "x": 3.7,
+        "y": 4.4,
+        "w": 5.6,
+        "h": 4.2
+      },
+      "house": {
+        "x": 2.4000000000000004,
+        "y": 3.1000000000000005,
+        "w": 8.2,
+        "h": 6.800000000000001
+      },
+      "ramp": {
+        "x": 3.7,
+        "y": 7.350000000000001,
+        "w": 5.6,
+        "h": 1.25
+      },
+      "rampDir": "nx",
+      "depth": 2.7,
+      "t0": 126.48739999999988,
+      "dropped": true
+    }
+  },
+  "rampSetup": {
+    "level": 902,
+    "seed": 542466.1523,
+    "checks": 18,
+    "player": [
+      73.1,
+      71.975,
+      -2.603571428571426
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -4.71238898038469,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 379,
+      "textures": 104
+    },
+    "frame": {
+      "cpu": 2.2999999998137355,
+      "calls": 96,
+      "triangles": 249469
+    },
+    "pin": null,
+    "l02": {
+      "t": 132.27049999999593,
+      "stage": 3,
+      "dust": 0.6101506410389391,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 7
+      }
+    },
+    "ramp": {
+      "x": 3.7,
+      "y": 7.350000000000001,
+      "w": 5.6,
+      "h": 1.25
+    },
+    "dir": "nx"
+  },
+  "rampClimbed": {
+    "level": 902,
+    "seed": 542466.1523,
+    "checks": 19,
+    "player": [
+      64.84874999999924,
+      71.975,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -4.71238898038469,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 415,
+      "textures": 104
+    },
+    "frame": {
+      "cpu": 2.199999999254942,
+      "calls": 122,
+      "triangles": 405599
+    },
+    "pin": null,
+    "l02": {
+      "t": 135.4162999999931,
+      "stage": 3,
+      "dust": 0.2758265358059874,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 10
+      }
+    }
+  },
+  "devicesSetup": {
+    "level": 902,
+    "seed": 542466.1523,
+    "checks": 22,
+    "player": [
+      68.413,
+      76.81,
+      0
+    ],
+    "origin": [
+      -96,
+      -128
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -1.048111969905496,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 361,
+      "textures": 104
+    },
+    "frame": {
+      "cpu": 8.5,
+      "calls": 51,
+      "triangles": 237793
+    },
+    "pin": null,
+    "l02": {
+      "t": 137.30789999999163,
+      "stage": 3,
+      "dust": 0.09671671452222336,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 11
+      }
+    },
+    "outlet": {
+      "fix": "outlet",
+      "fx": -27.587,
+      "fy": -51.89,
+      "yaw": 0,
+      "h": 0.335,
+      "sid": 1597488846
+    },
+    "phone": {
+      "battery": 39.98539960000021,
+      "on": false,
+      "docked": false,
+      "torch": false,
+      "photos": [],
+      "charging": false
+    },
+    "interact": "插座（通电）：给手机充电"
+  },
+  "charged": {
+    "level": 902,
+    "seed": 542466.1523,
+    "checks": 23,
+    "player": [
+      68.413,
+      76.81,
+      0
+    ],
+    "origin": [
+      -96,
+      -128
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -1.048111969905496,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 363,
+      "textures": 104
+    },
+    "frame": {
+      "cpu": 13.100000000558794,
+      "calls": 53,
+      "triangles": 243265
+    },
+    "pin": null,
+    "l02": {
+      "t": 139.0911999999904,
+      "stage": 3,
+      "dust": 0.033080698079932774,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 11
+      }
+    },
+    "battery": 41.302260000000345
+  },
+  "docSetup": {
+    "level": 902,
+    "seed": 542466.1523,
+    "checks": 25,
+    "player": [
+      75.2032,
+      73.1,
+      0
+    ],
+    "origin": [
+      -64,
+      -128
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -1.0800469214989017,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 371,
+      "textures": 104
+    },
+    "frame": {
+      "cpu": 4.900000000372529,
+      "calls": 50,
+      "triangles": 226175
+    },
+    "pin": null,
+    "l02": {
+      "t": 140.3078999999895,
+      "stage": 3,
+      "dust": 0.01591085139951776,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 11
+      }
+    }
+  },
+  "documentOpen": {
+    "level": 902,
+    "seed": 542466.1523,
+    "checks": 26,
+    "player": [
+      75.2032,
+      73.1,
+      0
+    ],
+    "origin": [
+      -64,
+      -128
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -1.0800469214989017,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 371,
+      "textures": 104
+    },
+    "frame": {
+      "cpu": 7.7999999998137355,
+      "calls": 50,
+      "triangles": 226175
+    },
+    "pin": null,
+    "l02": {
+      "t": 140.87029999998904,
+      "stage": 3,
+      "dust": 0.011345039282789784,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 11
+      }
+    }
+  },
+  "returnSetup": {
+    "level": 902,
+    "seed": 542466.1523,
+    "checks": 28,
+    "player": [
+      72,
+      85.18,
+      0
+    ],
+    "origin": [
+      -96,
+      -128
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -0.32447534329357164,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 419,
+      "textures": 104
+    },
+    "frame": {
+      "cpu": 7.8999999994412065,
+      "calls": 115,
+      "triangles": 462491
+    },
+    "pin": null,
+    "l02": {
+      "t": 141.59529999998855,
+      "stage": 3,
+      "dust": 0.0073339330322632155,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 11
+      }
+    },
+    "door": {
+      "x": -24,
+      "y": -43.92,
+      "yaw": 0,
+      "cx": -1,
+      "cy": -2,
+      "wall": {
+        "x": -25.8,
+        "y": -44.08,
+        "w": 3.6,
+        "h": 0.16
+      },
+      "clear": {
+        "x": -26.6,
+        "y": -45.2,
+        "w": 5.2,
+        "h": 5.4
+      }
+    }
+  },
+  "returned": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 30,
+    "player": [
+      79.22699999999999,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 4.71238898038469,
+      "pitch": -0.32447534329357164,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 261,
+      "textures": 97
+    },
+    "frame": {
+      "cpu": 5.8999999994412065,
+      "calls": 121,
+      "triangles": 112489
+    },
+    "pin": null,
+    "l02": {
+      "t": 142.13699999998812,
+      "stage": 3,
+      "dust": 0.005294238657868019,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 11
+      }
+    },
+    "distance": 1.0999999999999943
+  },
+  "cleaned": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 31,
+    "player": [
+      79.22699999999999,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 4.71238898038469,
+      "pitch": -0.32447534329357164,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 261,
+      "textures": 97
+    },
+    "frame": {
+      "cpu": 5.7999999998137355,
+      "calls": 121,
+      "triangles": 112489
+    },
+    "pin": null,
+    "l02": {
+      "t": 142.13699999998812,
+      "stage": 3,
+      "dust": 0.005294238657868019,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 11
+      }
+    },
+    "allChecks": [
+      "Collision-safe natural corridor for hound",
+      "L0 tutorial panel renders in actual HUD",
+      "Real engine reveals L0 task",
+      "Existing engine grants BRC permit",
+      "Real nearby L0 wall for construction",
+      "Wall has accessible construction face",
+      "Using real permit creates construction site",
+      "Reusable permit keeps an item and saves its site",
+      "Construction barriers and door are in actual scene",
+      "E targets actual construction door",
+      "L02 collision/runtime initialized",
+      "Entering real door records L0 sublevel discovery",
+      "Indoor L02 does not render an outdoor sky",
+      "Live collapse enters stage3",
+      "Actual collapse controller schedules floor opening",
+      "Warning resolves to real collapsed floor",
+      "House geometry is in real collapse scene",
+      "Ramp starts inside the actual unfinished house",
+      "Holding real W climbs the real rubble ramp out of the collapsed floor",
+      "Live level has powered outlet",
+      "Outlet face has safe footing",
+      "Real interact targets fixture",
+      "Actual outlet restores phone battery",
+      "BRC clipboard fixture exists",
+      "E targets actual BRC clipboard",
+      "BRC document styled UI present",
+      "E targets real return door",
+      "Return door vicinity stops collapse",
+      "Return arrives at saved construction doorway",
+      "L02 transient scene retired on level change",
+      "GL remains healthy after hound/L0/L02 round trip"
+    ]
+  },
+  "summary": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 31,
+    "player": [
+      79.22699999999999,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 4.71238898038469,
+      "pitch": -0.32447534329357164,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 261,
+      "textures": 97
+    },
+    "frame": {
+      "cpu": 5.7999999998137355,
+      "calls": 121,
+      "triangles": 112489
+    },
+    "pin": null,
+    "l02": {
+      "t": 142.13699999998812,
+      "stage": 3,
+      "dust": 0.005294238657868019,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 11
+      }
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

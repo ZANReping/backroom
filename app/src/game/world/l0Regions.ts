@@ -139,6 +139,7 @@ export function l0EnvironmentAt(seed:number,x:number,y:number):L0Environment{
 }
 /** Forced developer/showcase/private layouts still use the same position interface. */
 export function l0LayoutEnvironment(a:L0Layout,x:number,y:number):L0Environment{
+ if(a.theme)return{base:'open',effect:'none',red:0,blackout:0,arch:0}
  const f=a.testField
  if(f&&x>=f.x&&y>=f.y&&x<f.x+f.w&&y<f.y+f.h)return{base:'open',effect:'none',red:0,blackout:0,arch:0}
  const e=l0EnvironmentAt(a.seed??0,x,y)

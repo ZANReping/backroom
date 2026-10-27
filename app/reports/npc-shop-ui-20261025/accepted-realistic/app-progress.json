@@ -1,0 +1,127 @@
+{
+  "checks": [
+    "v1 saved credit account restored",
+    "real merchant home mkt_moore",
+    "safe actual-world position 39.349999999999994,73",
+    "look-at scan selects mkt_moore",
+    "dialog pauses gameplay",
+    "clicking typewriter completes text without reverting on the next frame",
+    "real NPC model portrait canvas is initialized",
+    "numbered dialog response leaves dialog interactive",
+    "shop and dialog are separate paused overlays",
+    "actual purchase deducts 14 credits only and grants flashlight",
+    "double-click executes the clicked row, not the previously selected flashlight",
+    "quantity-two buyback credits account and records sale without changing cash",
+    "story item cannot be sold",
+    "keyboard selection is bounded at last item and immediately moves back",
+    "real merchant home mkt_moore",
+    "safe actual-world position 39.349999999999994,73",
+    "look-at scan selects mkt_moore",
+    "shop shortcut label follows custom binding",
+    "safe actual-world position 103,101.8",
+    "unavailable special tap is not latched",
+    "real merchant home mkt_moore",
+    "safe actual-world position 39.349999999999994,73",
+    "look-at scan selects mkt_moore",
+    "approaching a merchant after an unavailable tap never opens the shop",
+    "dialog fits 390x844",
+    "dialog fits 844x390",
+    "shop fits 390x844",
+    "checkout action remains reachable at 390x844",
+    "shop fits 844x390",
+    "checkout action remains reachable at 844x390",
+    "real merchant home mkt_moore",
+    "safe actual-world position 39.349999999999994,73",
+    "look-at scan selects mkt_moore",
+    "touch contextual action opens the same shop and pauses gameplay",
+    "safe actual-world position 103,103.65",
+    "ATM renders new buyback ledger entry",
+    "real save/reload preserves purchase, sale and ledger without duplication",
+    "existing Alpha warehouse page renders inside redesigned dialog",
+    "non-merchant has no shop shortcut",
+    "supplemental bntg merchant catalog renders",
+    "supplemental meg merchant catalog renders",
+    "supplemental ariane merchant catalog renders",
+    "supplemental tom merchant catalog renders",
+    "supplemental homely merchant catalog renders",
+    "supplemental originals merchant catalog renders",
+    "reserved capital skin renders without adding a capital merchant"
+  ],
+  "shots": [
+    "01-real-dialog-bntg",
+    "02-real-shop-bntg",
+    "03-real-buyback-credit-receipt",
+    "04-dialog-phone",
+    "05-dialog-landscape",
+    "06-shop-phone",
+    "07-shop-landscape",
+    "09-real-touch-trade",
+    "08-atm-buyback-statement",
+    "11-actual-alpha-warehouse",
+    "12-actual-alpha-supervisor",
+    "10-skin-bntg",
+    "10-skin-meg",
+    "10-skin-ariane",
+    "10-skin-tom",
+    "10-skin-homely",
+    "10-skin-originals",
+    "10-skin-capital"
+  ],
+  "flows": [
+    {
+      "numberedOption": "有什么建议？"
+    },
+    {
+      "nativeNpc": "suanpan",
+      "entry": "actual dialog event"
+    },
+    {
+      "nativeNpc": "kat",
+      "entry": "actual dialog event"
+    }
+  ],
+  "layouts": [
+    {
+      "width": 390,
+      "height": 844,
+      "x": 8,
+      "right": 382,
+      "top": 584,
+      "bottom": 834,
+      "scroll": 390,
+      "client": 390
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "x": 16,
+      "right": 828,
+      "top": 150,
+      "bottom": 362,
+      "scroll": 844,
+      "client": 844
+    },
+    {
+      "x": 16,
+      "right": 374,
+      "top": 62,
+      "bottom": 782,
+      "scroll": 356,
+      "client": 356
+    },
+    {
+      "x": 16,
+      "right": 828,
+      "top": 16,
+      "bottom": 374,
+      "scroll": 810,
+      "client": 810
+    }
+  ],
+  "saved": {
+    "bank": "{\"v\":1,\"balance\":86,\"sequence\":3,\"history\":[{\"id\":1,\"at\":1792906001227,\"kind\":\"purchase\",\"delta\":-14,\"balance\":86,\"cashDelta\":0,\"detail\":\"购买 手电筒：信用点 14，压印币 0。\"},{\"id\":2,\"at\":1792906001264,\"kind\":\"purchase\",\"delta\":-2,\"balance\":84,\"cashDelta\":0,\"detail\":\"购买 电池：信用点 2，压印币 0。\"},{\"id\":3,\"at\":1792906001355,\"kind\":\"sale\",\"delta\":2,\"balance\":86,\"cashDelta\":0,\"detail\":\"卖出 电池 ×2：入账 2 信用点。\"}]}",
+    "cash": 150,
+    "battery": 3,
+    "flashlight": 1
+  }
+}

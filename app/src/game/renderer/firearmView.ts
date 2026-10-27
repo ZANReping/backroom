@@ -134,6 +134,7 @@ export class FirearmView {
   setLook(l: RetroHandLook) { this.hands.L.hand.setLook(l) }
   /** 调试：两只手前臂在镜头坐标系里的方向 */
   /** 预览 / 检查用：两只手（含手里的弹）的挂载节点 */
+  creepHandModels(): RetroHand[] { return this.active?[this.hands.L.hand]:[] }
   handNodes(): THREE.Object3D[] { return [this.hands.L.carrier, this.hands.R.carrier] }
 
   debugArms(camera: THREE.Camera): string {

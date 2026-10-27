@@ -1,0 +1,2637 @@
+{
+  "seed": 424242,
+  "mode": "classic",
+  "port": 11659,
+  "cdp": 11660,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:11659/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Mon, 26 Oct 2026 09:56:42 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 282,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 11659,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 35666.238053,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.468,
+        "sendEnd": 0.508,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 71.197,
+        "receiveHeadersEnd": 71.345
+      },
+      "responseTime": 1793008602735.711,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l02-round5-import-20261026\\validated-classic\\qa-1793008587259-53212",
+    "--remote-debugging-port=11660",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 42328,
+    "server": 25912
+  },
+  "appBootMs": 15043.3359,
+  "entryMs": 2101.0063999999984,
+  "firstPlayableMs": 20891.847500000003,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 589,
+      "textures": 135
+    },
+    "frame": {
+      "cpu": 5.5,
+      "calls": 572,
+      "triangles": 166949
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0
+  },
+  "l0": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 2,
+    "player": [
+      79.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 113,
+      "textures": 45
+    },
+    "frame": {
+      "cpu": 5.600000001490116,
+      "calls": 114,
+      "triangles": 129911
+    },
+    "pin": null,
+    "l02": null,
+    "quests": [
+      {
+        "id": "l0_tutorial",
+        "revealed": true,
+        "done": false,
+        "rewarded": false,
+        "obj": [
+          {
+            "id": "explore",
+            "done": false,
+            "visible": true,
+            "progress": 1
+          },
+          {
+            "id": "manila",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "photo_red",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "exit",
+            "done": false,
+            "visible": false
+          }
+        ]
+      },
+      {
+        "id": "l0_beyond",
+        "revealed": false,
+        "done": false,
+        "rewarded": false,
+        "obj": [
+          {
+            "id": "find_zenith_station",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "find_remade_chaos",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "find_ice_room",
+            "done": false,
+            "visible": true
+          }
+        ]
+      }
+    ]
+  },
+  "paperInfo": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 7,
+    "player": [
+      77.237,
+      92.5685,
+      0.018966650000000182
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -1.5707963267948966,
+      "pitch": -0.44794209416966174,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 219,
+      "textures": 54
+    },
+    "frame": {
+      "cpu": 7.5,
+      "calls": 112,
+      "triangles": 162347
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 5,
+    "kind": "permit",
+    "form": "施 工 许 可 证",
+    "stamp": true,
+    "signatures": 2,
+    "overflow": [],
+    "bounds": {
+      "x": 640,
+      "y": 312.0625,
+      "width": 640,
+      "height": 503.859375
+    },
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  "permit": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 8,
+    "player": [
+      77.237,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -1.5707963267948966,
+      "pitch": -0.44794209416966174,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 282,
+      "textures": 56
+    },
+    "frame": {
+      "cpu": 2.399999998509884,
+      "calls": 198,
+      "triangles": 266897
+    },
+    "pin": null,
+    "l02": null,
+    "site": {
+      "id": "rm20_141_286",
+      "x": 16.526999999999994,
+      "y": 28.5685,
+      "r": 6,
+      "door": {
+        "x": 14.126999999999995,
+        "y": 28.5685,
+        "yaw": 1.5707963267948966
+      },
+      "t0": 1.9880000000000042,
+      "props": [
+        {
+          "kind": "barricade",
+          "x": 15.826999999999995,
+          "y": 27.2185,
+          "yaw": 3.141592653589793
+        },
+        {
+          "kind": "barricade",
+          "x": 15.826999999999995,
+          "y": 29.9185,
+          "yaw": 3.141592653589793
+        },
+        {
+          "kind": "cone",
+          "x": 16.826999999999995,
+          "y": 27.6185,
+          "yaw": 0
+        },
+        {
+          "kind": "cone",
+          "x": 16.826999999999995,
+          "y": 29.5185,
+          "yaw": 0.6
+        },
+        {
+          "kind": "cone",
+          "x": 14.576999999999995,
+          "y": 27.0185,
+          "yaw": 1.1
+        },
+        {
+          "kind": "cone",
+          "x": 14.576999999999995,
+          "y": 30.1685,
+          "yaw": 2.3
+        },
+        {
+          "kind": "sign",
+          "x": 17.426999999999996,
+          "y": 26.5685,
+          "yaw": 1.9207963267948966
+        },
+        {
+          "kind": "worklamp",
+          "x": 14.676999999999996,
+          "y": 26.2685,
+          "yaw": 1.0707963267948966
+        }
+      ]
+    }
+  },
+  "doorSetup": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 9,
+    "player": [
+      79.327,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -4.71238898038469,
+      "pitch": -0.33667481938672655,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 399,
+      "textures": 60
+    },
+    "frame": {
+      "cpu": 2,
+      "calls": 181,
+      "triangles": 271543
+    },
+    "pin": null,
+    "l02": null,
+    "interact": "进入 施工场所的门"
+  },
+  "entryTitle": {
+    "level": 902,
+    "seed": 542456.9109,
+    "checks": 9,
+    "player": [
+      80.5,
+      80.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -4.71238898038469,
+      "pitch": -0.33667481938672655,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 233,
+      "textures": 50
+    },
+    "frame": {
+      "cpu": 7.799999997019768,
+      "calls": 0,
+      "triangles": 0
+    },
+    "pin": null,
+    "l02": {
+      "t": 0,
+      "stage": 0,
+      "dust": 0,
+      "stopped": false,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 7,
+    "theme": "remodel",
+    "text": "—— 门在你身后合拢 ——Level 0.2 · 重塑的混乱Level 0 的子层级 · 后室装修公司施工区 · 结构不稳定正在准备附近场景… @keyframes cutCardEnter { from { opacity: 0; transform: scale(.985) } to { opacity: 1; transform: scale(1) } } @keyframes cutCardExit { from { opacity: 1; transform: sc"
+  },
+  "entered": {
+    "level": 902,
+    "seed": 542456.9109,
+    "checks": 12,
+    "player": [
+      80.5,
+      80.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -4.71238898038469,
+      "pitch": -0.33667481938672655,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 301,
+      "textures": 70
+    },
+    "frame": {
+      "cpu": 5.200000002980232,
+      "calls": 126,
+      "triangles": 281895
+    },
+    "pin": null,
+    "l02": {
+      "t": 1.2707999999999942,
+      "stage": 0,
+      "dust": 0,
+      "stopped": false,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "fixtures": [
+      {
+        "fix": "outlet",
+        "fx": -47.586999999999996,
+        "fy": -59.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1571067598
+      },
+      {
+        "fix": "outlet",
+        "fx": -59.586999999999996,
+        "fy": -55.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 278678451
+      },
+      {
+        "fix": "clipboard",
+        "fx": -43.1008,
+        "fy": -51.6,
+        "yaw": 0,
+        "doc": "brc_report",
+        "sid": 2089161078
+      },
+      {
+        "fix": "outlet",
+        "fx": -15.586999999999998,
+        "fy": -59.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2949059574
+      },
+      {
+        "fix": "outlet",
+        "fx": 0.493,
+        "fy": -51.89,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 1724416694
+      },
+      {
+        "fix": "outlet",
+        "fx": 12.413,
+        "fy": -51.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3377195677
+      },
+      {
+        "fix": "outlet",
+        "fx": 80.413,
+        "fy": -55.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3277995824
+      },
+      {
+        "fix": "router",
+        "fx": 73.4368,
+        "fy": -35.72,
+        "yaw": 0,
+        "sid": 2106213344
+      },
+      {
+        "fix": "clipboard",
+        "fx": -55.254400000000004,
+        "fy": -27.599999999999998,
+        "yaw": 0,
+        "doc": "brc_report",
+        "sid": 3701413652
+      },
+      {
+        "fix": "outlet",
+        "fx": -11.587,
+        "fy": -27.889999999999997,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1033104613
+      },
+      {
+        "fix": "outlet",
+        "fx": 16.413,
+        "fy": -23.889999999999997,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2959725217
+      },
+      {
+        "fix": "outlet",
+        "fx": 24.413,
+        "fy": -23.889999999999997,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2995622580
+      },
+      {
+        "fix": "router",
+        "fx": 1.3208,
+        "fy": -11.719999999999999,
+        "yaw": 0,
+        "sid": 319039150
+      },
+      {
+        "fix": "clipboard",
+        "fx": 26.435200000000002,
+        "fy": -23.599999999999998,
+        "yaw": 0,
+        "doc": "brc_report",
+        "sid": 1432110007
+      },
+      {
+        "fix": "outlet",
+        "fx": 32.493,
+        "fy": -27.889999999999997,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 619997944
+      },
+      {
+        "fix": "outlet",
+        "fx": 40.413000000000004,
+        "fy": -27.889999999999997,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 4113473397
+      },
+      {
+        "fix": "outlet",
+        "fx": 32.493,
+        "fy": -23.889999999999997,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 1197134540
+      },
+      {
+        "fix": "router",
+        "fx": 41.9232,
+        "fy": -15.719999999999997,
+        "yaw": 0,
+        "sid": 4241149231
+      },
+      {
+        "fix": "clipboard",
+        "fx": 53.6672,
+        "fy": -19.599999999999998,
+        "yaw": 0,
+        "doc": "brc_took",
+        "sid": 857631703
+      },
+      {
+        "fix": "outlet",
+        "fx": -27.507,
+        "fy": 4.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3951758628
+      },
+      {
+        "fix": "toilet",
+        "fx": -20.8,
+        "fy": 12.45,
+        "yaw": 0,
+        "i": 0,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.45,
+        "sid": 2374544150
+      },
+      {
+        "fix": "stall",
+        "fx": -21.6,
+        "fy": 12.8,
+        "yaw": 0,
+        "i": 0,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 1084202742
+      },
+      {
+        "fix": "toilet",
+        "fx": -19.2,
+        "fy": 12.45,
+        "yaw": 0,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.45,
+        "sid": 3331044627
+      },
+      {
+        "fix": "stall",
+        "fx": -20,
+        "fy": 12.8,
+        "yaw": 0,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 756206217
+      },
+      {
+        "fix": "stall",
+        "fx": -18.4,
+        "fy": 12.8,
+        "yaw": 0,
+        "i": 2,
+        "end": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 1531581744
+      },
+      {
+        "fix": "sink",
+        "fx": -23.65,
+        "fy": 13.6,
+        "yaw": 1.5707963267948966,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.85,
+        "sid": 4207284611
+      },
+      {
+        "fix": "sink",
+        "fx": -23.65,
+        "fy": 14.8,
+        "yaw": 1.5707963267948966,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.85,
+        "sid": 594929729
+      },
+      {
+        "fix": "restroom",
+        "fx": -21,
+        "fy": 14,
+        "yaw": 0,
+        "rx": -24,
+        "ry": 12,
+        "rw": 6,
+        "rh": 4,
+        "dx": -20.1,
+        "dw": 1.1,
+        "sid": 1280439078
+      },
+      {
+        "fix": "outlet",
+        "fx": 0.493,
+        "fy": 4.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 525324741
+      },
+      {
+        "fix": "outlet",
+        "fx": 20.493,
+        "fy": 4.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 940918778
+      },
+      {
+        "fix": "router",
+        "fx": 14.2,
+        "fy": 13.6,
+        "yaw": 0,
+        "sid": 3838060308
+      },
+      {
+        "fix": "clipboard",
+        "fx": 18,
+        "fy": 13.4,
+        "yaw": 0,
+        "doc": "brc_slogan",
+        "sid": 1883400399
+      },
+      {
+        "fix": "router",
+        "fx": 75.196,
+        "fy": 30.2,
+        "yaw": 0,
+        "sid": 2372565952
+      },
+      {
+        "fix": "outlet",
+        "fx": -53.306999999999995,
+        "fy": 48.11,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 1151080344
+      },
+      {
+        "fix": "outlet",
+        "fx": -15.507,
+        "fy": 60.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 4235441803
+      },
+      {
+        "fix": "outlet",
+        "fx": -19.507,
+        "fy": 48.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1445313356
+      },
+      {
+        "fix": "outlet",
+        "fx": -31.507,
+        "fy": 44.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3196274021
+      },
+      {
+        "fix": "router",
+        "fx": -7.635999999999999,
+        "fy": 60.28,
+        "yaw": 0,
+        "sid": 1819232184
+      },
+      {
+        "fix": "outlet",
+        "fx": 16.413,
+        "fy": 40.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1215143818
+      },
+      {
+        "fix": "clipboard",
+        "fx": 1.5936,
+        "fy": 48.4,
+        "yaw": 0,
+        "doc": "brc_took",
+        "sid": 2237360847
+      },
+      {
+        "fix": "clipboard",
+        "fx": 58.7168,
+        "fy": 48.4,
+        "yaw": 0,
+        "doc": "brc_took",
+        "sid": 1405814016
+      },
+      {
+        "fix": "outlet",
+        "fx": 72.493,
+        "fy": 44.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3991419023
+      },
+      {
+        "fix": "outlet",
+        "fx": 84.413,
+        "fy": 44.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2273352000
+      },
+      {
+        "fix": "toilet",
+        "fx": 87.2,
+        "fy": 44.45,
+        "yaw": 0,
+        "i": 0,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.45,
+        "sid": 4167483052
+      },
+      {
+        "fix": "stall",
+        "fx": 86.4,
+        "fy": 44.8,
+        "yaw": 0,
+        "i": 0,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 2133392892
+      },
+      {
+        "fix": "toilet",
+        "fx": 88.8,
+        "fy": 44.45,
+        "yaw": 0,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.45,
+        "sid": 2114335619
+      },
+      {
+        "fix": "stall",
+        "fx": 88,
+        "fy": 44.8,
+        "yaw": 0,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 3699368505
+      },
+      {
+        "fix": "stall",
+        "fx": 89.6,
+        "fy": 44.8,
+        "yaw": 0,
+        "i": 2,
+        "end": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 3849795072
+      },
+      {
+        "fix": "sink",
+        "fx": 84.35,
+        "fy": 45.6,
+        "yaw": 1.5707963267948966,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.85,
+        "sid": 1636429801
+      },
+      {
+        "fix": "sink",
+        "fx": 84.35,
+        "fy": 46.8,
+        "yaw": 1.5707963267948966,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.85,
+        "sid": 967668348
+      },
+      {
+        "fix": "restroom",
+        "fx": 87,
+        "fy": 46,
+        "yaw": 0,
+        "rx": 84,
+        "ry": 44,
+        "rw": 6,
+        "rh": 4,
+        "dx": 87.9,
+        "dw": 1.1,
+        "sid": 496823582
+      },
+      {
+        "fix": "outlet",
+        "fx": -51.586999999999996,
+        "fy": 68.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3201933758
+      },
+      {
+        "fix": "outlet",
+        "fx": -51.586999999999996,
+        "fy": 76.11,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 2182932600
+      },
+      {
+        "fix": "toilet",
+        "fx": 47.2,
+        "fy": 80.45,
+        "yaw": 0,
+        "i": 0,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.45,
+        "sid": 842737398
+      },
+      {
+        "fix": "stall",
+        "fx": 46.400000000000006,
+        "fy": 80.8,
+        "yaw": 0,
+        "i": 0,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 1046922970
+      },
+      {
+        "fix": "toilet",
+        "fx": 48.8,
+        "fy": 80.45,
+        "yaw": 0,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.45,
+        "sid": 2832923249
+      },
+      {
+        "fix": "stall",
+        "fx": 48,
+        "fy": 80.8,
+        "yaw": 0,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 3956017206
+      },
+      {
+        "fix": "stall",
+        "fx": 49.6,
+        "fy": 80.8,
+        "yaw": 0,
+        "i": 2,
+        "end": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 1009138704
+      },
+      {
+        "fix": "sink",
+        "fx": 44.35,
+        "fy": 81.6,
+        "yaw": 1.5707963267948966,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.85,
+        "sid": 733898053
+      },
+      {
+        "fix": "sink",
+        "fx": 44.35,
+        "fy": 82.8,
+        "yaw": 1.5707963267948966,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.85,
+        "sid": 528475147
+      },
+      {
+        "fix": "restroom",
+        "fx": 47,
+        "fy": 82,
+        "yaw": 0,
+        "rx": 44,
+        "ry": 80,
+        "rw": 6,
+        "rh": 4,
+        "dx": 47.9,
+        "dw": 1.1,
+        "sid": 3418239367
+      },
+      {
+        "fix": "clipboard",
+        "fx": 40.784,
+        "fy": 80.32,
+        "yaw": 0,
+        "doc": "brc_slogan",
+        "sid": 1775616943
+      }
+    ]
+  },
+  "fixedScene": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 12,
+    "player": [
+      80,
+      80,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.1112158270654806,
+      "pitch": 0.004287438357623136,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 288,
+      "textures": 69
+    },
+    "frame": {
+      "cpu": 11.799999997019768,
+      "calls": 54,
+      "triangles": 189455
+    },
+    "pin": null,
+    "l02": {
+      "t": 0.13320000000000437,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 9,
+    "meshes": 217
+  },
+  "lighting": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 12,
+    "player": [
+      80,
+      80,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.1112158270654806,
+      "pitch": 0.004287438357623136,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 304,
+      "textures": 71
+    },
+    "frame": {
+      "cpu": 10,
+      "calls": 70,
+      "triangles": 235869
+    },
+    "pin": null,
+    "l02": {
+      "t": 0.8997000000000036,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 11,
+    "lamps": 1400,
+    "spawnWallLength": 37.92,
+    "spawnWalls": 5,
+    "colors": [
+      "#f7f4dd"
+    ]
+  },
+  "whiteLine": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 12,
+    "player": [
+      80,
+      80,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -1.5707963267948966,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 314,
+      "textures": 71
+    },
+    "frame": {
+      "cpu": 8.600000001490116,
+      "calls": 80,
+      "triangles": 280479
+    },
+    "pin": null,
+    "l02": {
+      "t": 1.7040999999999962,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 12,
+    "rays": [
+      {
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "y": -0.04,
+        "hit": {
+          "distance": 23.93912651919846,
+          "point": [
+            39.91999816894531,
+            0.5932000732421875,
+            16
+          ],
+          "endStrip": false
+        }
+      },
+      {
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "y": 0,
+        "hit": {
+          "distance": 23.919998168945312,
+          "point": [
+            39.91999816894531,
+            1.55,
+            16
+          ],
+          "endStrip": false
+        }
+      },
+      {
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "y": 0.04,
+        "hit": {
+          "distance": 23.93912651919846,
+          "point": [
+            39.91999816894531,
+            2.5067999267578127,
+            16
+          ],
+          "endStrip": false
+        }
+      },
+      {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "y": -0.04,
+        "hit": null
+      },
+      {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "y": 0,
+        "hit": null
+      },
+      {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "y": 0.04,
+        "hit": null
+      }
+    ]
+  },
+  "ceiling": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 12,
+    "player": [
+      82,
+      82,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -1.5707963267948966,
+      "pitch": 0.10791248881667655,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 342,
+      "textures": 71
+    },
+    "frame": {
+      "cpu": 6.299999997019768,
+      "calls": 84,
+      "triangles": 290637
+    },
+    "pin": null,
+    "l02": {
+      "t": 4.974899999999987,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 14,
+    "jumpMaximum": 1.0300000000000002,
+    "maximumEye": 2.58,
+    "forced": 1.0300000000000002
+  },
+  "props": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 12,
+    "player": [
+      88.45,
+      72.9,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 0.3252348608537834,
+      "pitch": -0.13145735511572593,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 435,
+      "textures": 71
+    },
+    "frame": {
+      "cpu": 4.799999997019768,
+      "calls": 106,
+      "triangles": 190479
+    },
+    "pin": null,
+    "l02": {
+      "t": 6.328899999999982,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 16,
+    "models": {
+      "router": 18,
+      "clipboard": 2,
+      "toilet": 10,
+      "stall": 11,
+      "sink": 16
+    }
+  },
+  "wallSetup": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 12,
+    "player": [
+      72.493,
+      72.91,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -0.9885133939533282,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 249,
+      "textures": 69
+    },
+    "frame": {
+      "cpu": 4.600000001490116,
+      "calls": 32,
+      "triangles": 190035
+    },
+    "pin": null,
+    "l02": {
+      "t": 0.4249000000000017,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 20,
+    "wall": {
+      "kind": "pillar",
+      "x": 8,
+      "y": 7.920000000000002,
+      "w": 12,
+      "h": 0.16,
+      "solid": true,
+      "data": {
+        "l0Wall": 1,
+        "bottom": 0,
+        "top": 2.7,
+        "sid": 933440184
+      }
+    },
+    "outlet": {
+      "fix": "outlet",
+      "fx": 8.493,
+      "fy": 8.11,
+      "yaw": 0,
+      "h": 0.335,
+      "sid": 1266095262
+    }
+  },
+  "charging": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 12,
+    "player": [
+      72.493,
+      72.91,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -0.9885133939533282,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 254,
+      "textures": 71
+    },
+    "frame": {
+      "cpu": 4.4000000059604645,
+      "calls": 37,
+      "triangles": 206445
+    },
+    "pin": null,
+    "l02": {
+      "t": 1.620699999999993,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 21,
+    "battery": 40.544992000000185,
+    "charging": true
+  },
+  "collapseWall": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 12,
+    "player": [
+      78,
+      77.92,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -0.12435499454676144,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 332,
+      "textures": 71
+    },
+    "frame": {
+      "cpu": 2.100000001490116,
+      "calls": 148,
+      "triangles": 425429
+    },
+    "pin": null,
+    "l02": {
+      "t": 5.949699999999968,
+      "stage": 0,
+      "dust": 0.17468007139492173,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 1,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 1,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 26,
+    "wall": {
+      "x": 7.97,
+      "y": 7.8900000000000015,
+      "w": 12.059999999999999,
+      "h": 0.22,
+      "axis": "x",
+      "dir": 1,
+      "t0": 2.2833999999999937,
+      "freeEnds": [
+        true,
+        true
+      ],
+      "rail": false
+    },
+    "remainingColliders": 0,
+    "mounts": 0
+  },
+  "houseSetup": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 12,
+    "player": [
+      80,
+      82,
+      -2.7
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0.8926770190458493,
+      "pitch": 0.03243669877888874,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 374,
+      "textures": 82
+    },
+    "frame": {
+      "cpu": 5.200000002980232,
+      "calls": 67,
+      "triangles": 180803
+    },
+    "pin": null,
+    "l02": {
+      "t": 127.84149999999954,
+      "stage": 3,
+      "dust": 0.6404406561328285,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 30,
+    "hole": {
+      "id": 1,
+      "open": {
+        "x": 13.2,
+        "y": 15.9,
+        "w": 5.6,
+        "h": 4.2
+      },
+      "house": {
+        "x": 11.899999999999999,
+        "y": 14.6,
+        "w": 8.2,
+        "h": 6.800000000000001
+      },
+      "ramp": {
+        "x": 13.2,
+        "y": 15.9,
+        "w": 5.6,
+        "h": 1.25
+      },
+      "rampDir": "px",
+      "depth": 2.7,
+      "t0": 125.1,
+      "dropped": true
+    }
+  },
+  "rampSetup": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 13,
+    "player": [
+      77.4,
+      80.525,
+      -2.603571428571426
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -1.5707963267948966,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 389,
+      "textures": 82
+    },
+    "frame": {
+      "cpu": 1.7000000029802322,
+      "calls": 92,
+      "triangles": 239977
+    },
+    "pin": null,
+    "l02": {
+      "t": 128.7831999999989,
+      "stage": 3,
+      "dust": 0.7203481997667309,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 2
+      }
+    },
+    "ramp": {
+      "x": 13.2,
+      "y": 15.9,
+      "w": 5.6,
+      "h": 1.25
+    },
+    "dir": "px"
+  },
+  "rampClimbed": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 14,
+    "player": [
+      85.67375000000075,
+      80.525,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -1.5707963267948966,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 431,
+      "textures": 82
+    },
+    "frame": {
+      "cpu": 5.100000001490116,
+      "calls": 96,
+      "triangles": 358063
+    },
+    "pin": null,
+    "l02": {
+      "t": 131.95839999999643,
+      "stage": 3,
+      "dust": 0.3889503171271288,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 7
+      }
+    }
+  },
+  "tileSetup": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 14,
+    "player": [
+      80,
+      80,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.0344439357957027,
+      "pitch": 0.5593892413655124,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 294,
+      "textures": 82
+    },
+    "frame": {
+      "cpu": 6,
+      "calls": 85,
+      "triangles": 322645
+    },
+    "pin": null,
+    "l02": {
+      "t": 2.6622000000000052,
+      "stage": 0,
+      "dust": 0.11832526634298493,
+      "stopped": true,
+      "stats": {
+        "tiles": 1,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 34,
+    "plenumBatches": 8
+  },
+  "openPermit": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 14,
+    "player": [
+      80,
+      80,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.0344439357957027,
+      "pitch": 0.5593892413655124,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 303,
+      "textures": 82
+    },
+    "frame": {
+      "cpu": 6.299999997019768,
+      "calls": 94,
+      "triangles": 359383
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.3747999999999956,
+      "stage": 0,
+      "dust": 0.12539370752889542,
+      "stopped": true,
+      "stats": {
+        "tiles": 1,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 39,
+    "kind": "permit",
+    "form": "施 工 许 可 证",
+    "stamp": true,
+    "signatures": 2,
+    "overflow": [],
+    "bounds": {
+      "x": 640,
+      "y": 288.1620788574219,
+      "width": 640,
+      "height": 503.8594055175781
+    },
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  "openLog": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 14,
+    "player": [
+      80,
+      80,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.0344439357957027,
+      "pitch": 0.5593892413655124,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 303,
+      "textures": 82
+    },
+    "frame": {
+      "cpu": 4.899999998509884,
+      "calls": 94,
+      "triangles": 359383
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.4915999999999845,
+      "stage": 0,
+      "dust": 0.12499144795906264,
+      "stopped": true,
+      "stats": {
+        "tiles": 1,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 44,
+    "kind": "log",
+    "form": "施 工 日 志",
+    "stamp": true,
+    "signatures": 2,
+    "overflow": [],
+    "bounds": {
+      "x": 640,
+      "y": 202.59658813476562,
+      "width": 640,
+      "height": 675.296875
+    },
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  "openWork": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 14,
+    "player": [
+      80,
+      80,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.0344439357957027,
+      "pitch": 0.5593892413655124,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 327,
+      "textures": 82
+    },
+    "frame": {
+      "cpu": 1.7999999970197678,
+      "calls": 118,
+      "triangles": 449705
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.599999999999993,
+      "stage": 0,
+      "dust": 0.12450802763725496,
+      "stopped": true,
+      "stats": {
+        "tiles": 1,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 49,
+    "kind": "workorder",
+    "form": "工 作 单",
+    "stamp": true,
+    "signatures": 3,
+    "overflow": [],
+    "bounds": {
+      "x": 640,
+      "y": 192.22732543945312,
+      "width": 640,
+      "height": 698.421875
+    },
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  "openInspect": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 14,
+    "player": [
+      80,
+      80,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.0344439357957027,
+      "pitch": 0.5593892413655124,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 327,
+      "textures": 82
+    },
+    "frame": {
+      "cpu": 1.7999999970197678,
+      "calls": 51,
+      "triangles": 244361
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.8289000000000017,
+      "stage": 0,
+      "dust": 0.1231709005022941,
+      "stopped": true,
+      "stats": {
+        "tiles": 1,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 59,
+    "kind": "inspect",
+    "form": "巡 检 记 录 表",
+    "stamp": false,
+    "signatures": 2,
+    "overflow": [],
+    "bounds": {
+      "x": 16,
+      "y": 51.10033416748047,
+      "width": 358,
+      "height": 742.71875
+    },
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  "touch": {
+    "desktopSimulation": true,
+    "viewport": [
+      390,
+      844
+    ],
+    "closed": true
+  },
+  "otherReturnSetup": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 14,
+    "player": [
+      80,
+      89.18,
+      0
+    ],
+    "origin": [
+      -128,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -0.30805278102377426,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 375,
+      "textures": 82
+    },
+    "frame": {
+      "cpu": 5.399999998509884,
+      "calls": 134,
+      "triangles": 365801
+    },
+    "pin": null,
+    "l02": {
+      "t": 5.245199999999999,
+      "stage": 0,
+      "dust": 0.05442658578446156,
+      "stopped": true,
+      "stats": {
+        "tiles": 1,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 62,
+    "door": {
+      "x": -48,
+      "y": 24.08,
+      "yaw": 0,
+      "cx": -2,
+      "cy": 0,
+      "wall": {
+        "x": -49.8,
+        "y": 23.92,
+        "w": 3.6,
+        "h": 0.16
+      },
+      "clear": {
+        "x": -50.6,
+        "y": 22.8,
+        "w": 5.2,
+        "h": 5.4
+      }
+    },
+    "nearbyDoors": 11
+  },
+  "returned": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 16,
+    "player": [
+      79.22699999999999,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 4.71238898038469,
+      "pitch": -0.30805278102377426,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 244,
+      "textures": 76
+    },
+    "frame": {
+      "cpu": 7.800000004470348,
+      "calls": 107,
+      "triangles": 112475
+    },
+    "pin": null,
+    "l02": {
+      "t": 5.8535999999999895,
+      "stage": 0,
+      "dust": 0.0377435491025718,
+      "stopped": true,
+      "stats": {
+        "tiles": 1,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "distance": 1.0999999999999943
+  },
+  "devClosed": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 16,
+    "player": [
+      79.22699999999999,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 4.71238898038469,
+      "pitch": -0.30805278102377426,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 251,
+      "textures": 76
+    },
+    "frame": {
+      "cpu": 5.199999995529652,
+      "calls": 114,
+      "triangles": 138339
+    },
+    "pin": null,
+    "l02": {
+      "t": 5.8535999999999895,
+      "stage": 0,
+      "dust": 0.0377435491025718,
+      "stopped": true,
+      "stats": {
+        "tiles": 1,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 63,
+    "open": false
+  },
+  "devExpanded": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 16,
+    "player": [
+      79.22699999999999,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 4.71238898038469,
+      "pitch": -0.30805278102377426,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 259,
+      "textures": 76
+    },
+    "frame": {
+      "cpu": 4.600000001490116,
+      "calls": 122,
+      "triangles": 165361
+    },
+    "pin": null,
+    "l02": {
+      "t": 5.8535999999999895,
+      "stage": 0,
+      "dust": 0.0377435491025718,
+      "stopped": true,
+      "stats": {
+        "tiles": 1,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 64,
+    "open": true
+  },
+  "closeDev": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 16,
+    "player": [
+      79.22699999999999,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 4.71238898038469,
+      "pitch": -0.30805278102377426,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 271,
+      "textures": 76
+    },
+    "frame": {
+      "cpu": 4.899999998509884,
+      "calls": 134,
+      "triangles": 213449
+    },
+    "pin": null,
+    "l02": {
+      "t": 5.8535999999999895,
+      "stage": 0,
+      "dust": 0.0377435491025718,
+      "stopped": true,
+      "stats": {
+        "tiles": 1,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 64
+  },
+  "codex": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 16,
+    "player": [
+      79.22699999999999,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 4.71238898038469,
+      "pitch": -0.30805278102377426,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 283,
+      "textures": 76
+    },
+    "frame": {
+      "cpu": 6.0999999940395355,
+      "calls": 146,
+      "triangles": 261245
+    },
+    "pin": null,
+    "l02": {
+      "t": 5.8535999999999895,
+      "stage": 0,
+      "dust": 0.0377435491025718,
+      "stopped": true,
+      "stats": {
+        "tiles": 1,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 67,
+    "text": "子层级天顶站锁定尚未开放的子层级。Level 0.2 · 重塑的混乱已发现Level 0.2「重塑的混乱」。后室装修公司试图把 Level 0 改造成一层整洁的办公空间，工程失败后这片区域从 Level 0 分裂出去：通高米白隔墙、深红棕防撞条、暗酒红短绒地毯、矿棉板吊顶与和 Level 0 一模一样的荧光灯盘。结构并不稳定。——据 Backrooms Wikidot（PandaShark71004 著，JLhze 译）整理冰室锁定尚未开放的子层级。"
+  },
+  "resources": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 16,
+    "player": [
+      80,
+      80,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.1112158270654806,
+      "pitch": 0.004287438357623136,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 284,
+      "textures": 82
+    },
+    "frame": {
+      "cpu": 6.299999997019768,
+      "calls": 80,
+      "triangles": 280479
+    },
+    "pin": null,
+    "l02": {
+      "t": 1.8457999999999846,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 75,
+    "rounds": [
+      {
+        "geometries": 286,
+        "textures": 82
+      },
+      {
+        "geometries": 284,
+        "textures": 82
+      },
+      {
+        "geometries": 284,
+        "textures": 82
+      }
+    ]
+  },
+  "bench": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 16,
+    "player": [
+      80,
+      80,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.1112158270654806,
+      "pitch": 0.004287438357623136,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 315,
+      "textures": 82
+    },
+    "frame": {
+      "cpu": 2,
+      "calls": 110,
+      "triangles": 405273
+    },
+    "pin": null,
+    "l02": {
+      "t": 5.9205999999999595,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 77,
+    "rounds": [
+      {
+        "median": 8.19999999999709,
+        "p95": 12.5,
+        "cpuMedian": 5.200000002980232,
+        "cpuP95": 8.200000002980232,
+        "calls": 80,
+        "triangles": 280479
+      },
+      {
+        "median": 8.19999999999709,
+        "p95": 12.60000000000582,
+        "cpuMedian": 5.5999999940395355,
+        "cpuP95": 8.600000001490116,
+        "calls": 85,
+        "triangles": 324507
+      },
+      {
+        "median": 8.19999999999709,
+        "p95": 12.39999999999418,
+        "cpuMedian": 5.699999995529652,
+        "cpuP95": 8,
+        "calls": 110,
+        "triangles": 405273
+      },
+      {
+        "median": 8.19999999999709,
+        "p95": 12.60000000000582,
+        "cpuMedian": 5.300000004470348,
+        "cpuP95": 9.199999995529652,
+        "calls": 110,
+        "triangles": 405273
+      },
+      {
+        "median": 4.2999999999883585,
+        "p95": 8.5,
+        "cpuMedian": 2.100000001490116,
+        "cpuP95": 5.700000002980232,
+        "calls": 110,
+        "triangles": 405273
+      }
+    ]
+  },
+  "cleaned": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 17,
+    "player": [
+      80,
+      80,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.1112158270654806,
+      "pitch": 0.004287438357623136,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 315,
+      "textures": 82
+    },
+    "frame": {
+      "cpu": 2.2999999970197678,
+      "calls": 110,
+      "triangles": 405273
+    },
+    "pin": null,
+    "l02": {
+      "t": 6.691299999999959,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "allChecks": [
+      "L0 tutorial panel renders in actual HUD",
+      "Real engine reveals L0 task",
+      "Existing engine grants BRC permit",
+      "Real nearby L0 wall for construction",
+      "Wall has accessible construction face",
+      "Using real permit creates construction site",
+      "Reusable permit keeps an item and saves its site",
+      "Construction barriers and door are in actual scene",
+      "E targets actual construction door",
+      "L02 collision/runtime initialized",
+      "Entering real door records L0 sublevel discovery",
+      "Indoor L02 does not render an outdoor sky",
+      "Ramp starts inside the actual unfinished house",
+      "Holding real W climbs the real rubble ramp out of the collapsed floor",
+      "Return arrives at saved construction doorway",
+      "L02 transient scene retired on level change",
+      "GL remains healthy after hound/L0/L02 round trip"
+    ],
+    "round5Checks": 77,
+    "allRound5Checks": [
+      "Paper construction form is shown in actual document overlay",
+      "Document stays within viewport",
+      "Paper form text has no horizontal overflow",
+      "Article attribution is retained in small footer text",
+      "Construction form retains signature fields",
+      "Actual entry card identifies Level 0.2 and its name",
+      "Actual entry card has its subtitle",
+      "Guaranteed spawn router provides actual Wi-Fi",
+      "Interior L02 has no visible sky",
+      "Streamed L02 has regular fluorescent fixtures",
+      "Live light colors and radii match main Level 0",
+      "Both entry sight axes have no near isolated wall end strip",
+      "Strong jump keeps actual head and camera below the ceiling",
+      "Elevated player is clamped below the actual ceiling",
+      "Fixed scene includes a real restroom",
+      "Real restroom uses detailed batched toilet and sink models",
+      "Guaranteed spawn router provides actual Wi-Fi",
+      "Interior L02 has no visible sky",
+      "A real powered wall outlet has accessible footing",
+      "Actual interact ray targets the mounted outlet",
+      "Actual phone battery rises at the mounted outlet",
+      "Live collapse controller removes entire outlet wall",
+      "Collapsed wall no longer has a full-height collision rectangle",
+      "Collapse disconnects active phone charging",
+      "Destroyed outlet has no interaction prompt",
+      "Mounted outlet indicators retire with the wall",
+      "Guaranteed spawn router provides actual Wi-Fi",
+      "Interior L02 has no visible sky",
+      "Controller schedules actual floor collapse in a clear area",
+      "Detailed unfinished house is present in the actual scene",
+      "Guaranteed spawn router provides actual Wi-Fi",
+      "Interior L02 has no visible sky",
+      "Non-light ceiling tile falls through the live controller",
+      "Fallen tile exposes modeled ducts, sprinkler and cable tray",
+      "Paper construction form is shown in actual document overlay",
+      "Document stays within viewport",
+      "Paper form text has no horizontal overflow",
+      "Article attribution is retained in small footer text",
+      "Construction form retains signature fields",
+      "Paper construction form is shown in actual document overlay",
+      "Document stays within viewport",
+      "Paper form text has no horizontal overflow",
+      "Article attribution is retained in small footer text",
+      "Construction form retains signature fields",
+      "Paper construction form is shown in actual document overlay",
+      "Document stays within viewport",
+      "Paper form text has no horizontal overflow",
+      "Article attribution is retained in small footer text",
+      "Construction form retains signature fields",
+      "Paper construction form is shown in actual document overlay",
+      "Document stays within viewport",
+      "Paper form text has no horizontal overflow",
+      "Article attribution is retained in small footer text",
+      "Construction form retains signature fields",
+      "Paper construction form is shown in actual document overlay",
+      "Document stays within viewport",
+      "Paper form text has no horizontal overflow",
+      "Article attribution is retained in small footer text",
+      "Construction form retains signature fields",
+      "Multiple natural return doors exist around entry",
+      "Approaching another return door stops collapse",
+      "Actual E ray targets second natural return door",
+      "L02 developer section is collapsed by default",
+      "Expanding L02 section reveals existing controls",
+      "L0 archive entry can be opened in actual codex",
+      "Real entry unlocks Level 0.2 in L0 codex",
+      "Unmade sublevels remain honestly locked",
+      "Guaranteed spawn router provides actual Wi-Fi",
+      "Interior L02 has no visible sky",
+      "Guaranteed spawn router provides actual Wi-Fi",
+      "Interior L02 has no visible sky",
+      "Guaranteed spawn router provides actual Wi-Fi",
+      "Interior L02 has no visible sky",
+      "Repeated L02 visits keep shared textures bounded",
+      "Repeated L02 visits keep geometry count bounded",
+      "Guaranteed spawn router provides actual Wi-Fi",
+      "Interior L02 has no visible sky"
+    ]
+  },
+  "summary": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 17,
+    "player": [
+      80,
+      80,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.1112158270654806,
+      "pitch": 0.004287438357623136,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 315,
+      "textures": 82
+    },
+    "frame": {
+      "cpu": 2.2999999970197678,
+      "calls": 110,
+      "triangles": 405273
+    },
+    "pin": null,
+    "l02": {
+      "t": 6.699599999999948,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 77
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

@@ -1,0 +1,539 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 10176,
+  "cdp": 10177,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:10176/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sun, 25 Oct 2026 07:15:00 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 298,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 10176,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 11050.020929,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.498,
+        "sendEnd": 0.554,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 62.517,
+        "receiveHeadersEnd": 62.695
+      },
+      "responseTime": 1792912500313.741,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\creeper-import-20261025\\realistic\\qa-1792912482273-21236",
+    "--remote-debugging-port=10177",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 50372,
+    "server": 11352
+  },
+  "appBootMs": 17221.2543,
+  "entryMs": 2384.9859000000033,
+  "firstPlayableMs": 25830.5171,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "memory": {
+      "geometries": 661,
+      "textures": 158
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 0,
+    "load": 0
+  },
+  "setup": {
+    "level": 2,
+    "checks": 1,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 798,
+      "textures": 193
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 0,
+    "load": 0,
+    "natural": [
+      {
+        "host": "rat",
+        "stage": 3,
+        "x": 105.5,
+        "y": 48.5
+      },
+      {
+        "host": "rat",
+        "stage": 1,
+        "x": 81.5,
+        "y": 117.5
+      }
+    ],
+    "pad": {
+      "x": 78.5,
+      "y": 66.5,
+      "axis": {
+        "x": 0,
+        "y": -1
+      },
+      "d": 13.509256086106296
+    }
+  },
+  "rat1": {
+    "level": 2,
+    "checks": 4,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1154,
+      "textures": 216
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 0,
+    "load": 0,
+    "host": "rat",
+    "model": {
+      "tris": 5280,
+      "draws": 26
+    },
+    "key": "[\"rat\",1,\"hairless\",\"wolf\",17]"
+  },
+  "rat4": {
+    "level": 2,
+    "checks": 7,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1165,
+      "textures": 216
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 0,
+    "load": 0,
+    "host": "rat",
+    "model": {
+      "tris": 43598,
+      "draws": 51
+    },
+    "key": "[\"rat\",4,\"hairless\",\"wolf\",17]"
+  },
+  "spider4": {
+    "level": 2,
+    "checks": 10,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1175,
+      "textures": 217
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 0,
+    "load": 0,
+    "host": "arachnid",
+    "model": {
+      "tris": 18478,
+      "draws": 73
+    },
+    "key": "[\"arachnid\",4,\"common\",\"blindcave\",17]"
+  },
+  "human": {
+    "level": 2,
+    "checks": 13,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1167,
+      "textures": 218
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 0,
+    "load": 0,
+    "host": "human",
+    "model": {
+      "tris": 98978,
+      "draws": 61
+    },
+    "key": "[\"human\",5,\"common\",\"wolf\",13]"
+  },
+  "humanAttack": {
+    "level": 2,
+    "checks": 14,
+    "player": [
+      78.5,
+      67.87297970222323,
+      0
+    ],
+    "memory": {
+      "geometries": 1167,
+      "textures": 218
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 0,
+    "load": 50,
+    "hp": 56,
+    "start": [
+      78.5,
+      63.9
+    ],
+    "lunge": {
+      "clip": "lunge",
+      "t": 0.6833000000000026,
+      "pos": [
+        78.5,
+        64.37978559979429
+      ]
+    },
+    "entity": [
+      78.5,
+      67.31297970222323
+    ],
+    "mode": "attack"
+  },
+  "death": {
+    "level": 2,
+    "checks": 19,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1170,
+      "textures": 221
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 0,
+    "load": 0,
+    "deathT": 2.691600000000011,
+    "spores": 1
+  },
+  "spores": {
+    "level": 2,
+    "checks": 22,
+    "player": [
+      78.5,
+      95.9,
+      0
+    ],
+    "memory": {
+      "geometries": 695,
+      "textures": 236
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 0,
+    "load": 3.010250000000005,
+    "spores": 1
+  },
+  "burn": {
+    "level": 2,
+    "checks": 23,
+    "player": [
+      78.5,
+      95.9,
+      0
+    ],
+    "memory": {
+      "geometries": 695,
+      "textures": 236
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 0,
+    "load": 3.010250000000005
+  },
+  "stage2": {
+    "level": 2,
+    "checks": 25,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1354,
+      "textures": 267
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 2,
+    "load": 0,
+    "overlayStage": 2,
+    "handObjects": 3
+  },
+  "stage3": {
+    "level": 2,
+    "checks": 27,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1357,
+      "textures": 267
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 3,
+    "load": 0,
+    "overlayStage": 3,
+    "handObjects": 4
+  },
+  "stage4": {
+    "level": 2,
+    "checks": 29,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1374,
+      "textures": 267
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 4,
+    "load": 0,
+    "overlayStage": 4,
+    "handObjects": 5
+  },
+  "heldWeapon": {
+    "level": 2,
+    "checks": 31,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1379,
+      "textures": 270
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 4,
+    "load": 0
+  },
+  "gun": {
+    "level": 2,
+    "checks": 33,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1404,
+      "textures": 274
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 4,
+    "load": 0
+  },
+  "gunAim": {
+    "level": 2,
+    "checks": 34,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1411,
+      "textures": 274
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 4,
+    "load": 0
+  },
+  "devForms": {
+    "level": 2,
+    "checks": 40,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1410,
+      "textures": 277
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 0,
+    "load": 0,
+    "rows": [
+      {
+        "form": "creeper-rat",
+        "host": "rat"
+      },
+      {
+        "form": "creeper-spider",
+        "host": "arachnid"
+      },
+      {
+        "form": "creeper-human",
+        "host": "human"
+      }
+    ]
+  },
+  "resources": {
+    "level": 2,
+    "checks": 51,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1410,
+      "textures": 277
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 0,
+    "load": 0,
+    "rounds": [
+      {
+        "geometries": 1410,
+        "textures": 277
+      },
+      {
+        "geometries": 1410,
+        "textures": 277
+      },
+      {
+        "geometries": 1410,
+        "textures": 277
+      }
+    ]
+  },
+  "bench": {
+    "level": 2,
+    "checks": 54,
+    "player": [
+      78.5,
+      66.5,
+      0
+    ],
+    "memory": {
+      "geometries": 1441,
+      "textures": 277
+    },
+    "calls": 1,
+    "triangles": 1,
+    "stage": 0,
+    "load": 0,
+    "rounds": [
+      {
+        "median": 4.19999999999709,
+        "p95": 12.5,
+        "calls": 1,
+        "triangles": 1
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 8.30000000000291,
+        "calls": 1,
+        "triangles": 1
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 8.30000000000291,
+        "calls": 1,
+        "triangles": 1
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 8.39999999999418,
+        "calls": 1,
+        "triangles": 1
+      },
+      {
+        "median": 4.19999999999709,
+        "p95": 12.5,
+        "calls": 1,
+        "triangles": 1
+      }
+    ]
+  }
+}

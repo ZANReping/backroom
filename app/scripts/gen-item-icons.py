@@ -654,7 +654,30 @@ def draw_foyerpack(d):
     d.line([(27, 9), (27, 26)], fill='#1f242b', width=2)
     d.point([(9, 7), (8, 8)], fill='#5b6678')                          # 高光
 
+def draw_brc_permit(d):
+    # 施工许可：后室装修公司的蓝色复写单据
+    obox(d, [6, 3, 26, 29], '#5b5f66')
+    obox(d, [13, 1, 19, 5], '#b8bcc4')
+    d.rectangle([8, 6, 24, 27], fill='#cfe0f2', outline=INK)
+    d.rectangle([9, 7, 23, 10], fill='#4f4c7a')
+    d.point([(11, 8), (13, 8), (15, 8), (17, 8)], fill='#d3ae00')
+    for y in (13, 16, 19): d.line([(10, y), (22, y)], fill='#7d93b3')
+    d.line([(10, 22), (15, 22)], fill='#7d93b3')
+    d.ellipse([17, 20, 23, 26], fill='#d3ae00', outline='#8a6d00')
+    d.point([(20, 23), (19, 22), (21, 24)], fill='#f1d45a')
+    for i in range(3): d.line([(9 + i * 3, 25), (11 + i * 3, 23)], fill='#e3b23c')
+
+def draw_dustmask(d):
+    # 防尘口罩：白色折叠杯形口罩与橙色松紧带、蓝灰呼吸阀
+    d.line([(4, 12), (9, 14)], fill='#d9822b', width=2); d.line([(27, 12), (22, 14)], fill='#d9822b', width=2)
+    d.line([(4, 21), (9, 20)], fill='#d9822b', width=2); d.line([(27, 21), (22, 20)], fill='#d9822b', width=2)
+    d.polygon([(8, 12), (16, 8), (24, 12), (24, 21), (16, 26), (8, 21)], fill='#eeeeea', outline=INK)
+    d.line([(16, 9), (16, 25)], fill='#c9c9c2'); d.line([(11, 11), (21, 11)], fill='#aab0b8')
+    obox(d, [13, 15, 19, 20], '#6f8597'); d.point([(15, 17), (17, 17)], fill='#3e4c58'); d.point([(10, 15), (10, 16)], fill='#ffffff')
+
 DRAW = {
+    'brc_permit': draw_brc_permit,
+    'dustmask': draw_dustmask,
     'phone': draw_phone, 'bottledwater': draw_bottledwater, 'snackbar': draw_snackbar, 'foyerpack': draw_foyerpack,
     'acidcallus': draw_acidcallus,
     'ashpile': draw_ashpile,
@@ -709,6 +732,37 @@ DRAW = {
     'candymint_bag': candy_bag('#a0d0b0'),
 }
 
+def tape_motif(d, motif, pal, box):
+    x0, y0, x1, y1 = box
+    if motif == 'single-yellow-wall':
+        d.line([(x0 + 3, y0), (x0 + 3, y1)], fill=pal['stain'])
+    elif motif == 'diamond':
+        for x in range(x0 + 2, x1, 4): d.point([(x, y0 + 2), (x + 1, y0 + 3)], fill=pal['stain'])
+    elif motif:
+        d.line([(x0 + 1, y0 + 1), (x1 - 1, y1 - 1)], fill=pal['stain'])
+
+def draw_level_tape(look):
+    pal, motif = look['palette'], look.get('motif', '')
+    def fn(d):
+        obox(d, [4, 8, 28, 24], pal['shell'])
+        d.line([(5, 9), (27, 9)], fill=pal['trim'])
+        d.rectangle([7, 10, 25, 14], fill=pal['label'], outline=INK)
+        tape_motif(d, motif, pal, (7, 10, 25, 14))
+        d.rectangle([9, 15, 23, 20], fill=pal['window'], outline=INK)
+        for cx in (12, 20):
+            d.ellipse([cx - 2, 16, cx + 2, 20], fill=pal['reel'], outline=INK)
+            d.point([(cx, 18)], fill=pal['reelHub'])
+        d.line([(14, 18), (18, 18)], fill=pal['reelHub'])
+        d.rectangle([7, 21, 25, 23], fill=pal['shellDark'], outline=INK)
+        d.point([(10, 22), (22, 22)], fill=pal['trim'])
+        for x, y in ((5, 19), (6, 20), (26, 12), (25, 17), (26, 18), (5, 13)): d.point([(x, y)], fill=pal['stain'])
+    return fn
+
+import json as _json
+LEVEL_TAPES = _json.load(open('src/game/content/levelTapes.json', encoding='utf-8'))['tapes']
+for _t in LEVEL_TAPES:
+    DRAW[_t['item']] = draw_level_tape(_t)
+
 # ---------- 物品清单：直接解析 items.ts ----------
 src = open('src/game/content/items.ts', encoding='utf-8').read()  # v54：items.ts 移至 content/（此前路径必崩）
 types = re.findall(r"^  (\w+): \{ type: '", src, re.M)
@@ -717,6 +771,7 @@ cb = open('src/game/engine/curabiturTuning.ts', encoding='utf-8').read()
 m = re.search(r'export const CB_ITEM = \{(.*?)\}', cb, re.S)
 if m:
     types += re.findall(r"'(\w+)'", m.group(1))
+types += [t['item'] for t in LEVEL_TAPES]
 if not types:
     sys.exit('未能从 items.ts 解析到物品清单')
 print(f'物品共 {len(types)} 件')

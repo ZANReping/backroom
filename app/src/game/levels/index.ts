@@ -34,6 +34,7 @@ import { LHAMMOZ } from './l114'
 import { LCORNUCOPIA } from './l116'
 
 import { LFOYER } from './lfoyer'
+import { L02 } from './l02'
 
 export const LEVELS: LevelDef[] = [L0, L1, L2, L3, L4, L5, L6, L7, L8, L9, L10, L11, L601]
 
@@ -46,9 +47,12 @@ export const ALL_LEVEL_DEFS: LevelDef[] = [...LEVELS, ...Object.values(OUTPOST_L
 /** 按 id 解析层级定义（普通层级走 LEVELS 下标；据点走独立 id 空间） */
 /** 序章「前厅」（id 900）：只经 levelDefOf 解析，不进入 ALL_LEVEL_DEFS（图鉴/路线审计不列出）。 */
 export const FOYER_LEVEL_DEF: LevelDef = LFOYER
+/** Level 0.2「重塑的混乱」（id 902）：同前厅，只经 levelDefOf 解析。 */
+export const L02_LEVEL_DEF: LevelDef = L02
 
 export function levelDefOf(id: number): LevelDef | undefined {
   if (id === LFOYER.id) return LFOYER
+  if (id === L02.id) return L02
   return OUTPOST_LEVEL_DEFS[id] ?? LEVELS[id]
 }
 
@@ -59,7 +63,7 @@ export const END_LEVEL = 12
 
 /** 玩家可见的层级编号（Level 601 显示 601，其余同索引；据点显示其独立 id） */
 export function levelNo(id: number): number {
-  return LEVELS[id]?.displayId ?? id
+  return levelDefOf(id)?.displayId ?? id // Level 0.2（独立 id 902）经 levelDefOf 取 displayId=0.2
 }
 /** 玩家可见的层级标签，如「Level 8」「Level 601」；据点等专名层级用 label 覆盖（如「Alpha 基地」） */
 export function levelLabel(id: number): string {

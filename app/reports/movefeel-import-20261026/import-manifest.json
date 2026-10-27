@@ -1,0 +1,145 @@
+{
+  "source": "C:\\Users\\ZANRe\\Downloads\\movefeel-full.zip",
+  "sourceSha256": "4b7a02c3746115990f0967f066460979129ca0b04a40bc726d81fde168f32790",
+  "root": "E:\\ZAN\\backroom",
+  "files": [
+    {
+      "path": "app/MOVEFEEL.md",
+      "before": null,
+      "after": "0736abc6f935eb89f3b71fd3ebe2faa9368fce1477627e8a2b061aa8cb932c5c",
+      "patch": "patches/app/MOVEFEEL.md.diff"
+    },
+    {
+      "path": "app/package.json",
+      "before": "66678c48aa880d760a62a79c70aaf6a0dc86e79f5f346cd5e313e4288fbb5c9f",
+      "after": "8646e7511f4c0fad7be9ad8efd61704bbf460a5933863330116291b3f3993bfd",
+      "patch": "patches/app/package.json.diff"
+    },
+    {
+      "path": "app/proto-movefeel.html",
+      "before": null,
+      "after": "75d731dafea5cb4186a7a82782b7dc075730034ea0abb9a6e0280ae8d7807bf0",
+      "patch": "patches/app/proto-movefeel.html.diff"
+    },
+    {
+      "path": "app/scripts/check-arms.ts",
+      "before": "7e97bcf5a782636f1e6aae22f96cd2206ec2366084c722d1ec28256eece6c72e",
+      "after": "1505b30be3c92791075cc5a61c03e46d5bb1e8c56d61d9ea2c2235bc68a643d9",
+      "patch": "patches/app/scripts/check-arms.ts.diff"
+    },
+    {
+      "path": "app/scripts/check-movefeel.ts",
+      "before": null,
+      "after": "92c956e2c1adb54fbc22c9d51e5c8958d8db85b9045982384844d97186c716cb",
+      "patch": "patches/app/scripts/check-movefeel.ts.diff"
+    },
+    {
+      "path": "app/scripts/check-swim.ts",
+      "before": "29a348844afcb1cb59d5e4a91512259c17d406cbb670c560fa02c95014aa895a",
+      "after": "bf87a60119d2f7cbdbf77629c36d9961494e0c9fc229d4282e69269d153eba5b",
+      "patch": "patches/app/scripts/check-swim.ts.diff"
+    },
+    {
+      "path": "app/scripts/verify-movefeel.mjs",
+      "before": null,
+      "after": "e1acf1e7e822dd7e72585ef829f217f80bf0f9e9c2007924523b28a355188141",
+      "patch": "patches/app/scripts/verify-movefeel.mjs.diff"
+    },
+    {
+      "path": "app/src/App.tsx",
+      "before": "4b1dfba8f37f56062dc49435ced5bdff24114c61b153a967e62ccae56de514b0",
+      "after": "c21caadc58ec7c8e31c8c65646d60c09b7de301f5c8708f67bef712032017c40",
+      "patch": "patches/app/src/App.tsx.diff"
+    },
+    {
+      "path": "app/src/components/SettingsModal.tsx",
+      "before": "203af9c60d6e46058398773616c455be1f3e2d4af9eea2dcbd9a74a1d42cae19",
+      "after": "c5893c83f1c595d5cfc96339b8a686ab195b75651ddea4a4c196636998f3ab8c",
+      "patch": "patches/app/src/components/SettingsModal.tsx.diff"
+    },
+    {
+      "path": "app/src/components/TouchControls.tsx",
+      "before": "7b5ce137c385900439a6da474de0628aac0c74af94342740d7aab57edabe6c69",
+      "after": "60bd21458c94b8f2c24562b4c6a6ffdda24d31c63bdb47d0b592ea1a22910731",
+      "patch": "patches/app/src/components/TouchControls.tsx.diff"
+    },
+    {
+      "path": "app/src/game/core/audio.ts",
+      "before": "6418513935ebdd5e010c5d9aaafed8d139a6cb47dc9da3c3a0f7fbd5253dec47",
+      "after": "37e2fd32d96c3f67ab3c969242e36e6c5758bf7f1262150f38db794f8b008cc6",
+      "patch": "patches/app/src/game/core/audio.ts.diff"
+    },
+    {
+      "path": "app/src/game/core/graphicsPresets.ts",
+      "before": "f0f6da63d8cb0964dbe4958d8cc909e4cb6d3c0335dbb7a3b9ba440cccb55893",
+      "after": "13e4db25abea24f97c8582e118a3dddc242932896291ab53a07770e91730137b",
+      "patch": "patches/app/src/game/core/graphicsPresets.ts.diff"
+    },
+    {
+      "path": "app/src/game/core/player.ts",
+      "before": "203541af59165bf0a6cca9f519a55538fe42435abb66691b874fcb38388fa9d1",
+      "after": "2883ca89d2f370796278a537ce439aacb383f35eb6b4f1e920571e087dfa6ae4",
+      "patch": "patches/app/src/game/core/player.ts.diff"
+    },
+    {
+      "path": "app/src/game/engine.ts",
+      "before": "816f76ccdde5610ad229d30f9e3bd314aff53b17f64e70b15f5a6e4656da670f",
+      "after": "1047d2a6f35a81a8e5f3e788282f74d43a8345a9f7a3397ba83870cb341c2b98",
+      "patch": "patches/app/src/game/engine.ts.diff"
+    },
+    {
+      "path": "app/src/game/engine/moveTuning.ts",
+      "before": null,
+      "after": "e2e468018ea75d781fdf9851b381fb7e8f4875fc712791bb1959ab8df0cc45a6",
+      "patch": "patches/app/src/game/engine/moveTuning.ts.diff"
+    },
+    {
+      "path": "app/src/game/engine/movement.ts",
+      "before": "a66aecbccab8e64d91877c9e14a74780ab69ac69a7eef4e5cf0967e31e155d08",
+      "after": "ef5907d24b0979630b660a91d7d291711409363db731a6b3393366ba99308178",
+      "patch": "patches/app/src/game/engine/movement.ts.diff"
+    },
+    {
+      "path": "app/src/game/renderer/renderer.ts",
+      "before": "dfea8f09e0a63cb2811106510aeaf925f1fb9442620de5d8f126b27953086115",
+      "after": "7a725e5213685f757da894eca702c47d8941168a0245788222c9510ffbbf0725",
+      "patch": "patches/app/src/game/renderer/renderer.ts.diff"
+    },
+    {
+      "path": "app/src/proto/movefeelProto.ts",
+      "before": null,
+      "after": "74b1054fd21b20d08cbb1e8e50256e99a61d19dd20ecc239c7e47d069153d79c",
+      "patch": "patches/app/src/proto/movefeelProto.ts.diff"
+    },
+    {
+      "path": "app/src/components/PauseMenu.tsx",
+      "before": "14dda8a333f4ebc59b2ebce82e7b83f29990415319f846198debc8455e07d651",
+      "after": "864e1e277936c8ce470cd103ff262ecdaa03666bddb8ce7d721574ac18c6c9b7",
+      "patch": null
+    },
+    {
+      "path": "app/scripts/check-l0-experience.ts",
+      "before": "ee4e1a0647c984cb76a0ddcb1cc6728ce6dbe99935ab296b4d17b0061e9b8ad1",
+      "after": "5c6569d26fa674b196937a5dbc74929ce0be369b80a810aff12ba6353f71b800",
+      "patch": null
+    },
+    {
+      "path": "app/scripts/verify-movefeel-game.mjs",
+      "before": null,
+      "after": "6779753e5891b32ee8152ac4b22d21665dce5bd593b5f1c66368ceaf07b35ae6",
+      "patch": null
+    },
+    {
+      "path": "info.md",
+      "before": "89a32a77166bda1eb0689c76dbbbbcebce867492a23594875c4dadf65852d185",
+      "after": "455d65d1732ce211445f16a307436bad204eeee41a71f1e78951374000db780e",
+      "patch": null
+    }
+  ],
+  "newScripts": {
+    "check:movefeel": "esbuild scripts/check-movefeel.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-movefeel.mjs && node .cache/check-movefeel.mjs",
+    "verify:movefeel": "node scripts/verify-movefeel.mjs"
+  },
+  "existingCollisionCodePreserved": true,
+  "houndControlPreserved": true
+}

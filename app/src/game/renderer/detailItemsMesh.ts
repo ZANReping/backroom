@@ -204,13 +204,16 @@ function buildCoffee(): THREE.Group {
   return g
 }
 
-function buildTape(): THREE.Group {
+/** 磁带模型；pal 给出时按层级专属磁带外观表（content/levelTapes.json 的 palette）着色外壳/标签/卷盘。 */
+function buildTape(pal?: Record<string, string>): THREE.Group {
   const g = new THREE.Group()
-  const shell = litMaterial({ color: '#2b2d31', map: darkGripTexture(), roughness: .82 })
+  const shell = pal
+    ? litMaterial({ color: '#ffffff', map: noiseTexture(pal.shell ?? '#5b4a2c', pal.stain ?? pal.shellDark ?? '#4a3c22', 64), roughness: .9 })
+    : litMaterial({ color: '#2b2d31', map: darkGripTexture(), roughness: .82 })
   box(g, .29, .18, .058, shell)
-  const face = new THREE.Mesh(new THREE.PlaneGeometry(.275, .166), new THREE.MeshLambertMaterial({ map: cassetteFaceTexture() }))
+  const face = new THREE.Mesh(new THREE.PlaneGeometry(.275, .166), new THREE.MeshLambertMaterial({ map: cassetteFaceTexture(), color: pal?.label ?? '#ffffff' }))
   face.position.z = .0305; g.add(face)
-  const reelMat = litMaterial({ color: '#ded6b7', roughness: .74 })
+  const reelMat = litMaterial({ color: pal?.reel ?? '#ded6b7', roughness: .74 })
   for (const x of [-.068, .068]) {
     const reel = cylinder(g, .047, .047, .02, reelMat, x, .025, .047, 18); reel.rotation.x = Math.PI / 2
     const hub = cylinder(g, .018, .018, .024, litMaterial({ color: '#303238', roughness: .8 }), x, .025, .06, 10); hub.rotation.x = Math.PI / 2
@@ -366,6 +369,9 @@ function buildWallpaper(): THREE.Group {
   curl.rotation.z = Math.PI / 2; curl.rotation.y = -.12
   return g
 }
+
+/** 层级专属磁带（tape_l0…）：通用磁带几何 + 外观表配色。 */
+export function buildLevelTapeMesh(pal: Record<string, string>): THREE.Group { return buildTape(pal) }
 
 export function buildDetailedItemMesh(type: DetailedItemType): THREE.Group {
   switch (type) {

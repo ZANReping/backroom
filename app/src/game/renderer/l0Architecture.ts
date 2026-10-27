@@ -10,13 +10,22 @@ import {RoundedBoxGeometry} from 'three/examples/jsm/geometries/RoundedBoxGeomet
 import {exposedL0WallFaces} from '../world/l0WallFaces'
 import {l0TrimWalls,l0OutletPositions} from '../world/l0WallDetails'
 import {l0StaticPointMask} from './l0PointMask'
+import {L02_RAIL_Y,L02_RAIL_H,L02_WALL_T} from '../world/l02Layout'
+import {installRemodelZones} from './remodelZones'
+import {installL02Cuts} from './l02Scene'
+import {installL02Pbr,l02Tex,L02_PBR,type L02PbrName} from './l02Pbr'
 const inside=(r:L0Rect,x:number,y:number)=>x>=r.x&&y>=r.y&&x<=r.x+r.w&&y<=r.y+r.h
-function tex(name:string,data=false){const t=levelTexture('l0-remake/'+name+'.png',()=>noiseTexture(data?'#8080ff':'#a49e74',data?'#8080ff':'#b2ac86'));t.colorSpace=data?THREE.NoColorSpace:THREE.SRGBColorSpace;return t}
-function material(name:string,baked=true){
- const real=getMaterialMode()==='realistic',trim=name.endsWith('trim'),frame=name==='fixture-frame'||name==='black-frame',paint=name==='khaki'||name==='rubber'||name==='bin-red'||name==='can-metal',source=trim||frame||paint?'cream':name,map=tex(source),carpet=name.includes('carpet')
- const normal=trim?.015:frame?.02:name==='cream'?.035:carpet?.045:name==='wood'?.08:.12
- const tint=trim?(name==='red-trim'?'#843c2f':name==='arch-trim'?'#c8bfab':'#d2c295'):frame?(name==='black-frame'?'#181916':'#e1e0d5'):name==='khaki'?'#d9ceb0':name==='rubber'?'#24231f':name==='bin-red'?'#762e28':name==='can-metal'?'#aaa99a':'#ffffff'
- const m=litMaterial({map,color:tint,normalMap:tex(source+'-normal',true),normalScale:new THREE.Vector2(normal,normal),roughnessMap:real?tex(source+'-rough',true):undefined,roughness:carpet?1:name==='wood'?.92:frame?.67:.94,metalness:frame?.28:0,envBase:carpet?.005:name==='wood'?.018:.025,vertexColors:false,emissive:baked?tint:'#000000',emissiveMap:baked?map:undefined,emissiveIntensity:baked?(frame?.4:.72):0})
+// Level 0.2（theme='l02'）：墙/地毯/吊顶/防撞条换用 public/textures/l02 的 CC0 PBR 材质（albedo + OpenGL 法线 + ORM），其余五金/灯盘沿用 L0。
+const L02_OWN=new Set(['wall','carpet','ceiling','trim'])
+function tex(name:string,data=false,theme?:'l02'){const base=name.replace(/-(normal|rough)$/,'');if(theme&&L02_OWN.has(base))return l02Tex(base as L02PbrName,name.endsWith('-normal')?'normal':name.endsWith('-rough')?'orm':'albedo');const t=levelTexture('l0-remake/'+name+'.png',()=>noiseTexture(data?'#8080ff':'#a49e74',data?'#8080ff':'#b2ac86'));t.colorSpace=data?THREE.NoColorSpace:THREE.SRGBColorSpace;return t}
+function material(name:string,baked=true,theme?:'l02'){
+ const real=getMaterialMode()==='realistic',trim=name.endsWith('trim'),frame=name==='fixture-frame'||name==='black-frame',paint=name==='khaki'||name==='rubber'||name==='bin-red'||name==='can-metal',source=theme&&name==='trim'?'trim':trim||frame||paint?'cream':name,pbr=!!theme&&L02_OWN.has(source),map=tex(source,false,theme),carpet=name.includes('carpet')
+ const normal=pbr?L02_PBR[source as L02PbrName].normal:trim?.015:frame?.02:name==='cream'?.035:carpet?.045:name==='wood'?.08:.12
+ // L0.2 调色（对照参考图取色）：象牙米白墙（压蓝）、暗酒红偏棕地毯（降饱和、偏棕）；防撞条乘在 Rubber004 PBR 贴图上（albedo 均值与旧墙面贴图相同，结果仍为深红棕）。
+ // 吊顶（2026-10-25 PBR 返工）：albedo 标定到 Level 0 本体 ceiling.png 均值 [192,180,132]（暖米黄），tint 只做近中性的轻微压暗/暖偏，
+ // 同机位截图与 Level 0 本体对比实测见 reports/level-0-2/pbr（不再用 #d8d6d1 灰色）。
+ const tint=theme&&name==='trim'?'#6e423a':theme&&name==='wall'?'#fffce0':theme&&name==='carpet'?'#a3f2e2':theme&&name==='ceiling'?'#f4f3ef':trim?(name==='red-trim'?'#843c2f':name==='arch-trim'?'#c8bfab':'#d2c295'):frame?(name==='black-frame'?'#181916':'#e1e0d5'):name==='khaki'?'#d9ceb0':name==='rubber'?'#24231f':name==='bin-red'?'#762e28':name==='can-metal'?'#aaa99a':'#ffffff'
+ const m=litMaterial({map,color:tint,normalMap:tex(source+'-normal',true,theme),normalScale:new THREE.Vector2(normal,normal),roughnessMap:real?tex(source+'-rough',true,theme):undefined,roughness:carpet?1:name==='wood'?.92:frame?.67:theme&&name==='trim'?.82:.94,metalness:frame?.28:0,envBase:carpet?.005:name==='wood'?.018:.025,vertexColors:false,emissive:baked?tint:'#000000',emissiveMap:baked?map:undefined,emissiveIntensity:baked?(frame?.4:.72):0})
  if(name==='can-metal'&&m instanceof THREE.MeshStandardMaterial){m.metalness=.65;m.roughness=.48}
  // Static fixture contribution is baked with wall visibility. Handheld/dropped lights remain live.
  if(baked){
@@ -62,10 +71,17 @@ function material(name:string,baked=true){
   // this key avoids compiling the same program for every architectural finish.
   m.customProgramCacheKey=()=>`l0-bake-v7-${real}-${blend}-${name==='trim'}`
  }
- m.name='l0-'+name;m.userData.l0Owned=true;return m
+ // Level 0 施工许可改造区：冷白灯光 / 地毯变干（Level 0.2 自身不需要）
+ if(!theme)installRemodelZones(m,carpet?'carpet':'surface')
+ // Level 0.2 崩塌：倒塌墙段/塌陷口/掉落吊顶板处丢弃烘焙片元（renderer/l02Scene.ts 画替身）
+ else installL02Cuts(m)
+ // Level 0.2 PBR：法线起伏 / AO / 地毯宏观磨损乘到烘焙后的最终颜色（renderer/l02Pbr.ts）
+ if(pbr)installL02Pbr(m,source as L02PbrName)
+ m.name=(theme?'l02-':'l0-')+name;m.userData.l0Owned=true;return m
 }
 /** Streaming generator: bounded batches, owned materials/geometries, shared images. */
 export function* buildL0Architecture(a:L0Layout,ox:number,oy:number,root:THREE.Group,neighbours:L0Layout[]=[]):Generator<void>{
+ const theme=a.theme
  const groups=new Map<string,THREE.BufferGeometry[]>(),light=createL0LightSampler(a,neighbours),flicker=createL0FlickerSampler([a,...neighbours]),environment=new Map<string,ReturnType<typeof l0LayoutEnvironment>>()
  const environmentAt=(x:number,z:number)=>{const key=`${x.toFixed(4)},${z.toFixed(4)}`;let e=environment.get(key);if(!e){e=l0LayoutEnvironment(a,x,z);environment.set(key,e)}return e}
  const inWood=(x:number,z:number)=>!!a.wood&&inside(a.wood,x,z)&&(!a.testField||!inside(a.testField,x,z))
@@ -76,11 +92,11 @@ export function* buildL0Architecture(a:L0Layout,ox:number,oy:number,root:THREE.G
   const p=g.getAttribute('position'),n=g.getAttribute('normal'),uv=g.getAttribute('uv'),c=new Float32Array(p.count*3),field=new Float32Array(p.count*2),flash=new Float32Array(p.count*4)
   for(let i=0;i<p.count;i++){
    const x=p.getX(i),z=p.getZ(i),h=p.getY(i),nx=n.getX(i),nz=n.getZ(i),top=Math.abs(n.getY(i))>.5
-   const scale=name==='wall'||name==='red'?.8:name==='manila'?1.05:name==='ceiling'?1/1.2:name==='wood'?1/1.7:name.includes('carpet')?1/3:.75
+   const scale=theme&&name==='wall'?.9:theme&&name==='carpet'?1/1.5:name==='wall'||name==='red'?.8:name==='manila'?1.05:name==='ceiling'?1/1.2:name==='wood'?1/1.7:name.includes('carpet')?1/3:.75
    uv.setXY(i,(top?x:Math.abs(nx)>.5?z:x)*scale,(top?z:h)*scale)
    if(top&&name==='wood')uv.setXY(i,z/1.7,x/1.7)
    if(top&&name.endsWith('ceiling'))uv.setXY(i,x/1.2,z/.6)
-   const ceilingK=name==='ceiling'?(inWood(x,z)?.8:.36):1
+   const ceilingK=name==='ceiling'?(inWood(x,z)?.8:theme?.34:.36):1
    const v=(fixture?.light??(bake?light(x,z,h,nx,n.getY(i),nz):1))*ceilingK;c.set([v,v,v],i*3)
    const e=fixture??environmentAt(x,z);field.set([forceYellow?0:e.red,name==='carpet'||name==='trim'?e.arch:0],i*2)
    flash.set(flicker(x,z,h,nx,n.getY(i),nz),i*4)
@@ -110,7 +126,9 @@ export function* buildL0Architecture(a:L0Layout,ox:number,oy:number,root:THREE.G
  const woods=l0WoodRects(a)
  // Rows are built directly into buffers, avoiding thousands of temporary
  // PlaneGeometry objects. Split exactly at doorway flooring boundaries.
- const boundaries=[...woods,...a.pits,...(a.redZones??[]).flatMap(({bounds:r})=>[r,{x:r.x+.26,y:r.y+.26,w:r.w-.52,h:r.h-.52}])]
+ // L0.2：隔墙在 4 m 网格线上，正好压住 1 m 地毯/2 m 吊顶网格顶点——顶点落在墙体内会被烘焙成全黑，插值成墙脚/吊顶上的深色椭圆斑；
+ // 把墙体边线也作为切分线，顶点落在墙面上（单侧可见），斑点消失。
+ const boundaries=[...woods,...a.pits,...(a.redZones??[]).flatMap(({bounds:r})=>[r,{x:r.x+.26,y:r.y+.26,w:r.w-.52,h:r.h-.52}]),...(theme?a.walls.filter(w=>w.bottom<=0&&w.top>0):[])]
  const cuts=(origin:number,axis:'x'|'y',span:'w'|'h')=>[...new Set([...Array.from({length:33},(_,i)=>origin+i),...boundaries.flatMap(r=>[r[axis],r[axis]+r[span]]).filter(v=>v>origin&&v<origin+32)])].sort((a,b)=>a-b)
  const xs=cuts(X,'x','w'),zs=cuts(Y,'y','h')
  for(let zi=0;zi<zs.length-1;zi++){
@@ -127,8 +145,9 @@ export function* buildL0Architecture(a:L0Layout,ox:number,oy:number,root:THREE.G
   for(const [name,b]of buffers){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(b.p,3));g.setAttribute('normal',new THREE.Float32BufferAttribute(b.n,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(b.uv,2));g.setIndex(b.ix);add(g,name)}
   if(zi%2===1)yield
  }
- const ceilX=[...new Set([X,...Array.from({length:16},(_,i)=>X+(i+1)*2),...boundaries.flatMap(r=>[r.x,r.x+r.w])])].filter(v=>v>=X&&v<=X+32).sort((a,b)=>a-b)
- const ceilZ=[...new Set([Y,...Array.from({length:16},(_,i)=>Y+(i+1)*2),...boundaries.flatMap(r=>[r.y,r.y+r.h])])].filter(v=>v>=Y&&v<=Y+32).sort((a,b)=>a-b)
+ // L0.2：吊顶与地毯共用 1 m + 墙边线切分（顶点与地毯顶点同 xz，烘焙可见性缓存命中，不额外增加光线测试），吊顶—墙交界的软阴影才有足够顶点
+ const ceilX=theme?xs:[...new Set([X,...Array.from({length:16},(_,i)=>X+(i+1)*2),...boundaries.flatMap(r=>[r.x,r.x+r.w])])].filter(v=>v>=X&&v<=X+32).sort((a,b)=>a-b)
+ const ceilZ=theme?zs:[...new Set([Y,...Array.from({length:16},(_,i)=>Y+(i+1)*2),...boundaries.flatMap(r=>[r.y,r.y+r.h])])].filter(v=>v>=Y&&v<=Y+32).sort((a,b)=>a-b)
  for(let zi=0;zi<ceilZ.length-1;zi++){
   for(let xi=0;xi<ceilX.length-1;xi++){
    const x=ceilX[xi],z=ceilZ[zi],w=ceilX[xi+1]-x,d=ceilZ[zi+1]-z
@@ -154,13 +173,30 @@ export function* buildL0Architecture(a:L0Layout,ox:number,oy:number,root:THREE.G
   if(axis!==1&&v<.07&&v+f.h>0&&w.surface==='manila'&&!outer)emit(Math.min(.07,v+f.h)-Math.max(0,v),Math.max(0,v),'wood',.006)
   // Intermittent low wall moulding floats above the carpet; no continuous
   // yellow-room skirting remains. Keep it off the arch piers and red enclosure.
-  if(axis!==1&&trimWalls.has(w)&&(name==='wall'||name==='dots')&&v<=.18&&v+f.h>=.205)emit(.025,.18,'trim',.0006)
+  if(!theme&&axis!==1&&trimWalls.has(w)&&(name==='wall'||name==='dots')&&v<=.18&&v+f.h>=.205)emit(.025,.18,'trim',.0006)
+  // Level 0.2：深红棕防撞条——沿用 Level 0 踢脚线的选墙规则（l0TrimWalls：整段相连隔墙为一组、短组按种子约 12% 装饰），
+  // 选中组的竖直外露面（含墙端）才有；盒体两端各伸出 1.2 cm 包住转角
+  if(theme&&axis!==1&&trimWalls.has(w)&&w.bottom<=0&&v<=L02_RAIL_Y-L02_RAIL_H/2&&v+f.h>=L02_RAIL_Y+L02_RAIL_H/2){
+   const D=.014,len=f.w+D*2,g=axis===0?new THREE.BoxGeometry(D,L02_RAIL_H,len,1,1,Math.max(1,Math.ceil(len/.8))):new THREE.BoxGeometry(len,L02_RAIL_H,D,Math.max(1,Math.ceil(len/.8)),1,1)
+   if(axis===0)g.translate(at+sign*D/2,L02_RAIL_Y,u+f.w/2);else g.translate(u+f.w/2,L02_RAIL_Y,at+sign*D/2)
+   add(g,'trim')
+   // 倒角：上下沿各压一条窄台阶（截面看是一道斜边的近似），受光时出现细高光/细阴影
+   for(const dy of [L02_RAIL_H/2+.002,-L02_RAIL_H/2-.002]){const c=axis===0?new THREE.BoxGeometry(D*.55,.004,len-.004,1,1,Math.max(1,Math.ceil(len/.8))):new THREE.BoxGeometry(len-.004,.004,D*.55,Math.max(1,Math.ceil(len/.8)),1,1);if(axis===0)c.translate(at+sign*D*.275,L02_RAIL_Y+dy,u+f.w/2);else c.translate(u+f.w/2,L02_RAIL_Y+dy,at+sign*D*.275);add(c,'trim')}
+   // 接缝：每 2.4 m 一道（防撞条成品长度），深色细缝略凸出
+   for(let t=2.4;t<f.w-.3;t+=2.4){const s=axis===0?new THREE.BoxGeometry(D+.0012,L02_RAIL_H+.004,.0025):new THREE.BoxGeometry(.0025,L02_RAIL_H+.004,D+.0012);if(axis===0)s.translate(at+sign*(D/2+.0006),L02_RAIL_Y,u+t);else s.translate(u+t,L02_RAIL_Y,at+sign*(D/2+.0006));add(s,'rubber')}
+  }
+  // Level 0.2 墙端护角：墙端头（宽≈墙厚的竖向外露面）两条竖棱各贴一根 1 cm 护角条，略凸出两侧墙面，像圆角/倒角
+  if(theme&&axis!==1&&f.w<=L02_WALL_T+.01&&w.bottom<=0&&f.h>1.5){
+   for(const t of [0,f.w]){const g=new THREE.BoxGeometry(.011,f.h-.01,.011,1,Math.max(1,Math.ceil(f.h/.6)),1);if(axis===0)g.translate(at+sign*.0035,v+f.h/2,u+t);else g.translate(u+t,v+f.h/2,at+sign*.0035);add(g,'wall')}
+  }
   yield
  }
  // Two grounded receptacles, bevelled plate, screw heads and recessed slots.
  // All hardware joins existing material buckets, including at close range.
  for(const socket of l0OutletPositions(a)){
-  const x=0,z=0,y=.335,parts:{g:THREE.BufferGeometry;name:string}[]=[]
+  // 插座高度：L0.2 只有装了防撞条的墙把插座抬到条带上方（0.46 m），其余墙与 Level 0 相同（0.335 m）
+  const host=a.walls.find(w=>socket.x>=w.x&&socket.x<=w.x+w.w&&Math.abs(w.y+w.h-socket.y)<.01)
+  const x=0,z=0,y=theme&&host&&trimWalls.has(host)?.46:.335,parts:{g:THREE.BufferGeometry;name:string}[]=[]
   const outletAdd=(g:THREE.BufferGeometry,name:string)=>parts.push({g,name})
   const outletBox=(x:number,y:number,z:number,w:number,h:number,d:number,name:string)=>{const g=new THREE.BoxGeometry(w,h,d);g.translate(x+w/2,y+h/2,z+d/2);outletAdd(g,name)}
   const plate=new RoundedBoxGeometry(.086,.138,.012,1,.006);plate.translate(x,y,z);outletAdd(plate,'cream')
@@ -208,7 +244,8 @@ export function* buildL0Architecture(a:L0Layout,ox:number,oy:number,root:THREE.G
  }
  const lit:THREE.BufferGeometry[]=[],off:THREE.BufferGeometry[]=[]
  for(const l of a.lamps){
-  const parts=buildL0FixtureParts(l,L0_HEIGHT)
+  // L0.2 第五轮：灯盘与 Level 0 本体完全相同（四灯管 + 浅格栅 + 反光槽，flatLens=false；发光色/强度同 L0）
+  const parts=buildL0FixtureParts(l,L0_HEIGHT,false)
   // Millimetre-scale grille faces share one irradiance sample. Ray-tracing
   // every bevel vertex was the dominant build cost and added no visible detail.
   const fixture={...environmentAt(l.x,l.y),light:light(l.x,l.y,L0_HEIGHT-.06,0,-1,0)}
@@ -227,10 +264,11 @@ export function* buildL0Architecture(a:L0Layout,ox:number,oy:number,root:THREE.G
   box(v.x+.024,L0_HEIGHT-.033,v.y+v.h*.33,v.w-.048,.008,.009,'pit');box(v.x+.024,L0_HEIGHT-.033,v.y+v.h*.67,v.w-.048,.008,.009,'pit')
   for(const x of [v.x+.015,v.x+v.w-.015])for(const z of [v.y+.015,v.y+v.h-.015]){const screw=new THREE.CircleGeometry(.004,6);screw.rotateX(-Math.PI/2);screw.translate(x,L0_HEIGHT-.045,z);add(screw,'pit')}
  }
- for(const [arr,color]of [[lit,a.region==='red'?'#ffdccb':'#fffbee'],[off,'#aaa79b']]as const)if(arr.length){const g=mergeGeometries(arr);arr.forEach(v=>v.dispose());if(g){const map=tex('diffuser'),on=arr===lit;const mat=litMaterial({map,color:on?'#c4c1ac':color,emissive:on?color:'#000000',emissiveMap:map,normalMap:tex('diffuser-normal',true),normalScale:new THREE.Vector2(.04,.04),roughnessMap:getMaterialMode()==='realistic'?tex('diffuser-rough',true):undefined,emissiveIntensity:on?(getMaterialMode()==='realistic'?3.8:1.3):0,roughness:.92,envBase:.008});root.add(new THREE.Mesh(g,mat))}}
+ for(const [arr,color]of [[lit,a.region==='red'?'#ffdccb':'#fffbee'],[off,'#aaa79b']]as const)if(arr.length){const g=mergeGeometries(arr);arr.forEach(v=>v.dispose());if(g){const map=tex('diffuser'),on=arr===lit;const flat=false,mat=litMaterial({map,color:on?'#c4c1ac':color,emissive:on?color:'#000000',emissiveMap:flat?undefined:map,normalMap:tex('diffuser-normal',true),normalScale:new THREE.Vector2(.04,.04),roughnessMap:getMaterialMode()==='realistic'?tex('diffuser-rough',true):undefined,emissiveIntensity:on?(getMaterialMode()==='realistic'?3.8:flat?2.4:1.3):0,roughness:.92,envBase:.008}); // L0.2：格栅灯盘按参考图做成整片均匀发白的漫射面
+if(!theme)installRemodelZones(mat,'diffuser');root.add(new THREE.Mesh(g,mat))}}
  for(const p of a.puddles)for(const [x,z,w,d]of [[p.x,p.y,.008,p.h],[p.x+p.w-.008,p.y,.008,p.h],[p.x,p.y,p.w,.008],[p.x,p.y+p.h-.008,p.w,.008]])box(x,-p.depth,z,w,p.depth,d,'carpet')
- for(const [name,arr]of groups){const merged=mergeGeometries(arr);arr.forEach(g=>g.dispose());if(merged){const mesh=new THREE.Mesh(merged,material(name));mesh.castShadow=!name.includes('carpet')&&name!=='wood'&&!name.endsWith('trim');mesh.receiveShadow=true;root.add(mesh)}yield}
- for(const p of a.puddles){const g=new THREE.PlaneGeometry(p.w,p.h);g.rotateX(-Math.PI/2);g.translate(p.x+p.w/2-ox,-.018,p.y+p.h/2-oy);root.add(new THREE.Mesh(g,litMaterial({color:'#38372b',transparent:true,opacity:.35,roughness:.2,envBase:.15,depthWrite:false})))}
+ for(const [name,arr]of groups){const merged=mergeGeometries(arr);arr.forEach(g=>g.dispose());if(merged){const mesh=new THREE.Mesh(merged,material(name,true,theme));mesh.castShadow=!name.includes('carpet')&&name!=='wood'&&!name.endsWith('trim');mesh.receiveShadow=true;root.add(mesh)}yield}
+ for(const p of a.puddles){const g=new THREE.PlaneGeometry(p.w,p.h);g.rotateX(-Math.PI/2);g.translate(p.x+p.w/2-ox,-.018,p.y+p.h/2-oy);{const pm=litMaterial({color:'#38372b',transparent:true,opacity:.35,roughness:.2,envBase:.15,depthWrite:false});installRemodelZones(pm,'puddle');root.add(new THREE.Mesh(g,pm))}}
  root.userData.l0Architecture=true
  }finally{for(const arr of groups.values())for(const g of arr)g.dispose();root.traverse(o=>{const m=(o as THREE.Mesh).material;if(m)for(const mat of(Array.isArray(m)?m:[m]))mat.userData.l0Owned=true})}
 }

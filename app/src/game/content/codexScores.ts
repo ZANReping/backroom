@@ -87,6 +87,7 @@ export const ENTITY_INTEL: Record<string, string> = {
   vendingmachine: 'C-', vmad: 'C-', // 人制品售货机
   nguithr: 'C', // Nguithr'xurh（精巧织网布陷阱）
   malady: 'E', // 疫疾（细菌本能传播，无智能可言）
+  creeper: 'E', // [creeper] 爬菌：寄生真菌驱动宿主，无智能可言（爬菌人只剩本能）
 }
 
 // ---- IOTS 物品分类（完全对照 component:iots 的标准词汇与点数表；不渲染徽章组件本体） ----
@@ -118,6 +119,7 @@ const IOTS_UTILITY_OVERRIDE: Record<string, string> = {
   thingmeat: '不建议使用', // 7 层之物的肉
   velvetcake: '不建议使用', // 派对客的丝绒蛋糕：切勿食用
   ratmeat: '高风险实用', // v79 尸鼠肉（顶饿但可能染病）
+  creepmeat: '不建议使用', // [creeper] 爬菌感染体的肉
   liquidpain: '不建议使用', // 液态痛苦：饮用致命（仅作武器使用）
   manmade: '不建议使用', // 人制品：高多巴胺成瘾食品
   tape: '情境实用', // 集齐 6 盘揭示真相（胜利条件）
@@ -141,6 +143,7 @@ const IOTS_ORIGIN_OVERRIDE: Record<string, string> = {
   thingmeat: '实体相关', // 7 层之物身上割下
   velvetcake: '实体相关', // 派对客反刍制成
   ratmeat: '实体相关', // v79 尸鼠身上割下
+  creepmeat: '实体相关', // [creeper] 爬菌感染体掉落
   ashpile: '实体相关', // 观察者光束化灰留下
   manmade: '实体相关', // 人制品售货机（Entity 36）的产品
   pamphlet: '实体相关', // 杰瑞的信众张贴（鹉主教义）
@@ -270,6 +273,7 @@ export const ENTITY_CECS_CLASS: Record<string, string> = {
   vendingmachine: 'Itemic', vmad: 'Itemic',
   nguithr: 'Zoophoid',
   malady: 'Enigmatic', // v55：疫疾（无形体的传染疾病）
+  creeper: 'Chimeric', // [creeper] 爬菌：真菌 + 宿主的混合体
 }
 
 /** 实体具备的 CECS 性质（键=实体 type） */
@@ -285,4 +289,5 @@ export const ENTITY_CECS: Record<string, string[]> = {
   vendingmachine: ['NCR', 'MCH', 'NRO'], vmad: ['NCR', 'MCH', 'NRO'],
   nguithr: ['AGR', 'TXC'],
   malady: ['NCR', 'TXC'], // v55：疫疾（隐秘传播 · 毒性危害）
+  creeper: ['AGR', 'VRL-A'], // [creeper] 爬菌：咬伤 / 孢子传染，宿主转化
 }

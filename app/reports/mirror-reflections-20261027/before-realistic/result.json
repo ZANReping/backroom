@@ -1,0 +1,460 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 2767,
+  "cdp": 2768,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:2767/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Tue, 27 Oct 2026 08:39:31 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 136,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 2767,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 117440.45558,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.657,
+        "sendEnd": 0.746,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 227.357,
+        "receiveHeadersEnd": 227.548
+      },
+      "responseTime": 1793090371780.22,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\mirror-reflections-20261027\\before-realistic\\qa-1793090321875-59516",
+    "--remote-debugging-port=2768",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 46796,
+    "server": 20096
+  },
+  "appBootMs": 42402.32,
+  "entryMs": 4974.087800000008,
+  "firstPlayableMs": 59329.09679999999,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "pos": [
+      78.5,
+      79.5,
+      0
+    ],
+    "camera": [
+      78.5,
+      1.55,
+      79.5
+    ],
+    "yaw": 0,
+    "pitch": 0,
+    "mirrors": null,
+    "memory": {
+      "geometries": 661,
+      "textures": 159
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": []
+  },
+  "foyer": {
+    "level": 900,
+    "pos": [
+      6,
+      12.55,
+      0
+    ],
+    "camera": [
+      6,
+      1.55,
+      12.55
+    ],
+    "yaw": -4.71238898038469,
+    "pitch": 0.05046217401685577,
+    "mirrors": null,
+    "memory": {
+      "geometries": 676,
+      "textures": 235
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": []
+  },
+  "perf": [
+    {
+      "median": 4.200000002980232,
+      "p95": 13.400000005960464,
+      "mirrorCpuMedian": 0,
+      "mirrorCpuP95": 0,
+      "level": 900,
+      "pos": [
+        6,
+        12.55,
+        0
+      ],
+      "camera": [
+        6,
+        1.55,
+        12.55
+      ],
+      "yaw": -4.71238898038469,
+      "pitch": 0.05046217401685577,
+      "mirrors": null,
+      "memory": {
+        "geometries": 644,
+        "textures": 231
+      },
+      "calls": 1,
+      "triangles": 1,
+      "checks": []
+    },
+    {
+      "median": 16.5,
+      "p95": 33.70000000298023,
+      "mirrorCpuMedian": 0,
+      "mirrorCpuP95": 0,
+      "level": 900,
+      "pos": [
+        6,
+        12.55,
+        0
+      ],
+      "camera": [
+        6,
+        1.55,
+        12.55
+      ],
+      "yaw": -4.71238898038469,
+      "pitch": 0.05046217401685577,
+      "mirrors": null,
+      "memory": {
+        "geometries": 644,
+        "textures": 231
+      },
+      "calls": 1,
+      "triangles": 1,
+      "checks": []
+    },
+    {
+      "median": 4.299999997019768,
+      "p95": 21.5,
+      "mirrorCpuMedian": 0,
+      "mirrorCpuP95": 0,
+      "level": 900,
+      "pos": [
+        6,
+        12.55,
+        0
+      ],
+      "camera": [
+        6,
+        1.55,
+        12.55
+      ],
+      "yaw": -4.71238898038469,
+      "pitch": 0.05046217401685577,
+      "mirrors": null,
+      "memory": {
+        "geometries": 644,
+        "textures": 231
+      },
+      "calls": 1,
+      "triangles": 1,
+      "checks": []
+    },
+    {
+      "median": 4.5,
+      "p95": 34,
+      "mirrorCpuMedian": 0,
+      "mirrorCpuP95": 0,
+      "level": 900,
+      "pos": [
+        6,
+        12.55,
+        0
+      ],
+      "camera": [
+        6,
+        1.55,
+        12.55
+      ],
+      "yaw": -4.71238898038469,
+      "pitch": 0.05046217401685577,
+      "mirrors": null,
+      "memory": {
+        "geometries": 644,
+        "textures": 231
+      },
+      "calls": 1,
+      "triangles": 1,
+      "checks": []
+    },
+    {
+      "median": 4.100000008940697,
+      "p95": 11.5,
+      "mirrorCpuMedian": 0,
+      "mirrorCpuP95": 0,
+      "level": 900,
+      "pos": [
+        6,
+        12.55,
+        0
+      ],
+      "camera": [
+        6,
+        1.55,
+        12.55
+      ],
+      "yaw": -4.71238898038469,
+      "pitch": 0.05046217401685577,
+      "mirrors": null,
+      "memory": {
+        "geometries": 644,
+        "textures": 231
+      },
+      "calls": 1,
+      "triangles": 1,
+      "checks": []
+    }
+  ],
+  "side": {
+    "level": 900,
+    "pos": [
+      6.6,
+      13,
+      0
+    ],
+    "camera": [
+      6.6,
+      1.55,
+      13
+    ],
+    "yaw": 1.3981148351768917,
+    "pitch": 0.038164698551551524,
+    "mirrors": null,
+    "memory": {
+      "geometries": 644,
+      "textures": 231
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": []
+  },
+  "away": {
+    "level": 900,
+    "pos": [
+      6.6,
+      13,
+      0
+    ],
+    "camera": [
+      6.6,
+      1.55,
+      13
+    ],
+    "yaw": 4.539707488766685,
+    "pitch": 0.038164698551551524,
+    "mirrors": null,
+    "memory": {
+      "geometries": 644,
+      "textures": 231
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": []
+  },
+  "bath": {
+    "level": 900,
+    "pos": [
+      10.45,
+      5.4,
+      0
+    ],
+    "camera": [
+      10.45,
+      1.55,
+      5.4
+    ],
+    "yaw": -4.71238898038469,
+    "pitch": 0,
+    "mirrors": null,
+    "memory": {
+      "geometries": 676,
+      "textures": 235
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": []
+  },
+  "l02": {
+    "level": 902,
+    "pos": [
+      78.1,
+      70.2,
+      0
+    ],
+    "camera": [
+      78.1,
+      1.55,
+      70.2
+    ],
+    "yaw": -4.71238898038469,
+    "pitch": -0.02856365783876002,
+    "mirrors": null,
+    "memory": {
+      "geometries": 151,
+      "textures": 101
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": [
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      }
+    ],
+    "rest": {
+      "x": -52,
+      "y": -60,
+      "w": 6,
+      "h": 4,
+      "door": {
+        "x": -48.1,
+        "w": 1.1
+      }
+    }
+  },
+  "traders": {
+    "level": 102,
+    "pos": [
+      82,
+      122.72699999999999,
+      0
+    ],
+    "camera": [
+      82,
+      1.55,
+      122.72699999999999
+    ],
+    "yaw": -3.141592653589793,
+    "pitch": 0.049958395721942696,
+    "mirrors": null,
+    "memory": {
+      "geometries": 765,
+      "textures": 146
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": [
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      }
+    ],
+    "fixture": {
+      "kind": "trade_counter",
+      "x": 80.4,
+      "y": 124.35199999999999,
+      "w": 3.2,
+      "h": 0.7500000000000004,
+      "solid": true,
+      "data": {
+        "tradersId": "dress.west_wash.basins",
+        "tradersModel": "dressing",
+        "dressing": "washcounter",
+        "tradersProp": "dressing",
+        "deg": 180,
+        "height": 2.25,
+        "bottom": 0,
+        "roomId": "west_wash",
+        "variant": 2,
+        "wallId": "wall_188",
+        "wallSide": "s",
+        "wallNormalX": 0,
+        "wallNormalY": -1,
+        "wallGap": 0.008,
+        "localW": 3.2,
+        "localD": 0.75
+      }
+    }
+  },
+  "summary": {
+    "level": 102,
+    "pos": [
+      82,
+      122.72699999999999,
+      0
+    ],
+    "camera": [
+      82,
+      1.55,
+      122.72699999999999
+    ],
+    "yaw": -3.141592653589793,
+    "pitch": 0.049958395721942696,
+    "mirrors": null,
+    "memory": {
+      "geometries": 797,
+      "textures": 146
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": [
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      }
+    ]
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

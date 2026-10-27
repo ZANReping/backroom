@@ -7,6 +7,7 @@ import {buildTradersMarketProp} from './tradersMarketMeshes'
 import {buildTradersShopProp} from './tradersShopMeshes'
 import {tradersLocalStructure,type DressingKind} from '../content/tradersDressingShapes'
 import type {TradersAssets} from './tradersMeshes'
+import { mirrorSurface } from './mirrorSurface'
 export function buildTradersDressing(source:Structure,assets:TradersAssets){
  const s=tradersLocalStructure(source),kind=s.data?.dressing as DressingKind,w=s.w,d=s.h,v=Number(s.data?.variant??0)
  const root=new THREE.Group();root.userData.tradersOwnGeometry=true;root.name='traders-dressing:'+kind;root.position.set(s.x+w/2,0,s.y+d/2);root.rotation.y=Number(s.data?.deg??0)*Math.PI/180
@@ -80,7 +81,9 @@ export function buildTradersDressing(source:Structure,assets:TradersAssets){
   for(const x of [-w*.27,w*.27]){
    const profile=[[.035,0],[.13,.02],[.23,.09],[.28,.13],[.30,.14],[.30,.156],[.275,.156],[.22,.09],[.12,.03],[.035,.014]].map(([r,y])=>new THREE.Vector2(r,y)),g=new THREE.LatheGeometry(profile,16);g.translate(x,.79,0);p.add(g,'ceramic',C.paper)
    p.cylinder(x,.810,0,.035,.01,'steel',C.dark);rod([x,.94,-.25],[x,1.14,-.25],.021);rod([x,1.14,-.25],[x,1.14,-.10],.021)
-   p.box(x,1.72,-d/2+.03,1.10,.95,.035,'mirror','#adbbb7',.015)
+   const reflector = mirrorSurface(1.10, .95)
+   reflector.position.set(x, 1.72, -d / 2 + .048)
+   root.add(reflector)
    for(const xx of [-.56,.56])p.box(x+xx,1.72,-d/2+.045,.025,.99,.04,'steel',C.steel)
    for(const yy of [1.235,2.205])p.box(x,yy,-d/2+.045,1.14,.025,.04,'steel',C.steel)
    p.box(x+.45,1.13,-d/2+.11,.12,.25,.15,'paint',C.cream,.02);p.box(x+.45,1.27,-d/2+.11,.09,.035,.09,'rubber',C.dark)

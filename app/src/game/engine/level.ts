@@ -30,6 +30,9 @@ import type { Engine } from '../engine'
 import { l5StairWallDirection } from '../world/l5Topology'
 import { resetEffects } from './effects'
 import { persist as persistSave } from './save'
+import { remodelOnLevelChange, remodelBeforeEnter, placeAtRemodelDoor } from './remodel'
+import { L02_ID } from '../world/l02Layout'
+import { resetL02, leaveL02 } from './l02Collapse'
 
 export function nextMapSeed(eng: Engine, id: number): number {
   return eng.mpMapSeed?.(id) ?? (id === 0 ? eng.l0World?.seed ?? eng.seed : id === 1 ? eng.l1World?.seed ?? (eng.seed===20261006?eng.seed:eng.seed+131) : id === 11 ? eng.l11World?.seed ?? (eng.seed+1441) : id===102 ? eng.tradersWorld?.seed??(eng.seed+13362) : eng.seed+eng.time*7+id*131)
@@ -37,6 +40,14 @@ export function nextMapSeed(eng: Engine, id: number): number {
 
 export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; firstVisit: boolean }, preparedMapSeed?: number) {
   if (eng.player.level === FOYER_ID && id !== FOYER_ID) resetBreakCube()
+  // 层级任务：离开当前层级（读档恢复不算；死亡即结束本局，不会走到这里）
+  if (!restore && eng.map && !eng.over && eng.player.level !== id) eng.questEvent({ t: 'leaveLevel', from: eng.player.level, to: id })
+  // 施工许可：离开 Level 0 → 许可刷新；同步施工点供 L0 区块实例化注入
+  remodelOnLevelChange(eng, eng.player.level, id, !!restore)
+  // Level 0.2：每次进入都从完整状态开始（崩塌不持久）；离开时清掉手机 Wi‑Fi/充电状态
+  if (id === L02_ID) resetL02(eng); else leaveL02(eng)
+  const arriveRemodel = eng.arriveRemodel && !restore && id === 0
+  eng.arriveRemodel = false
   if(!restore&&eng.map?.traders)eng.tradersWorld=captureTradersWorld(eng.map)
   eng.seating = null
   settleGlowFlight(eng)
@@ -237,6 +248,8 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.l7fx=newL7Fx();eng.l7fx.mapRef=eng.map
   eng.explored = new Uint8Array(eng.map.w * eng.map.h)
   if(id===0)restoreL0(eng)
+  // 从 Level 0.2 返回：落在施工门旁
+  if(arriveRemodel)placeAtRemodelDoor(eng)
   if(id===1)restoreL1(eng)
   if(id===11)restoreL11(eng)
   eng.visible = new Uint8Array(eng.map.w * eng.map.h)
@@ -285,8 +298,11 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.l9FogK = 0
   eng.l9FogT = id === 9 ? 230 + Math.random() * 360 : 240
   audio.stopCaveWeather()
-  audio.startHum(id)
+  // Level 0.2：没有嗡鸣，只有空调低频风声（远处电钻/敲击声见 audio.startAirCon）
+  audio.stopAirCon()
+  if (id === L02_ID) { audio.stopHum(); audio.startAirCon() } else audio.startHum(id)
   audio.startBGM(id)
+  if (id === L02_ID) audio.stopBGM()
   if (id === 6) audio.stopBGM() // L6 除罕见幻听外保持寂静
   if (id === 4) audio.startRain() // v54：L4 常驻雨声（永不止歇的大雨）；离层即停
   else audio.stopRain()
@@ -630,6 +646,9 @@ export function takeExit(eng: Engine, def: ExitDef) {  const p = eng.player
     eng.emit({ kind: 'transition', anim: 'bloom' })
     return
   }
+  // 施工门：记录施工点并完成「发现『重塑的混乱』」（仍在 Level 0 时触发任务事件）
+  if (def.kind === 'remodeldoor') { remodelBeforeEnter(eng, eng.remodelPendingSite); eng.remodelPendingSite = undefined }
+  if (def.kind === 'remodelreturn') eng.arriveRemodel = true
   audio.pickup()
   // v51：乘电梯 → 抵达层出生点改到该层电梯旁（L3↔L4/L5 双向）
   if (def.kind === 'elevatorshaft') eng.arriveElevator = true

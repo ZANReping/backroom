@@ -1,0 +1,69 @@
+
+> my-app@0.0.0 check:swim-integration
+> esbuild scripts/check-swim-integration.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-swim-integration.mjs && node .cache/check-swim-integration.mjs
+
+
+  .cache\check-swim-integration.mjs  6.3mb
+
+Done in 278ms
+PASS Water currents cannot pass through a thin submerged collider
+PASS Blocked currents slide along the collider
+PASS Current leaves the player outside the collider
+PASS Strong impulses cannot tunnel through the thin collider
+PASS A terrain wall blocks external water forces
+PASS Water forces stop at the shore instead of pushing onto dry land
+PASS Unblocked currents retain a decaying drift
+PASS Origin rebasing preserves inertia when world position stays unchanged
+PASS A real teleport clears the old swimming velocity
+PASS Swimming velocity remains finite after rebase and teleport
+PASS Teleports clear external currents before they can move the new position
+PASS Teleporting during a mantle cannot pull the player back to the old bank
+PASS knife light animation and cooldown use underwater resistance
+PASS knife light hit timing slows without extra stamina cost
+PASS knife heavy animation and cooldown use underwater resistance
+PASS knife heavy hit timing slows without extra stamina cost
+PASS crowbar light animation and cooldown use underwater resistance
+PASS crowbar light hit timing slows without extra stamina cost
+PASS crowbar heavy animation and cooldown use underwater resistance
+PASS crowbar heavy hit timing slows without extra stamina cost
+PASS wrench light animation and cooldown use underwater resistance
+PASS wrench light hit timing slows without extra stamina cost
+PASS wrench heavy animation and cooldown use underwater resistance
+PASS wrench heavy hit timing slows without extra stamina cost
+PASS timber light animation and cooldown use underwater resistance
+PASS timber light hit timing slows without extra stamina cost
+PASS timber heavy animation and cooldown use underwater resistance
+PASS timber heavy hit timing slows without extra stamina cost
+PASS axe light animation and cooldown use underwater resistance
+PASS axe light hit timing slows without extra stamina cost
+PASS axe heavy animation and cooldown use underwater resistance
+PASS axe heavy hit timing slows without extra stamina cost
+PASS Water resistance does not mutate shared weapon damage, reach or durability tables
+PASS Reset clears velocity, currents, breath, pressure, bends and mantle state
+PASS Separate swimming controllers do not share mutable state
+PASS Normal oxygen leaves the rendered image unchanged
+PASS Breath visuals progress from edge contraction to desaturation and blackout
+PASS Breath uniforms are bounded at stage 0, oxygen 0
+PASS Breath uniforms are bounded at stage 0, oxygen 0.6
+PASS Breath uniforms are bounded at stage 0, oxygen 0.85
+PASS Breath uniforms are bounded at stage 0, oxygen 1
+PASS Breath uniforms are bounded at stage 0, oxygen 1.5
+PASS Breath uniforms are bounded at stage 1, oxygen 0
+PASS Breath uniforms are bounded at stage 1, oxygen 0.6
+PASS Breath uniforms are bounded at stage 1, oxygen 0.85
+PASS Breath uniforms are bounded at stage 1, oxygen 1
+PASS Breath uniforms are bounded at stage 1, oxygen 1.5
+PASS Breath uniforms are bounded at stage 2, oxygen 0
+PASS Breath uniforms are bounded at stage 2, oxygen 0.6
+PASS Breath uniforms are bounded at stage 2, oxygen 0.85
+PASS Breath uniforms are bounded at stage 2, oxygen 1
+PASS Breath uniforms are bounded at stage 2, oxygen 1.5
+PASS Breath uniforms are bounded at stage 3, oxygen 0
+PASS Breath uniforms are bounded at stage 3, oxygen 0.6
+PASS Breath uniforms are bounded at stage 3, oxygen 0.85
+PASS Breath uniforms are bounded at stage 3, oxygen 1
+PASS Breath uniforms are bounded at stage 3, oxygen 1.5
+PASS Recovery clears the effect regardless of pulse phase
+PASS Swimming hands and thumbs mirror in camera space
+PASS Swimming fingers extend rather than forming the empty-hand fist
+60/60 integration checks passed

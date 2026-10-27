@@ -1,0 +1,229 @@
+{
+  "date": "2026-10-26",
+  "root": "E:\\ZAN\\backroom",
+  "moveFeel": {
+    "passed": 87,
+    "checks": 87,
+    "newVelocityCrateSweeps": 240,
+    "fps": [
+      30,
+      60,
+      144
+    ]
+  },
+  "regressions": {
+    "arms": "81/81",
+    "swim": "89/89",
+    "swimIntegration": "60/60",
+    "oldIntegratorRecovery": {
+      "assertions": 56669,
+      "sweeps": 240
+    },
+    "flight": 19,
+    "seating": 310,
+    "l0Experience": "PASS"
+  },
+  "actualApp": {
+    "delivery-realistic": {
+      "ok": true,
+      "checks": 23,
+      "actualAppChecks": 22,
+      "supplementalCurveChecks": 1,
+      "screenshots": 9,
+      "consoleErrors": 0,
+      "networkErrors": 0,
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      },
+      "home": {
+        "wx": 15.5,
+        "wy": 15.5,
+        "z": 0,
+        "dx": 0,
+        "dy": -1,
+        "yaw": 0
+      },
+      "wall": {
+        "wx": 15.5,
+        "wy": 3.100000000000037,
+        "z": 0,
+        "dx": 0,
+        "dy": -1,
+        "yaw": 0
+      },
+      "curves": {
+        "accel95": 0.15,
+        "stopT": 0.13333333333332487,
+        "stopD": 0.22083333333333144,
+        "back": 2.448,
+        "side": 3.06,
+        "oldToggles": 452,
+        "jumpTop": 1.3229861111111099,
+        "jumpAir": 0.9083333333333325,
+        "doorNew": 41.89877777777805,
+        "doorOld": 37.67333333333363,
+        "cornerNudge": 0.0849999999999973,
+        "cornerOld": 39.67333333333363,
+        "footsteps": 11,
+        "directionLimitDiag": 0.95
+      },
+      "phaseEnd": {
+        "walk": {
+          "speed": 3.4,
+          "fov": 72
+        },
+        "walk-stop": {
+          "speed": 0,
+          "fov": 72
+        },
+        "sprint": {
+          "speed": 6,
+          "fov": 77.969137056
+        },
+        "sprint-stop": {
+          "speed": 0,
+          "fov": 72
+        },
+        "backward": {
+          "speed": 2.448,
+          "fov": 72
+        },
+        "sideways": {
+          "speed": 3.06,
+          "fov": 72
+        },
+        "crouch": {
+          "speed": 1.7,
+          "fov": 72
+        },
+        "jump": {
+          "speed": 0,
+          "fov": 72
+        },
+        "wall-blocked": {
+          "speed": 0,
+          "fov": 72.03134760755556
+        },
+        "touch-small-push": {
+          "speed": 1.4299749819033556,
+          "fov": 72.03134760755556
+        },
+        "touch-sprint": {
+          "speed": 6,
+          "fov": 77.55722088844442
+        },
+        "touch-release": {
+          "speed": 0,
+          "fov": 72.03086294399999
+        }
+      }
+    },
+    "delivery-classic": {
+      "ok": true,
+      "checks": 23,
+      "actualAppChecks": 22,
+      "supplementalCurveChecks": 1,
+      "screenshots": 9,
+      "consoleErrors": 0,
+      "networkErrors": 0,
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      },
+      "home": {
+        "wx": 15.5,
+        "wy": 15.5,
+        "z": 0,
+        "dx": 0,
+        "dy": -1,
+        "yaw": 0
+      },
+      "wall": {
+        "wx": 15.5,
+        "wy": 3.100000000000037,
+        "z": 0,
+        "dx": 0,
+        "dy": -1,
+        "yaw": 0
+      },
+      "curves": {
+        "accel95": 0.15,
+        "stopT": 0.13333333333332487,
+        "stopD": 0.22083333333333144,
+        "back": 2.448,
+        "side": 3.06,
+        "oldToggles": 452,
+        "jumpTop": 1.3229861111111099,
+        "jumpAir": 0.9083333333333325,
+        "doorNew": 41.89877777777805,
+        "doorOld": 37.67333333333363,
+        "cornerNudge": 0.0849999999999973,
+        "cornerOld": 39.67333333333363,
+        "footsteps": 11,
+        "directionLimitDiag": 0.95
+      },
+      "phaseEnd": {
+        "walk": {
+          "speed": 3.4,
+          "fov": 72
+        },
+        "walk-stop": {
+          "speed": 0,
+          "fov": 72
+        },
+        "sprint": {
+          "speed": 6,
+          "fov": 78
+        },
+        "sprint-stop": {
+          "speed": 0,
+          "fov": 72
+        },
+        "backward": {
+          "speed": 2.448,
+          "fov": 72
+        },
+        "sideways": {
+          "speed": 3.06,
+          "fov": 72
+        },
+        "crouch": {
+          "speed": 1.7,
+          "fov": 72
+        },
+        "jump": {
+          "speed": 0,
+          "fov": 72
+        },
+        "wall-blocked": {
+          "speed": 0,
+          "fov": 72.00000199955555
+        },
+        "touch-small-push": {
+          "speed": 1.4299749819033556,
+          "fov": 72.00000199955555
+        },
+        "touch-sprint": {
+          "speed": 6,
+          "fov": 77.24625205555556
+        },
+        "touch-release": {
+          "speed": 0,
+          "fov": 72.03038194444444
+        }
+      }
+    }
+  },
+  "build": {
+    "ok": true,
+    "viteSeconds": 54.9,
+    "log": "build.log"
+  },
+  "limits": [
+    "Desktop Chrome headless native GPU and CDP touch emulation; not Android/iOS hardware testing",
+    "No all-level FPS benchmark or subjective audio listening claim"
+  ]
+}

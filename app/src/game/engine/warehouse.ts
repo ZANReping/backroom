@@ -5,7 +5,9 @@
 // （warehouseTempUnlock 不持久，DialogOverlay 卸载即清空）；MEG 侧纯声望门槛，无付费通道。
 // 堆叠/并摞规则与背包一致；装备位物品需先卸下（面板只列背包格，引擎侧同样拦截）。随存档快照持久。
 import { ITEMS, itemName } from '../content/items'
+import { isGun, isAmmo } from '../content/firearms'
 import { NPCS } from '../content/npcs'
+import { L11_PEOPLE } from '../content/l11People'
 import { audio } from '../core/audio'
 import {payBntgService} from './bntgBank'
 import type { Engine, InvSlot, SlotRef } from '../engine'
@@ -23,7 +25,7 @@ export function freshWarehouses(): WarehouseState {
 
 /** NPC 是否为寄存 NPC（NpcDef.warehouse 标记）及其阵营仓库 id；非寄存 NPC 返回 null */
 export function warehouseOfNpc(npcId: string): WarehouseFaction | null {
-  return NPCS[npcId]?.warehouse ?? null
+  return NPCS[npcId]?.warehouse ?? L11_PEOPLE.find(n => n.id === npcId)?.warehouse ?? null
 }
 
 /** 声望门槛：对应团体声望 ≥10 开放；或本对话已付费临时解锁（BNTG） */
@@ -45,71 +47,133 @@ export function payWarehouseAccess(eng: Engine, fac: WarehouseFaction): boolean 
   return true
 }
 
-/** 寄存：背包/快捷栏物品移入阵营仓库（同类同 tag 先并摞；满仓失败） */
-export function warehouseDeposit(eng: Engine, fac: WarehouseFaction, from: SlotRef): boolean {
-  if (from.w !== 'hotbar' && from.w !== 'backpack') { eng.msg('装备位物品要先卸下才能寄存。', 'system'); return false }
-  const s = eng.slotGet(from)
-  if (!s) return false
-  const wh = eng.warehouses[fac]
-  const facName = WAREHOUSE_FACTION_NAME[fac]
-  const stack = ITEMS[s.type]?.stack ?? 1
-  if (stack > 1) {
-    for (const w of wh) {
-      if (!w || w.type !== s.type || w.tag !== s.tag || w.count >= stack) continue
-      const mv = Math.min(stack - w.count, s.count)
-      w.count += mv
-      s.count -= mv
-      if (s.count <= 0) {
-        eng.slotSet(from, null)
-        eng.syncPassives()
-        eng.msg(`寄存了 ${itemName(s.type)}（${facName} 阵营仓库）`, 'system')
-        return true
-      }
-    }
+export type WarehouseCat = 'weapon' | 'med' | 'food' | 'power' | 'gear' | 'misc'
+export const WAREHOUSE_CAT_LABEL: Record<WarehouseCat, string> = { weapon: '武器', med: '医疗', food: '食水', power: '电源照明', gear: '装备', misc: '杂项' }
+const CAT_ORDER: WarehouseCat[] = ['weapon', 'med', 'food', 'power', 'gear', 'misc']
+const RARITY_ORDER: Record<string, number> = { epic: 0, rare: 1, uncommon: 2, common: 3 }
+export function warehouseCat(type: string): WarehouseCat {
+  const d = ITEMS[type]
+  if (!d) return 'misc'
+  if (d.weapon || isGun(type) || isAmmo(type)) return 'weapon'
+  if (d.use === 'eat' || d.use === 'sanityeat' || d.value3 != null) return 'food' // 饮品（杏仁水等）也算食水
+  if (d.use === 'heal' || d.use === 'cure' || d.use === 'sanity' || d.use === 'bigsanity') return 'med'
+  if (d.use === 'battery' || d.use === 'light') return 'power'
+  if (d.equip) return 'gear'
+  return 'misc'
+}
+
+type Slots = (InvSlot | null)[]
+const cloneSlot = (s: InvSlot): InvSlot => ({ ...s, ...(s.mag ? { mag: [...s.mag] } : {}) })
+const validSlot = (s: InvSlot | null | undefined): s is InvSlot => !!s && Number.isSafeInteger(s.count) && s.count > 0
+const stackSize = (s: InvSlot) => Math.max(1, ITEMS[s.type]?.stack ?? 1)
+/** Equal item state is required when merging; keep origin, wear, blood and loaded ammunition. */
+const stackMatches = (a: InvSlot, b: InvSlot) => a.type === b.type && a.tag === b.tag && a.dur === b.dur && a.blood === b.blood && a.ammoSel === b.ammoSel && a.stage === b.stage && a.cyl === b.cyl && JSON.stringify(a.mag) === JSON.stringify(b.mag)
+function capacity(arrays: Slots[], source: InvSlot): number {
+  const stack = stackSize(source)
+  return arrays.reduce((total, slots) => total + slots.reduce((n, s) => n + (!s ? stack : stack > 1 && stackMatches(s, source) ? Math.max(0, stack - s.count) : 0), 0), 0)
+}
+function moveCount(source: InvSlot, n?: number): number | null {
+  return n === undefined ? source.count : Number.isSafeInteger(n) && n > 0 ? Math.min(n, source.count) : null
+}
+/** Write only to cloned destination slots; publish after the whole requested quantity fits. */
+function stagedInsert(arrays: Slots[], source: InvSlot, count: number): Slots[] | null {
+  if (capacity(arrays, source) < count) return null
+  const stage = arrays.map(slots => slots.map(s => s ? cloneSlot(s) : null)), stack = stackSize(source)
+  let left = count
+  if (stack > 1) for (const slots of stage) for (const s of slots) {
+    if (!s || !left || !stackMatches(s, source)) continue
+    const n = Math.min(Math.max(0, stack - s.count), left); s.count += n; left -= n
   }
-  const free = wh.findIndex((x) => !x)
-  if (free < 0) { eng.msg(`${facName} 阵营仓库已满（${WAREHOUSE_SIZE} 栏）。`, 'system'); return false }
-  wh[free] = { ...s }
-  eng.slotSet(from, null)
+  for (const slots of stage) for (let i = 0; i < slots.length && left; i++) if (!slots[i]) {
+    const n = Math.min(stack, left); slots[i] = { ...cloneSlot(source), count: n }; left -= n
+  }
+  return left ? null : stage
+}
+function publish(target: Slots, staged: Slots) { for (let i = 0; i < target.length; i++) target[i] = staged[i] }
+
+/** Original whole-slot interface; a full destination fails without moving part of the stack. */
+export function warehouseDeposit(eng: Engine, fac: WarehouseFaction, from: SlotRef): boolean {
+  return warehouseDepositN(eng, fac, from)
+}
+export function warehouseWithdraw(eng: Engine, fac: WarehouseFaction, i: number): boolean {
+  return warehouseWithdrawN(eng, fac, i)
+}
+
+/** Deposit the requested positive integer quantity (default: the whole slot), atomically. */
+export function warehouseDepositN(eng: Engine, fac: WarehouseFaction, from: SlotRef, n?: number): boolean {
+  if (from.w !== 'hotbar' && from.w !== 'backpack') { eng.msg('装备位物品要先卸下才能寄存。', 'system'); return false }
+  if (!Number.isSafeInteger(from.i) || from.i < 0) return false
+  const source = eng.slotGet(from), wh = eng.warehouses[fac]
+  if (!validSlot(source) || !wh) return false
+  if (ITEMS[source.type]?.keyItem) { eng.msg(`「${ITEMS[source.type].name}」是关键收藏物，不能寄存。`, 'system'); return false }
+  const count = moveCount(source, n)
+  if (count === null) return false
+  const stage = stagedInsert([wh], source, count)
+  if (!stage) { eng.msg(`${WAREHOUSE_FACTION_NAME[fac]} 阵营仓库已满（${WAREHOUSE_SIZE} 栏）。`, 'system'); return false }
+  publish(wh, stage[0])
+  eng.slotSet(from, count === source.count ? null : { ...cloneSlot(source), count: source.count - count })
   eng.syncPassives()
-  eng.msg(`寄存了 ${s.count > 1 ? `${itemName(s.type)} ×${s.count}` : itemName(s.type)}（${facName} 阵营仓库）`, 'system')
+  eng.msg(`寄存了 ${itemName(source.type)} ×${count}（${WAREHOUSE_FACTION_NAME[fac]} 阵营仓库）`, 'system')
   return true
 }
 
-/** 取回：仓库栏位移回背包（同类同 tag 先并摞进快捷栏/背包；背包满失败，仓库栏位不动） */
-export function warehouseWithdraw(eng: Engine, fac: WarehouseFaction, i: number): boolean {
+/** Withdraw into inventory without retagging berries or dropping gun/medical item state. */
+export function warehouseWithdrawN(eng: Engine, fac: WarehouseFaction, i: number, n?: number): boolean {
   const wh = eng.warehouses[fac]
-  const w = wh[i]
-  if (!w) return false
-  const p = eng.player
-  const stack = ITEMS[w.type]?.stack ?? 1
-  if (stack > 1) {
-    for (const arr of [p.hotbar, p.backpack]) {
-      for (const s of arr) {
-        if (!s || s.type !== w.type || s.tag !== w.tag || s.count >= stack) continue
-        const mv = Math.min(stack - s.count, w.count)
-        s.count += mv
-        w.count -= mv
-        if (w.count <= 0) {
-          wh[i] = null
-          eng.syncPassives()
-          eng.msg(`取回了 ${itemName(w.type)}`, 'system')
-          return true
-        }
-      }
-    }
-  }
-  let free: SlotRef | null = null
-  const hi = p.hotbar.findIndex((x) => !x)
-  if (hi >= 0) free = { w: 'hotbar', i: hi }
-  else {
-    const bi = p.backpack.findIndex((x) => !x)
-    if (bi >= 0) free = { w: 'backpack', i: bi }
-  }
-  if (!free) { eng.msg('背包已满，取不出来。', 'system'); return false }
-  eng.slotSet(free, { ...w })
-  wh[i] = null
+  if (!wh || !Number.isSafeInteger(i) || i < 0) return false
+  const source = wh[i]
+  if (!validSlot(source)) return false
+  const count = moveCount(source, n)
+  if (count === null) return false
+  const p = eng.player, stage = stagedInsert([p.hotbar, p.backpack], source, count)
+  if (!stage) { eng.msg('背包已满，取不出来。', 'system'); return false }
+  publish(p.hotbar, stage[0]); publish(p.backpack, stage[1])
+  wh[i] = count === source.count ? null : { ...cloneSlot(source), count: source.count - count }
   eng.syncPassives()
-  eng.msg(`取回了 ${w.count > 1 ? `${itemName(w.type)} ×${w.count}` : itemName(w.type)}`, 'system')
+  eng.msg(`取回了 ${itemName(source.type)} ×${count}`, 'system')
+  return true
+}
+
+/** Move as many items of this type as fit, keeping each slot's metadata intact. */
+export function warehouseDepositAllOf(eng: Engine, fac: WarehouseFaction, type: string): number {
+  const wh = eng.warehouses[fac]
+  if (!wh) return 0
+  let moved = 0
+  for (const w of ['backpack', 'hotbar'] as const) eng.player[w].forEach((s, i) => {
+    if (!validSlot(s) || s.type !== type) return
+    const n = Math.min(s.count, capacity([wh], s))
+    if (n > 0 && warehouseDepositN(eng, fac, { w, i }, n)) moved += n
+  })
+  return moved
+}
+export function warehouseWithdrawAllOf(eng: Engine, fac: WarehouseFaction, type: string): number {
+  const wh = eng.warehouses[fac]
+  if (!wh) return 0
+  let moved = 0
+  wh.forEach((s, i) => {
+    if (!validSlot(s) || s.type !== type) return
+    const n = Math.min(s.count, capacity([eng.player.hotbar, eng.player.backpack], s))
+    if (n > 0 && warehouseWithdrawN(eng, fac, i, n)) moved += n
+  })
+  return moved
+}
+
+/** Merge compatible stacks, sort, then publish together. Never truncate overflowed legacy data. */
+export function warehouseSort(eng: Engine, fac: WarehouseFaction): boolean {
+  const wh = eng.warehouses[fac]
+  if (!wh || wh.some(s => s && !validSlot(s))) return false
+  const merged: Slots = new Array(wh.length).fill(null)
+  for (const s of wh) {
+    if (!s) continue
+    const stage = stagedInsert([merged], s, s.count)
+    if (!stage) { eng.msg('库内数量超出可整理范围，原库存已保留。', 'system'); return false }
+    publish(merged, stage[0])
+  }
+  const sorted = merged.filter((s): s is InvSlot => !!s).sort((a, b) =>
+    CAT_ORDER.indexOf(warehouseCat(a.type)) - CAT_ORDER.indexOf(warehouseCat(b.type)) ||
+    (RARITY_ORDER[ITEMS[a.type]?.rarity ?? 'common'] ?? 3) - (RARITY_ORDER[ITEMS[b.type]?.rarity ?? 'common'] ?? 3) ||
+    itemName(a.type).localeCompare(itemName(b.type), 'zh-CN') || (b.count - a.count))
+  publish(wh, [...sorted, ...new Array(wh.length - sorted.length).fill(null)])
+  eng.msg(`${WAREHOUSE_FACTION_NAME[fac]} 阵营仓库已整理。`, 'system')
   return true
 }

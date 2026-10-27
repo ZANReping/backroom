@@ -1,0 +1,152 @@
+{
+  "checks": [
+    "actual look-at E conversation suanpan",
+    "separate warehouse pauses and renders 48 slots suanpan",
+    "quantity-three deposit updates both inventories once",
+    "successful storage action persists immediately",
+    "quantity-two withdrawal merges into carried ammunition",
+    "double-click transfers only the clicked whole stack",
+    "bubbling drop moves one whole stack without a second parent transfer",
+    "move-all preserves all twenty rounds",
+    "sorting preserves loaded gun, medical charges and berry origin",
+    "warehouse keyboard down follows eight-column grid",
+    "keyboard Enter transfers the selected whole slot",
+    "warehouse sheet fits meg 390x844",
+    "storage action is unobscured meg 390x844",
+    "warehouse sheet fits meg 844x390",
+    "storage action is unobscured meg 844x390",
+    "both inventories remain clickable in short landscape meg",
+    "actual look-at E conversation brandt",
+    "separate warehouse pauses and renders 48 slots brandt",
+    "another native MEG base exposes the same saved warehouse",
+    "actual look-at E conversation vesper",
+    "BNTG low reputation initially hides storage access",
+    "existing temporary access charges five credits once",
+    "BNTG page displays temporary permit",
+    "warehouse sheet fits bntg 390x844",
+    "storage action is unobscured bntg 390x844",
+    "warehouse sheet fits bntg 844x390",
+    "storage action is unobscured bntg 844x390",
+    "both inventories remain clickable in short landscape bntg",
+    "warehouse does not inherit hidden dialog X-to-shop shortcut",
+    "return shortcut label follows custom binding",
+    "returning to conversation retains permit without billing again",
+    "BNTG quantity-one withdrawal uses its separate warehouse",
+    "closing fullscreen storage clears temporary access",
+    "temporary permit is excluded from actual save",
+    "real v1 save/reload preserves inventories, gun state and credit ledger but not temporary permission",
+    "actual look-at E conversation vesper",
+    "reloaded low-reputation customer must obtain access again"
+  ],
+  "shots": [
+    "01-meg-warehouse",
+    "02-meg-selected-details",
+    "03-meg-sorted",
+    "04-meg-phone",
+    "04-meg-landscape",
+    "05-gemma-shared-warehouse",
+    "06-bntg-vault",
+    "07-bntg-receipt-details",
+    "04-bntg-phone",
+    "04-bntg-landscape"
+  ],
+  "entries": [
+    {
+      "x": 67.39999999999999,
+      "y": 59.55,
+      "z": 0.02,
+      "id": "suanpan"
+    },
+    {
+      "x": 51.5,
+      "y": 40.5,
+      "z": 0.02,
+      "id": "brandt"
+    },
+    {
+      "x": 47.599999999999994,
+      "y": 8,
+      "z": 0.02,
+      "id": "vesper"
+    },
+    {
+      "x": 47.599999999999994,
+      "y": 8,
+      "z": 0.02,
+      "id": "vesper"
+    }
+  ],
+  "layouts": [
+    {
+      "skin": "meg",
+      "width": 390,
+      "height": 844,
+      "x": 0,
+      "right": 390,
+      "top": 0,
+      "bottom": 844,
+      "sw": 388,
+      "cw": 388,
+      "action": {
+        "top": 708,
+        "bottom": 750,
+        "reachable": true
+      }
+    },
+    {
+      "skin": "meg",
+      "width": 844,
+      "height": 390,
+      "x": 0,
+      "right": 844,
+      "top": 0,
+      "bottom": 390,
+      "sw": 842,
+      "cw": 842,
+      "action": {
+        "top": 270,
+        "bottom": 306,
+        "reachable": true
+      }
+    },
+    {
+      "skin": "bntg",
+      "width": 390,
+      "height": 844,
+      "x": 0,
+      "right": 390,
+      "top": 0,
+      "bottom": 844,
+      "sw": 388,
+      "cw": 388,
+      "action": {
+        "top": 708,
+        "bottom": 750,
+        "reachable": true
+      }
+    },
+    {
+      "skin": "bntg",
+      "width": 844,
+      "height": 390,
+      "x": 0,
+      "right": 844,
+      "top": 0,
+      "bottom": 390,
+      "sw": 842,
+      "cw": 842,
+      "action": {
+        "top": 270,
+        "bottom": 306,
+        "reachable": true
+      }
+    }
+  ],
+  "saved": {
+    "warehouses": "{\"meg\":[null,{\"type\":\"cart_4440\",\"count\":20},{\"type\":\"outdoorkit\",\"count\":1,\"dur\":1},{\"type\":\"bandage\",\"count\":3},{\"type\":\"bandage\",\"count\":1},{\"type\":\"warpberry\",\"count\":1,\"tag\":7},{\"type\":\"canned\",\"count\":2},{\"type\":\"rope\",\"count\":1},{\"type\":\"rope\",\"count\":1},null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],\"bntg\":[{\"type\":\"cart_4440\",\"count\":11},{\"type\":\"presses\",\"count\":12},null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}",
+    "hotbar": "[{\"type\":\"presses\",\"count\":20},{\"type\":\"almond\",\"count\":3},{\"type\":\"revolver\",\"count\":1,\"mag\":[\"cart_4440\",\"spent\",\"\",\"cart_4440\",\"\",\"\"],\"ammoSel\":\"cart_4440\",\"cyl\":3,\"stage\":2},{\"type\":\"knife\",\"count\":1,\"dur\":17,\"blood\":0.4},{\"type\":\"cart_4440\",\"count\":1},null,{\"type\":\"phone\",\"count\":1}]",
+    "backpack": "[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]",
+    "bank": "{\"v\":1,\"balance\":95,\"sequence\":1,\"history\":[{\"id\":1,\"at\":1792911963932,\"kind\":\"service\",\"delta\":-5,\"balance\":95,\"cashDelta\":0,\"detail\":\"临时使用 B.N.T.G. 仓库：信用点 5，压印币 0。\"}]}",
+    "permitStored": false
+  }
+}

@@ -1,6 +1,6 @@
 // NPC 对话窗（RPG 式）：NPC 名+职业+形象、对话文本、预制回复选项；
 // 设置页接入 LLM API 后出现特殊选项「聊天页面」——类似聊天软件的实时对话，
-// 聊天记录跨局持久化（br_npc_chat）并作为模型上下文（NPC 会「记住」）；「交易」页以天鹰币结算。
+// 聊天记录跨局持久化（br_npc_chat）并作为模型上下文（NPC 会「记住」）；交易由独立商店处理，沿用各团体货币。
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { NPCS, npcAvatar } from '@/game/content/npcs'
 import { engine } from '@/game/engine'
@@ -9,28 +9,24 @@ import { ITEMS } from '@/game/content/items'
 import { llmConfigured, npcChat, loadChat, appendChat, type ChatMsg } from '@/game/core/llm'
 import { FACTIONS, REP_TIER } from '@/game/content/factions'
 import AvatarPreview from './AvatarPreview'
-import { ItemGlyph } from './HUD'
+import WarehouseOverlay from './warehouse/WarehouseOverlay'
 import { MegNpcMissions } from './MegMissions'
 import { FactionNpcMissions } from './FactionMissions'
 import { isNewFaction } from '@/game/content/factionTerminals'
 import { megQuestProgress } from '@/game/content/megTerminal'
 import { tinyScorn } from '@/game/engine/tinyAI'
-import {bntgPaymentPlan, type BntgPaymentMode, type BankResult} from '@/game/engine/bntgBank'
-import './BntgPayment.css'
+import './DialogOverlay.css'
+import { isMerchant } from '@/game/engine/merchantTrade'
+import { getKeybinds, bindLabelFor } from '@/game/core/keybinds'
 
-function BntgPaymentChoice({mode,onChange}:{mode:BntgPaymentMode;onChange:(mode:BntgPaymentMode)=>void}){
- return <fieldset className="bntg-payment"><legend>B.N.T.G. 结账方式</legend><div className="bntg-payment-balances"><span>信用点 <b>{engine.bntgBank.balance.toLocaleString('zh-CN')}</b></span><span>随身压印币 <b>{engine.countItem('presses')}</b></span></div><div className="bntg-payment-options">{([['auto','优先信用点'],['credits','仅信用点'],['cash','仅压印币']] as const).map(([value,label])=><button key={value} type="button" aria-pressed={mode===value} onClick={()=>onChange(value)}>{label}</button>)}</div><p>{mode==='auto'?'优先扣除信用点，不足部分使用随身压印币。':mode==='credits'?'仅扣除账户信用点；余额不足时不成交。':'仅使用随身压印币，账户余额不变。'} 1 信用点 = 1 枚压印币。</p></fieldset>
-}
 
-export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClose: () => void }) {
+export default function DialogOverlay({ npcId, onClose, onShop }: { npcId: string; onClose: () => void; onShop?: () => void }) {
   // 定义解析：静态注册表 + 运行时随机 NPC（否则随机 NPC 无法弹窗）
   const def = NPCS[npcId] ?? engine.npcs.find((n) => n.id === npcId)?.def ?? engine.knownNpcs.find((n) => n.id === npcId)
   const [node, setNode] = useState(0)
-  const [mode, setMode] = useState<'chat' | 'trade' | 'chatpage' | 'quest' | 'warehouse'>('chat')
+  const [mode, setMode] = useState<'chat' | 'chatpage' | 'quest' | 'warehouse'>('chat')
   // v56：乐手演奏反馈（演奏中的曲名提示）
   const [playNote, setPlayNote] = useState('')
-  const [paymentMode,setPaymentMode]=useState<BntgPaymentMode>('auto')
-  const [tradeNotice,setTradeNotice]=useState('')
   const [smallTalk, setSmallTalk] = useState<string>(() => def?.idle[Math.floor(Math.random() * def.idle.length)] ?? '')
   // 委托三选一（生成 → 选择 → 确认接取）
   const [offers, setOffers] = useState<import('@/game/content/factions').QuestDef[]>([])
@@ -55,6 +51,25 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
     const el = listRef.current
     if (el) el.scrollTop = el.scrollHeight
   }, [msgs, busy])
+  // 键盘：数字键 1–9 选对应选项；特殊交互键（X）= 打开商店（独立入口，不混在对话选项里）
+  const canShop = !!onShop && isMerchant(def)
+  useEffect(() => {
+    if (mode === 'warehouse') return
+    const kb = getKeybinds()
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName
+      if (tag === 'TEXTAREA' || tag === 'INPUT' || e.repeat) return
+      if (e.code === kb.special && canShop) { e.preventDefault(); audio.uiTick(); onShop!(); return }
+      const m = /^(?:Digit|Numpad)([1-9])$/.exec(e.code)
+      if (m) {
+        const opts = document.querySelectorAll<HTMLButtonElement>('.dlg-root .dlg-opts .dlg-opt')
+        const b = opts[Number(m[1]) - 1]
+        if (b) { e.preventDefault(); b.click() }
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [canShop, onShop, mode])
   if (!def || !avatar) return null
 
   const cur = def.lines[node] ?? def.lines[0]
@@ -64,25 +79,14 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
   const rep = engine.rep[def.faction ?? 'meg'] ?? 0
   const isBrc = def.faction === 'brc' // v39：BRC 员工——沉默（永不拒谈也永不回应，走专属选项）
   const noTalk = !!fac?.hasRep && rep <= REP_TIER.noTalk && !isBrc
-  const noTrade = !!fac?.hasRep && rep <= REP_TIER.noTrade
-  const discount = !!fac?.hasRep && rep >= REP_TIER.discount
   const facColor = fac?.color ?? 'var(--amber)'
   const facSub = fac?.sub ?? fac?.color ?? 'var(--amber)' // 副主题色（团体相关文字）
-  // 交易货币（BNTG 系为压印币：1 杏仁水 ↔ 2 压印币；v54：'almond'=直接以杏仁水计价——Gamma 基地军需官，无币互换）
-  const coinItem = def.currency === 'presses' ? 'presses' : def.currency === 'almond' ? 'almond' : 'eaglecoin'
-  const coinName = def.currency === 'presses' ? '压印币' : def.currency === 'almond' ? '杏仁水' : '天鹰币'
-  const coinUnit = def.currency === 'almond' ? '瓶' : '枚' // v54：货币量词
-  const coinRate = def.currency === 'presses' ? 2 : 1 // 1 杏仁水 = coinRate 币
   // 随机居民：未接入 API 时只能闲聊随机内容（不接对话树）
   const isRand = npcId.startsWith('rand_')
-  const isBntg=def.faction==='bntg'
-  const creditTrade=isBntg&&coinItem==='presses'
-  const showPayment=isBntg&&(creditTrade&&!!def.trade||def.barter?.some(b=>b.give==='presses'||b.give2==='presses'))
-  const reportTrade=(r:BankResult)=>{setTradeNotice(r.message);setBrcTick(x=>x+1);if(r.ok)audio.pickup();else engine.msg(r.message,'system')}
 
   const pick = (next?: number, action?: 'trade' | 'leave' | 'play' | 'scorn') => {
     audio.uiTick()
-    if (action === 'trade') { setMode('trade'); return }
+    if (action === 'trade') { if (onShop) onShop(); return } // 旧对话树里的「看看货」：直接去商店页面
     if (action === 'scorn') { onClose(); tinyScorn(engine); return } // [tiny] 跟小小提门/出路：第一次警告并记恼怒，再提就追杀
     if (action === 'leave') { onClose(); return }
     if (action === 'play') {
@@ -116,37 +120,40 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
     } finally { setBusy(false) }
   }
 
+  if (mode === 'warehouse' && def.warehouse) return <WarehouseOverlay npcId={npcId} onBack={() => setMode('chat')} onClose={onClose} />
+
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-4" onClick={onClose}>
+    <div className="dlg-root" onClick={onClose} data-dlg-faction={def.faction ?? 'meg'}>
       <div
-        className="dlg-panel anim-slideUp hud-panel flex w-full max-w-[600px] gap-4 p-4"
-        style={{ background: 'var(--panel)', borderColor: facColor }}
+        className="dlg-stage anim-slideUp"
+        style={{ ['--fac' as string]: facColor, ['--fac2' as string]: facSub }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="dlg-side flex w-[112px] shrink-0 flex-col items-center gap-1">
-          <AvatarPreview avatar={avatar} npcId={def.id} npcDef={def} size={92} />
-          <div className="font-title text-[15px]" style={{ color: 'var(--amber)' }}>{def.name}</div>
-          <div className="font-mono2 text-center text-[10px]" style={{ color: 'var(--text-dim)' }}>{def.role}</div>
-          {fac && (
-            <div className="font-mono2 text-center text-[9px]" style={{ color: 'var(--text-dim)' }}>
-              {fac.name} {fac.en}
-            </div>
-          )}
-          {fac?.hasRep && (
-            <div className="font-mono2 text-center text-[9px]" style={{ color: rep >= REP_TIER.discount ? 'var(--exit)' : rep <= REP_TIER.noTrade ? 'var(--blood)' : 'var(--amber)' }}>
-              声望 {rep > 0 ? '+' : ''}{rep}
-            </div>
-          )}
+        <div className="dlg-portrait">
+          <div className="dlg-portrait-frame"><AvatarPreview avatar={avatar} npcId={def.id} npcDef={def} size={148} /></div>
         </div>
-        <div className="min-w-0 flex-1">
+        <div className="dlg-box">
+          <div className="dlg-plate">
+            <span className="dlg-name">{def.name}</span>
+            <span className="dlg-role">{def.role}</span>
+            {fac && <span className="dlg-fac" title={fac.en}>{fac.name}</span>}
+            {fac?.hasRep && (
+              <span className="dlg-rep" style={{ color: rep >= REP_TIER.discount ? 'var(--exit)' : rep <= REP_TIER.noTrade ? 'var(--blood)' : undefined }}>声望 {rep > 0 ? '+' : ''}{rep}</span>
+            )}
+            <span className="dlg-gap" />
+            {canShop && (
+              <button className="dlg-shop" onClick={() => { audio.uiTick(); onShop!() }}><kbd>{bindLabelFor('special')}</kbd>交易</button>
+            )}
+            <button className="dlg-x" aria-label="关闭" onClick={() => { audio.uiTick(); onClose() }}>✕</button>
+          </div>
+          <div className="dlg-content">
           {mode === 'chat' && (
             <>
               <div
                 data-speaker={def.name}
-                className="dlg-line mb-3 min-h-[76px] border p-2 text-[13px] leading-relaxed"
-                style={{ borderColor: 'var(--panel-edge)', color: 'var(--text)', background: 'rgba(0,0,0,0.25)' }}
+                className="dlg-line"
               >
-                {noTalk ? `「……我跟你没什么好说的。」（与${fac!.name}的声望过低）` : isRand && !useLlm ? smallTalk : line}
+                <TypeLine text={noTalk ? `「……我跟你没什么好说的。」（与${fac!.name}的声望过低）` : isRand && !useLlm ? smallTalk : line} />
               </div>
               {playNote && (
                 <div className="mb-2 border p-1.5 text-[12px]" style={{ borderColor: 'var(--panel-edge)', color: 'var(--amber)' }}>
@@ -154,25 +161,34 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                 </div>
               )}
               {noTalk ? (
-                <div className="mb-2 flex flex-col gap-1">
-                  <button className="menu-btn px-3 py-1.5 text-left text-[12px]" onClick={() => { audio.uiTick(); onClose() }}>告辞。</button>
+                <div className="dlg-opts">
+                  <button className="dlg-opt" onClick={() => { audio.uiTick(); onClose() }}>告辞。</button>
                 </div>
               ) : isBrc ? (
                 // v39：BRC 员工——沉默（不回应任何问题），只有特殊选项：模仿装修 / 坦白 / 告辞
-                <div className="mb-2 flex flex-col gap-1">
+                <div className="dlg-opts">
                   <button
-                    className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                    className="dlg-opt"
                     style={engine.brcMimicCd > 0 ? { opacity: 0.55 } : undefined}
                     onClick={() => { engine.mimicBrc(); setBrcTick((x) => x + 1) }}
                   >尝试模仿他们的动作进行装修{engine.brcMimicCd > 0 ? `（冷却 ${Math.ceil(engine.brcMimicCd)}s）` : '（声望 +2）'}</button>
-                  {engine.brcSin.hurt + engine.brcSin.killed > 0 && (
+                  {engine.canRequestBrcPermit() && (
+                    // 施工许可（engine/remodel.ts）：声望 > 60 才出现；每局只发一张
                     <button
                       className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                      data-qa="brc-permit"
+                      style={{ borderColor: facSub, color: facSub }}
+                      onClick={() => { engine.requestBrcPermit(); setBrcTick((x) => x + 1) }}
+                    >指指墙面，再指指自己——比划着要一份「施工许可」</button>
+                  )}
+                  {engine.brcSin.hurt + engine.brcSin.killed > 0 && (
+                    <button
+                      className="dlg-opt"
                       style={{ borderColor: 'var(--blood)', color: 'var(--blood)' }}
                       onClick={() => { engine.confessBrc(npcId); onClose() }}
                     >坦白你伤害/杀死了他们的同事（伤害 ×{engine.brcSin.hurt} · 杀死 ×{engine.brcSin.killed}，结清：声望 -{engine.brcSin.hurt * 10 + engine.brcSin.killed * 30}）</button>
                   )}
-                  <button className="menu-btn px-3 py-1.5 text-left text-[12px]" onClick={() => { audio.uiTick(); onClose() }}>告辞。</button>
+                  <button className="dlg-opt" onClick={() => { audio.uiTick(); onClose() }}>告辞。</button>
                   {engine.brcSin.hurt + engine.brcSin.killed > 0 && (
                     <div className="font-mono2 text-[10px]" style={{ color: 'var(--text-dim)' }}>
                       未告发记录：伤害 ×{engine.brcSin.hurt} · 杀死 ×{engine.brcSin.killed}——他们似乎还没有察觉。
@@ -184,12 +200,12 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                 // 认同（v48 仅野外 L2 宣传间信众可选；v49 每局仅首次 +10——已宣誓后任何信众处不再出现，
                 // 改显示「你已宣誓过了」风味文本；L274 内信众不显示——他们已认可你才带你来）/
                 // 带我去杰瑞的房间（认同后，≥10 引路）/ 传教使命（L274 侍立信众，≥30 三选一）/ 非议杰瑞（作死 -10）/ 告辞
-                <div className="mb-2 flex flex-col gap-1">
-                  {cur.opts.map((o, i) => (
-                    <button key={i} className="menu-btn px-3 py-1.5 text-left text-[12px]" onClick={() => pick(o.next, o.action)}>{o.text}</button>
+                <div className="dlg-opts">
+                  {cur.opts.filter((o) => o.action !== 'trade').map((o, i) => (
+                    <button key={i} className="dlg-opt" onClick={() => pick(o.next, o.action)}>{o.text}</button>
                   ))}
                   {engine.canAgreeJerry(npcId) && (
-                    <button className="menu-btn px-3 py-1.5 text-left text-[12px]" onClick={() => { engine.agreeJerry(npcId); setBrcTick((x) => x + 1) }}>「鹉主在上。杰瑞的伟大超乎一切层级。」（声望 +10）</button>
+                    <button className="dlg-opt" onClick={() => { engine.agreeJerry(npcId); setBrcTick((x) => x + 1) }}>「鹉主在上。杰瑞的伟大超乎一切层级。」（声望 +10）</button>
                   )}
                   {engine.player.level !== 274 && engine.player.level !== 108 && engine.jerryOath && (
                     <div className="font-mono2 text-[10px]" style={{ color: 'var(--text-dim)' }}>
@@ -198,7 +214,7 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                   )}
                   {engine.jerryAgreed.has(npcId) && engine.player.level !== 274 && engine.player.level !== 108 && (
                     <button
-                      className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                      className="dlg-opt"
                       style={{ borderColor: 'var(--exit)', color: 'var(--exit)' }}
                       onClick={() => { if (engine.gotoJerryRoom(npcId)) onClose(); else setBrcTick((x) => x + 1) }}
                     >「请引我朝见鹉主——带我去杰瑞的房间。」（需声望 ≥10）</button>
@@ -211,7 +227,7 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                     if (pq?.done) {
                       return (
                         <button
-                          className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                          className="dlg-opt"
                           style={{ borderColor: 'var(--exit)', color: 'var(--exit)' }}
                           onClick={() => { engine.turnInQuest('jerry'); setBrcTick((x) => x + 1) }}
                         >复命：传教使命「{pq.def.title}」已成。（声望 +{pq.def.rewardRep}{pq.def.rewardItems.length ? ` · ${pq.def.rewardItems.map((t) => ITEMS[t]?.name ?? t).join('、')}` : ''}）</button>
@@ -227,7 +243,7 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                     if (rep >= 30) {
                       return (
                         <button
-                          className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                          className="dlg-opt"
                           onClick={() => { setOffers(engine.questOffers('jerry')); setSelOffer(0); setMode('quest'); audio.uiTick() }}
                         >「可有传扬鹉主之名的使命予我？」（委托三选一）</button>
                       )
@@ -235,34 +251,34 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                     return null
                   })()}
                   <button
-                    className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                    className="dlg-opt"
                     style={{ borderColor: 'var(--blood)', color: 'var(--blood)' }}
                     onClick={() => { engine.slanderJerry(npcId); onClose() }}
                   >「恕我直言——祂不过是一只鸟。」（作死：声望 -10）</button>
-                  <button className="menu-btn px-3 py-1.5 text-left text-[12px]" onClick={() => { audio.uiTick(); onClose() }}>告辞。</button>
+                  <button className="dlg-opt" onClick={() => { audio.uiTick(); onClose() }}>告辞。</button>
                 </div>
               ) : isRand && !useLlm ? (
-                <div className="mb-2 flex flex-col gap-1">
+                <div className="dlg-opts">
                   <button
-                    className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                    className="dlg-opt"
                     onClick={() => { setSmallTalk(def.idle[Math.floor(Math.random() * def.idle.length)]); audio.uiTick() }}
                   >再闲聊一句</button>
-                  <button className="menu-btn px-3 py-1.5 text-left text-[12px]" onClick={() => { audio.uiTick(); onClose() }}>告辞。</button>
+                  <button className="dlg-opt" onClick={() => { audio.uiTick(); onClose() }}>告辞。</button>
                 </div>
               ) : (
-              <div className="mb-2 flex flex-col gap-1">
-                {cur.opts.map((o, i) => (
-                  <button key={i} className="menu-btn px-3 py-1.5 text-left text-[12px]" onClick={() => pick(o.next, o.action)}>{o.text}</button>
+              <div className="dlg-opts">
+                {cur.opts.filter((o) => o.action !== 'trade').map((o, i) => (
+                  <button key={i} className="dlg-opt" onClick={() => pick(o.next, o.action)}>{o.text}</button>
                 ))}
                 {def.id === 'nightingale' && (
                   <>
                     <button
-                      className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                      className="dlg-opt"
                       onClick={() => { setOffers(engine.questOffers('meg')); setSelOffer(0); setMode('quest'); audio.uiTick() }}
                     >有什么委托可以接？</button>
                     {engine.quests.some((q) => q.def.faction === 'meg' && megQuestProgress(engine, q).done) && (
                       <button
-                        className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                        className="dlg-opt"
                         style={{ borderColor: 'var(--exit)', color: 'var(--exit)' }}
                         onClick={() => { engine.turnInQuest('meg'); setBrcTick(x => x + 1) }}
                       >交付已完成的委托（{engine.quests.filter((q) => q.def.faction === 'meg' && megQuestProgress(engine, q).done).length}）</button>
@@ -272,12 +288,12 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                 {def.id === 'lan' && (
                   <>
                     <button
-                      className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                      className="dlg-opt"
                       onClick={() => { setOffers(engine.questOffers('bntg')); setSelOffer(0); setMode('quest'); audio.uiTick() }}
                     >有押运或征集的活吗？</button>
                     {engine.quests.some((q) => q.def.faction === 'bntg' && megQuestProgress(engine, q).done) && (
                       <button
-                        className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                        className="dlg-opt"
                         style={{ borderColor: 'var(--exit)', color: 'var(--exit)' }}
                         onClick={() => { engine.turnInQuest('bntg') }}
                       >交付已完成的征集（{engine.quests.filter((q) => q.def.faction === 'bntg' && megQuestProgress(engine, q).done).length}）</button>
@@ -287,12 +303,12 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                 {def.id === 'lefevre' && (
                   <>
                     <button
-                      className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                      className="dlg-opt"
                       onClick={() => { setOffers(engine.questOffers('ariane')); setSelOffer(0); setMode('quest'); audio.uiTick() }}
                     >有什么征集委托可以接？</button>
                     {engine.quests.some((q) => q.def.faction === 'ariane' && megQuestProgress(engine, q).done) && (
                       <button
-                        className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                        className="dlg-opt"
                         style={{ borderColor: 'var(--exit)', color: 'var(--exit)' }}
                         onClick={() => { engine.turnInQuest('ariane') }}
                       >交付已完成的征集（{engine.quests.filter((q) => q.def.faction === 'ariane' && megQuestProgress(engine, q).done).length}）</button>
@@ -302,12 +318,12 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                 {def.id === 'mccauley' && (
                   <>
                     <button
-                      className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                      className="dlg-opt"
                       onClick={() => { setOffers(engine.goodsQuestOffers()); setSelOffer(0); setMode('quest'); audio.uiTick() }}
                     >有物流的活吗？</button>
                     {engine.quests.some((q) => q.def.kind === 'deliverGoods' && !q.done) && !engine.hasItem('parcel') && (
                       <button
-                        className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                        className="dlg-opt"
                         style={{ borderColor: 'var(--blood)', color: 'var(--blood)' }}
                         onClick={() => { engine.failGoodsQuest(); onClose() }}
                       >包裹弄丢了……认栽（委托失败，声望 -3）</button>
@@ -317,41 +333,41 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                 {/* v56：乐手乔伊——演奏中可叫停（停下后吉他收起、背景音乐恢复） */}
                 {def.id === 'joey' && engine.joeyPlaying && (
                   <button
-                    className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                    className="dlg-opt"
                     onClick={() => { engine.musicianStop(); setPlayNote(''); audio.uiTick() }}
                   >先停一下，别弹了。</button>
                 )}
                 {def.id === 'vesper' && engine.canClaimEl3aRelief() && (
                   <button
-                    className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                    className="dlg-opt"
                     style={{ borderColor: 'var(--exit)', color: 'var(--exit)' }}
                     onClick={() => { engine.claimEl3aRelief(); onClose() }}
                   >免费领取补给包（杏仁水×1 + 罐装食品×1，本次进仓限领一次）</button>
                 )}
                 {engine.quests.some((q) => q.def.kind === 'deliverGoods' && q.def.target === npcId && !q.done) && (
                   <button
-                    className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                    className="dlg-opt"
                     style={{ borderColor: 'var(--exit)', color: 'var(--exit)' }}
                     onClick={() => { if (engine.deliverGoodsTo(npcId)) onClose() }}
                   >交付物流包裹（{engine.quests.find((q) => q.def.kind === 'deliverGoods' && q.def.target === npcId)?.def.title}）</button>
                 )}
                 {engine.quests.some((q) => q.def.kind === 'deliver' && q.def.target === npcId && !q.done) && (
                   <button
-                    className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                    className="dlg-opt"
                     style={{ borderColor: 'var(--exit)', color: 'var(--exit)' }}
                     onClick={() => { engine.deliverQuestTo(npcId); onClose() }}
                   >交付押运包裹（{engine.quests.find((q) => q.def.kind === 'deliver' && q.def.target === npcId)?.def.title}）</button>
                 )}
                 {engine.preachTargetOk(npcId) && (
                   <button
-                    className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                    className="dlg-opt"
                     style={{ borderColor: '#4142a5', color: '#8a90e0' }}
                     onClick={() => { if (engine.preachTo(npcId)) onClose() }}
                   >「请听我说：鹉主杰瑞的道，超乎一切层级。」（传教委托目标；对方团体 -5）</button>
                 )}
                 {useLlm && (
                   <button
-                    className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                    className="dlg-opt"
                     style={{ borderColor: 'var(--amber)', color: 'var(--amber)' }}
                     onClick={openChatPage}
                   >打开聊天页面</button>
@@ -359,7 +375,7 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                 {/* v55：医疗身份 NPC——疫疾三阶以上出现「求治感染」（清除感染值） */}
                 {def.medic && engine.player.infection >= 300 && (
                   <button
-                    className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                    className="dlg-opt"
                     style={{ borderColor: '#7a9a4a', color: '#a8c96a' }}
                     onClick={() => { engine.cureInfection(npcId); setBrcTick((x) => x + 1) }}
                   >「医生……我病了。求您看看。」（求治感染——彻底清除）</button>
@@ -368,22 +384,19 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                     BNTG 侧声望不足可付 5 压印币临时使用（仅本次对话，关闭对话即恢复锁定） */}
                 {def.warehouse && engine.canUseWarehouse(npcId) && (
                   <button
-                    className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                    className="dlg-opt"
                     style={{ borderColor: 'var(--thirst)', color: 'var(--thirst)' }}
                     onClick={() => { setMode('warehouse'); audio.uiTick() }}
                   >寄存物品 / 取回物品（{def.warehouse === 'meg' ? 'M.E.G.' : 'B.N.T.G.'} 阵营仓库）</button>
                 )}
                 {def.warehouse === 'bntg' && !engine.canUseWarehouse(npcId) && (
                   <button
-                    className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                    className="dlg-opt"
                     style={{ borderColor: 'var(--amber)', color: 'var(--amber)', opacity: engine.countItem('presses') + engine.bntgBank.balance >= 5 ? 1 : 0.55 }}
                     onClick={() => { engine.payWarehouseAccess('bntg'); setBrcTick((x) => x + 1) }}
                   >花 5 信用点／压印币临时使用仓库（合计 {engine.countItem('presses')+engine.bntgBank.balance} · 仅本次对话有效）</button>
                 )}
-                {(def.trade || def.barter) && !cur.opts.some((o) => o.action === 'trade') && (
-                  <button className="menu-btn px-3 py-1.5 text-left text-[12px]" onClick={() => pick(undefined, 'trade')}>看看货。</button>
-                )}
-                <button className="menu-btn px-3 py-1.5 text-left text-[12px]" onClick={() => { audio.uiTick(); onClose() }}>告辞。</button>
+                <button className="dlg-opt" onClick={() => { audio.uiTick(); onClose() }}>告辞。</button>
               </div>
               )}
             </>
@@ -480,160 +493,27 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
               <button className="menu-btn px-3 py-1.5 text-[12px]" onClick={() => { audio.uiTick(); setMode('chat') }}>返回交谈</button>
             </>
           )}
-          {mode === 'warehouse' && def.warehouse && (() => {
-            // v54：阵营寄存仓库面板——点背包格寄存，点仓库格取回（堆叠规则同背包；装备位需先卸下）
-            const fac = def.warehouse
-            const wh = engine.warehouses[fac]
-            const facName = fac === 'meg' ? 'M.E.G.' : 'B.N.T.G.'
-            const shareNote = fac === 'meg' ? 'Alpha / Gemma / Omega 基地互通' : '存储设施 / 办公区EL3A 互通'
-            const cell = (key: string, s: { type: string; count: number } | null, onClick?: () => void) => (
-              <button
-                key={key}
-                className="relative flex items-center justify-center border"
-                style={{ width: 34, height: 34, borderColor: s ? facColor : 'var(--panel-edge)', background: 'rgba(0,0,0,0.25)', opacity: s ? 1 : 0.5 }}
-                onClick={onClick}
-              >
-                {s && (
-                  <>
-                    <ItemGlyph type={s.type} count={s.count} />
-                    {s.count > 1 && <span className="font-mono2 absolute bottom-0 right-0.5 text-[9px]" style={{ color: 'var(--amber)' }}>{s.count}</span>}
-                  </>
-                )}
-              </button>
-            )
-            const used = wh.filter(Boolean).length
-            return (
-              <>
-                <div className="mb-2 text-[12px]" style={{ color: 'var(--text-dim)' }}>
-                  {facName} 阵营仓库（{used}/48 栏 · {shareNote}）——点下方背包物品寄存，点仓库物品取回。装备位物品需先卸下。
-                </div>
-                <div className="mb-1 font-mono2 text-[10px]" style={{ color: facSub }}>仓库</div>
-                <div className="mb-2 flex max-h-[24dvh] flex-wrap gap-1 overflow-y-auto border p-1.5" style={{ borderColor: 'var(--panel-edge)' }}>
-                  {wh.map((s, i) => cell(`w${i}`, s, s ? () => { engine.warehouseWithdraw(fac, i); setBrcTick((x) => x + 1) } : undefined))}
-                </div>
-                <div className="mb-1 font-mono2 text-[10px]" style={{ color: facSub }}>背包（快捷栏 + 行囊）</div>
-                <div className="mb-2 flex max-h-[18dvh] flex-wrap gap-1 overflow-y-auto border p-1.5" style={{ borderColor: 'var(--panel-edge)' }}>
-                  {engine.player.hotbar.map((s, i) => cell(`h${i}`, s, s ? () => { engine.warehouseDeposit(fac, { w: 'hotbar', i }); setBrcTick((x) => x + 1) } : undefined))}
-                  {engine.player.backpack.map((s, i) => cell(`b${i}`, s, s ? () => { engine.warehouseDeposit(fac, { w: 'backpack', i }); setBrcTick((x) => x + 1) } : undefined))}
-                </div>
-                <button className="menu-btn px-3 py-1.5 text-[12px]" onClick={() => { audio.uiTick(); setMode('chat') }}>返回交谈</button>
-              </>
-            )
-          })()}
-          {mode === 'trade' && (
-            <>
-              {noTrade ? (
-                <div className="mb-3 border p-3 text-[13px] leading-relaxed" style={{ borderColor: 'var(--panel-edge)', color: 'var(--text)' }}>
-                  「生意？免谈。」（与{fac!.name}的声望过低，交易被拒绝）
-                </div>
-              ) : (
-              <>
-              {showPayment&&<BntgPaymentChoice mode={paymentMode} onChange={setPaymentMode}/>}
-              {tradeNotice&&<p className="bntg-trade-notice" role="status">{tradeNotice}</p>}
-              {def.barter && (
-              <>
-              {/* 以物易物（阿丽亚娜医疗品↔物资 / Tom 的餐馆食材↔菜肴：无货币，可含第二种食材 give2） */}
-              <div className="mb-2 text-[12px]" style={{ color: 'var(--text-dim)' }}>
-                {showPayment?'压印币报价支持信用点结算；其余换物仍需相应实物。':'以物易物——只收实物，不收货币。'}（{discount && <span style={{ color: 'var(--exit)' }}>声望卓著的流浪者，欢迎。</span>}）
-              </div>
-              <div className="mb-2 grid gap-1">
-                {def.barter.map((b, i) => {
-                  const giveIt = ITEMS[b.give], getIt = ITEMS[b.get], give2It = b.give2 ? ITEMS[b.give2] : undefined
-                  const have = engine.countItem(b.give)
-                  const have2 = b.give2 ? engine.countItem(b.give2) : 0
-                  const cashCost=(b.give==='presses'?b.giveN:0)+(b.give2==='presses'?(b.give2N??1):0)
-                  const afford = isBntg?(!cashCost||!!bntgPaymentPlan(engine,cashCost,paymentMode))&&(b.give==='presses'||have>=b.giveN)&&(!b.give2||b.give2==='presses'||have2>=(b.give2N??1)):have >= b.giveN && (!b.give2 || have2 >= (b.give2N ?? 1))
-                  const giveText = `${giveIt?.name ?? b.give} ×${b.giveN}${b.give2 ? ` + ${give2It?.name ?? b.give2} ×${b.give2N ?? 1}` : ''}`
-                  return (
-                    <button
-                      key={i}
-                      className="flex items-center gap-2 border px-2 py-1.5 text-left"
-                      style={{ borderColor: afford ? facColor : 'var(--panel-edge)', opacity: afford ? 1 : 0.45 }}
-                      onClick={() => {
-                        if(isBntg){reportTrade(engine.bntgBarter(npcId,i,paymentMode));return}
-                        if (engine.countItem(b.give) < b.giveN) { engine.msg(`${giveIt?.name ?? b.give}不够。`, 'system'); return }
-                        if (b.give2 && engine.countItem(b.give2) < (b.give2N ?? 1)) { engine.msg(`${give2It?.name ?? b.give2}不够。`, 'system'); return }
-                        for (let k = 0; k < b.giveN; k++) engine.consumeItem(b.give)
-                        if (b.give2) for (let k = 0; k < (b.give2N ?? 1); k++) engine.consumeItem(b.give2)
-                        for (let k = 0; k < b.getN; k++) engine.addItem(b.get)
-                        audio.pickup()
-                        engine.emit({ kind: 'toast', text: `${giveText} → ${getIt?.name ?? b.get}×${b.getN}` })
-                      }}
-                    >
-                      <ItemGlyph type={b.get} size={20} />
-                      <span className="flex-1 text-[12px]" style={{ color: 'var(--text)' }}>{giveText} → {getIt?.name ?? b.get} ×{b.getN}</span>
-                      <span className="font-mono2 text-[11px]" style={{ color: afford ? 'var(--exit)' : 'var(--text-dim)' }}>持有 {have}{b.give2 ? ` / ${have2}` : ''}</span>
-                    </button>
-                  )
-                })}
-              </div>
-              </>
-              )}
-              {def.trade && (
-              <>
-              <div className="mb-2 text-[12px]" style={{ color: 'var(--text-dim)' }}>
-                {creditTrade?'支持信用点或压印币结账。':`${coinName}结账，概不赊欠。`}（{coinName}：{engine.countItem(coinItem)} {coinUnit}
-                {def.currency !== 'almond' && ` · 杏仁水：${engine.countItem('almond')} 瓶`}）
-                {discount && <span style={{ color: 'var(--exit)' }}>声望优惠：全部八折</span>}
-              </div>
-              {/* 互换：1 杏仁水 ↔ coinRate 币（v54：杏仁水计价时无币可换，不显示互换） */}
-              {def.currency !== 'almond' && (
-              <div className="mb-2 flex gap-2">
-                <button
-                  className="menu-btn flex-1 px-2 py-1 text-[11px]"
-                  onClick={() => { if(creditTrade){reportTrade(engine.bntgExchange(npcId,'sellAlmond',paymentMode));return} if (engine.consumeItem('almond')) { for (let i = 0; i < coinRate; i++) engine.addItem(coinItem); audio.uiTick() } }}
-                >1 杏仁水 → {coinRate} {coinName}</button>
-                <button
-                  className="menu-btn flex-1 px-2 py-1 text-[11px]"
-                  onClick={() => {
-                    if(creditTrade){reportTrade(engine.bntgExchange(npcId,'buyAlmond',paymentMode));return}
-                    if (engine.countItem(coinItem) >= coinRate) {
-                      for (let i = 0; i < coinRate; i++) engine.consumeItem(coinItem)
-                      engine.addItem('almond'); audio.uiTick()
-                    } else engine.msg(`${coinName}不够。`, 'system')
-                  }}
-                >{coinRate} {creditTrade?'信用点／压印币':coinName} → 1 杏仁水</button>
-              </div>
-              )}
-              <div className="mb-2 grid gap-1">
-                {def.trade!.map((t) => {
-                  const it = ITEMS[t.item]
-                  // v51：银舌头（Object 5）——生效中交易再享 95 折
-                  const price = Math.max(1, Math.floor((discount ? t.price * 0.8 : t.price) * (engine.silverTongueT > 0 ? 0.95 : 1)))
-                  const payment=creditTrade?bntgPaymentPlan(engine,price,paymentMode):null
-                  const afford = creditTrade?!!payment:engine.countItem(coinItem) >= price
-                  return (
-                    <button
-                      key={t.item}
-                      className="flex items-center gap-2 border px-2 py-1.5 text-left"
-                      style={{ borderColor: afford ? facColor : 'var(--panel-edge)', opacity: afford ? 1 : 0.45 }}
-                      onClick={() => {
-                        if(creditTrade){reportTrade(engine.bntgBuy(npcId,t.item,paymentMode));return}
-                        if (engine.countItem(coinItem) < price) { engine.msg(`${coinName}不够。`, 'system'); return }
-                        for (let i = 0; i < price; i++) engine.consumeItem(coinItem)
-                        for (let q = 0; q < Math.max(1, t.qty ?? 1); q++) engine.addItem(t.item)
-                        audio.pickup()
-                        engine.emit({ kind: 'toast', text: `-${price} ${coinName} → ${it?.name ?? t.item}` })
-                      }}
-                    >
-                      <ItemGlyph type={t.item} size={20} />
-                      <span className="flex-1 text-[12px]" style={{ color: 'var(--text)' }}>{it?.name ?? t.item}{(t.qty ?? 1) > 1 ? ` ×${t.qty}` : ''}</span>
-                      <span className="font-mono2 text-[11px]" style={{ color: 'var(--amber)' }}>{creditTrade&&payment?`${payment.credit?payment.credit+' 信用点':''}${payment.credit&&payment.cash?' + ':''}${payment.cash?payment.cash+' 压印币':''}`:`${price} ${creditTrade&&paymentMode==='credits'?'信用点':coinUnit}`}{discount && price < t.price ? `（原 ${t.price}）` : ''}</span>
-                    </button>
-                  )
-                })}
-              </div>
-              </>
-              )}
-              <button className="menu-btn px-3 py-1.5 text-[12px]" onClick={() => { audio.uiTick(); setMode('chat') }}>返回交谈</button>
-              </>
-              )}
-              <button className="menu-btn px-3 py-1.5 text-[12px]" onClick={() => { audio.uiTick(); onClose() }}>告辞。</button>
-            </>
-          )}
+
+          </div>
         </div>
       </div>
     </div>
   )
 }
 
+
+/** 台词逐字出现（约 45 字/秒）；点一下直接显示全文 */
+function TypeLine({ text }: { text: string }) {
+  const [n, setN] = useState(0)
+  const raf = useRef(0)
+  useEffect(() => {
+    setN(0)
+    const t0 = performance.now()
+    const step = () => { const k = Math.min(text.length, Math.floor((performance.now() - t0) / 22)); setN(k); if (k < text.length) raf.current = requestAnimationFrame(step) }
+    raf.current = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(raf.current)
+  }, [text])
+  const finish = () => { cancelAnimationFrame(raf.current); setN(text.length) }
+  const done = n >= text.length
+  return <span className="dlg-type" role="button" tabIndex={0} aria-label={text} onClick={finish} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); finish() } }}>{text.slice(0, n)}{!done && <span className="dlg-caret">▍</span>}{done && <span className="dlg-more">◆</span>}</span>
+}

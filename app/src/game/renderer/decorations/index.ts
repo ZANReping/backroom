@@ -11,6 +11,7 @@ import type { LevelDef, LightSource } from '../../core/types'
 import { createDecorCtx, flushDecor } from './context'
 import * as decal from './decals'
 import * as prop from './props'
+import { L02_ID } from '../../world/l02Layout'
 
 // ---------- 层级装饰：贴墙/地面贴花 + 低模道具，避开实体/物品/出口/通路 ----------
 export function* buildDecorationsJob(
@@ -21,6 +22,8 @@ g: THREE.Group,
 fixtures: { mat: THREE.MeshBasicMaterial; seed: number; src?: LightSource }[],
 range?: { x0: number; y0: number; x1: number; y1: number; variant?: string }, // v17：无限模式按 chunk 范围构建（含 chunk 变体）
 ): Generator<void, void, unknown> {
+  // Level 0.2（gen 也是 'rooms'）不套用 Level 0 的地毯污渍/剥落墙纸/假门/歪灯——污渍贴花就是地毯上的深色椭圆斑
+  if (def.id === L02_ID) return
   const c = createDecorCtx(m, def, wallH, g, fixtures, range)
 
   switch (def.gen) {

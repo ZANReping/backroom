@@ -25,9 +25,9 @@ export const ENTITY_FORMS: Readonly<Record<string, readonly EntitySubform[]>> = 
   deathmoth: Object.entries(MOTH_FORMS).map(([id, v]) => ({ ...v, id: id as EntityForm })),
   smiler: Object.entries(SMILER_KINDS).map(([id, v]) => ({ id: id as EntityForm, name: id === 'common' ? '普通笑魇' : v.name, desc: v.desc, behavior: v.behavior })),
   hound: [
-    form('hound-hostile', '普通猎犬', '低伏四足、长发垂落的敌对个体。', '嚎叫呼应、追猎和扑击，持续直视可短暂威慑。', { houndKind: 'hostile' }),
-    form('hound-neutral', '中立猎犬', 'Level 11 常见的中立形态，坐下观察并摇尾。', '近处奔跑会使其逃开；被攻击后仍会转为敌对。', { houndKind: 'neutral' }),
-    form('hound-ambusher', '高智能猎犬', 'Level 3 的伏击个体，外观沿用普通猎犬。', '伏击与快速追击；被直视时僵住。', { houndKind: 'ambusher' }),
+    form('hound-hostile', '普通猎犬', '低伏四足、长发垂落的敌对个体。', '嚎叫后两三只结群包抄、冲锋扑倒压制、拖走并啃食尸体；准星对准脸持续直视可短暂威慑，手电照脸更有效。', { houndKind: 'hostile' }),
+    form('hound-neutral', '中立猎犬', 'Level 11 常见的中立形态，毛色浅、眼神柔和，坐下观察并摇尾。', '不结群、不扑人、不抢尸体；近处奔跑会使其逃开；被攻击后仍会转为敌对。', { houndKind: 'neutral' }),
+    form('hound-ambusher', '高智能猎犬', 'Level 3 的伏击个体，更瘦长、伏得更低，爪更长。', '单独伏击与快速追击；被直视时僵住；扑倒后更难挣脱。', { houndKind: 'ambusher' }),
   ],
   faceling: [
     form('faceling-common', '普通种', '与人类高度相似，分幼年 / 成年 / 老年；衣着模仿所处环境的职业。脸部没有五官。', '中立：会招手、点头、指路；幼体会哭闹，可安抚；伤害幼体会激怒附近成体。', { passive: true, l3face: false, tool: false }),
@@ -56,6 +56,12 @@ export const ENTITY_FORMS: Readonly<Record<string, readonly EntitySubform[]>> = 
     form('corpserat-ceiling', '罗特尼斯尸鼠', 'Level 8 穴顶的尸鼠，适应反向重力并倒挂在洞顶。', '沿洞顶倒挂爬行；需要有顶空间观察。', { ceilingCrawler: true, ratMorph: 'cave' }),
   ],
   // [L8-arachnid] 重制：17 个变种 + 旧「食草被动型」行为标志（engine/arachnidStats.ts）；旧 spider/scorpion/tick/mite 外形数据由 legacyArachnidKind 映射
+  // [creeper] Entity 17：感染体宿主与爬菌人（阶段与数值见 engine/creeperAI.CR）
+  creeper: [
+    form('creeper-rat', '尸鼠感染体', '尸鼠的关节、背上长出亮白绒球，毛色灰白干瘪，高阶时几乎被白绒包住。', '1–3 阶僵直游荡、不主动攻击；4 阶主动追人。阶段越高越慢、出手间隔越长，但更狠更记仇。', { creepHost: 'rat' }),
+    form('creeper-spider', '蛛形纲感染体', '蜘蛛的每个腿关节上一颗白绒球，腹部一大团白球，菌丝连到网上。', '同尸鼠感染体；腿僵直不协调，偶尔拖着一条后腿走。', { creepHost: 'arachnid' }),
+    form('creeper-human', '爬菌人', '腰下断开、焦黑龟裂的人形，双手撑地爬行，白色增生团里余烬明灭。', '极罕见。听觉视觉增强，发现目标会尖叫，然后主动追击、扑击。', { creepHost: 'human', passive: false }),
+  ],
   arachnid: ARACHNID_FORM_ROWS.map((r) => form(r.id, r.name, r.desc, r.behavior, { arachnidVariant: r.kind, ...(r.herbivore ? { herbivore: true, passive: true } : {}) })),
 }
 const EMPTY: readonly EntitySubform[] = []

@@ -7,10 +7,22 @@ export interface DocDef {
   title: string // 文档标题
   no: string // 文档编号（如 3/7）
   body: DocSection[]
-  style?: 'note' | 'book' | 'foundation' | 'web' | 'missing' // 基金会欢迎信有独立白纸排版
+  style?: 'note' | 'book' | 'foundation' | 'web' | 'missing' | 'brc' // Documents keep their dedicated presentation.
   font?: 'zhimangxing' // v53b：手书字体覆盖（L3 画作笔记残页用志莽行）
   url?: string // 前厅：web 风格文档的地址栏（虚构域名）
   image?: string // v57t：book 风格页内配图（远程 URL；加载失败自动隐藏）
+  heads?: boolean // note 风格默认不画分节标题；为 true 时显示（L0.2 板夹文件的「后室装修公司」等分节）
+  /** L0.2 后室装修公司纸质单据（style='brc'，components/BrcDocument.tsx）：按单据类型区分版式；body 为手写部分。 */
+  brc?: {
+    kind: 'permit' | 'log' | 'workorder' | 'inspect'
+    form: string; no: string; date: string; page: string; motto?: string
+    fields?: [string, string][]
+    cols?: string[]; colW?: string[]; rows?: string[][]
+    sign?: [string, string][]; stamp?: string; stampSub?: string
+    copy?: string
+    /** 来源署名（页脚小字） */
+    src?: string
+  }
 }
 
 // v53b：L3 大幅画作下的笔记残页（wikidot L3「艺术品」多页笔记纸转录——狂乱笔迹，作者疑为
@@ -176,4 +188,72 @@ for (let i = 0; i < L3_NOTE_IDS.length; i++) {
     font: 'zhimangxing',
     body: [{ head: '', paras: [L3_NOTES[i]] }],
   }
+}
+
+// Level 0.2「重塑的混乱」：后室装修公司（brc）板夹上的三份文件（engine/l02Collapse.ts 交互打开）。
+// 依据 https://backrooms-wiki-cn.wikidot.com/level-0-2 「恢复的文件」一节（作者 PandaShark71004，译者 JLhze）
+// 自行转述/节选：口号与「这一页其余的部分都被撕掉了」为原文短句引用，其余为改写。来源登记见 reports/level-0-2/final/中文说明.md。
+const L02_SRC = '据 Backrooms 中文维基《Level 0.2 - “重塑的混乱”》恢复的文件转述 · PandaShark71004 著 · JLhze 译'
+// 第五轮：改成真实施工单据版式（BrcDocument）。三份板夹文件 = 施工日志封面页 / 工作单 / 巡检记录表；另有施工许可证（领取许可时展示）。
+// 来源署名移到页脚小字（brc.src），正文不再出现署名段。
+DOCS.brc_slogan = {
+  id: 'brc_slogan', title: '后室装修公司 · 板夹（一）· 施工日志', no: '1/3', style: 'brc', heads: true,
+  brc: {
+    kind: 'log', form: '施 工 日 志', no: 'BRC-L0-A880-001', date: '□□/□□', page: '第 1 页　共 3 页', motto: '「真正的整洁来自于装潢。」',
+    fields: [['工程名称', 'Level 0 · A 级重塑'], ['施工部位', '（未填）'], ['天气 / 照明', '荧光灯 全亮']],
+    cols: ['时间', '施工内容', '人数', '记录人'], colW: ['16%', '54%', '12%', '18%'],
+    rows: [['08:00', '进场。', '4', 'CX'], ['', '', '', ''], ['', '', '', ''], ['', '', '', '']],
+    sign: [['施工负责人', ''], ['监理', '']], stamp: '后室装修公司', stampSub: '工程专用章',
+    copy: '本页为日志封面页 · 页眉页脚各印公司名一次', src: L02_SRC,
+  },
+  body: [
+    { head: '后室装修公司', paras: ['「真正的整洁来自于装潢。」'] },
+    { head: '', paras: ['（整页几乎空白，只在页眉和页脚各印了一次公司名，像一张还没填写的封面。纸角被石膏粉染成了灰色。）'] },
+  ],
+}
+DOCS.brc_took = {
+  id: 'brc_took', title: '后室装修公司 · 板夹（二）· 工作单', no: '2/3', style: 'brc', heads: true,
+  brc: {
+    kind: 'workorder', form: '工 作 单', no: 'WO-A880-1 / 102-CX', date: '加急', page: '第 2 页　共 3 页',
+    fields: [['对象', 'Level 0'], ['部门', 'A880-1'], ['目标', 'A 级重塑'], ['派出工作组', '102-CX（4 人）'], ['主管', 'Major Took']],
+    sign: [['派单人', 'Major Took'], ['接单（工作组）', '102-CX'], ['验收', '']], stamp: '后室装修公司', stampSub: '派工专用章',
+    src: L02_SRC,
+  },
+  body: [
+    { head: '工作单', paras: ['加急。完工后交主管验收，验收栏空着。'] },
+    { head: '工作批注（转述）', paras: [
+      'Major Took 在批注里几乎是在吼：这可能是你们四个保住饭碗的最后机会。以往派给你们的活，没有一次不搞砸；上头已经盯上了这件事，挨骂的却总是他。',
+      '他要求这一次务必干好——别再让「领导」因为你们的愚蠢受罚。落款：「你的老板，Major Took」。',
+    ] },
+  ],
+}
+DOCS.brc_report = {
+  id: 'brc_report', title: '后室装修公司 · 板夹（三）· 巡检记录表', no: '3/3', style: 'brc', heads: true,
+  brc: {
+    kind: 'inspect', form: '巡 检 记 录 表', no: 'INS-102-CX-07', date: '当日', page: '第 3 页　共 3 页',
+    cols: ['检查项', '正常', '异常', '备注'], colW: ['34%', '12%', '12%', '42%'],
+    rows: [['隔墙垂直度', '✓', '', '一切都好！'], ['吊顶龙骨', '✓', '', '没什么不对劲'], ['地面基层', '', '', '好吧，除了个别'], ['照明线路', '✓', '', '']],
+    sign: [['巡检人', '（未签）'], ['复核', '']],
+    copy: '下半页缺失', src: L02_SRC,
+  },
+  body: [
+    { head: '致 Major Took（转述）', paras: [
+      '写报告的工人一开口就道歉：他知道自己本该在干活，而不是在写这张纸。然后连用了一串感叹号向主管保证——这里一切都好，没什么不对劲，「好吧，除了个别」。',
+      '他说大家这次格外卖力，不想再让主管失望；又小心地问能不能请主管跟上级说说情，再给工作组几次机会，因为大多数故障「完全不是我们的错」，我们应——',
+      '（字迹在这里断开。「这一页其余的部分都被撕掉了。」）',
+    ] },
+  ],
+}
+// 施工许可证（engine/remodel.ts 领取许可时展示；图鉴「文档」可再读）
+DOCS.brc_permit = {
+  id: 'brc_permit', title: '后室装修公司 · 施工许可证', no: '许可', style: 'brc', heads: true,
+  brc: {
+    kind: 'permit', form: '施 工 许 可 证', no: 'No. 0060-A', date: '即日起', page: '第 1 页　共 1 页',
+    fields: [['持证人', '流浪者（BRC 声望 > 60）'], ['施工地点', 'Level 0 任意完整墙面'], ['许可事项', '「重塑」施工 · 开设施工场所门一扇'], ['有效期', '每次使用后，离开 Level 0 再回来方可再次使用']],
+    sign: [['签发', '后室装修公司'], ['持证人签字', '']], stamp: '后室装修公司', stampSub: '施工许可专用章',
+    copy: '蓝联（复写）：持证人收执 · 右下压金色钢印', src: '游戏内设定（依据 Backrooms 中文维基 Level 0.2 页面的「后室装修公司」设定自拟）',
+  },
+  body: [
+    { head: '注意事项', paras: ['施工期间周围区域会被「重塑」。施工场所内结构不稳定：吊顶板会掉落、隔墙会倒塌、地板会塌陷。请佩戴防尘口罩。'] },
+  ],
 }

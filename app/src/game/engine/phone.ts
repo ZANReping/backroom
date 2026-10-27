@@ -4,6 +4,7 @@ import type { Engine, PlayerState } from '../engine'
 import { audio } from '../core/audio'
 import { FOYER_ID, foyerRoomAt } from '../world/foyerLayout'
 import { onStreetPhoto, streetPlaceName } from './foyerStreet'
+import { redEntranceInShot } from './l0QuestProbe'
 
 export interface PhoneNote { id: number; kind: 'note' | 'photo'; title: string; text: string; time: string; place?: string }
 export interface PhoneState {
@@ -17,6 +18,10 @@ export interface PhoneState {
   cracked?: boolean
   /** M4：Level 0 无信号（论坛无法刷新） */
   noSignal?: boolean
+  /** Level 0.2：连上了工地临时 Wi‑Fi（路由器 16 m 内；离开本层清除）。 */
+  wifi?: boolean
+  /** Level 0.2：正插在墙上插座充电（每帧由 engine/l02Collapse.ts 置位）。 */
+  charging?: boolean
 }
 
 export function newPhoneState(): PhoneState {
@@ -115,11 +120,15 @@ export function takePhoto(eng: Engine, thumb?: string): PhoneNote | null {
   ph.photos++
   const place = placeName(eng)
   const subject = eng.player.level === FOYER_ID ? onStreetPhoto(eng) : null // M3：巷子调查点/寻人启事
-  const n = addPhoneNote(eng, 'photo', `照片 #${ph.photos}`, `${place}，${clockText(eng)}。${subject ? '\n' + subject : ''}`, place)
+  // Level 0：在红室外拍到红室入口（任务「教学」可选目标）
+  const redShot = eng.player.level === 0 ? redEntranceInShot(eng) : null
+  const l0Subject = redShot ? '画面里是一处红室入口：门洞那边的墙纸泛着暗红，像是浸过什么。我没有走进去。' : null
+  const n = addPhoneNote(eng, 'photo', `照片 #${ph.photos}`, `${place}，${clockText(eng)}。${subject ? '\n' + subject : ''}${l0Subject ? '\n' + l0Subject : ''}`, place)
   if (thumb) eng.phoneThumbs.set(n.id, thumb)
   audio.uiTick()
   eng.photoFlashT = 0.35
   eng.markTutorial('phone_photo')
+  eng.questEvent({ t: 'photo', subject: redShot ? 'l0_red_entrance' : null })
   return n
 }
 

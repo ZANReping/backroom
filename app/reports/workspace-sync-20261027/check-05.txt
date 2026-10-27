@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:careers
+> esbuild scripts/check-careers.ts --bundle --platform=node --format=esm --outfile=.cache/check-careers.mjs && node .cache/check-careers.mjs
+
+
+  .cache\check-careers.mjs  3.2mb
+
+Done in 420ms
+Career checks passed: 36 task submissions across three legacy routes, reloads, field distance, escrow, tracking limit, stabilizer radius and expiry.

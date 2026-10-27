@@ -571,8 +571,8 @@ export function stepFerrenWorld(eng: Engine, dt: number) {
   if (!flashing) r.flash = Math.max(0, r.flash - dt / FR.FLASH_OUT)
   if (r.sanBackT > 0) { r.sanBackT -= dt; if (r.sanBackT <= 0) eng.player.sanity = Math.min(100, eng.player.sanity + FR.NOCLIP_SAN_BACK) }
   const held = !!eng.specialHeld
-  if (eng.specialPressed || held && !r.prevHeld) ferrenPress(eng)
-  eng.specialPressed = false
+  // Only consume the tap when Ferren actually handles it; merchants share this input.
+  if ((eng.specialPressed || held && !r.prevHeld) && ferrenPress(eng)) eng.specialPressed = false
   r.prevHeld = held
 }
 

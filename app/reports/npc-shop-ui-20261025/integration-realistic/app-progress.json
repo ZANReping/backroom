@@ -1,0 +1,84 @@
+{
+  "checks": [
+    "v1 saved credit account restored",
+    "real merchant home mkt_moore",
+    "safe actual-world position 39.349999999999994,73",
+    "look-at scan selects mkt_moore",
+    "dialog pauses gameplay",
+    "clicking typewriter completes text without reverting on the next frame",
+    "real NPC model portrait canvas is initialized",
+    "numbered dialog response leaves dialog interactive",
+    "shop and dialog are separate paused overlays",
+    "actual purchase deducts 14 credits only and grants flashlight",
+    "double-click executes the clicked row, not the previously selected flashlight",
+    "quantity-two buyback credits account and records sale without changing cash",
+    "story item cannot be sold",
+    "keyboard selection is bounded at last item and immediately moves back",
+    "real merchant home mkt_moore",
+    "safe actual-world position 39.349999999999994,73",
+    "look-at scan selects mkt_moore",
+    "shop shortcut label follows custom binding",
+    "safe actual-world position 103,101.8",
+    "unavailable special tap is not latched",
+    "real merchant home mkt_moore",
+    "safe actual-world position 39.349999999999994,73",
+    "look-at scan selects mkt_moore",
+    "approaching a merchant after an unavailable tap never opens the shop",
+    "dialog fits 390x844",
+    "dialog fits 844x390",
+    "shop fits 390x844",
+    "checkout action remains reachable at 390x844",
+    "shop fits 844x390"
+  ],
+  "shots": [
+    "01-real-dialog-bntg",
+    "02-real-shop-bntg",
+    "03-real-buyback-credit-receipt",
+    "04-dialog-phone",
+    "05-dialog-landscape",
+    "06-shop-phone"
+  ],
+  "flows": [
+    {
+      "numberedOption": "有什么建议？"
+    }
+  ],
+  "layouts": [
+    {
+      "width": 390,
+      "height": 844,
+      "x": 8,
+      "right": 382,
+      "top": 584,
+      "bottom": 834,
+      "scroll": 390,
+      "client": 390
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "x": 16,
+      "right": 828,
+      "top": 150,
+      "bottom": 362,
+      "scroll": 844,
+      "client": 844
+    },
+    {
+      "x": 16,
+      "right": 374,
+      "top": 62,
+      "bottom": 782,
+      "scroll": 356,
+      "client": 356
+    },
+    {
+      "x": 16,
+      "right": 828,
+      "top": 7.8125,
+      "bottom": 382.203125,
+      "scroll": 810,
+      "client": 810
+    }
+  ]
+}

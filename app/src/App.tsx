@@ -35,6 +35,7 @@ import RadioOverlay from '@/components/RadioOverlay'
 import InventoryOverlay, { discoverFromEngine, loadCodex, saveCodex } from '@/components/InventoryOverlay'
 import DocOverlay from '@/components/DocOverlay'
 import LandmarkOverlay from '@/components/LandmarkOverlay'
+import ShopOverlay from './components/shop/ShopOverlay'
 import DialogOverlay from '@/components/DialogOverlay'
 import FacilityPanel from '@/components/FacilityPanel'
 import BntgAtm from '@/components/BntgAtm'
@@ -65,7 +66,7 @@ import { hudOn, type HudKey } from '@/game/engine/hud'
 import { carriesPhone, takePhoto } from '@/game/engine/phone'
 
 type Screen = 'title' | 'loading' | 'intro' | 'game' | 'fall' | 'design'
-type Overlay = 'none' | 'phone' | 'settings' | 'howto' | 'pause' | 'radio' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'lobby' | 'facility' | 'bank' | 'vending'
+type Overlay = 'none' | 'phone' | 'settings' | 'howto' | 'pause' | 'radio' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'shop' | 'lobby' | 'facility' | 'bank' | 'vending'
 
 // 冒烟测试钩子（Playwright page.evaluate 用）
 if (typeof window !== 'undefined') {
@@ -119,6 +120,8 @@ function Game() {
       delete stored.preloadAllLevels
       if(typeof stored.newGameSeed!=='string'||(stored.newGameSeed.trim()&&!parseSeedInput(stored.newGameSeed)&&parseSeedInput(stored.newGameSeed)!==0))delete stored.newGameSeed
       delete stored.dust // 已移除的旧版漂浮尘埃设置不再继续写回存档。
+      // [movefeel] 一次性迁移：旧存档没有 headBobStrong——原来开着真实摇晃的保留完整幅度（强），原来关着的改为新默认（简化版开启）
+      if (typeof stored.headBobStrong !== 'boolean') { stored.headBobStrong = stored.headBob === true; stored.headBob = true }
       return { ...defaults, ...stored, flicker:0,eyeAdaptation:typeof stored.eyeAdaptation==='boolean'?stored.eyeAdaptation:defaults.eyeAdaptation } as GameSettings
     } catch { return defaults }
   })
@@ -137,7 +140,7 @@ function Game() {
   // 指针锁定下鼠标移动与 keyup 都发生在 React 渲染之外，ref 保证它们读取同一帧的轮盘选择。
   const squirtWheelRef = useRef<SquirtWheelState | null>(null)
   // v23：切入切出过场（替代旧的简易 TransitionOverlay）
-  const [cut, setCut] = useState<{ id: number; kind: CutKind; levelId?: number; cutIn?: CutIn; toName?: string; caption?: string } | null>(null)
+  const [cut, setCut] = useState<{ id: number; kind: CutKind; levelId?: number; cutIn?: CutIn; toName?: string; subtitle?: string; caption?: string } | null>(null)
   const cutSequence = useRef(0)
   const cutRef = useRef<typeof cut>(null)
   cutRef.current = cut
@@ -309,7 +312,8 @@ function Game() {
               kind: e.anim as CutKind,
               levelId: d,
               cutIn: e.cutIn as CutIn | undefined,
-              toName: d !== undefined ? (levelDefOf(d)?.label ?? `${levelLabel(d)} · ${levelDefOf(d)?.name ?? ''}`) : e.dest === 'win' ? undefined : '未知层级',
+              toName: d !== undefined ? (levelDefOf(d)?.titleName ?? levelDefOf(d)?.label ?? `${levelLabel(d)} · ${levelDefOf(d)?.name ?? ''}`) : e.dest === 'win' ? undefined : '未知层级',
+              subtitle: d !== undefined ? levelDefOf(d)?.titleSub : undefined,
               caption: e.cutIn === 'outpost' ? '你跟着鲜黄色地标指示的路线，成功抵达了' : CUT_CAPTION[e.anim] ?? '你换了一层',
             }
             cutRef.current = nextCut
@@ -317,12 +321,14 @@ function Game() {
             if (e.fallDamage) setTimeout(() => setFallDmg(e.fallDamage!), 900)
           } else if (e.anim === 'intro') {
             introPhaseRef.current = 'presenting'
+            // Level 0.2（独立 id 902，不在 LEVELS 里）：到达即记入图鉴，L0 档案页「子层级」区块据此显示「已发现」
+            if (engine.player.level === 902) { const c = loadCodex(); if (!c.level_902) { c.level_902 = true; saveCodex(c) } }
             updateWorldLoading(!rendererRef.current?.isNearWorldReady(engine))
             if (cutRef.current && cutRef.current.levelId === undefined) {
               const levelId = engine.player.level
               const destination = levelDefOf(levelId)
-              const toName = destination?.label ?? `${levelLabel(levelId)} · ${destination?.name ?? ''}`
-              const completedCut = { ...cutRef.current, levelId, toName }
+              const toName = destination?.titleName ?? destination?.label ?? `${levelLabel(levelId)} · ${destination?.name ?? ''}`
+              const completedCut = { ...cutRef.current, levelId, toName, subtitle: destination?.titleSub }
               cutRef.current = completedCut
               setCut(completedCut)
             }
@@ -381,6 +387,15 @@ function Game() {
           if (!c[`npc_${id}`]) { c[`npc_${id}`] = true; saveCodex(c) }
           setDialogId(id)
           setOverlay('dialog')
+          break
+        }
+        case 'shop': {
+          // 特殊交互键（X）对着商人：直接打开该团体风格的商店（与对话窗互相切换）
+          const id = e.text ?? ''
+          const c = loadCodex()
+          if (!c[`npc_${id}`]) { c[`npc_${id}`] = true; saveCodex(c) }
+          setDialogId(id)
+          setOverlay('shop')
           break
         }
       }
@@ -1067,8 +1082,8 @@ function Game() {
 
   // 画面设置：真实视角摇晃（v54；默认关闭=基础 bob）
   useEffect(() => {
-    rendererRef.current?.setHeadBob(settings.headBob)
-  }, [settings.headBob])
+    rendererRef.current?.setHeadBob(settings.headBob, settings.headBobStrong)
+  }, [settings.headBob, settings.headBobStrong])
 
   // 画面设置：不重建关卡即可即时调整的渲染负载与相机参数。
   useEffect(() => {
@@ -1218,6 +1233,7 @@ function Game() {
           levelId={cut.levelId}
           cutIn={cut.cutIn}
           toName={cut.toName}
+          subtitle={cut.subtitle}
           caption={cut.caption}
           ready={!worldLoading}
           onStageChange={(stage) => { cutStageRef.current = stage }}
@@ -1248,6 +1264,7 @@ function Game() {
           level={levelNo(levelDef.id)}
           levelId={levelDef.id}
           name={levelDef.name}
+          subtitle={levelDef.titleSub}
           flavor={levelDef.flavor}
           seed={engine.seed}
           ready={!worldLoading}
@@ -1298,7 +1315,8 @@ function Game() {
         <div className="pointer-events-none fixed inset-0 z-[44]" data-phone-camera>
           <div className="absolute inset-[7%] border-2" style={{ borderColor: 'rgba(255,255,255,.55)', borderRadius: 18 }} />
           <div className="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 border" style={{ borderColor: 'rgba(255,214,90,.8)' }} />
-          <div className="absolute left-[9%] top-[9%] font-mono text-[12px]" style={{ color: '#fff', textShadow: '0 1px 2px #000' }}>● REC 相机 · {Math.round(engine.player.phone?.battery ?? 0)}%</div>
+          {/* 取景框左上角与 HUD 状态条重叠：加深色底保证可读 */}
+          <div className="absolute left-[9%] top-[9%] rounded px-2 py-0.5 font-mono text-[12px]" style={{ background: 'rgba(0,0,0,.6)', color: '#fff', textShadow: '0 1px 2px #000' }}>● REC 相机 · {Math.round(engine.player.phone?.battery ?? 0)}%</div>
           <div className="absolute bottom-[10%] left-1/2 -translate-x-1/2 rounded px-3 py-1 font-mono text-[12px]" style={{ background: 'rgba(0,0,0,.55)', color: '#fff' }}>
             {isMobile ? '点「快门」拍照 · 点「退出」' : `[${bindLabelFor('interact')}] / [${bindLabelFor('attack')}] 拍照 · [Esc] / [${bindLabelFor('phone')}] 退出`}
           </div>
@@ -1317,7 +1335,10 @@ function Game() {
         <LandmarkOverlay outpostId={landmarkId} onClose={() => setOverlay('none')} />
       )}
       {overlay === 'dialog' && (
-        <DialogOverlay npcId={dialogId} onClose={() => setOverlay('none')} />
+        <DialogOverlay npcId={dialogId} onClose={() => setOverlay('none')} onShop={() => setOverlay('shop')} />
+      )}
+      {overlay === 'shop' && (
+        <ShopOverlay npcId={dialogId} onClose={() => setOverlay('none')} onTalk={() => setOverlay('dialog')} />
       )}
       <FullscreenHint />
       {screen === 'game' && isMobile && !portraitBlocked && overlay === 'none' && !hudHidden && (

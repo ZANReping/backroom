@@ -279,6 +279,22 @@ export function buildHeldItem(type: string): THREE.Group {
       g.add(detail)
       break
     }
+    case 'brc_permit': {
+      // 施工许可：板夹向后仰、斜对镜头（像低头看单子），缩小到手掌尺度，许可单印字朝向玩家
+      const pm = buildItemMesh('brc_permit', { halo: false })
+      pm.scale.setScalar(.62); pm.rotation.set(-.95, .18, .06)
+      pm.position.set(-.01, .05, -.17)
+      g.add(pm)
+      break
+    }
+    case 'dustmask': {
+      // 防尘口罩：杯面朝前，鼻夹在上，托在掌心
+      const mm = buildItemMesh('dustmask', { halo: false })
+      mm.scale.setScalar(.82); mm.rotation.set(-.25, .35, 0)
+      mm.position.set(0, .05, -.16)
+      g.add(mm)
+      break
+    }
     default: {
       // 复用物品低模（去掉地面光环）
       const src = buildItemMesh(type, { halo: false })

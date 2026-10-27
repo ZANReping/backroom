@@ -1,0 +1,1761 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 6323,
+  "cdp": 6324,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:6323/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Tue, 27 Oct 2026 08:43:17 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 388,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 6323,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 117665.986224,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.987,
+        "sendEnd": 1.056,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 254.994,
+        "receiveHeadersEnd": 255.244
+      },
+      "responseTime": 1793090597338.5,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\mirror-reflections-20261027\\after-realistic-first\\qa-1793090544882-5792",
+    "--remote-debugging-port=6324",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 56408,
+    "server": 45476
+  },
+  "appBootMs": 49543.0229,
+  "entryMs": 4093.1426999999967,
+  "firstPlayableMs": 64530.405600000006,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "pos": [
+      78.5,
+      79.5,
+      0
+    ],
+    "camera": [
+      78.5,
+      1.55,
+      79.5
+    ],
+    "yaw": 0,
+    "pitch": 0,
+    "mirrors": {
+      "surfaces": 0,
+      "visible": 0,
+      "planes": 0,
+      "targets": 0,
+      "updates": 0,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 661,
+      "textures": 159
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": []
+  },
+  "foyer": {
+    "level": 900,
+    "pos": [
+      6,
+      12.55,
+      0
+    ],
+    "camera": [
+      6,
+      1.55,
+      12.55
+    ],
+    "yaw": -4.71238898038469,
+    "pitch": 0.05046217401685577,
+    "mirrors": {
+      "surfaces": 2,
+      "visible": 1,
+      "planes": 1,
+      "targets": 1,
+      "updates": 344,
+      "framePasses": 1,
+      "calls": 75,
+      "triangles": 48124,
+      "cpuMs": 1.4000000059604645,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 678,
+      "textures": 238
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      }
+    ]
+  },
+  "side": {
+    "level": 900,
+    "pos": [
+      6.6,
+      13,
+      0
+    ],
+    "camera": [
+      6.6,
+      1.55,
+      13
+    ],
+    "yaw": 1.3981148351768917,
+    "pitch": 0.038164698551551524,
+    "mirrors": {
+      "surfaces": 2,
+      "visible": 1,
+      "planes": 1,
+      "targets": 1,
+      "updates": 199,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 646,
+      "textures": 234
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      }
+    ]
+  },
+  "away": {
+    "level": 900,
+    "pos": [
+      6.6,
+      13,
+      0
+    ],
+    "camera": [
+      6.6,
+      1.55,
+      13
+    ],
+    "yaw": 4.539707488766685,
+    "pitch": 0.038164698551551524,
+    "mirrors": {
+      "surfaces": 2,
+      "visible": 0,
+      "planes": 0,
+      "targets": 0,
+      "updates": 223,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 646,
+      "textures": 233
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      }
+    ]
+  },
+  "bath": {
+    "level": 900,
+    "pos": [
+      10.45,
+      5.4,
+      0
+    ],
+    "camera": [
+      10.45,
+      1.55,
+      5.4
+    ],
+    "yaw": -4.71238898038469,
+    "pitch": 0,
+    "mirrors": {
+      "surfaces": 2,
+      "visible": 2,
+      "planes": 2,
+      "targets": 2,
+      "updates": 547,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 678,
+      "textures": 239
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      }
+    ]
+  },
+  "l02": {
+    "level": 902,
+    "pos": [
+      78.1,
+      70.2,
+      0
+    ],
+    "camera": [
+      78.1,
+      1.55,
+      70.2
+    ],
+    "yaw": -4.71238898038469,
+    "pitch": -0.02856365783876002,
+    "mirrors": {
+      "surfaces": 4,
+      "visible": 2,
+      "planes": 1,
+      "targets": 1,
+      "updates": 923,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 240,
+      "textures": 105
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      }
+    ],
+    "rest": {
+      "x": -52,
+      "y": -60,
+      "w": 6,
+      "h": 4,
+      "door": {
+        "x": -48.1,
+        "w": 1.1
+      }
+    }
+  },
+  "traders": {
+    "level": 102,
+    "pos": [
+      82,
+      122.72699999999999,
+      0
+    ],
+    "camera": [
+      82,
+      1.55,
+      122.72699999999999
+    ],
+    "yaw": -3.141592653589793,
+    "pitch": 0.049958395721942696,
+    "mirrors": {
+      "surfaces": 8,
+      "visible": 2,
+      "planes": 1,
+      "targets": 1,
+      "updates": 1020,
+      "framePasses": 1,
+      "calls": 232,
+      "triangles": 155776,
+      "cpuMs": 6.700000002980232,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 775,
+      "textures": 151
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      }
+    ],
+    "fixture": {
+      "kind": "trade_counter",
+      "x": 80.4,
+      "y": 124.35199999999999,
+      "w": 3.2,
+      "h": 0.7500000000000004,
+      "solid": true,
+      "data": {
+        "tradersId": "dress.west_wash.basins",
+        "tradersModel": "dressing",
+        "dressing": "washcounter",
+        "tradersProp": "dressing",
+        "deg": 180,
+        "height": 2.25,
+        "bottom": 0,
+        "roomId": "west_wash",
+        "variant": 2,
+        "wallId": "wall_188",
+        "wallSide": "s",
+        "wallNormalX": 0,
+        "wallNormalY": -1,
+        "wallGap": 0.008,
+        "localW": 3.2,
+        "localD": 0.75
+      }
+    }
+  },
+  "low": {
+    "level": 102,
+    "pos": [
+      82,
+      122.72699999999999,
+      0
+    ],
+    "camera": [
+      82,
+      1.55,
+      122.72699999999999
+    ],
+    "yaw": -3.141592653589793,
+    "pitch": 0.049958395721942696,
+    "mirrors": {
+      "surfaces": 8,
+      "visible": 2,
+      "planes": 1,
+      "targets": 1,
+      "updates": 1059,
+      "framePasses": 1,
+      "calls": 232,
+      "triangles": 155776,
+      "cpuMs": 7.799999997019768,
+      "size": 256
+    },
+    "memory": {
+      "geometries": 775,
+      "textures": 148
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Low quality uses 256px and one plane"
+      }
+    ]
+  },
+  "high": {
+    "level": 102,
+    "pos": [
+      82,
+      122.72699999999999,
+      0
+    ],
+    "camera": [
+      82,
+      1.55,
+      122.72699999999999
+    ],
+    "yaw": -3.141592653589793,
+    "pitch": 0.049958395721942696,
+    "mirrors": {
+      "surfaces": 8,
+      "visible": 2,
+      "planes": 1,
+      "targets": 1,
+      "updates": 1093,
+      "framePasses": 1,
+      "calls": 232,
+      "triangles": 155776,
+      "cpuMs": 6.5999999940395355,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 807,
+      "textures": 151
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Low quality uses 256px and one plane"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "High quality restores 1024px reflection"
+      }
+    ]
+  },
+  "mobile": {
+    "level": 102,
+    "pos": [
+      82,
+      122.72699999999999,
+      0
+    ],
+    "camera": [
+      82,
+      1.55,
+      122.72699999999999
+    ],
+    "yaw": -3.141592653589793,
+    "pitch": 0.049958395721942696,
+    "mirrors": {
+      "surfaces": 8,
+      "visible": 2,
+      "planes": 1,
+      "targets": 1,
+      "updates": 1147,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 256
+    },
+    "memory": {
+      "geometries": 857,
+      "textures": 151
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Low quality uses 256px and one plane"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "High quality restores 1024px reflection"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Touch viewport lowers reflection budget"
+      }
+    ]
+  },
+  "touch": {
+    "desktopSimulation": true,
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  "city": {
+    "level": 11,
+    "pos": [
+      86.00000022351742,
+      87.14850000596047,
+      7.595000219345093
+    ],
+    "camera": [
+      86.00000022351742,
+      9.145000219345093,
+      87.14850000596047
+    ],
+    "yaw": -3.141592653589793,
+    "pitch": -3.172065784643304e-17,
+    "mirrors": {
+      "surfaces": 60,
+      "visible": 8,
+      "planes": 2,
+      "targets": 2,
+      "updates": 1189,
+      "framePasses": 1,
+      "calls": 251,
+      "triangles": 576734,
+      "cpuMs": 5.100000008940697,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 428,
+      "textures": 167
+    },
+    "calls": 1,
+    "triangles": 1,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Low quality uses 256px and one plane"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "High quality restores 1024px reflection"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Touch viewport lowers reflection budget"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      }
+    ]
+  }
+}

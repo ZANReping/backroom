@@ -1740,3 +1740,20 @@ body[data-tut-touch~="flashlight"] [data-touch-id="flashlight"],
 body[data-tut-touch~="backpack"] [data-touch-id="backpack"],
 body[data-tut-touch~="backpack"] [data-touch-id="backpack-top"],
 body[data-tut-touch~="phone"] [data-touch-id="phone"] { animation: tutTouchPulse 1.1s ease-in-out infinite; border-color: var(--amber) !important; }
+/* 层级任务面板（LevelQuestPanel） */
+.hud-level-quest { padding: 6px 10px 7px; font-size: 11px; line-height: 1.35; color: var(--text); text-align: left; }
+.hud-level-quest__quest + .hud-level-quest__quest { margin-top: 6px; padding-top: 5px; border-top: 1px dashed rgba(242, 201, 76, .25); }
+.hud-level-quest__title { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 2px; font-size: 10px; letter-spacing: .1em; color: var(--amber); }
+.hud-level-quest__state { flex: none; color: var(--text-dim); letter-spacing: .04em; }
+.hud-level-quest__quest.is-done .hud-level-quest__state { color: var(--exit, #8fd98f); }
+.hud-level-quest__obj { display: flex; align-items: flex-start; gap: 6px; padding: 1px 2px; border-radius: 2px; }
+.hud-level-quest__box { flex: none; width: 10px; color: var(--amber); }
+.hud-level-quest__text { min-width: 0; overflow-wrap: anywhere; }
+.hud-level-quest__count { font-weight: 600; color: #e9d48a; }
+.hud-level-quest__opt { display: inline-block; margin-left: 5px; padding: 0 4px; font-style: normal; font-size: 9px; line-height: 13px; color: #1d1a12; background: #b9a46a; border-radius: 2px; vertical-align: 1px; }
+.hud-level-quest__obj.is-done { color: var(--text-dim); text-decoration: line-through; opacity: .62; }
+.hud-level-quest__obj.is-done .hud-level-quest__opt { text-decoration: none; }
+.hud-level-quest__obj.is-pulse, .hud-level-quest__quest.is-pulse > .hud-level-quest__title { animation: questPulse 2.6s ease-out both; }
+.hud-level-quest__fold { margin-top: 3px; font-size: 9px; text-align: right; color: var(--text-dim); }
+.hud-level-quest.is-mobile { cursor: pointer; }
+@keyframes questPulse { 0% { background: rgba(242, 201, 76, .55); color: #fff6d0; opacity: 1; } 35% { background: rgba(242, 201, 76, .28); } 100% { background: transparent; } }

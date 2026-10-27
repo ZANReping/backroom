@@ -1,0 +1,1007 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 3851,
+  "cdp": 3852,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:3851/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Mon, 26 Oct 2026 09:40:00 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 267,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 3851,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 34664.054392,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.342,
+        "sendEnd": 0.396,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 7.704,
+        "receiveHeadersEnd": 7.9
+      },
+      "responseTime": 1793007600488.558,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l02-round5-import-20261026\\realistic-second\\qa-1793007586509-6692",
+    "--remote-debugging-port=3852",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 51180,
+    "server": 13740
+  },
+  "appBootMs": 12272.3416,
+  "entryMs": 2126.5959000000003,
+  "firstPlayableMs": 19796.5985,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 661,
+      "textures": 158
+    },
+    "frame": {
+      "cpu": 7.799999997019768,
+      "calls": 800,
+      "triangles": 442783
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0
+  },
+  "l0": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 2,
+    "player": [
+      79.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 101,
+      "textures": 70
+    },
+    "frame": {
+      "cpu": 8.700000002980232,
+      "calls": 106,
+      "triangles": 127853
+    },
+    "pin": null,
+    "l02": null,
+    "quests": [
+      {
+        "id": "l0_tutorial",
+        "revealed": true,
+        "done": false,
+        "rewarded": false,
+        "obj": [
+          {
+            "id": "explore",
+            "done": false,
+            "visible": true,
+            "progress": 1
+          },
+          {
+            "id": "manila",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "photo_red",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "exit",
+            "done": false,
+            "visible": false
+          }
+        ]
+      },
+      {
+        "id": "l0_beyond",
+        "revealed": false,
+        "done": false,
+        "rewarded": false,
+        "obj": [
+          {
+            "id": "find_zenith_station",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "find_remade_chaos",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "find_ice_room",
+            "done": false,
+            "visible": true
+          }
+        ]
+      }
+    ]
+  },
+  "paperInfo": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 7,
+    "player": [
+      77.237,
+      92.5685,
+      0.018941599999999635
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -1.5707963267948966,
+      "pitch": -0.44794209416966174,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 220,
+      "textures": 80
+    },
+    "frame": {
+      "cpu": 30.799999997019768,
+      "calls": 120,
+      "triangles": 138197
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 5,
+    "kind": "permit",
+    "form": "施 工 许 可 证",
+    "stamp": true,
+    "signatures": 2,
+    "overflow": [],
+    "bounds": {
+      "x": 640,
+      "y": 312.0625,
+      "width": 640,
+      "height": 503.859375
+    },
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  "permit": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 8,
+    "player": [
+      77.237,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -1.5707963267948966,
+      "pitch": -0.44794209416966174,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 280,
+      "textures": 81
+    },
+    "frame": {
+      "cpu": 2.7000000029802322,
+      "calls": 203,
+      "triangles": 266743
+    },
+    "pin": null,
+    "l02": null,
+    "site": {
+      "id": "rm21_141_286",
+      "x": 16.526999999999994,
+      "y": 28.5685,
+      "r": 6,
+      "door": {
+        "x": 14.126999999999995,
+        "y": 28.5685,
+        "yaw": 1.5707963267948966
+      },
+      "t0": 2.0665999999999944,
+      "props": [
+        {
+          "kind": "barricade",
+          "x": 15.826999999999995,
+          "y": 27.2185,
+          "yaw": 3.141592653589793
+        },
+        {
+          "kind": "barricade",
+          "x": 15.826999999999995,
+          "y": 29.9185,
+          "yaw": 3.141592653589793
+        },
+        {
+          "kind": "cone",
+          "x": 16.826999999999995,
+          "y": 27.6185,
+          "yaw": 0
+        },
+        {
+          "kind": "cone",
+          "x": 16.826999999999995,
+          "y": 29.5185,
+          "yaw": 0.6
+        },
+        {
+          "kind": "cone",
+          "x": 14.576999999999995,
+          "y": 27.0185,
+          "yaw": 1.1
+        },
+        {
+          "kind": "cone",
+          "x": 14.576999999999995,
+          "y": 30.1685,
+          "yaw": 2.3
+        },
+        {
+          "kind": "sign",
+          "x": 17.426999999999996,
+          "y": 26.5685,
+          "yaw": 1.9207963267948966
+        },
+        {
+          "kind": "worklamp",
+          "x": 14.676999999999996,
+          "y": 26.2685,
+          "yaw": 1.0707963267948966
+        }
+      ]
+    }
+  },
+  "doorSetup": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 9,
+    "player": [
+      79.327,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -4.71238898038469,
+      "pitch": -0.33667481938672655,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 397,
+      "textures": 85
+    },
+    "frame": {
+      "cpu": 3.899999998509884,
+      "calls": 193,
+      "triangles": 271503
+    },
+    "pin": null,
+    "l02": null,
+    "interact": "进入 施工场所的门"
+  },
+  "entryTitle": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 9,
+    "player": [
+      79.327,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -4.71238898038469,
+      "pitch": -0.33667481938672655,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 397,
+      "textures": 85
+    },
+    "frame": {
+      "cpu": 3.1999999955296516,
+      "calls": 195,
+      "triangles": 271557
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 7,
+    "theme": "remodel",
+    "text": "—— 门在你身后合拢 ——Level 0.2 · 重塑的混乱Level 0 的子层级 · 后室装修公司施工区 · 结构不稳定正在准备附近场景… @keyframes cutCardEnter { from { opacity: 0; transform: scale(.985) } to { opacity: 1; transform: scale(1) } } @keyframes cutCardExit { from { opacity: 1; transform: sc"
+  },
+  "entered": {
+    "level": 902,
+    "seed": 542448.8293999999,
+    "checks": 12,
+    "player": [
+      80.5,
+      80.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -4.71238898038469,
+      "pitch": -0.33667481938672655,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 256,
+      "textures": 91
+    },
+    "frame": {
+      "cpu": 5.5,
+      "calls": 109,
+      "triangles": 237221
+    },
+    "pin": null,
+    "l02": {
+      "t": 1.258199999999995,
+      "stage": 0,
+      "dust": 0,
+      "stopped": false,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "fixtures": [
+      {
+        "fix": "clipboard",
+        "fx": -40.796800000000005,
+        "fy": -47.6,
+        "yaw": 0,
+        "doc": "brc_slogan",
+        "sid": 269672022
+      },
+      {
+        "fix": "outlet",
+        "fx": -7.587,
+        "fy": -59.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 15280617
+      },
+      {
+        "fix": "outlet",
+        "fx": -27.587,
+        "fy": -55.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2537299277
+      },
+      {
+        "fix": "clipboard",
+        "fx": -17.641599999999997,
+        "fy": -51.6,
+        "yaw": 0,
+        "doc": "brc_report",
+        "sid": 1334977052
+      },
+      {
+        "fix": "outlet",
+        "fx": 4.413,
+        "fy": -55.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1020004632
+      },
+      {
+        "fix": "clipboard",
+        "fx": 13.019199999999998,
+        "fy": -55.6,
+        "yaw": 0,
+        "doc": "brc_slogan",
+        "sid": 400347255
+      },
+      {
+        "fix": "outlet",
+        "fx": 52.413000000000004,
+        "fy": -59.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2895800136
+      },
+      {
+        "fix": "outlet",
+        "fx": 64.493,
+        "fy": -43.89,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1275817340
+      },
+      {
+        "fix": "router",
+        "fx": 70.1024,
+        "fy": -59.72,
+        "yaw": 0,
+        "sid": 1716266132
+      },
+      {
+        "fix": "outlet",
+        "fx": -47.586999999999996,
+        "fy": -27.889999999999997,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2370222708
+      },
+      {
+        "fix": "clipboard",
+        "fx": -56.976,
+        "fy": -3.6,
+        "yaw": 0,
+        "doc": "brc_slogan",
+        "sid": 1932817319
+      },
+      {
+        "fix": "outlet",
+        "fx": -27.587,
+        "fy": -27.889999999999997,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 380244170
+      },
+      {
+        "fix": "outlet",
+        "fx": -15.586999999999998,
+        "fy": -27.889999999999997,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2372577471
+      },
+      {
+        "fix": "outlet",
+        "fx": 12.413,
+        "fy": -27.889999999999997,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3956495144
+      },
+      {
+        "fix": "outlet",
+        "fx": 24.413,
+        "fy": -23.889999999999997,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1102336142
+      },
+      {
+        "fix": "router",
+        "fx": 30.896,
+        "fy": -7.72,
+        "yaw": 0,
+        "sid": 953678366
+      },
+      {
+        "fix": "outlet",
+        "fx": 44.413000000000004,
+        "fy": -27.889999999999997,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1933378726
+      },
+      {
+        "fix": "outlet",
+        "fx": 72.413,
+        "fy": -27.889999999999997,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 457104207
+      },
+      {
+        "fix": "outlet",
+        "fx": -63.507,
+        "fy": 12.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1034361768
+      },
+      {
+        "fix": "outlet",
+        "fx": -35.586999999999996,
+        "fy": 8.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 631018306
+      },
+      {
+        "fix": "outlet",
+        "fx": 8.493,
+        "fy": 4.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3817619040
+      },
+      {
+        "fix": "router",
+        "fx": 13.008,
+        "fy": 24.28,
+        "yaw": 0,
+        "sid": 2817566035
+      },
+      {
+        "fix": "clipboard",
+        "fx": 8.8,
+        "fy": 4.4,
+        "yaw": 0,
+        "doc": "brc_slogan",
+        "sid": 2799295539
+      },
+      {
+        "fix": "outlet",
+        "fx": 36.413000000000004,
+        "fy": 4.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3810147426
+      },
+      {
+        "fix": "outlet",
+        "fx": 48.413000000000004,
+        "fy": 4.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1685732529
+      },
+      {
+        "fix": "outlet",
+        "fx": 60.413000000000004,
+        "fy": 8.11,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 1906539537
+      },
+      {
+        "fix": "outlet",
+        "fx": 64.493,
+        "fy": 28.110000000000003,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 4202756303
+      },
+      {
+        "fix": "outlet",
+        "fx": 64.493,
+        "fy": 24.110000000000003,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1752742546
+      },
+      {
+        "fix": "outlet",
+        "fx": 80.493,
+        "fy": 4.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2385032281
+      },
+      {
+        "fix": "outlet",
+        "fx": -55.586999999999996,
+        "fy": 44.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 465754727
+      },
+      {
+        "fix": "router",
+        "fx": -56.2832,
+        "fy": 40.28,
+        "yaw": 0,
+        "sid": 4114631166
+      },
+      {
+        "fix": "outlet",
+        "fx": -7.587,
+        "fy": 36.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2398714714
+      },
+      {
+        "fix": "router",
+        "fx": -6.8448,
+        "fy": 36.28,
+        "yaw": 0,
+        "sid": 1906649522
+      },
+      {
+        "fix": "outlet",
+        "fx": 24.413,
+        "fy": 36.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 379928198
+      },
+      {
+        "fix": "router",
+        "fx": 27.254400000000004,
+        "fy": 52.28,
+        "yaw": 0,
+        "sid": 2646880504
+      },
+      {
+        "fix": "outlet",
+        "fx": 40.413000000000004,
+        "fy": 36.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2486159930
+      },
+      {
+        "fix": "outlet",
+        "fx": 52.413000000000004,
+        "fy": 36.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3703883834
+      },
+      {
+        "fix": "outlet",
+        "fx": 84.493,
+        "fy": 48.11,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 2814078962
+      },
+      {
+        "fix": "toilet",
+        "fx": 75.2,
+        "fy": 36.45,
+        "yaw": 0,
+        "i": 0,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.45,
+        "sid": 3739871923
+      },
+      {
+        "fix": "stall",
+        "fx": 74.4,
+        "fy": 36.8,
+        "yaw": 0,
+        "i": 0,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 1975377350
+      },
+      {
+        "fix": "toilet",
+        "fx": 76.8,
+        "fy": 36.45,
+        "yaw": 0,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.45,
+        "sid": 1318580763
+      },
+      {
+        "fix": "stall",
+        "fx": 76,
+        "fy": 36.8,
+        "yaw": 0,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 181569295
+      },
+      {
+        "fix": "stall",
+        "fx": 77.6,
+        "fy": 36.8,
+        "yaw": 0,
+        "i": 2,
+        "end": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 1.9,
+        "sid": 2244928935
+      },
+      {
+        "fix": "sink",
+        "fx": 72.35,
+        "fy": 37.6,
+        "yaw": 1.5707963267948966,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.85,
+        "sid": 1617283009
+      },
+      {
+        "fix": "sink",
+        "fx": 72.35,
+        "fy": 38.8,
+        "yaw": 1.5707963267948966,
+        "i": 1,
+        "l0Wall": 1,
+        "l0Prop": 1,
+        "bottom": 0,
+        "top": 0.85,
+        "sid": 3610819619
+      },
+      {
+        "fix": "restroom",
+        "fx": 75,
+        "fy": 38,
+        "yaw": 0,
+        "rx": 72,
+        "ry": 36,
+        "rw": 6,
+        "rh": 4,
+        "dx": 75.9,
+        "dw": 1.1,
+        "sid": 1625422519
+      },
+      {
+        "fix": "router",
+        "fx": 72.71199999999999,
+        "fy": 60.28,
+        "yaw": 0,
+        "sid": 3682549378
+      },
+      {
+        "fix": "clipboard",
+        "fx": 74.6716,
+        "fy": 40.4,
+        "yaw": 0,
+        "doc": "brc_slogan",
+        "sid": 1434818125
+      },
+      {
+        "fix": "outlet",
+        "fx": -63.507,
+        "fy": 72.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3598903501
+      },
+      {
+        "fix": "outlet",
+        "fx": -43.586999999999996,
+        "fy": 72.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2421304910
+      },
+      {
+        "fix": "outlet",
+        "fx": -19.587,
+        "fy": 72.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 2916119603
+      },
+      {
+        "fix": "outlet",
+        "fx": -11.587,
+        "fy": 76.11,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 3245819397
+      },
+      {
+        "fix": "outlet",
+        "fx": 50.573,
+        "fy": 96.03,
+        "yaw": 0,
+        "h": 0.335,
+        "sid": 1003798820
+      },
+      {
+        "fix": "router",
+        "fx": 49.224,
+        "fy": 68.27999999999999,
+        "yaw": 0,
+        "sid": 3512823904
+      },
+      {
+        "fix": "outlet",
+        "fx": 72.413,
+        "fy": 88.03,
+        "yaw": 0,
+        "h": 0.46,
+        "sid": 3296059753
+      }
+    ]
+  },
+  "fixedScene": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 12,
+    "player": [
+      80,
+      80,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.1112158270654806,
+      "pitch": 0.004287438357623136,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 293,
+      "textures": 90
+    },
+    "frame": {
+      "cpu": 9,
+      "calls": 91,
+      "triangles": 191781
+    },
+    "pin": null,
+    "l02": {
+      "t": 0.125,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 9,
+    "meshes": 217
+  },
+  "lighting": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 12,
+    "player": [
+      80,
+      80,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.1112158270654806,
+      "pitch": 0.004287438357623136,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 309,
+      "textures": 92
+    },
+    "frame": {
+      "cpu": 8.600000001490116,
+      "calls": 107,
+      "triangles": 238195
+    },
+    "pin": null,
+    "l02": {
+      "t": 0.9249000000000005,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 11,
+    "lamps": 1400,
+    "spawnWallLength": 37.92,
+    "spawnWalls": 5,
+    "colors": [
+      "#f7f4dd"
+    ]
+  }
+}

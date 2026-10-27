@@ -18,11 +18,12 @@ export function entityArchiveOptions(type: string, step = 0): EntityMeshOpts {
     smilerKind: type === 'smiler' ? form?.id as SmilerKind : undefined,
     l3clump: traits?.l3clump, l3face: traits?.l3face, tool: traits?.tool,
     wranglerKind:traits?.wranglerKind,
-    houndNeutral: traits?.houndKind === 'neutral', wretchKind: traits?.wretchKind,
+    houndNeutral: traits?.houndKind === 'neutral', houndKind: traits?.houndKind, wretchKind: traits?.wretchKind,
     ratMorph: type === 'corpserat' ? ratMorphFor(0, traits ?? {}) : undefined,
     capybara: traits?.capybara, ceilingCrawler: traits?.ceilingCrawler,
     arachnidMorph: traits?.arachnidMorph, arachnidBreed: specimen, herbivore: traits?.herbivore,
     arachnidVariant: traits?.arachnidVariant, // [L8-arachnid]
+    creep: type === 'creeper' ? { host: traits?.creepHost ?? 'rat', stage: traits?.creepHost === 'human' ? 5 : 3, seed, morph: traits?.creepHost === 'rat' ? 'common' : undefined, variant: 'wolf' } : undefined, // [creeper] 图鉴：3 阶标本 / 爬菌人
   }
 }
 
@@ -43,6 +44,9 @@ export function buildEntityArchiveModel(type: string, step = 0): THREE.Group | n
   model.updateMatrixWorld(true)
   // Studio lighting must not sample the active level's darkness or probe field.
   // Only this new model's material uniforms are replaced; world uniforms stay intact.
+  // Archive lighting is instance-local even for pooled procedural fungus materials.
+  const privateMaterials=new Map<THREE.Material,THREE.Material>()
+  if(type==='creeper')model.traverse(o=>{const m=o as THREE.Mesh;if(!m.material)return;const copy=(src:THREE.Material)=>{if(!src.userData.entityShared)return src;let mat=privateMaterials.get(src);if(!mat){mat=src.clone();mat.onBeforeCompile=src.onBeforeCompile;mat.customProgramCacheKey=src.customProgramCacheKey.bind(src);mat.userData={...src.userData,entityShared:false};privateMaterials.set(src,mat)}return mat};m.material=Array.isArray(m.material)?m.material.map(copy):copy(m.material)})
   const materials = new Set<THREE.Material>()
   model.traverse(o => {
     const m = o as THREE.Mesh

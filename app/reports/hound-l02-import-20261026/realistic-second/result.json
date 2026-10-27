@@ -1,0 +1,389 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 7086,
+  "cdp": 7087,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:7086/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Mon, 26 Oct 2026 01:16:24 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 291,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 7086,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 4447.695575,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.684,
+        "sendEnd": 0.704,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 7.806,
+        "receiveHeadersEnd": 7.931
+      },
+      "responseTime": 1792977384302.019,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\hound-l02-import-20261026\\realistic-second\\qa-1792977369262-30460",
+    "--remote-debugging-port=7087",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 24496,
+    "server": 9892
+  },
+  "appBootMs": 14642.800799999999,
+  "entryMs": 2774.3112,
+  "firstPlayableMs": 24364.1069,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 661,
+      "textures": 159
+    },
+    "frame": {
+      "cpu": 9.200000000186265,
+      "calls": 730,
+      "triangles": 381663
+    },
+    "pin": null,
+    "l02": null
+  },
+  "setup": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 1,
+    "player": [
+      78.5,
+      94.5,
+      0.02
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 668,
+      "textures": 183
+    },
+    "frame": {
+      "cpu": 7.2000000001862645,
+      "calls": 808,
+      "triangles": 469151
+    },
+    "pin": null,
+    "l02": null,
+    "pad": {
+      "wx": 14.5,
+      "wy": -1.5,
+      "axis": {
+        "x": 0,
+        "y": -1
+      }
+    }
+  },
+  "hostile": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 3,
+    "player": [
+      78.5,
+      94.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -0.32268776124501536,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 1112,
+      "textures": 223
+    },
+    "frame": {
+      "cpu": 3.2000000001862645,
+      "calls": 241,
+      "triangles": 130114
+    },
+    "pin": null,
+    "l02": null,
+    "kind": "hostile",
+    "meshes": 8,
+    "tris": 23001,
+    "appearanceMs": 1474.0999999996275,
+    "modelBuildMax": 90.09999999962747,
+    "frameMax": 158.20000000000073,
+    "cpuMax": 113.09999999962747
+  },
+  "neutral": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 5,
+    "player": [
+      78.5,
+      94.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -0.32268776124501536,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 1112,
+      "textures": 223
+    },
+    "frame": {
+      "cpu": 3.7999999998137355,
+      "calls": 241,
+      "triangles": 129974
+    },
+    "pin": null,
+    "l02": null,
+    "kind": "neutral",
+    "meshes": 8,
+    "tris": 22861,
+    "appearanceMs": 809.6000000005588,
+    "modelBuildMax": 91.29999999981374,
+    "frameMax": 95.79999999999927,
+    "cpuMax": 95.8999999994412
+  },
+  "ambusher": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 7,
+    "player": [
+      78.5,
+      94.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -0.32268776124501536,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 1112,
+      "textures": 223
+    },
+    "frame": {
+      "cpu": 3.1000000005587935,
+      "calls": 241,
+      "triangles": 129901
+    },
+    "pin": null,
+    "l02": null,
+    "kind": "ambusher",
+    "meshes": 8,
+    "tris": 22788,
+    "appearanceMs": 788.2999999998137,
+    "modelBuildMax": 86.79999999981374,
+    "frameMax": 91.79999999999927,
+    "cpuMax": 92.5
+  },
+  "l0": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 9,
+    "player": [
+      79.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -0.32268776124501536,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 120,
+      "textures": 72
+    },
+    "frame": {
+      "cpu": 9.400000000372529,
+      "calls": 128,
+      "triangles": 129925
+    },
+    "pin": null,
+    "l02": null,
+    "quests": [
+      {
+        "id": "l0_tutorial",
+        "revealed": true,
+        "done": false,
+        "rewarded": false,
+        "obj": [
+          {
+            "id": "explore",
+            "done": false,
+            "visible": true,
+            "progress": 1
+          },
+          {
+            "id": "manila",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "photo_red",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "exit",
+            "done": false,
+            "visible": false
+          }
+        ]
+      },
+      {
+        "id": "l0_beyond",
+        "revealed": false,
+        "done": false,
+        "rewarded": false,
+        "obj": [
+          {
+            "id": "find_zenith_station",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "find_remade_chaos",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "find_ice_room",
+            "done": false,
+            "visible": true
+          }
+        ]
+      }
+    ]
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Using real permit creates construction site\",\"lineNumber\":22,\"columnNumber\":19,\"scriptId\":\"783\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"ok\",\"scriptId\":\"783\",\"url\":\"http://127.0.0.1:7086/verifier/hound-l02-import-game.ts\",\"lineNumber\":21,\"columnNumber\":18},{\"functionName\":\"permit\",\"scriptId\":\"783\",\"url\":\"http://127.0.0.1:7086/verifier/hound-l02-import-game.ts\",\"lineNumber\":207,\"columnNumber\":4},{\"functionName\":\"\",\"scriptId\":\"792\",\"url\":\"\",\"lineNumber\":0,\"columnNumber\":9}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Using real permit creates construction site\\n    at ok (http://127.0.0.1:7086/verifier/hound-l02-import-game.ts:22:19)\\n    at Object.permit (http://127.0.0.1:7086/verifier/hound-l02-import-game.ts:208:5)\\n    at <anonymous>:1:10\",\"objectId\":\"-6920920368162404244.2.1\"}}",
+  "partial": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 12,
+    "player": [
+      78.007,
+      88.487,
+      0.019223839999999732
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -3.141592653589793,
+      "pitch": -0.09040583619718633,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 229,
+      "textures": 83
+    },
+    "frame": {
+      "cpu": 405.5,
+      "calls": 191,
+      "triangles": 206721
+    },
+    "pin": null,
+    "l02": null
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 13210.099999999627
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\n孤立效应\nLEVEL 0\n教学关卡\nB0\n磁带\n0/6\n开阔区\n100%\n任务 · Level 0 · 教学\n0/2\n□\n探索“后室” (1/5)\n□\n找到马尼拉房间\n◇\n用手机拍摄红室入口（不必进入）可选\n新任务 · Level 0 · 教学\n工人从白围裙的口袋里抽出一张盖了钢印的单据，塞进你手里，然后转身继续敲打墙面。\n获得「施工许可」——在 Level 0 使用。\n附近没有能开门的墙。靠近一面完整的墙再试。\n获得 施工许可\n附近没有能开门的墙。靠近一面完整的墙再试。\n施工许可\n1\n2\n3\n4\n5\n6\n7\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

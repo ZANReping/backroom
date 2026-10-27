@@ -1,0 +1,154 @@
+{
+ "mode": "base",
+ "results": [
+  {
+   "name": "7 开发者面板：「Level 0.2」分区默认收起",
+   "ok": false,
+   "detail": "null"
+  },
+  {
+   "name": "7 开发者面板：展开后按钮可见",
+   "ok": false,
+   "detail": "null"
+  },
+  {
+   "name": "9 施工单据版式：四类单据各自版式、签名栏、页脚来源小字（≤10px）、无文字溢出（1280×720）",
+   "ok": false,
+   "detail": "{\"brc_permit\": null, \"brc_slogan\": null, \"brc_took\": null, \"brc_report\": null}"
+  },
+  {
+   "name": "9 印章：许可证/日志/工作单带印章",
+   "ok": false,
+   "detail": ""
+  },
+  {
+   "name": "9 移动端 390×844：单据在视口内、无文字溢出",
+   "ok": false,
+   "detail": "{\"brc_permit\": null, \"brc_took\": null, \"brc_report\": null}"
+  },
+  {
+   "name": "5 经施工门进入 L0.2 的主题过场卡（「Level 0.2 · 重塑的混乱」+ 副标题，theme=remodel）",
+   "ok": false,
+   "detail": "null"
+  },
+  {
+   "name": "3 灯盘与 Level 0 同参数（#f7f4dd / r 4.2 / ×0.42），间距 3.6×4.2 m 晶格",
+   "ok": false,
+   "detail": "{\"n\": 2202, \"xs\": [1.8, 1.8000000000000003], \"zs\": [1.5, 0.3, 3.3, 2.1], \"colors\": [\"#f4f6f2\"], \"r\": [4.6], \"mul\": [0.4]}"
+  },
+  {
+   "name": "4 吊顶碰撞：强跳（vz=9）头顶/相机不超过吊顶下 12 cm",
+   "ok": false,
+   "detail": "{\"maxZ\": 1.45, \"eyeMax\": 3, \"forced\": 1.395, \"ceil\": null}"
+  },
+  {
+   "name": "4 吊顶碰撞：被抬到 z=2.4（爬到高处/穿出）时压回吊顶以下",
+   "ok": false,
+   "detail": "{\"maxZ\": 1.45, \"eyeMax\": 3, \"forced\": 1.395, \"ceil\": null}"
+  },
+  {
+   "name": "4 掉板处可略高（露出设备层，≤ 2.7+0.45−0.12）",
+   "ok": true,
+   "detail": "{\"eyeMax\": 3}"
+  },
+  {
+   "name": "1 倒墙后原位无残留：墙高范围内无未被丢弃的烘焙三角形、无贴墙小件、无碰撞体",
+   "ok": false,
+   "detail": "{\"wall\": {\"x\": 23, \"y\": 15.900000000000002, \"w\": 3.7605465687521615, \"h\": 0.2, \"axis\": \"x\", \"dir\": 1, \"t0\": 12.266800000000087}, \"res\": {\"tris\": 180, \"examples\": [[\"l02-wall\", 23, 2.52, 15.973], [\"l02-wall\", 23, 2.34, 16.027], [\"l02-wall\", 23, 1.98, 15.973], [\"l02-wall\", 23, 1.8, 16.027]], \"mounts\": 0, \"colliders\": 0}}"
+  },
+  {
+   "name": "1 独立短墙（两端自由端）整面倒：原位无墙端面/护角/墙顶横带残留、无碰撞体",
+   "ok": false,
+   "detail": "{\"wall\": {\"x\": 26.76054656875216, \"y\": 15.900000000000002, \"w\": 5.2394534312478385, \"h\": 0.2, \"axis\": \"x\", \"dir\": 1, \"t0\": 17.16670000000012}, \"res\": {\"tris\": 74, \"examples\": [[\"l02-wall\", 32, 2.52, 16.027], [\"l02-wall\", 32, 2.34, 15.973], [\"l02-wall\", 32, 1.98, 16.027], [\"l02-wall\", 32, 1.8, 15.973]], \"mounts\": 0, \"colliders\": 1}}"
+  },
+  {
+   "name": "8 返回门自然生成：入口 130 m 内 ≥2 扇，最近一扇 40–110 m，播报指向最近一扇",
+   "ok": false,
+   "detail": "{\"doors\": [{\"x\": -16, \"y\": 80.08, \"dist\": 72}], \"hint\": \"门在身后合上，消失在墙里。施工单背面潦草地写着：「返回 Level 0 的门在入口西南方向，约 72 米。」\"}"
+  },
+  {
+   "name": "8 本层出口全部是返回门（可同时存在多扇）",
+   "ok": true,
+   "detail": "['remodelreturn'] ×1"
+  },
+  {
+   "name": "8 第二扇返回门 E 键可进入并回到 L0",
+   "ok": true,
+   "detail": "door={'x': -16, 'y': 80.08, 'dist': 72}"
+  },
+  {
+   "name": "5 图鉴 L0 页底部「子层级」：重塑的混乱=已发现，其余占位=锁定，无溢出",
+   "ok": false,
+   "detail": "[]"
+  },
+  {
+   "name": "5 调试直入（LevelIntro 进入卡）同样是 remodel 主题 + 副标题",
+   "ok": false,
+   "detail": "{\"kind\": \"intro\", \"theme\": \"default\", \"text\": \"LEVEL 0.2 「重塑的混乱」 米白的隔墙，干燥的酒红地毯，冷白的灯盘一排排亮着。没有嗡鸣——只有空调的低风声。这里看起来像刚装修完，又像根本没装修完。 SEED: 09DC-9A29 正在准备附近场景…\", \"sub\": false}"
+  },
+  {
+   "name": "页面/控制台无错误",
+   "ok": true,
+   "detail": "[]"
+  }
+ ],
+ "errors": [],
+ "log": [
+  "headless launch: True base",
+  "L0 ready True",
+  "SHOT i3-L0-ceiling",
+  "CHECK FAIL 7 开发者面板：「Level 0.2」分区默认收起 null",
+  "SHOT i7-dev-collapsed",
+  "CHECK FAIL 7 开发者面板：展开后按钮可见 null",
+  "SHOT i7-dev-open",
+  "SHOT i9-doc-permit",
+  "SHOT i9-doc-log",
+  "SHOT i9-doc-workorder",
+  "SHOT i9-doc-inspect",
+  "CHECK FAIL 9 施工单据版式：四类单据各自版式、签名栏、页脚来源小字（≤10px）、无文字溢出（1280×720） {\"brc_permit\": null, \"brc_slogan\": null, \"brc_took\": null, \"brc_report\": null}",
+  "CHECK FAIL 9 印章：许可证/日志/工作单带印章 ",
+  "SHOT i9-doc-permit-mobile",
+  "SHOT i9-doc-workorder-mobile",
+  "SHOT i9-doc-inspect-mobile",
+  "CHECK FAIL 9 移动端 390×844：单据在视口内、无文字溢出 {\"brc_permit\": null, \"brc_took\": null, \"brc_report\": null}",
+  "use permit 你把施工许可按在墙上。纸面上的钢印亮了一下——荧光灯的嗡鸣开始变小。 | 附近的墙上出现了一扇施工场所的门。许可需要「切换层级刷新」后才能再次使用。",
+  "take remodeldoor True",
+  "CHECK FAIL 5 经施工门进入 L0.2 的主题过场卡（「Level 0.2 · 重塑的混乱」+ 副标题，theme=remodel） null",
+  "L02 ready True",
+  "seed 20261025",
+  "hint 门在身后合上，消失在墙里。施工单背面潦草地写着：「返回 Level 0 的门在入口西南方向，约 72 米。」",
+  "SHOT i3-L02-ceiling",
+  "SHOT i3-L02-ceiling-up",
+  "CHECK FAIL 3 灯盘与 Level 0 同参数（#f7f4dd / r 4.2 / ×0.42），间距 3.6×4.2 m 晶格 {\"n\": 2202, \"xs\": [1.8, 1.8000000000000003], \"zs\": [1.5, 0.3, 3.3, 2.1], \"colors\": [\"#f4f6f2\"], \"r\": [4.6], \"mul\": [0.4]}",
+  "CHECK FAIL 4 吊顶碰撞：强跳（vz=9）头顶/相机不超过吊顶下 12 cm {\"maxZ\": 1.45, \"eyeMax\": 3, \"forced\": 1.395, \"ceil\": null}",
+  "CHECK FAIL 4 吊顶碰撞：被抬到 z=2.4（爬到高处/穿出）时压回吊顶以下 {\"maxZ\": 1.45, \"eyeMax\": 3, \"forced\": 1.395, \"ceil\": null}",
+  "SHOT i4-jump-apex",
+  "CHECK PASS 4 掉板处可略高（露出设备层，≤ 2.7+0.45−0.12） {\"eyeMax\": 3}",
+  "SHOT i2-plenum",
+  "CHECK FAIL 1 倒墙后原位无残留：墙高范围内无未被丢弃的烘焙三角形、无贴墙小件、无碰撞体 {\"wall\": {\"x\": 23, \"y\": 15.900000000000002, \"w\": 3.7605465687521615, \"h\": 0.2, \"axis\": \"x\", \"dir\": 1, \"t0\": 12.266800000000087}, \"res\": {\"tris\": 180, \"examples\": [[\"l02-wall\", 23, 2.52, 15.973], [\"l02-wall\", 23, 2.34, 16.027], [\"l02-wall\", 23, 1.98, 15.973], [\"l02-wall\", 23, 1.8, 16.027]], \"mounts\": 0, \"colliders\": 0}}",
+  "SHOT i1-wall-down",
+  "SHOT i1-wall-down-up",
+  "free wall {'cx': 29.38027328437608, 'cy': 16, 'len': 5.2394534312478385, 'horiz': True, 'd': 8.509125261062552, 'w': {'x': 26.76054656875216, 'y': 15.920000000000002, 'w': 5.2394534312478385, 'h': 0.16}}",
+  "CHECK FAIL 1 独立短墙（两端自由端）整面倒：原位无墙端面/护角/墙顶横带残留、无碰撞体 {\"wall\": {\"x\": 26.76054656875216, \"y\": 15.900000000000002, \"w\": 5.2394534312478385, \"h\": 0.2, \"axis\": \"x\", \"dir\": 1, \"t0\": 17.16670000000012}, \"res\": {\"tris\": 74, \"examples\": [[\"l02-wall\", 32, 2.52, 16.027], [\"l02-wall\", 32, 2.34, 15.973], [\"l02-wall\", 32, 1.98, 16.027], [\"l02-wall\", 32, 1.8, 15.973]], \"mounts\": 0, \"colliders\": 1}}",
+  "SHOT i1-free-wall-down",
+  "doors [{'x': -16, 'y': 80.08, 'dist': 72}]",
+  "CHECK FAIL 8 返回门自然生成：入口 130 m 内 ≥2 扇，最近一扇 40–110 m，播报指向最近一扇 {\"doors\": [{\"x\": -16, \"y\": 80.08, \"dist\": 72}], \"hint\": \"门在身后合上，消失在墙里。施工单背面潦草地写着：「返回 Level 0 的门在入口西南方向，约 72 米。」\"}",
+  "SHOT i8-door-nearest",
+  "CHECK PASS 8 本层出口全部是返回门（可同时存在多扇） ['remodelreturn'] ×1",
+  "SHOT i8-door-second",
+  "CHECK PASS 8 第二扇返回门 E 键可进入并回到 L0 door={'x': -16, 'y': 80.08, 'dist': 72}",
+  "SHOT i5-codex-sublevels",
+  "CHECK FAIL 5 图鉴 L0 页底部「子层级」：重塑的混乱=已发现，其余占位=锁定，无溢出 []",
+  "SHOT i5-title-intro",
+  "CHECK FAIL 5 调试直入（LevelIntro 进入卡）同样是 remodel 主题 + 副标题 {\"kind\": \"intro\", \"theme\": \"default\", \"text\": \"LEVEL 0.2 「重塑的混乱」 米白的隔墙，干燥的酒红地毯，冷白的灯盘一排排亮着。没有嗡鸣——只有空调的低风声。这里看起来像刚装修完，又像根本没装修完。 SEED: 09DC-9A29 正在准备附近场景…\", \"sub\": false}",
+  "SHOT i2-restroom",
+  "SHOT i2-sink",
+  "SHOT i2-toilet",
+  "SHOT i2-router",
+  "SHOT i2-clipboard",
+  "SHOT i2-house",
+  "SHOT i2-house-2",
+  "SHOT i6-rooms-view",
+  "CHECK PASS 页面/控制台无错误 []"
+ ]
+}

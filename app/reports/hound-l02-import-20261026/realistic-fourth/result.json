@@ -1,0 +1,278 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 7720,
+  "cdp": 7721,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:7720/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Mon, 26 Oct 2026 01:23:59 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 295,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 7720,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 4902.631253,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.985,
+        "sendEnd": 1.054,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 10.118,
+        "receiveHeadersEnd": 10.243
+      },
+      "responseTime": 1792977839240.008,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\hound-l02-import-20261026\\realistic-fourth\\qa-1792977825556-14812",
+    "--remote-debugging-port=7721",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 51640,
+    "server": 49360
+  },
+  "appBootMs": 13295.9663,
+  "entryMs": 1972.4598000000005,
+  "firstPlayableMs": 20944.0988,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 661,
+      "textures": 158
+    },
+    "frame": {
+      "cpu": 7.400000000372529,
+      "calls": 800,
+      "triangles": 442783
+    },
+    "pin": null,
+    "l02": null
+  },
+  "setup": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 1,
+    "player": [
+      78.5,
+      94.5,
+      0.02
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 668,
+      "textures": 182
+    },
+    "frame": {
+      "cpu": 8.900000000372529,
+      "calls": 732,
+      "triangles": 384727
+    },
+    "pin": null,
+    "l02": null,
+    "pad": {
+      "wx": 14.5,
+      "wy": -1.5,
+      "axis": {
+        "x": 0,
+        "y": -1
+      }
+    }
+  },
+  "l0": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 3,
+    "player": [
+      79.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 120,
+      "textures": 70
+    },
+    "frame": {
+      "cpu": 5.599999999627471,
+      "calls": 128,
+      "triangles": 129925
+    },
+    "pin": null,
+    "l02": null,
+    "quests": [
+      {
+        "id": "l0_tutorial",
+        "revealed": true,
+        "done": false,
+        "rewarded": false,
+        "obj": [
+          {
+            "id": "explore",
+            "done": false,
+            "visible": true,
+            "progress": 1
+          },
+          {
+            "id": "manila",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "photo_red",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "exit",
+            "done": false,
+            "visible": false
+          }
+        ]
+      },
+      {
+        "id": "l0_beyond",
+        "revealed": false,
+        "done": false,
+        "rewarded": false,
+        "obj": [
+          {
+            "id": "find_zenith_station",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "find_remade_chaos",
+            "done": false,
+            "visible": true
+          },
+          {
+            "id": "find_ice_room",
+            "done": false,
+            "visible": true
+          }
+        ]
+      }
+    ]
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Using real permit creates construction site\",\"lineNumber\":22,\"columnNumber\":19,\"scriptId\":\"783\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"ok\",\"scriptId\":\"783\",\"url\":\"http://127.0.0.1:7720/verifier/hound-l02-import-game.ts\",\"lineNumber\":21,\"columnNumber\":18},{\"functionName\":\"permit\",\"scriptId\":\"783\",\"url\":\"http://127.0.0.1:7720/verifier/hound-l02-import-game.ts\",\"lineNumber\":207,\"columnNumber\":4},{\"functionName\":\"\",\"scriptId\":\"789\",\"url\":\"\",\"lineNumber\":0,\"columnNumber\":9}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Using real permit creates construction site\\n    at ok (http://127.0.0.1:7720/verifier/hound-l02-import-game.ts:22:19)\\n    at Object.permit (http://127.0.0.1:7720/verifier/hound-l02-import-game.ts:208:5)\\n    at <anonymous>:1:10\",\"objectId\":\"-5541751039460823140.2.1\"}}",
+  "partial": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 6,
+    "player": [
+      78.007,
+      88.487,
+      0.01920525
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -3.141592653589793,
+      "pitch": -0.09040583619718633,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 229,
+      "textures": 81
+    },
+    "frame": {
+      "cpu": 283.20000000018626,
+      "calls": 191,
+      "triangles": 206721
+    },
+    "pin": null,
+    "l02": null
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 11764.200000000186
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\n孤立效应\nLEVEL 0\n教学关卡\nB0\n磁带\n0/6\n开阔区\n100%\n任务 · Level 0 · 教学\n0/2\n□\n探索“后室” (1/5)\n□\n找到马尼拉房间\n◇\n用手机拍摄红室入口（不必进入）可选\n新任务 · Level 0 · 教学\n工人从白围裙的口袋里抽出一张盖了钢印的单据，塞进你手里，然后转身继续敲打墙面。\n获得「施工许可」——在 Level 0 使用。\n附近没有能开门的墙。靠近一面完整的墙再试。\n新任务 · Level 0 · 教学\n获得 施工许可\n附近没有能开门的墙。靠近一面完整的墙再试。\n施工许可\n1\n2\n3\n4\n5\n6\n7\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

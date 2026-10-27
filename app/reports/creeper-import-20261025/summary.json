@@ -1,0 +1,455 @@
+{
+  "date": "2026-10-25",
+  "source": "creeper-full.zip",
+  "productionBuild": [
+    {
+      "name": "check:creeper",
+      "exit": 0,
+      "ms": 1918,
+      "log": "check-creeper.log"
+    },
+    {
+      "name": "check:creeper-integration",
+      "exit": 0,
+      "ms": 1868,
+      "log": "check-creeper-integration.log"
+    },
+    {
+      "name": "build",
+      "exit": 0,
+      "ms": 44710,
+      "log": "build.log"
+    }
+  ],
+  "focusedChecks": {
+    "creeper": 90,
+    "integration": 120,
+    "forms": 263,
+    "preparation": 17,
+    "retroHands": 17314,
+    "merchantTrade": 44,
+    "itemBatches": 29
+  },
+  "runs": [
+    {
+      "label": "validated-realistic",
+      "mode": "realistic",
+      "seed": 424242,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "checks": 64,
+      "entryMs": 1769.5407000000014,
+      "appBootMs": 10359.6004,
+      "firstPlayableMs": 16868.596,
+      "resourceRounds": [
+        {
+          "geometries": 1180,
+          "textures": 273
+        },
+        {
+          "geometries": 1180,
+          "textures": 273
+        },
+        {
+          "geometries": 1180,
+          "textures": 273
+        }
+      ],
+      "benchmark": [
+        {
+          "median": 4.19999999999709,
+          "p95": 8.30000000000291,
+          "cpuMedian": 3.199999999254942,
+          "cpuP95": 5.400000000372529,
+          "calls": 392,
+          "triangles": 240733
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.39999999999418,
+          "cpuMedian": 3.199999999254942,
+          "cpuP95": 5.599999999627471,
+          "calls": 392,
+          "triangles": 240733
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.400000000008731,
+          "cpuMedian": 3.199999999254942,
+          "cpuP95": 5.599999999627471,
+          "calls": 392,
+          "triangles": 240733
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.30000000000291,
+          "cpuMedian": 3.199999999254942,
+          "cpuP95": 5.599999999627471,
+          "calls": 392,
+          "triangles": 240733
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.39999999999418,
+          "cpuMedian": 3.199999999254942,
+          "cpuP95": 5.800000000745058,
+          "calls": 392,
+          "triangles": 240733
+        }
+      ],
+      "firstAppearance": {},
+      "runtimeErrors": [],
+      "failedRequests": [
+        {
+          "url": "http://127.0.0.1:1699/favicon.ico",
+          "status": 404
+        }
+      ],
+      "codex": {
+        "type": "creeper",
+        "steps": 12,
+        "seenForms": [
+          "creeper-rat",
+          "creeper-spider",
+          "creeper-human"
+        ],
+        "images": [
+          {
+            "view": 1,
+            "angle": 1,
+            "appearance": 0,
+            "form": "creeper-rat",
+            "pixels": 251
+          },
+          {
+            "view": 2,
+            "angle": 2,
+            "appearance": 0,
+            "form": "creeper-rat",
+            "pixels": 292
+          },
+          {
+            "view": 3,
+            "angle": 3,
+            "appearance": 0,
+            "form": "creeper-rat",
+            "pixels": 255
+          },
+          {
+            "view": 4,
+            "angle": 0,
+            "appearance": 1,
+            "form": "creeper-spider",
+            "pixels": 505
+          },
+          {
+            "view": 5,
+            "angle": 1,
+            "appearance": 1,
+            "form": "creeper-spider",
+            "pixels": 521
+          },
+          {
+            "view": 6,
+            "angle": 2,
+            "appearance": 1,
+            "form": "creeper-spider",
+            "pixels": 510
+          },
+          {
+            "view": 7,
+            "angle": 3,
+            "appearance": 1,
+            "form": "creeper-spider",
+            "pixels": 509
+          },
+          {
+            "view": 8,
+            "angle": 0,
+            "appearance": 2,
+            "form": "creeper-human",
+            "pixels": 290
+          },
+          {
+            "view": 9,
+            "angle": 1,
+            "appearance": 2,
+            "form": "creeper-human",
+            "pixels": 282
+          },
+          {
+            "view": 10,
+            "angle": 2,
+            "appearance": 2,
+            "form": "creeper-human",
+            "pixels": 279
+          },
+          {
+            "view": 11,
+            "angle": 3,
+            "appearance": 2,
+            "form": "creeper-human",
+            "pixels": 225
+          },
+          {
+            "view": 12,
+            "angle": 0,
+            "appearance": 3,
+            "form": "creeper-rat",
+            "pixels": 408
+          }
+        ],
+        "stats": {
+          "builds": 13,
+          "renders": 13,
+          "hits": 1,
+          "cached": 13,
+          "bytes": 2128476,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 36,
+            "textures": 8
+          }
+        }
+      },
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "label": "validated-classic",
+      "mode": "classic",
+      "seed": 424242,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "checks": 64,
+      "entryMs": 1576.4223000000002,
+      "appBootMs": 11398.595299999999,
+      "firstPlayableMs": 15856.179399999999,
+      "resourceRounds": [
+        {
+          "geometries": 1064,
+          "textures": 248
+        },
+        {
+          "geometries": 1064,
+          "textures": 248
+        },
+        {
+          "geometries": 1064,
+          "textures": 248
+        }
+      ],
+      "benchmark": [
+        {
+          "median": 4.19999999999709,
+          "p95": 8.400000000008731,
+          "cpuMedian": 3.799999998882413,
+          "cpuP95": 5.5,
+          "calls": 378,
+          "triangles": 240719
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.39999999999418,
+          "cpuMedian": 3.699999999254942,
+          "cpuP95": 4.800000000745058,
+          "calls": 378,
+          "triangles": 240719
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.39999999999418,
+          "cpuMedian": 3.600000001490116,
+          "cpuP95": 6.099999999627471,
+          "calls": 378,
+          "triangles": 240719
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.400000000008731,
+          "cpuMedian": 3.799999998882413,
+          "cpuP95": 6.800000000745058,
+          "calls": 378,
+          "triangles": 240719
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.39999999999418,
+          "cpuMedian": 3.399999998509884,
+          "cpuP95": 5.099999999627471,
+          "calls": 378,
+          "triangles": 240719
+        }
+      ],
+      "firstAppearance": {
+        "rat1": {
+          "readyMs": 578,
+          "frames": 134,
+          "frameP95": 4.30000000000291,
+          "frameMax": 8.399999999997817,
+          "cpuP95": 4.100000001490116,
+          "cpuMax": 5.599999999627471
+        },
+        "rat4": {
+          "readyMs": 558.3000000007451,
+          "frames": 134,
+          "frameP95": 4.299999999999272,
+          "frameMax": 4.299999999999272,
+          "cpuP95": 3.599999999627471,
+          "cpuMax": 5
+        },
+        "spider4": {
+          "readyMs": 891.3000000007451,
+          "frames": 197,
+          "frameP95": 8.30000000000291,
+          "frameMax": 12.600000000002183,
+          "cpuP95": 5,
+          "cpuMax": 11.700000001117587
+        },
+        "human": {
+          "readyMs": 1356.800000000745,
+          "frames": 301,
+          "frameP95": 8.19999999999709,
+          "frameMax": 29.200000000000728,
+          "cpuP95": 4.900000000372529,
+          "cpuMax": 12.300000000745058
+        }
+      },
+      "runtimeErrors": [],
+      "failedRequests": [
+        {
+          "url": "http://127.0.0.1:12201/favicon.ico",
+          "status": 404
+        }
+      ],
+      "codex": {
+        "type": "creeper",
+        "steps": 12,
+        "seenForms": [
+          "creeper-rat",
+          "creeper-spider",
+          "creeper-human"
+        ],
+        "images": [
+          {
+            "view": 1,
+            "angle": 1,
+            "appearance": 0,
+            "form": "creeper-rat",
+            "pixels": 251
+          },
+          {
+            "view": 2,
+            "angle": 2,
+            "appearance": 0,
+            "form": "creeper-rat",
+            "pixels": 290
+          },
+          {
+            "view": 3,
+            "angle": 3,
+            "appearance": 0,
+            "form": "creeper-rat",
+            "pixels": 255
+          },
+          {
+            "view": 4,
+            "angle": 0,
+            "appearance": 1,
+            "form": "creeper-spider",
+            "pixels": 504
+          },
+          {
+            "view": 5,
+            "angle": 1,
+            "appearance": 1,
+            "form": "creeper-spider",
+            "pixels": 525
+          },
+          {
+            "view": 6,
+            "angle": 2,
+            "appearance": 1,
+            "form": "creeper-spider",
+            "pixels": 510
+          },
+          {
+            "view": 7,
+            "angle": 3,
+            "appearance": 1,
+            "form": "creeper-spider",
+            "pixels": 509
+          },
+          {
+            "view": 8,
+            "angle": 0,
+            "appearance": 2,
+            "form": "creeper-human",
+            "pixels": 288
+          },
+          {
+            "view": 9,
+            "angle": 1,
+            "appearance": 2,
+            "form": "creeper-human",
+            "pixels": 282
+          },
+          {
+            "view": 10,
+            "angle": 2,
+            "appearance": 2,
+            "form": "creeper-human",
+            "pixels": 279
+          },
+          {
+            "view": 11,
+            "angle": 3,
+            "appearance": 2,
+            "form": "creeper-human",
+            "pixels": 226
+          },
+          {
+            "view": 12,
+            "angle": 0,
+            "appearance": 3,
+            "form": "creeper-rat",
+            "pixels": 409
+          }
+        ],
+        "stats": {
+          "builds": 13,
+          "renders": 13,
+          "hits": 1,
+          "cached": 13,
+          "bytes": 2132484,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 36,
+            "textures": 7
+          }
+        }
+      },
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    }
+  ],
+  "notes": [
+    "Native headless GPU; RAF intervals and CPU render duration, not GPU timer queries.",
+    "Touch checks are desktop emulation, not Android.",
+    "Earlier run directories are diagnostics; only validated-* are final acceptance."
+  ]
+}

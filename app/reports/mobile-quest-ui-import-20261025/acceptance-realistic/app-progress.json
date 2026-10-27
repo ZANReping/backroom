@@ -1,0 +1,568 @@
+{
+  "checks": [
+    "actual mobile HUD shows expanded MEG tracker and compact main quest",
+    "both cards fit and are touchable 01-meg-844",
+    "task cards avoid vitals, title and touch controls 01-meg-844",
+    "responsive task column placement 01-meg-844",
+    "physical touch collapses MEG tracker exactly once and saves preference",
+    "task touch does not move, attack or rotate the player",
+    "second physical touch expands MEG tracker",
+    "physical touch opens complete main checklist",
+    "both cards fit and are touchable 03-main-expanded-844",
+    "task cards avoid vitals, title and touch controls 03-main-expanded-844",
+    "responsive task column placement 03-main-expanded-844",
+    "main checklist automatically collapses after five seconds",
+    "keyboard Space opens checklist without jumping",
+    "keyboard Enter closes checklist without attacking {\"state\":\"closed\",\"focused\":\"<button code-path=\\\"src\\\\components\\\\MobileQuestChip.tsx:34:5\\\" type=\\\"button\\\" class=\\\"hud-panel hud-foyer-quest hud-quest-chip pointer-events-auto block w-full px-2.5 py-1.5 text-left font-mono2 text-[11px]\\\" data-foyer-quest=\\\"true\\\" data-quest-chip=\\\"closed\\\" aria-expanded=\\\"false\\\" aria-label=\\\"任务：主线 · 六张磁带，已完成 1/6，点按展开清单\\\" style=\\\"min-height: 44px; touch-action: manipulation;\\\"><div code-path=\\\"src\\\\components\\\\\",\"attack\":false,\"jump\":false}",
+    "new completed item updates main count and briefly opens checklist",
+    "progress hint automatically folds again",
+    "both cards fit and are touchable 05-meg-915x412",
+    "task cards avoid vitals, title and touch controls 05-meg-915x412",
+    "responsive task column placement 05-meg-915x412",
+    "both cards fit and are touchable 05-meg-667x375"
+  ],
+  "shots": [
+    "01-meg-844",
+    "02-meg-folded",
+    "03-main-expanded-844",
+    "04-progress-hint",
+    "05-meg-915x412"
+  ],
+  "layouts": [
+    {
+      "label": "01-meg-844",
+      "col": "beside",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "cards": [
+        {
+          "x": 156,
+          "y": 12,
+          "right": 370,
+          "bottom": 93.75,
+          "width": 214,
+          "height": 81.75,
+          "hit": true,
+          "kind": "faction"
+        },
+        {
+          "x": 156,
+          "y": 97,
+          "right": 370,
+          "bottom": 141.875,
+          "width": 214,
+          "height": 44.875,
+          "hit": true,
+          "kind": "main"
+        }
+      ],
+      "vitals": {
+        "x": 9.75,
+        "y": 9.75,
+        "right": 144.75,
+        "bottom": 139.375,
+        "width": 135,
+        "height": 129.625
+      },
+      "location": {
+        "x": 465.359375,
+        "y": 9.75,
+        "right": 638.640625,
+        "bottom": 36.25,
+        "width": 173.28125,
+        "height": 26.5
+      },
+      "nav": {
+        "x": 726.75,
+        "y": 9.75,
+        "right": 834.25,
+        "bottom": 181.25,
+        "width": 107.5,
+        "height": 171.5
+      },
+      "controls": [
+        {
+          "x": 756.25,
+          "y": 88.75,
+          "right": 792,
+          "bottom": 124.5,
+          "width": 35.75,
+          "height": 35.75,
+          "id": "backpack-top"
+        },
+        {
+          "x": 196,
+          "y": 266,
+          "right": 244,
+          "bottom": 314,
+          "width": 48,
+          "height": 48,
+          "id": "holster"
+        },
+        {
+          "x": 670,
+          "y": 308,
+          "right": 726,
+          "bottom": 364,
+          "width": 56,
+          "height": 56,
+          "id": "jump"
+        },
+        {
+          "x": 695.828125,
+          "y": 244.09375,
+          "right": 751.828125,
+          "bottom": 300.09375,
+          "width": 56,
+          "height": 56,
+          "id": "sprint"
+        },
+        {
+          "x": 758.78125,
+          "y": 216.0625,
+          "right": 814.78125,
+          "bottom": 272.0625,
+          "width": 56,
+          "height": 56,
+          "id": "crouch"
+        },
+        {
+          "x": 605.59375,
+          "y": 277.90625,
+          "right": 653.59375,
+          "bottom": 325.90625,
+          "width": 48,
+          "height": 48,
+          "id": "flashlight"
+        },
+        {
+          "x": 638.84375,
+          "y": 205.3125,
+          "right": 686.84375,
+          "bottom": 253.3125,
+          "width": 48,
+          "height": 48,
+          "id": "backpack"
+        },
+        {
+          "x": 752,
+          "y": 298,
+          "right": 828,
+          "bottom": 374,
+          "width": 76,
+          "height": 76,
+          "id": "attack"
+        }
+      ],
+      "scrollWidth": 844
+    },
+    {
+      "label": "03-main-expanded-844",
+      "col": "beside",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "cards": [
+        {
+          "x": 156,
+          "y": 12,
+          "right": 370,
+          "bottom": 93.75,
+          "width": 214,
+          "height": 81.75,
+          "hit": true,
+          "kind": "faction"
+        },
+        {
+          "x": 156,
+          "y": 97,
+          "right": 370,
+          "bottom": 224.375,
+          "width": 214,
+          "height": 127.375,
+          "hit": true,
+          "kind": "main"
+        }
+      ],
+      "vitals": {
+        "x": 9.75,
+        "y": 9.75,
+        "right": 144.75,
+        "bottom": 139.375,
+        "width": 135,
+        "height": 129.625
+      },
+      "location": {
+        "x": 465.359375,
+        "y": 9.75,
+        "right": 638.640625,
+        "bottom": 36.25,
+        "width": 173.28125,
+        "height": 26.5
+      },
+      "nav": {
+        "x": 726.75,
+        "y": 9.75,
+        "right": 834.25,
+        "bottom": 181.25,
+        "width": 107.5,
+        "height": 171.5
+      },
+      "controls": [
+        {
+          "x": 756.25,
+          "y": 88.75,
+          "right": 792,
+          "bottom": 124.5,
+          "width": 35.75,
+          "height": 35.75,
+          "id": "backpack-top"
+        },
+        {
+          "x": 196,
+          "y": 266,
+          "right": 244,
+          "bottom": 314,
+          "width": 48,
+          "height": 48,
+          "id": "holster"
+        },
+        {
+          "x": 670,
+          "y": 308,
+          "right": 726,
+          "bottom": 364,
+          "width": 56,
+          "height": 56,
+          "id": "jump"
+        },
+        {
+          "x": 695.828125,
+          "y": 244.09375,
+          "right": 751.828125,
+          "bottom": 300.09375,
+          "width": 56,
+          "height": 56,
+          "id": "sprint"
+        },
+        {
+          "x": 758.78125,
+          "y": 216.0625,
+          "right": 814.78125,
+          "bottom": 272.0625,
+          "width": 56,
+          "height": 56,
+          "id": "crouch"
+        },
+        {
+          "x": 605.59375,
+          "y": 277.90625,
+          "right": 653.59375,
+          "bottom": 325.90625,
+          "width": 48,
+          "height": 48,
+          "id": "flashlight"
+        },
+        {
+          "x": 638.84375,
+          "y": 205.3125,
+          "right": 686.84375,
+          "bottom": 253.3125,
+          "width": 48,
+          "height": 48,
+          "id": "backpack"
+        },
+        {
+          "x": 752,
+          "y": 298,
+          "right": 828,
+          "bottom": 374,
+          "width": 76,
+          "height": 76,
+          "id": "attack"
+        }
+      ],
+      "scrollWidth": 844
+    },
+    {
+      "label": "05-meg-915x412",
+      "col": "beside",
+      "viewport": {
+        "width": 915,
+        "height": 412
+      },
+      "cards": [
+        {
+          "x": 156,
+          "y": 12,
+          "right": 370,
+          "bottom": 93.75,
+          "width": 214,
+          "height": 81.75,
+          "hit": true,
+          "kind": "faction"
+        },
+        {
+          "x": 156,
+          "y": 97,
+          "right": 370,
+          "bottom": 141.875,
+          "width": 214,
+          "height": 44.875,
+          "hit": true,
+          "kind": "main"
+        }
+      ],
+      "vitals": {
+        "x": 9.75,
+        "y": 9.75,
+        "right": 144.75,
+        "bottom": 139.375,
+        "width": 135,
+        "height": 129.625
+      },
+      "location": {
+        "x": 500.859375,
+        "y": 9.75,
+        "right": 674.140625,
+        "bottom": 36.25,
+        "width": 173.28125,
+        "height": 26.5
+      },
+      "nav": {
+        "x": 797.75,
+        "y": 9.75,
+        "right": 905.25,
+        "bottom": 181.25,
+        "width": 107.5,
+        "height": 171.5
+      },
+      "controls": [
+        {
+          "x": 827.25,
+          "y": 88.75,
+          "right": 863,
+          "bottom": 124.5,
+          "width": 35.75,
+          "height": 35.75,
+          "id": "backpack-top"
+        },
+        {
+          "x": 196,
+          "y": 288,
+          "right": 244,
+          "bottom": 336,
+          "width": 48,
+          "height": 48,
+          "id": "holster"
+        },
+        {
+          "x": 741,
+          "y": 330,
+          "right": 797,
+          "bottom": 386,
+          "width": 56,
+          "height": 56,
+          "id": "jump"
+        },
+        {
+          "x": 766.828125,
+          "y": 266.09375,
+          "right": 822.828125,
+          "bottom": 322.09375,
+          "width": 56,
+          "height": 56,
+          "id": "sprint"
+        },
+        {
+          "x": 829.78125,
+          "y": 238.0625,
+          "right": 885.78125,
+          "bottom": 294.0625,
+          "width": 56,
+          "height": 56,
+          "id": "crouch"
+        },
+        {
+          "x": 676.59375,
+          "y": 299.90625,
+          "right": 724.59375,
+          "bottom": 347.90625,
+          "width": 48,
+          "height": 48,
+          "id": "flashlight"
+        },
+        {
+          "x": 709.84375,
+          "y": 227.3125,
+          "right": 757.84375,
+          "bottom": 275.3125,
+          "width": 48,
+          "height": 48,
+          "id": "backpack"
+        },
+        {
+          "x": 823,
+          "y": 320,
+          "right": 899,
+          "bottom": 396,
+          "width": 76,
+          "height": 76,
+          "id": "attack"
+        }
+      ],
+      "scrollWidth": 915
+    },
+    {
+      "label": "05-meg-667x375",
+      "col": "below",
+      "viewport": {
+        "width": 667,
+        "height": 375
+      },
+      "cards": [
+        {
+          "x": 211,
+          "y": 48,
+          "right": 411,
+          "bottom": 129.75,
+          "width": 200,
+          "height": 81.75,
+          "hit": true,
+          "kind": "faction"
+        },
+        {
+          "x": 211,
+          "y": 133,
+          "right": 411,
+          "bottom": 177.875,
+          "width": 200,
+          "height": 44.875,
+          "hit": true,
+          "kind": "main"
+        }
+      ],
+      "vitals": {
+        "x": 9.75,
+        "y": 9.75,
+        "right": 437.25,
+        "bottom": 70.375,
+        "width": 427.5,
+        "height": 60.625
+      },
+      "location": {
+        "x": 378,
+        "y": 9.75,
+        "right": 549,
+        "bottom": 36.25,
+        "width": 171,
+        "height": 26.5
+      },
+      "nav": {
+        "x": 549.75,
+        "y": 9.75,
+        "right": 657.25,
+        "bottom": 181.25,
+        "width": 107.5,
+        "height": 171.5
+      },
+      "controls": [
+        {
+          "x": 579.25,
+          "y": 88.75,
+          "right": 615,
+          "bottom": 124.5,
+          "width": 35.75,
+          "height": 35.75,
+          "id": "backpack-top"
+        },
+        {
+          "x": 196,
+          "y": 251,
+          "right": 244,
+          "bottom": 299,
+          "width": 48,
+          "height": 48,
+          "id": "holster"
+        },
+        {
+          "x": 493,
+          "y": 293,
+          "right": 549,
+          "bottom": 349,
+          "width": 56,
+          "height": 56,
+          "id": "jump"
+        },
+        {
+          "x": 518.828125,
+          "y": 229.09375,
+          "right": 574.828125,
+          "bottom": 285.09375,
+          "width": 56,
+          "height": 56,
+          "id": "sprint"
+        },
+        {
+          "x": 581.78125,
+          "y": 201.0625,
+          "right": 637.78125,
+          "bottom": 257.0625,
+          "width": 56,
+          "height": 56,
+          "id": "crouch"
+        },
+        {
+          "x": 428.59375,
+          "y": 262.90625,
+          "right": 476.59375,
+          "bottom": 310.90625,
+          "width": 48,
+          "height": 48,
+          "id": "flashlight"
+        },
+        {
+          "x": 461.84375,
+          "y": 190.3125,
+          "right": 509.84375,
+          "bottom": 238.3125,
+          "width": 48,
+          "height": 48,
+          "id": "backpack"
+        },
+        {
+          "x": 575,
+          "y": 283,
+          "right": 651,
+          "bottom": 359,
+          "width": 76,
+          "height": 76,
+          "id": "attack"
+        }
+      ],
+      "scrollWidth": 667
+    }
+  ],
+  "environment": {
+    "seed": 424242,
+    "player": {
+      "x": 79.5,
+      "y": 79.5,
+      "z": 0,
+      "level": 0
+    },
+    "yaw": 0,
+    "pitch": 0,
+    "mobile": true,
+    "engineListeners": 2
+  },
+  "keyDebug": {
+    "state": "closed",
+    "focused": "<button code-path=\"src\\components\\MobileQuestChip.tsx:34:5\" type=\"button\" class=\"hud-panel hud-foyer-quest hud-quest-chip pointer-events-auto block w-full px-2.5 py-1.5 text-left font-mono2 text-[11px]\" data-foyer-quest=\"true\" data-quest-chip=\"closed\" aria-expanded=\"false\" aria-label=\"任务：主线 · 六张磁带，已完成 1/6，点按展开清单\" style=\"min-height: 44px; touch-action: manipulation;\"><div code-path=\"src\\components\\",
+    "attack": false,
+    "jump": false
+  }
+}

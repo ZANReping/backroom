@@ -7,6 +7,7 @@ import {disposeCharacterModel} from '@/game/renderer/retroResources'
 import {buildNpcEntityPreview} from '@/game/renderer/npcEntityPreview'
 import {avatarFrame,type AvatarFocus,type AvatarFrame} from '@/game/renderer/avatarFraming'
 import type {NpcDef} from '@/game/content/npcs'
+import {QA_CPU_SKIN,syncSceneCpuSkins} from '@/game/renderer/qaCpuSkin'
 interface Props {
  avatar:AvatarCfg;gloves?:boolean;suit?:boolean;cavingsuit?:boolean;divemask?:boolean;headlamp?:boolean;nightvision?:boolean
  npcId?:string;npcDef?:NpcDef;size?:number;focus?:AvatarFocus
@@ -29,6 +30,8 @@ export default function AvatarPreview({avatar,gloves,suit,cavingsuit,divemask,he
    model.userData.retroUpdate?.(t/1000)
    const {yaw,pitch}=orbit.current,d=fit.distance
    camera.position.set(fit.target.x+Math.sin(yaw)*Math.cos(pitch)*d,fit.target.y+Math.sin(pitch)*d,fit.target.z+Math.cos(yaw)*Math.cos(pitch)*d);camera.lookAt(fit.target)
+   // 仅 ?cpu=1 的无头 QA：SwiftShader 一画 GPU 蒙皮 GPU 进程就崩（主画布也随之丢上下文、整屏变黑），预览同样改用 CPU 替身
+   if(QA_CPU_SKIN)syncSceneCpuSkins(scene)
    r.render(scene,camera)
   };raf=requestAnimationFrame(loop)
   return()=>{cancelAnimationFrame(raf);observer?.disconnect();if(current.model){scene.remove(current.model);disposeCharacterModel(current.model);current.model=null}state.current=null;drag.current=null;r.dispose();r.forceContextLoss()}

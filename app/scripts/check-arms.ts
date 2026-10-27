@@ -34,8 +34,8 @@ const ok = (c: unknown, m: string) => { n++; const l = `${c ? '✔' : '✘'} ${m
 const info = (m: string) => { console.log('  · ' + m); lines.push('  · ' + m) }
 const A = AI.ARMS
 
-// 基线 002514e + 项目既有 tradersWorld、bntgBank 可选字段；手臂与衔尾接入不增加存档键。
-const BASE_SNAP = { top: ['alphaLayout', 'avenueHintSeq', 'avenueMarks', 'bntgBank', 'bntgLayout', 'brcMimicCd', 'brcSin', 'career', 'difficulty', 'glowProjectiles', 'heardSongs', 'homelyApplied', 'indoctrination', 'jerryAgreed', 'jerryOath', 'jerryTamed', 'l0SharedWorld', 'l0World', 'l10Weather', 'l11Weather', 'l11World', 'l1World', 'l5MothAlerts', 'level', 'mapFirstVisit', 'mapSeed', 'outpostReturn', 'player', 'profile', 'quests', 'radio', 'rep', 'seed', 'settlementLayout', 'time', 'tradersWorld', 'v', 'visited', 'warehouses', 'worldPos'], player: ['aliveTime', 'backpack', 'battery', 'coffeeT', 'crouching', 'equip', 'facing', 'flashJamT', 'flashlight', 'floor', 'hasGloves', 'hasLighter', 'hasPockets', 'hasRabbit', 'hasSuit', 'hotbar', 'hp', 'hunger', 'infection', 'kills', 'level', 'leverPulled', 'sanity', 'selected', 'slowT', 'stamina', 'startTime', 'steps', 'tapes', 'thirst', 'vz', 'x', 'y', 'z'], l1World: ['dynamics', 'generation', 'migration', 'runtime', 'seed', 'taken', 'version'], saveKeys: ['brcMimicCd', 'brcSin', 'indoctrination', 'jerryAgreed', 'jerryOath', 'jerryTamed', 'warehouses'] }
+// 基线 002514e + 项目既有 tradersWorld、bntgBank、Ferren / 爬菌及任务字段；手臂与衔尾接入不增加存档键。
+const BASE_SNAP = { top: ['alphaLayout', 'avenueHintSeq', 'avenueMarks', 'bntgBank', 'bntgLayout', 'brcMimicCd', 'brcSin', 'career', 'creep', 'difficulty', 'ferren', 'glowProjectiles', 'heardSongs', 'homelyApplied', 'indoctrination', 'jerryAgreed', 'jerryOath', 'jerryTamed', 'l0SharedWorld', 'l0World', 'l10Weather', 'l11Weather', 'l11World', 'l1World', 'l5MothAlerts', 'level', 'mapFirstVisit', 'mapSeed', 'outpostReturn', 'player', 'profile', 'quests', 'radio', 'rep', 'seed', 'settlementLayout', 'time', 'tradersWorld', 'v', 'visited', 'warehouses', 'worldPos'], player: ['aliveTime', 'backpack', 'battery', 'coffeeT', 'crouching', 'equip', 'facing', 'flashJamT', 'flashlight', 'floor', 'hasGloves', 'hasLighter', 'hasPockets', 'hasRabbit', 'hasSuit', 'hotbar', 'hp', 'hunger', 'infection', 'kills', 'level', 'levelQuests', 'leverPulled', 'prologueClock', 'remodel', 'sanity', 'selected', 'slowT', 'stamina', 'startTime', 'steps', 'tapes', 'thirst', 'vz', 'x', 'y', 'z'], l1World: ['dynamics', 'generation', 'migration', 'runtime', 'seed', 'taken', 'version'], saveKeys: ['brcMimicCd', 'brcSin', 'creep', 'ferren', 'indoctrination', 'jerryAgreed', 'jerryOath', 'jerryTamed', 'warehouses'] }
 
 // ---------------------------------------------------------------------------
 // 场景：真实 L1，找一块「半径 4.5m 内同高可走 + 有天花板」的开阔地，放一只手臂；停电与灯光由测试控制
@@ -116,6 +116,7 @@ function sprintAround(e: any, spot: { x: number; y: number }, secs: number, stop
     const p = e.player
     if (p.y > spot.y + 2) dir = -1; else if (p.y < spot.y - 2) dir = 1
     e.input.mx = 0; e.input.my = dir; e.input.sprint = true; p.stamina = 100
+    look.yaw = dir > 0 ? Math.PI : 0 // [movefeel] 冲刺只在前进 ±50° 内生效：面朝奔跑方向（否则侧着「冲刺」只是走路、噪音半径 4）
     if (stop()) { e.input.my = 0; e.input.sprint = false; return true }
   })
 }
@@ -508,8 +509,10 @@ function swallowFlow(seed: number, hp: number, second?: (e: any, spot: any) => a
   ok(S(arms).mode !== 'hidden' && S(far).mode === 'hidden', '连通的两个风口：只有离玩家最近的那个出动')
   const snap = e.snapshot(), js = JSON.stringify(snap)
   const keys = { top: Object.keys(snap).sort(), player: Object.keys(snap.player).sort(), l1World: Object.keys(snap.l1World ?? {}).sort(), saveKeys: EFFECTS.filter((x: any) => x.saveKey).map((x: any) => x.saveKey).sort() }
+  if (JSON.stringify(keys) !== JSON.stringify(BASE_SNAP)) info(JSON.stringify(Object.fromEntries(Object.keys(keys).map(k => [k, {extra:(keys as any)[k].filter((v:string)=>!(BASE_SNAP as any)[k].includes(v)),missing:(BASE_SNAP as any)[k].filter((v:string)=>!(keys as any)[k].includes(v))}]))))
   ok(JSON.stringify(keys) === JSON.stringify(BASE_SNAP), '存档快照字段与项目现有格式一致（含 tradersWorld、bntgBank）（顶层 / player / l1World / effects 存档键）')
   ok(!/armsRun|"ar"|"marks"|"temps"/.test(js), '存档里没有手臂的任何运行时状态')
+  ok(!('mv' in snap) && !('moveIt' in snap), '移动速度、喘息及积分器保持运行时瞬态，不写入存档')
 }
 
 // ============================================================================

@@ -1,3 +1,4 @@
+import { inMirrorCapture } from './mirrorSurface'
 import * as THREE from 'three'
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js'
 import { clipping,rectangle,bounds,type Polygon } from '../world/l11Geometry'
@@ -63,6 +64,7 @@ export class L11WaterReflection {
         mat.uniforms.time=waterUniforms.uWaterTime;mat.uniforms.origin=waterUniforms.uWaterOrigin
         const original=mirror.onBeforeRender.bind(mirror);let lens=''
         mirror.onBeforeRender=(renderer,...args)=>{
+          if (inMirrorCapture()) return
           const camera=args[1],projection=camera.projectionMatrix.elements,next=`${projection[0]},${projection[5]}`
           if(lens!==next){lens=next;this.last=-Infinity}
           const now=performance.now()/1000;if(now-this.last<1/15)return;this.last=now

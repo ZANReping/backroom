@@ -1,0 +1,7472 @@
+{
+  "seed": 424242,
+  "mode": "classic",
+  "port": 10300,
+  "cdp": 10301,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:10300/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Tue, 27 Oct 2026 09:53:24 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 308,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 10300,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 121873.261851,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.542,
+        "sendEnd": 0.564,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 107.39,
+        "receiveHeadersEnd": 107.6
+      },
+      "responseTime": 1793094804466.523,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\mirror-reflections-20261027\\accepted-classic\\qa-1793094785872-39564",
+    "--remote-debugging-port=10301",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 68836,
+    "server": 71004
+  },
+  "appBootMs": 17181.173,
+  "entryMs": 1759.073199999999,
+  "firstPlayableMs": 22594.3158,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "pos": [
+      78.5,
+      79.5,
+      0
+    ],
+    "camera": [
+      78.5,
+      1.55,
+      79.5
+    ],
+    "yaw": 0,
+    "pitch": 0,
+    "mirrors": {
+      "surfaces": 0,
+      "visible": 0,
+      "planes": 0,
+      "targets": 0,
+      "updates": 0,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 589,
+      "textures": 135
+    },
+    "calls": 572,
+    "triangles": 166949,
+    "cpu": 4.799999997019768,
+    "checks": []
+  },
+  "foyer": {
+    "level": 900,
+    "pos": [
+      6,
+      12.55,
+      0
+    ],
+    "camera": [
+      6,
+      1.55,
+      12.55
+    ],
+    "yaw": -4.71238898038469,
+    "pitch": 0.05046217401685577,
+    "mirrors": {
+      "surfaces": 2,
+      "visible": 1,
+      "planes": 1,
+      "targets": 1,
+      "updates": 284,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 671,
+      "textures": 222
+    },
+    "calls": 48,
+    "triangles": 31741,
+    "cpu": 0.7999999970197678,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      }
+    ]
+  },
+  "perf": [
+    {
+      "median": 4.199999988079071,
+      "p95": 5,
+      "cpuMedian": 0.8999999910593033,
+      "cpuP95": 1.5,
+      "callsMedian": 48,
+      "callsP95": 123,
+      "trianglesMedian": 31741,
+      "trianglesP95": 79865,
+      "mirrorCpuMedian": 0,
+      "mirrorCpuP95": 0.7999999970197678,
+      "samples": 361,
+      "level": 900,
+      "pos": [
+        6,
+        12.55,
+        0
+      ],
+      "camera": [
+        6,
+        1.55,
+        12.55
+      ],
+      "yaw": -4.71238898038469,
+      "pitch": 0.05046217401685577,
+      "mirrors": {
+        "surfaces": 2,
+        "visible": 1,
+        "planes": 1,
+        "targets": 1,
+        "updates": 132,
+        "framePasses": 0,
+        "calls": 0,
+        "triangles": 0,
+        "cpuMs": 0,
+        "size": 1024
+      },
+      "memory": {
+        "geometries": 639,
+        "textures": 218
+      },
+      "calls": 48,
+      "triangles": 31741,
+      "cpu": 0.5999999940395355,
+      "checks": [
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        }
+      ]
+    },
+    {
+      "median": 4.200000002980232,
+      "p95": 5,
+      "cpuMedian": 0.7999999970197678,
+      "cpuP95": 1.5,
+      "callsMedian": 48,
+      "callsP95": 123,
+      "trianglesMedian": 31741,
+      "trianglesP95": 79865,
+      "mirrorCpuMedian": 0,
+      "mirrorCpuP95": 0.7999999970197678,
+      "samples": 360,
+      "level": 900,
+      "pos": [
+        6,
+        12.55,
+        0
+      ],
+      "camera": [
+        6,
+        1.55,
+        12.55
+      ],
+      "yaw": -4.71238898038469,
+      "pitch": 0.05046217401685577,
+      "mirrors": {
+        "surfaces": 2,
+        "visible": 1,
+        "planes": 1,
+        "targets": 1,
+        "updates": 153,
+        "framePasses": 0,
+        "calls": 0,
+        "triangles": 0,
+        "cpuMs": 0,
+        "size": 1024
+      },
+      "memory": {
+        "geometries": 639,
+        "textures": 218
+      },
+      "calls": 48,
+      "triangles": 31741,
+      "cpu": 0.7999999970197678,
+      "checks": [
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        }
+      ]
+    },
+    {
+      "median": 4.199999988079071,
+      "p95": 4.899999991059303,
+      "cpuMedian": 0.7999999970197678,
+      "cpuP95": 1.4000000059604645,
+      "callsMedian": 48,
+      "callsP95": 123,
+      "trianglesMedian": 31741,
+      "trianglesP95": 79865,
+      "mirrorCpuMedian": 0,
+      "mirrorCpuP95": 0.7999999970197678,
+      "samples": 360,
+      "level": 900,
+      "pos": [
+        6,
+        12.55,
+        0
+      ],
+      "camera": [
+        6,
+        1.55,
+        12.55
+      ],
+      "yaw": -4.71238898038469,
+      "pitch": 0.05046217401685577,
+      "mirrors": {
+        "surfaces": 2,
+        "visible": 1,
+        "planes": 1,
+        "targets": 1,
+        "updates": 175,
+        "framePasses": 0,
+        "calls": 0,
+        "triangles": 0,
+        "cpuMs": 0,
+        "size": 1024
+      },
+      "memory": {
+        "geometries": 639,
+        "textures": 218
+      },
+      "calls": 48,
+      "triangles": 31741,
+      "cpu": 1.0999999940395355,
+      "checks": [
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        }
+      ]
+    },
+    {
+      "median": 4.200000002980232,
+      "p95": 4.9000000059604645,
+      "cpuMedian": 0.9000000059604645,
+      "cpuP95": 1.5999999940395355,
+      "callsMedian": 48,
+      "callsP95": 123,
+      "trianglesMedian": 31741,
+      "trianglesP95": 79865,
+      "mirrorCpuMedian": 0,
+      "mirrorCpuP95": 0.8999999910593033,
+      "samples": 361,
+      "level": 900,
+      "pos": [
+        6,
+        12.55,
+        0
+      ],
+      "camera": [
+        6,
+        1.55,
+        12.55
+      ],
+      "yaw": -4.71238898038469,
+      "pitch": 0.05046217401685577,
+      "mirrors": {
+        "surfaces": 2,
+        "visible": 1,
+        "planes": 1,
+        "targets": 1,
+        "updates": 197,
+        "framePasses": 0,
+        "calls": 0,
+        "triangles": 0,
+        "cpuMs": 0,
+        "size": 1024
+      },
+      "memory": {
+        "geometries": 639,
+        "textures": 218
+      },
+      "calls": 48,
+      "triangles": 31741,
+      "cpu": 0.7000000029802322,
+      "checks": [
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        }
+      ]
+    },
+    {
+      "median": 4.199999988079071,
+      "p95": 5,
+      "cpuMedian": 0.7999999970197678,
+      "cpuP95": 1.4000000059604645,
+      "callsMedian": 48,
+      "callsP95": 123,
+      "trianglesMedian": 31741,
+      "trianglesP95": 79865,
+      "mirrorCpuMedian": 0,
+      "mirrorCpuP95": 0.7999999970197678,
+      "samples": 361,
+      "level": 900,
+      "pos": [
+        6,
+        12.55,
+        0
+      ],
+      "camera": [
+        6,
+        1.55,
+        12.55
+      ],
+      "yaw": -4.71238898038469,
+      "pitch": 0.05046217401685577,
+      "mirrors": {
+        "surfaces": 2,
+        "visible": 1,
+        "planes": 1,
+        "targets": 1,
+        "updates": 219,
+        "framePasses": 0,
+        "calls": 0,
+        "triangles": 0,
+        "cpuMs": 0,
+        "size": 1024
+      },
+      "memory": {
+        "geometries": 639,
+        "textures": 218
+      },
+      "calls": 48,
+      "triangles": 31741,
+      "cpu": 0.7999999970197678,
+      "checks": [
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        }
+      ]
+    }
+  ],
+  "side": {
+    "level": 900,
+    "pos": [
+      6.6,
+      13,
+      0
+    ],
+    "camera": [
+      6.6,
+      1.55,
+      13
+    ],
+    "yaw": 1.3981148351768917,
+    "pitch": 0.038164698551551524,
+    "mirrors": {
+      "surfaces": 2,
+      "visible": 1,
+      "planes": 1,
+      "targets": 1,
+      "updates": 245,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 639,
+      "textures": 218
+    },
+    "calls": 56,
+    "triangles": 32849,
+    "cpu": 0.8999999910593033,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      }
+    ]
+  },
+  "away": {
+    "level": 900,
+    "pos": [
+      6.6,
+      13,
+      0
+    ],
+    "camera": [
+      6.6,
+      1.55,
+      13
+    ],
+    "yaw": 4.539707488766685,
+    "pitch": 0.038164698551551524,
+    "mirrors": {
+      "surfaces": 2,
+      "visible": 0,
+      "planes": 0,
+      "targets": 0,
+      "updates": 249,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 639,
+      "textures": 217
+    },
+    "calls": 83,
+    "triangles": 49763,
+    "cpu": 1,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      }
+    ]
+  },
+  "bath": {
+    "level": 900,
+    "pos": [
+      10.45,
+      5.4,
+      0
+    ],
+    "camera": [
+      10.45,
+      1.55,
+      5.4
+    ],
+    "yaw": -4.71238898038469,
+    "pitch": 0,
+    "mirrors": {
+      "surfaces": 2,
+      "visible": 1,
+      "planes": 1,
+      "targets": 1,
+      "updates": 316,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 671,
+      "textures": 222
+    },
+    "calls": 149,
+    "triangles": 54747,
+    "cpu": 1.2999999970197678,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      }
+    ]
+  },
+  "crouch": {
+    "level": 900,
+    "pos": [
+      10.45,
+      5.4,
+      0
+    ],
+    "camera": [
+      10.45,
+      1.000000734086817,
+      5.4
+    ],
+    "yaw": -4.71238898038469,
+    "pitch": 0,
+    "mirrors": {
+      "surfaces": 2,
+      "visible": 1,
+      "planes": 1,
+      "targets": 1,
+      "updates": 371,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 671,
+      "textures": 222
+    },
+    "calls": 150,
+    "triangles": 54859,
+    "cpu": 1.0999999940395355,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Actual crouch input bends reflected avatar knees"
+      }
+    ]
+  },
+  "l02": {
+    "level": 902,
+    "pos": [
+      78.1,
+      70.2,
+      0
+    ],
+    "camera": [
+      78.1,
+      1.55,
+      70.2
+    ],
+    "yaw": -4.71238898038469,
+    "pitch": -0.02856365783876002,
+    "mirrors": {
+      "surfaces": 4,
+      "visible": 2,
+      "planes": 1,
+      "targets": 1,
+      "updates": 461,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 263,
+      "textures": 85
+    },
+    "calls": 117,
+    "triangles": 363551,
+    "cpu": 5.799999997019768,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Actual crouch input bends reflected avatar knees"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      }
+    ],
+    "rest": {
+      "x": -52,
+      "y": -60,
+      "w": 6,
+      "h": 4,
+      "door": {
+        "x": -48.1,
+        "w": 1.1
+      }
+    }
+  },
+  "l02Close": {
+    "level": 902,
+    "pos": [
+      77.4002,
+      70.8,
+      0
+    ],
+    "camera": [
+      77.4002,
+      1.55,
+      70.8
+    ],
+    "yaw": -4.71238898038469,
+    "pitch": -0.0384425900211881,
+    "mirrors": {
+      "surfaces": 4,
+      "visible": 2,
+      "planes": 1,
+      "targets": 1,
+      "updates": 496,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 346,
+      "textures": 85
+    },
+    "calls": 131,
+    "triangles": 456281,
+    "cpu": 2.2000000029802322,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Actual crouch input bends reflected avatar knees"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      }
+    ]
+  },
+  "flashlight": {
+    "level": 902,
+    "pos": [
+      77.4002,
+      70.8,
+      0
+    ],
+    "camera": [
+      77.4002,
+      1.55,
+      70.8
+    ],
+    "yaw": -4.71238898038469,
+    "pitch": -0.0384425900211881,
+    "mirrors": {
+      "surfaces": 4,
+      "visible": 2,
+      "planes": 1,
+      "targets": 1,
+      "updates": 530,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 346,
+      "textures": 85
+    },
+    "calls": 131,
+    "triangles": 456281,
+    "cpu": 1.7999999970197678,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Actual crouch input bends reflected avatar knees"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      }
+    ]
+  },
+  "traders": {
+    "level": 102,
+    "pos": [
+      82,
+      122.72699999999999,
+      0
+    ],
+    "camera": [
+      82,
+      1.55,
+      122.72699999999999
+    ],
+    "yaw": -3.141592653589793,
+    "pitch": 0.049958395721942696,
+    "mirrors": {
+      "surfaces": 8,
+      "visible": 2,
+      "planes": 1,
+      "targets": 1,
+      "updates": 576,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 922,
+      "textures": 129
+    },
+    "calls": 292,
+    "triangles": 182031,
+    "cpu": 9.799999997019768,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Actual crouch input bends reflected avatar knees"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      }
+    ],
+    "fixture": {
+      "kind": "trade_counter",
+      "x": 80.4,
+      "y": 124.35199999999999,
+      "w": 3.2,
+      "h": 0.7500000000000004,
+      "solid": true,
+      "data": {
+        "tradersId": "dress.west_wash.basins",
+        "tradersModel": "dressing",
+        "dressing": "washcounter",
+        "tradersProp": "dressing",
+        "deg": 180,
+        "height": 2.25,
+        "bottom": 0,
+        "roomId": "west_wash",
+        "variant": 2,
+        "wallId": "wall_188",
+        "wallSide": "s",
+        "wallNormalX": 0,
+        "wallNormalY": -1,
+        "wallGap": 0.008,
+        "localW": 3.2,
+        "localD": 0.75
+      }
+    }
+  },
+  "reflectionOff": {
+    "level": 102,
+    "pos": [
+      82,
+      122.72699999999999,
+      0
+    ],
+    "camera": [
+      82,
+      1.55,
+      122.72699999999999
+    ],
+    "yaw": -3.141592653589793,
+    "pitch": 0.049958395721942696,
+    "mirrors": {
+      "surfaces": 8,
+      "visible": 0,
+      "planes": 0,
+      "targets": 0,
+      "updates": 585,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 986,
+      "textures": 128
+    },
+    "calls": 311,
+    "triangles": 183345,
+    "cpu": 6.799999997019768,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Actual crouch input bends reflected avatar knees"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Reflection setting zero disables captures and releases targets"
+      }
+    ]
+  },
+  "reflectionOn": {
+    "level": 102,
+    "pos": [
+      82,
+      122.72699999999999,
+      0
+    ],
+    "camera": [
+      82,
+      1.55,
+      122.72699999999999
+    ],
+    "yaw": -3.141592653589793,
+    "pitch": 0.049958395721942696,
+    "mirrors": {
+      "surfaces": 8,
+      "visible": 2,
+      "planes": 1,
+      "targets": 1,
+      "updates": 610,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 1147,
+      "textures": 129
+    },
+    "calls": 366,
+    "triangles": 206981,
+    "cpu": 6.5,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Actual crouch input bends reflected avatar knees"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Reflection setting zero disables captures and releases targets"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      }
+    ]
+  },
+  "low": {
+    "level": 102,
+    "pos": [
+      82,
+      122.72699999999999,
+      0
+    ],
+    "camera": [
+      82,
+      1.55,
+      122.72699999999999
+    ],
+    "yaw": -3.141592653589793,
+    "pitch": 0.049958395721942696,
+    "mirrors": {
+      "surfaces": 8,
+      "visible": 2,
+      "planes": 1,
+      "targets": 1,
+      "updates": 641,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 256
+    },
+    "memory": {
+      "geometries": 1221,
+      "textures": 129
+    },
+    "calls": 366,
+    "triangles": 206981,
+    "cpu": 5.899999991059303,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Actual crouch input bends reflected avatar knees"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Reflection setting zero disables captures and releases targets"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Low quality uses 256px and one plane"
+      }
+    ]
+  },
+  "high": {
+    "level": 102,
+    "pos": [
+      82,
+      122.72699999999999,
+      0
+    ],
+    "camera": [
+      82,
+      1.55,
+      122.72699999999999
+    ],
+    "yaw": -3.141592653589793,
+    "pitch": 0.049958395721942696,
+    "mirrors": {
+      "surfaces": 8,
+      "visible": 2,
+      "planes": 1,
+      "targets": 1,
+      "updates": 672,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 1246,
+      "textures": 129
+    },
+    "calls": 366,
+    "triangles": 206981,
+    "cpu": 6.200000002980232,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Actual crouch input bends reflected avatar knees"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Reflection setting zero disables captures and releases targets"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Low quality uses 256px and one plane"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "High quality restores 1024px reflection"
+      }
+    ]
+  },
+  "mobile": {
+    "level": 102,
+    "pos": [
+      82,
+      122.72699999999999,
+      0
+    ],
+    "camera": [
+      82,
+      1.55,
+      122.72699999999999
+    ],
+    "yaw": -3.141592653589793,
+    "pitch": 0.049958395721942696,
+    "mirrors": {
+      "surfaces": 8,
+      "visible": 2,
+      "planes": 1,
+      "targets": 1,
+      "updates": 702,
+      "framePasses": 0,
+      "calls": 0,
+      "triangles": 0,
+      "cpuMs": 0,
+      "size": 256
+    },
+    "memory": {
+      "geometries": 1618,
+      "textures": 129
+    },
+    "calls": 208,
+    "triangles": 130551,
+    "cpu": 5.9000000059604645,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Actual crouch input bends reflected avatar knees"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Reflection setting zero disables captures and releases targets"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Low quality uses 256px and one plane"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "High quality restores 1024px reflection"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Touch viewport lowers reflection budget"
+      }
+    ]
+  },
+  "touch": {
+    "desktopSimulation": true,
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  "resources": [
+    {
+      "level": 900,
+      "pos": [
+        6,
+        12.55,
+        0
+      ],
+      "camera": [
+        6,
+        1.55,
+        12.55
+      ],
+      "yaw": -4.71238898038469,
+      "pitch": 0.05046217401685577,
+      "mirrors": {
+        "surfaces": 2,
+        "visible": 1,
+        "planes": 1,
+        "targets": 1,
+        "updates": 740,
+        "framePasses": 0,
+        "calls": 0,
+        "triangles": 0,
+        "cpuMs": 0,
+        "size": 1024
+      },
+      "memory": {
+        "geometries": 744,
+        "textures": 262
+      },
+      "calls": 48,
+      "triangles": 31741,
+      "cpu": 0.7999999970197678,
+      "checks": [
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "No mirror capture behind the camera"
+        },
+        {
+          "ok": true,
+          "label": "Idle reflection targets released"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "Actual crouch input bends reflected avatar knees"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "Natural L02 sink present"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "Reflection setting zero disables captures and releases targets"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "Low quality uses 256px and one plane"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "High quality restores 1024px reflection"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "Touch viewport lowers reflection budget"
+        },
+        {
+          "ok": true,
+          "label": "No mirror target after leaving interior"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        }
+      ]
+    },
+    {
+      "level": 900,
+      "pos": [
+        6,
+        12.55,
+        0
+      ],
+      "camera": [
+        6,
+        1.55,
+        12.55
+      ],
+      "yaw": -4.71238898038469,
+      "pitch": 0.05046217401685577,
+      "mirrors": {
+        "surfaces": 2,
+        "visible": 1,
+        "planes": 1,
+        "targets": 1,
+        "updates": 775,
+        "framePasses": 0,
+        "calls": 0,
+        "triangles": 0,
+        "cpuMs": 0,
+        "size": 1024
+      },
+      "memory": {
+        "geometries": 780,
+        "textures": 269
+      },
+      "calls": 48,
+      "triangles": 31741,
+      "cpu": 0.5999999940395355,
+      "checks": [
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "No mirror capture behind the camera"
+        },
+        {
+          "ok": true,
+          "label": "Idle reflection targets released"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "Actual crouch input bends reflected avatar knees"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "Natural L02 sink present"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "Reflection setting zero disables captures and releases targets"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "Low quality uses 256px and one plane"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "High quality restores 1024px reflection"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "Touch viewport lowers reflection budget"
+        },
+        {
+          "ok": true,
+          "label": "No mirror target after leaving interior"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "No mirror target after leaving interior"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        }
+      ]
+    },
+    {
+      "level": 900,
+      "pos": [
+        6,
+        12.55,
+        0
+      ],
+      "camera": [
+        6,
+        1.55,
+        12.55
+      ],
+      "yaw": -4.71238898038469,
+      "pitch": 0.05046217401685577,
+      "mirrors": {
+        "surfaces": 2,
+        "visible": 1,
+        "planes": 1,
+        "targets": 1,
+        "updates": 810,
+        "framePasses": 0,
+        "calls": 0,
+        "triangles": 0,
+        "cpuMs": 0,
+        "size": 1024
+      },
+      "memory": {
+        "geometries": 780,
+        "textures": 271
+      },
+      "calls": 48,
+      "triangles": 31741,
+      "cpu": 0.7999999970197678,
+      "checks": [
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "No mirror capture behind the camera"
+        },
+        {
+          "ok": true,
+          "label": "Idle reflection targets released"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "Actual crouch input bends reflected avatar knees"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "Natural L02 sink present"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "Reflection setting zero disables captures and releases targets"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "Low quality uses 256px and one plane"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "High quality restores 1024px reflection"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "Touch viewport lowers reflection budget"
+        },
+        {
+          "ok": true,
+          "label": "No mirror target after leaving interior"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "No mirror target after leaving interior"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        },
+        {
+          "ok": true,
+          "label": "No mirror target after leaving interior"
+        },
+        {
+          "ok": true,
+          "label": "At most one mirror world draw per frame"
+        },
+        {
+          "ok": true,
+          "label": "Reflection target pool bounded to two"
+        },
+        {
+          "ok": true,
+          "label": "Full avatar hidden in main view"
+        },
+        {
+          "ok": true,
+          "label": "Reflection uses full production avatar"
+        },
+        {
+          "ok": true,
+          "label": "Main render target restored"
+        },
+        {
+          "ok": true,
+          "label": "Actual surface is bound to a captured scene"
+        },
+        {
+          "ok": true,
+          "label": "Shared wipe/normal/roughness image decoded"
+        },
+        {
+          "ok": true,
+          "label": "Reflection projection finite"
+        }
+      ]
+    }
+  ],
+  "city": {
+    "level": 11,
+    "pos": [
+      70.02181815107663,
+      90.65000000596046,
+      0.08
+    ],
+    "camera": [
+      70.02181815107663,
+      1.6300000000000001,
+      90.65000000596046
+    ],
+    "yaw": -3.141592653589793,
+    "pitch": 1.0242648630231637,
+    "mirrors": {
+      "surfaces": 104,
+      "visible": 6,
+      "planes": 2,
+      "targets": 2,
+      "updates": 871,
+      "framePasses": 1,
+      "calls": 125,
+      "triangles": 1273627,
+      "cpuMs": 2.2000000029802322,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 644,
+      "textures": 172
+    },
+    "calls": 332,
+    "triangles": 2810202,
+    "cpu": 16.400000005960464,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Actual crouch input bends reflected avatar knees"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Reflection setting zero disables captures and releases targets"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Low quality uses 256px and one plane"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "High quality restores 1024px reflection"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Touch viewport lowers reflection budget"
+      },
+      {
+        "ok": true,
+        "label": "No mirror target after leaving interior"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror target after leaving interior"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror target after leaving interior"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "City camera has physical body clearance and an unobstructed ray to actual sealed glass"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      }
+    ],
+    "fixture": {
+      "x": 38.02181815107663,
+      "y": 58.650000005960464,
+      "z": 0.08,
+      "target": [
+        38.02181815107663,
+        62.150000005960464,
+        7.383333524068196
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "attempts": 1,
+      "hitMaterial": [
+        "l11-sealedglass:#29424c:false:classic"
+      ]
+    },
+    "origin": [
+      -32,
+      -32
+    ]
+  },
+  "summary": {
+    "level": 11,
+    "pos": [
+      70.02181815107663,
+      90.65000000596046,
+      0.08
+    ],
+    "camera": [
+      70.02181815107663,
+      1.6300000000000001,
+      90.65000000596046
+    ],
+    "yaw": -3.141592653589793,
+    "pitch": 1.0242648630231637,
+    "mirrors": {
+      "surfaces": 118,
+      "visible": 6,
+      "planes": 2,
+      "targets": 2,
+      "updates": 887,
+      "framePasses": 1,
+      "calls": 125,
+      "triangles": 1273627,
+      "cpuMs": 2.0999999940395355,
+      "size": 1024
+    },
+    "memory": {
+      "geometries": 652,
+      "textures": 172
+    },
+    "calls": 335,
+    "triangles": 2822270,
+    "cpu": 7.899999991059303,
+    "checks": [
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror capture behind the camera"
+      },
+      {
+        "ok": true,
+        "label": "Idle reflection targets released"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Actual crouch input bends reflected avatar knees"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Natural L02 sink present"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Reflection setting zero disables captures and releases targets"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Low quality uses 256px and one plane"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "High quality restores 1024px reflection"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "Touch viewport lowers reflection budget"
+      },
+      {
+        "ok": true,
+        "label": "No mirror target after leaving interior"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror target after leaving interior"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "No mirror target after leaving interior"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      },
+      {
+        "ok": true,
+        "label": "City camera has physical body clearance and an unobstructed ray to actual sealed glass"
+      },
+      {
+        "ok": true,
+        "label": "At most one mirror world draw per frame"
+      },
+      {
+        "ok": true,
+        "label": "Reflection target pool bounded to two"
+      },
+      {
+        "ok": true,
+        "label": "Full avatar hidden in main view"
+      },
+      {
+        "ok": true,
+        "label": "Reflection uses full production avatar"
+      },
+      {
+        "ok": true,
+        "label": "Main render target restored"
+      },
+      {
+        "ok": true,
+        "label": "Actual surface is bound to a captured scene"
+      },
+      {
+        "ok": true,
+        "label": "Shared wipe/normal/roughness image decoded"
+      },
+      {
+        "ok": true,
+        "label": "Reflection projection finite"
+      }
+    ]
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

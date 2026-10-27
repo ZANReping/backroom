@@ -226,6 +226,7 @@ function buildHandGeo(p: HandPose, mirror: boolean, sleeveKind: SleeveKind, col?
   }
   // ---------- ② 四指：关节合拢求解 ----------
   const caps: [V3, V3, number][] = [] // 已求解的指节胶囊（拇指的障碍物）
+  const tips: [V3, V3, number][] = [] // 指尖 [位置, 末节方向, 指厚半径]（H 坐标，未镜像）
   const segHit = (a: V3, b: V3, r: number, t0: number, palm: boolean, extra?: [V3, V3, number][]) => {
     const l = len(sub(b, a)), n = Math.max(2, Math.ceil(l / 0.003))
     for (let i = Math.ceil(t0 * n); i <= n; i++) {
@@ -263,6 +264,7 @@ function buildHandGeo(p: HandPose, mirror: boolean, sleeveKind: SleeveKind, col?
     const rad = [th / 2, th * 0.46, th * 0.4]
     const J = closeChain(mcp[fi], [-Math.sin(phi), 0, -Math.cos(phi)], L, rad, [0, 0, 0], p.open ? [0.04, 0.12, 0.08] : trig ? [0.12, 0.4, 0.5] : [1.55, 1.85, 1.35].map((t) => t * (p.wrap ?? 1)), [0.05, 0.06, 0.045], 1)
     for (let k = 0; k < 3; k++) caps.push([J[k], J[k + 1], rad[k]])
+    tips.push([J[3], norm(sub(J[3], J[2])), th / 2]) // 爬菌：指尖位置/方向（只记元数据，不影响几何）
     const pts = [add(J[0], mul(tb, 0.012)), ...J] // 指根埋进掌内
     for (let k = 0; k < pts.length - 1; k++) {
       const seg = k
@@ -319,7 +321,12 @@ function buildHandGeo(p: HandPose, mirror: boolean, sleeveKind: SleeveKind, col?
     const inner = prism(C, add(c0, mul(fd, 0.012)), c0, upW, 0.0165, 0.0265, 0.0215, 0.031, 0.45, 0.55, 8, [false, false])
     for (let j = 0; j < 8; j++) C.quad(lip.A[j], inner.B[j], inner.B[(j + 1) % 8], lip.A[(j + 1) % 8], 0.6, 0.5, 0.5, 0.6)
   }
-  return { skin: S.build(), sleeve: C.build(), shift: mul(n0, shift) }
+  tips.push([TJ[2], norm(sub(TJ[2], TJ[1])), 0.0045])
+  const skinG = S.build()
+  // 爬菌第一人称叠加层（creeperMesh.creepHandOverlay）读取的手部标记：指尖、手腕中心、前臂方向。几何坐标系（左手已镜像）。
+  const mx = (v: V3): V3 => mirror ? [-v[0], v[1], v[2]] : v
+  skinG.userData.creepMarks = { tips: tips.map(([q, d, r]) => [mx(q), mx(d), r]), wrist: mx(wc), fdir: mx(fd), back: mx(n0) }
+  return { skin: skinG, sleeve: C.build(), shift: mul(n0, shift) }
 }
 
 /** 一只第一人称手（右手；left = 镜像左手）。 */
