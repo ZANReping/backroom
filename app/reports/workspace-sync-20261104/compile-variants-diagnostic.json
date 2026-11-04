@@ -1,0 +1,17 @@
+{
+  "reproducedInSource": true,
+  "original": {
+    "name": "compile-variants-original",
+    "exitCode": 1,
+    "stdout": "",
+    "stderr": "file:///E:/ZAN/backroom/.cache/workspace-sync-20261104/compile-variants-original.mjs:16001\r\n      renderer2.compile(view, camera2, scene2);\r\n                ^\r\n\r\nTypeError: renderer2.compile is not a function\r\n    at compileSceneJob (file:///E:/ZAN/backroom/.cache/workspace-sync-20261104/compile-variants-original.mjs:16001:17)\r\n    at compileSceneJob.next (<anonymous>)\r\n    at run (file:///E:/ZAN/backroom/.cache/workspace-sync-20261104/compile-variants-original.mjs:16139:13)\r\n    at async file:///E:/ZAN/backroom/.cache/workspace-sync-20261104/compile-variants-original.mjs:16144:1\r\n\r\nNode.js v24.11.1"
+  },
+  "adjusted": {
+    "name": "compile-variants-adjusted-fixture",
+    "exitCode": 0,
+    "stdout": "{\"passed\":47,\"scope\":\"opt-in static shader representatives, exact feature variants and complete GPU uploads\"}",
+    "stderr": ""
+  },
+  "fixtureChange": "Expose compile(view) instead of compileAsync(view) in the temporary renderer mock.",
+  "sourceAndTargetScriptsUnchanged": true
+}

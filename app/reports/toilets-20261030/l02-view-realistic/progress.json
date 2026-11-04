@@ -1,0 +1,235 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 6084,
+  "cdp": 6085,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:6084/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Fri, 30 Oct 2026 13:37:08 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 265,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 6084,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 121562.275549,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.498,
+        "sendEnd": 0.539,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 64.176,
+        "receiveHeadersEnd": 64.335
+      },
+      "responseTime": 1793367428506.343,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\toilets-20261030\\l02-view-realistic\\qa-1793367412407-47064",
+    "--remote-debugging-port=6085",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 65368,
+    "server": 30564
+  },
+  "appBootMs": 15874.934700000002,
+  "entryMs": 1813.3315999999977,
+  "firstPlayableMs": 22088.1188,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 643,
+      "textures": 146
+    },
+    "frame": {
+      "cpu": 26.30000001192093,
+      "calls": 944,
+      "triangles": 657483
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null
+  },
+  "l02SittingView": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      87.2,
+      68.51499999999999,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 3.141592653589793,
+      "pitch": -0.975236632170396,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 230,
+      "textures": 71
+    },
+    "frame": {
+      "cpu": 5.199999988079071,
+      "calls": 67,
+      "triangles": 253245
+    },
+    "pin": null,
+    "l02": {
+      "t": 2.754199999999997,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 2,
+    "toiletChecks": 6,
+    "soundEvents": [],
+    "sitting": "seated",
+    "action": {
+      "id": "toiletFart",
+      "label": "放屁",
+      "hint": "坐在马桶上时点按发出放屁声",
+      "hold": false
+    },
+    "anchor": {
+      "x": 23.200000000000003,
+      "y": -27.485000000000014,
+      "z": 0.447,
+      "yaw": 0,
+      "index": 0,
+      "label": "马桶",
+      "relaxed": false,
+      "toilet": true,
+      "floor": 0
+    }
+  },
+  "firstPerson": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      87.2,
+      68.51499999999999,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 3.141592653589793,
+      "pitch": -1.1,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 230,
+      "textures": 71
+    },
+    "frame": {
+      "cpu": 5.299999997019768,
+      "calls": 58,
+      "triangles": 144307
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.025,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 2,
+    "toiletChecks": 8,
+    "soundEvents": [],
+    "sitting": "seated",
+    "action": {
+      "id": "toiletFart",
+      "label": "放屁",
+      "hint": "坐在马桶上时点按发出放屁声",
+      "hold": false
+    }
+  }
+}

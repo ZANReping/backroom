@@ -1,0 +1,9 @@
+/* [spokes] 迎宾女郎（Entity 28）：双字幕（上行 = 领口音箱的推销，黄铜边；下行 = 被困的心声，斜体灰字）+ 邀请卡（复用 HotelNotice 卡纸 hn-*） */
+.sp-subs { position: fixed; left: 50%; bottom: 15%; transform: translateX(-50%); max-width: min(760px, 92vw); display: flex; flex-direction: column; align-items: center; gap: 5px; pointer-events: none; z-index: 47; text-align: center; }
+.sp-top { padding: 5px 14px; background: rgba(28, 10, 14, 0.66); color: #ffe9c8; font-family: 'Songti SC', 'SimSun', 'Noto Serif CJK SC', serif; font-size: 19px; letter-spacing: 1px; text-shadow: 0 1px 3px #000; border-left: 2px solid #e2a3b4; border-right: 2px solid #e2a3b4; }
+.sp-top .who { color: #e2a3b4; font-size: 12px; margin-right: 8px; letter-spacing: 2px; }
+.sp-inner { padding: 2px 12px; color: rgba(190, 190, 186, 0.86); font-family: 'Songti SC', 'SimSun', 'Noto Serif CJK SC', serif; font-style: italic; font-size: 16px; letter-spacing: 1px; text-shadow: 0 1px 2px #000, 0 0 8px rgba(0, 0, 0, 0.7); }
+.sp-inner.clear { color: #f4f2ec; font-style: normal; font-size: 18px; text-shadow: 0 1px 3px #000, 0 0 12px rgba(255, 240, 220, 0.25); }
+.sp-inv .hn-card { width: min(380px, 88vw); padding: 28px 26px 20px; }
+.sp-inv .sp-inv-inner { margin-top: 10px; font-style: italic; color: #7a6a5a; font-size: 14px; }
+.sp-inv .bd-actions { margin-top: 4px; }

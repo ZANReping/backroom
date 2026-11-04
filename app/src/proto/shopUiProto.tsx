@@ -15,7 +15,7 @@ import DialogOverlay from '@/components/DialogOverlay'
 const q = new URLSearchParams(location.search)
 const id = q.get('npc') ?? 'mkt_moore'
 const def0: any = NPCS[id] ?? (TRADERS_MARKET_PEOPLE as any)[id] ?? (TRADERS_SHOP_PEOPLE as any)[id] ?? L11_PEOPLE.find((d) => d.id === id)
-const def: any = q.get('fac') ? { ...def0, faction: q.get('fac') } : def0 // fac= 只在预览里换皮肤（首都共同体目前没有商人）
+const def: any = q.get('fac') ? { ...def0, faction: q.get('fac') } : def0 // fac= 只在预览里换皮肤
 const eng: any = engine
 const S = 20
 eng.map = { w: S, h: S, tiles: new Uint8Array(S * S).fill(1), structures: [], items: [], lights: [], exits: [], entities: [], spawn: { x: 10, y: 10 } }

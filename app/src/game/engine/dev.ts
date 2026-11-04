@@ -27,6 +27,7 @@ import { OUTPOSTS, isLandmarkStruct } from '../content/outposts'
 import { DECOR_REGISTRY } from '../content/decorRegistry'
 import { ALPHA_DEFS, isAlphaKind } from '../content/alphaDecor'
 import { DIFF } from './shared'
+import { FOYER_ID } from '../world/foyerLayout'
 import type { FloorBand, Structure, StructKind } from '../core/types'
 import type { Engine } from '../engine'
 import { canOccupy, PLAYER_RADIUS } from '../core/player'
@@ -339,8 +340,10 @@ export function devFastForward(eng: Engine, sec = 60) {
   const dm = DIFF[eng.difficulty]
   const wasLocked = eng.dev.statLock
   eng.dev.statLock = false
-  p.hunger = Math.max(0, p.hunger - 0.28 * dm.drain * sec)
-  p.thirst = Math.max(0, p.thirst - 0.28 * dm.drain * sec)
+  if (eng.levelDef.id !== FOYER_ID) {
+    p.hunger = Math.max(0, p.hunger - 0.28 * dm.drain * sec)
+    p.thirst = Math.max(0, p.thirst - 0.28 * dm.drain * sec)
+  }
   if (p.flashlight) p.battery = Math.max(0, p.battery - 0.5 * sec)
   const lit = eng.map ? eng.isLit(p.x, p.y) : true
   if (!lit) p.sanity = Math.max(0, p.sanity - (p.flashlight ? 0.5 : 1.5) * dm.drain * sec)

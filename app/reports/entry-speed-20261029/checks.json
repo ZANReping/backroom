@@ -1,0 +1,392 @@
+[
+  {
+    "label": "entry-compile-variants-bundle",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "E:\\ZAN\\backroom\\app\\node_modules\\esbuild\\bin\\esbuild",
+      "scripts/check-entry-compile-variants.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/entry-speed-entry-compile-variants.mjs"
+    ],
+    "exit": 0,
+    "ms": 155,
+    "tail": "\n  .cache\\entry-speed-entry-compile-variants.mjs  655.8kb\n\nDone in 50ms\n"
+  },
+  {
+    "label": "entry-compile-variants",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      ".cache/entry-speed-entry-compile-variants.mjs"
+    ],
+    "exit": 0,
+    "ms": 122,
+    "tail": "{\"passed\":47,\"scope\":\"opt-in static shader representatives, exact feature variants and complete GPU uploads\"}\n"
+  },
+  {
+    "label": "entry-resources-bundle",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "E:\\ZAN\\backroom\\app\\node_modules\\esbuild\\bin\\esbuild",
+      "scripts/check-entry-resources.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/entry-speed-entry-resources.mjs"
+    ],
+    "exit": 0,
+    "ms": 108,
+    "tail": "\n  .cache\\entry-speed-entry-resources.mjs  2.3kb\n\nDone in 4ms\n"
+  },
+  {
+    "label": "entry-resources",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      ".cache/entry-speed-entry-resources.mjs"
+    ],
+    "exit": 0,
+    "ms": 91,
+    "tail": "{\"passed\":52}\n"
+  },
+  {
+    "label": "entry-texture-upload-bundle",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "E:\\ZAN\\backroom\\app\\node_modules\\esbuild\\bin\\esbuild",
+      "scripts/check-entry-texture-upload.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/entry-speed-entry-texture-upload.mjs"
+    ],
+    "exit": 0,
+    "ms": 155,
+    "tail": "\n  .cache\\entry-speed-entry-texture-upload.mjs  444.1kb\n\nDone in 50ms\n"
+  },
+  {
+    "label": "entry-texture-upload",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      ".cache/entry-speed-entry-texture-upload.mjs"
+    ],
+    "exit": 0,
+    "ms": 97,
+    "tail": "{\"passed\":13}\n"
+  },
+  {
+    "label": "traders-bake-queue-bundle",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "E:\\ZAN\\backroom\\app\\node_modules\\esbuild\\bin\\esbuild",
+      "scripts/check-traders-bake-queue.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/entry-speed-traders-bake-queue.mjs"
+    ],
+    "exit": 0,
+    "ms": 187,
+    "tail": "\n  .cache\\entry-speed-traders-bake-queue.mjs  2.2mb\n\nDone in 71ms\n"
+  },
+  {
+    "label": "traders-bake-queue",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      ".cache/entry-speed-traders-bake-queue.mjs"
+    ],
+    "exit": 0,
+    "ms": 448,
+    "tail": "{\"passed\":16,\"scope\":\"exact static radiance, bounded concurrency, cancellation, disposal and CPU fallback\"}\n"
+  },
+  {
+    "label": "model-warmup-bundle",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "E:\\ZAN\\backroom\\app\\node_modules\\esbuild\\bin\\esbuild",
+      "scripts/check-model-warmup.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/entry-speed-model-warmup.mjs"
+    ],
+    "exit": 0,
+    "ms": 174,
+    "tail": "\n  .cache\\entry-speed-model-warmup.mjs  649.0kb\n\nDone in 60ms\n"
+  },
+  {
+    "label": "model-warmup",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      ".cache/entry-speed-model-warmup.mjs"
+    ],
+    "exit": 0,
+    "ms": 111,
+    "tail": "{\"passed\":111}\n"
+  },
+  {
+    "label": "scene-warmup-bundle",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "E:\\ZAN\\backroom\\app\\node_modules\\esbuild\\bin\\esbuild",
+      "scripts/check-scene-warmup.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/entry-speed-scene-warmup.mjs"
+    ],
+    "exit": 0,
+    "ms": 150,
+    "tail": "\n  .cache\\entry-speed-scene-warmup.mjs  636.3kb\n\nDone in 50ms\n"
+  },
+  {
+    "label": "scene-warmup",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      ".cache/entry-speed-scene-warmup.mjs"
+    ],
+    "exit": 0,
+    "ms": 110,
+    "tail": "scene warmup regression passed: 7 batches\n"
+  },
+  {
+    "label": "program-completion-bundle",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "E:\\ZAN\\backroom\\app\\node_modules\\esbuild\\bin\\esbuild",
+      "scripts/check-program-completion.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/entry-speed-program-completion.mjs"
+    ],
+    "exit": 0,
+    "ms": 144,
+    "tail": "\n  .cache\\entry-speed-program-completion.mjs  624.7kb\n\nDone in 48ms\n"
+  },
+  {
+    "label": "program-completion",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      ".cache/entry-speed-program-completion.mjs"
+    ],
+    "exit": 0,
+    "ms": 118,
+    "tail": "{\"passed\":58}\n"
+  },
+  {
+    "label": "texture-images-bundle",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "E:\\ZAN\\backroom\\app\\node_modules\\esbuild\\bin\\esbuild",
+      "scripts/check-texture-images.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/entry-speed-texture-images.mjs"
+    ],
+    "exit": 0,
+    "ms": 142,
+    "tail": "\n  .cache\\entry-speed-texture-images.mjs  451.3kb\n\nDone in 49ms\n"
+  },
+  {
+    "label": "texture-images",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      ".cache/entry-speed-texture-images.mjs"
+    ],
+    "exit": 0,
+    "ms": 5085,
+    "tail": "texture image lifecycle regression passed: 96 checks\n"
+  },
+  {
+    "label": "chunk-build-queue-bundle",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "E:\\ZAN\\backroom\\app\\node_modules\\esbuild\\bin\\esbuild",
+      "scripts/check-chunk-build-queue.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/entry-speed-chunk-build-queue.mjs"
+    ],
+    "exit": 0,
+    "ms": 100,
+    "tail": "\n  .cache\\entry-speed-chunk-build-queue.mjs  3.7kb\n\nDone in 3ms\n"
+  },
+  {
+    "label": "chunk-build-queue",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      ".cache/entry-speed-chunk-build-queue.mjs"
+    ],
+    "exit": 0,
+    "ms": 68,
+    "tail": "{\"passed\":13}\n"
+  },
+  {
+    "label": "static-batch-job-bundle",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "E:\\ZAN\\backroom\\app\\node_modules\\esbuild\\bin\\esbuild",
+      "scripts/check-static-batch-job.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/entry-speed-static-batch-job.mjs"
+    ],
+    "exit": 0,
+    "ms": 143,
+    "tail": "\n  .cache\\entry-speed-static-batch-job.mjs  675.3kb\n\nDone in 49ms\n"
+  },
+  {
+    "label": "static-batch-job",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      ".cache/entry-speed-static-batch-job.mjs"
+    ],
+    "exit": 0,
+    "ms": 260,
+    "tail": "{\"passed\":20903,\"yields\":197,\"cancelledGeometries\":1871,\"cancelledInstances\":15,\"partialInstanceCancellation\":true,\"sourceDisposals\":0}\n"
+  },
+  {
+    "label": "static-colors-bundle",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "E:\\ZAN\\backroom\\app\\node_modules\\esbuild\\bin\\esbuild",
+      "scripts/check-static-colors.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/entry-speed-static-colors.mjs"
+    ],
+    "exit": 0,
+    "ms": 140,
+    "tail": "\n  .cache\\entry-speed-static-colors.mjs  612.8kb\n\nDone in 55ms\n"
+  },
+  {
+    "label": "static-colors",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      ".cache/entry-speed-static-colors.mjs"
+    ],
+    "exit": 0,
+    "ms": 86,
+    "tail": "static colors regression passed: 29 checks\n"
+  },
+  {
+    "label": "foyer-entry-bundle",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "E:\\ZAN\\backroom\\app\\node_modules\\esbuild\\bin\\esbuild",
+      "scripts/check-foyer-entry.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/entry-speed-foyer-entry.mjs"
+    ],
+    "exit": 0,
+    "ms": 249,
+    "tail": "\n  .cache\\entry-speed-foyer-entry.mjs  5.4mb\n\nDone in 126ms\n"
+  },
+  {
+    "label": "foyer-entry",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      ".cache/entry-speed-foyer-entry.mjs"
+    ],
+    "exit": 0,
+    "ms": 516,
+    "tail": "{\"ok\":true,\"checks\":85,\"initialEye\":1.27,\"ceilings\":12,\"maxFlightZ\":4.476666666666666}\n"
+  },
+  {
+    "label": "foyer-shell-bundle",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "E:\\ZAN\\backroom\\app\\node_modules\\esbuild\\bin\\esbuild",
+      "scripts/check-foyer-shell.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/entry-speed-foyer-shell.mjs"
+    ],
+    "exit": 0,
+    "ms": 94,
+    "tail": "\n  .cache\\entry-speed-foyer-shell.mjs  21.3kb\n\nDone in 5ms\n"
+  },
+  {
+    "label": "foyer-shell",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      ".cache/entry-speed-foyer-shell.mjs"
+    ],
+    "exit": 0,
+    "ms": 96,
+    "tail": "{\"ok\":true,\"checks\":130,\"blocks\":9,\"faces\":56,\"soffits\":2}\n"
+  },
+  {
+    "label": "traders-visibility-bundle",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "E:\\ZAN\\backroom\\app\\node_modules\\esbuild\\bin\\esbuild",
+      "scripts/check-traders-visibility.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/entry-speed-traders-visibility.mjs"
+    ],
+    "exit": 0,
+    "ms": 203,
+    "tail": "\n  .cache\\entry-speed-traders-visibility.mjs  2.2mb\n\nDone in 75ms\n"
+  },
+  {
+    "label": "traders-visibility",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      ".cache/entry-speed-traders-visibility.mjs"
+    ],
+    "exit": 0,
+    "ms": 514,
+    "tail": "{\n  \"ok\": true,\n  \"coldQueryMs\": 6.209000000000003,\n  \"closedRoomChunks\": 1,\n  \"openRoomChunks\": 2,\n  \"scope\": \"actual wall/door visibility affects readiness and priority, never mesh culling\"\n}\n"
+  },
+  {
+    "label": "traders-circulation-bundle",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "E:\\ZAN\\backroom\\app\\node_modules\\esbuild\\bin\\esbuild",
+      "scripts/check-traders-circulation.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/entry-speed-traders-circulation.mjs"
+    ],
+    "exit": 0,
+    "ms": 159,
+    "tail": "\n  .cache\\entry-speed-traders-circulation.mjs  2.4mb\n\nDone in 66ms\n"
+  },
+  {
+    "label": "traders-circulation",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      ".cache/entry-speed-traders-circulation.mjs"
+    ],
+    "exit": 0,
+    "ms": 533,
+    "tail": "{\n  \"ok\": true,\n  \"openings\": 11,\n  \"publicLanes\": 2,\n  \"collisionSamples\": 3216,\n  \"closedVaults\": 128,\n  \"tables\": 64,\n  \"emptyStalls\": 9,\n  \"oldPartitionRecovery\": 3\n}\n"
+  }
+]

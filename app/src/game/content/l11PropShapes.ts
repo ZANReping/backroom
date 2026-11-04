@@ -12,7 +12,11 @@ const prepared=new WeakMap<L11PropPart,{geometry:THREE.BufferGeometry;matrix:THR
 export function l11PropShape(p:L11PropPart){
   const hit=prepared.get(p);if(hit)return hit
   let geometry:THREE.BufferGeometry,sz=p.d
-  if(p.profile){
+  if(p.latheProfile){
+    const key='lathe:'+JSON.stringify(p.latheProfile)
+    geometry=roundUnits.get(key)??new THREE.LatheGeometry(p.latheProfile.map(([r,y])=>new THREE.Vector2(r,y)),20)
+    roundUnits.set(key,geometry)
+  }else if(p.profile){
     // A longitudinal (z,y) silhouette extruded across the vehicle width.
     // The same closed mesh supplies render geometry and collision triangles.
     const key='profile:'+JSON.stringify([p.profile,p.bevel,p.crown,p.nose])

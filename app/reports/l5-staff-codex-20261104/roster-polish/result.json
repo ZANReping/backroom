@@ -1,0 +1,165 @@
+{
+  "seed": 515151.25,
+  "mode": "realistic",
+  "port": 6063,
+  "cdp": 6064,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:6063/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Wed, 04 Nov 2026 15:02:11 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 295,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 6063,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 108916.699861,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.718,
+        "sendEnd": 0.758,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 103.177,
+        "receiveHeadersEnd": 103.313
+      },
+      "responseTime": 1793804531477.223,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l5-staff-codex-20261104\\roster-polish\\qa-1793804511081-61476",
+    "--remote-debugging-port=6064",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 74960,
+    "server": 76284
+  },
+  "appBootMs": 19955.1684,
+  "entryMs": 5074.9639000000025,
+  "firstPlayableMs": 34342.328,
+  "locked-ledger": true,
+  "ledger": {
+    "stats": {
+      "builds": 7,
+      "renders": 7,
+      "hits": 0,
+      "cached": 7,
+      "bytes": 717532,
+      "queued": 0,
+      "active": null,
+      "studio": true,
+      "memory": {
+        "geometries": 10,
+        "textures": 42
+      }
+    }
+  },
+  "entity-list": true,
+  "beast": {
+    "type": "beast",
+    "locks": 2
+  },
+  "greeter": {
+    "type": "greeter",
+    "locks": 1
+  },
+  "chef": {
+    "type": "chef",
+    "locks": 0
+  },
+  "jazz": {
+    "type": "jazz",
+    "locks": 0
+  },
+  "beast-full": {
+    "type": "beast",
+    "locks": 0
+  },
+  "archive-angle": true,
+  "touch": {
+    "viewport": [
+      844,
+      390
+    ]
+  },
+  "release": {
+    "checks": [
+      "All seven unencountered employees stay concealed",
+      "Locked roster does not build employee models",
+      "All seven 116×148 staff photos decode",
+      "All employees have distinct photos",
+      "Rendered roster photos keep their proportions in full-height cards",
+      "Reopening the roster reuses all seven photos",
+      "beast encounter tiers",
+      "beast live hotel records",
+      "greeter encounter tiers",
+      "greeter live hotel records",
+      "chef encounter tiers",
+      "chef live hotel records",
+      "jazz encounter tiers",
+      "jazz live hotel records",
+      "beast encounter tiers",
+      "beast live hotel records",
+      "Beast dossier matches live refusal penalty and contract times",
+      "Existing full-size archive preview still cycles",
+      "Changing archive angle preserves the staff photo",
+      "Touch landscape has no dossier overflow",
+      "Closing the codex unmounts the dossier"
+    ],
+    "stats": {
+      "builds": 8,
+      "renders": 8,
+      "hits": 2,
+      "cached": 8,
+      "bytes": 821816,
+      "queued": 0,
+      "active": null,
+      "studio": false,
+      "memory": null
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

@@ -40,6 +40,12 @@ import DialogOverlay from '@/components/DialogOverlay'
 import FacilityPanel from '@/components/FacilityPanel'
 import BntgAtm from '@/components/BntgAtm'
 import VendingOverlay from '@/components/VendingOverlay'
+import ElevatorPanel from '@/components/ElevatorPanel'
+import HotelNotice from '@/components/HotelNotice'
+import BeastDeal from '@/components/BeastDeal' // [beast] 野兽契约界面
+import GreeterInvite from '@/components/GreeterInvite' // [spokes] 迎宾女郎的「参观」邀请
+import JazzMenu from '@/components/JazzMenu' // [jazz] 萨克斯点歌菜单（暂停）
+import CasinoMenu from '@/components/CasinoMenu' // [casino] Level 5.1 兑换台 / 四种游戏 / 饮料 / 野兽 21 点 / 结局（暂停）
 import AvatarEditor from '@/components/AvatarEditor'
 import DeathScreen from '@/components/DeathScreen'
 import NotebookOverlay from '@/components/NotebookOverlay'
@@ -66,7 +72,7 @@ import { hudOn, type HudKey } from '@/game/engine/hud'
 import { carriesPhone, takePhoto } from '@/game/engine/phone'
 
 type Screen = 'title' | 'loading' | 'intro' | 'game' | 'fall' | 'design'
-type Overlay = 'none' | 'phone' | 'settings' | 'howto' | 'pause' | 'radio' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'shop' | 'lobby' | 'facility' | 'bank' | 'vending'
+type Overlay = 'none' | 'phone' | 'settings' | 'howto' | 'pause' | 'radio' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'shop' | 'lobby' | 'facility' | 'bank' | 'vending' | 'elevator' | 'hotelnotice' | 'beastdeal' | 'greeterinvite' | 'jazzmenu' | 'casinomenu'
 
 // 冒烟测试钩子（Playwright page.evaluate 用）
 if (typeof window !== 'undefined') {
@@ -149,6 +155,7 @@ function Game() {
   const [fallDmg, setFallDmg] = useState<number | null>(null)
   const [deathCause, setDeathCause] = useState('')
   const [docId, setDocId] = useState('meg_levels')
+  const [noticeData, setNoticeData] = useState('') // L5 1c：住客须知卡（JSON）
   const [landmarkId, setLandmarkId] = useState('alpha')
   const [dialogId, setDialogId] = useState('kat')
   const [factionPage,setFactionPage]=useState<string|undefined>()
@@ -374,6 +381,24 @@ function Game() {
         case 'vending':
           if(screenRef.current!=='game')break
           setOverlay('vending');break
+        case 'hotelnotice': // L5 恐怖旅馆 1c：住客须知卡
+          if(screenRef.current!=='game')break
+          setNoticeData(e.text ?? '');setOverlay('hotelnotice');break
+        case 'beastdeal': // [beast] 117 办公室：野兽的契约（暂停）
+          if(screenRef.current!=='game')break
+          setOverlay('beastdeal');break
+        case 'greeterinvite': // [spokes] 118 大堂：迎宾女郎鞠躬伸手请你「参观」（暂停）
+          if(screenRef.current!=='game')break
+          setOverlay('greeterinvite');break
+        case 'jazzmenu': // [jazz] 萨克斯「你点名，我来吹」点歌菜单（暂停；1–5 / 点按，Esc 关）
+          if(screenRef.current!=='game')break
+          setOverlay('jazzmenu');break
+        case 'casinomenu': // [casino] Level 5.1 覆盖层菜单（暂停；键盘 + 鼠标，Esc 关 / 「再玩一把？」）
+          if(screenRef.current!=='game')break
+          setOverlay('casinomenu');break
+        case 'elevator': // L5 恐怖旅馆：黄铜楼层面板（不暂停）
+          if(screenRef.current!=='game')break
+          setOverlay('elevator');break
         case 'bank':
           if(screenRef.current!=='game')break
           setAtmId(e.text??'');setOverlay('bank');break
@@ -484,7 +509,7 @@ function Game() {
     }).catch(() => undefined).then(async () => {
       try {
         const snap = seed !== undefined && !forceFresh ? readSaveSlot(slot) : null
-        const def = levelDefOf(targetLevel)!
+        const def = levelDefOf(targetLevel, targetLevel === 5 ? snap?.hotel?.floor ?? 1 : undefined)!
         const mapSeed = snap?.mapSeed ?? engine.mpMapSeed?.(targetLevel) ?? runSeed
         await prepareChunkWindow(def, mapSeed, 0, 0, progress => {
           setLoadState(prev => ({ ...prev, progress: Math.max(prev.progress, 88 + Math.floor(progress*7)), label: '生成初始地图', detail: `Level ${targetLevel} · 后台准备区块 ${Math.round(progress*100)}%` }))
@@ -619,6 +644,10 @@ function Game() {
         if (overlayRef.current === 'phone' && e.code === kb.phone) { e.preventDefault(); setOverlay('none'); return }
         // 手机界面开着时游戏不暂停：手电键照常开关副手光源
         if (overlayRef.current === 'phone' && e.code === kb.flashlight && !e.repeat) { e.preventDefault(); engine.input.toggleLight = true; return }
+        if (overlayRef.current === 'greeterinvite') return // [spokes] 邀请卡自己处理 Esc（= 婉拒）
+        if (overlayRef.current === 'beastdeal') return // [beast] 契约界面自己处理 Esc（强签不能关；普通交易 = 再想想）
+        if (overlayRef.current === 'jazzmenu') return // [jazz] 点歌菜单自己处理 1–5 / Esc
+        if (overlayRef.current === 'casinomenu') return // [casino] 赌场菜单自己处理按键 / Esc
         if (e.key === 'Escape' && overlayRef.current !== 'none' && overlayRef.current !== 'death' && overlayRef.current !== 'victory') {
           setOverlay(screenRef.current === 'game' ? 'none' : 'none')
         }
@@ -963,7 +992,7 @@ function Game() {
       attractEngine.map = null; attractReadyFrames = 0; attractYaw = 0; attractTime = 0; attractPublished = ''
       setTitleReadyKey('')
       attractFailed = false; setTitleError(false)
-      const def = levelDefOf(source.level)!
+      const def = levelDefOf(source.level, source.level === 5 ? 1 : undefined)!
       canvas.dataset.titleReady = 'false'
       canvas.dataset.titleLevel = String(source.level)
       canvas.dataset.titleSeed = String(source.seed)
@@ -1007,7 +1036,7 @@ function Game() {
       } else frameTimes = []
 
       // 售货机与手机界面保持实时运行。
-      const paused = overlayRef.current !== 'none' && overlayRef.current !== 'death' && overlayRef.current !== 'victory' && overlayRef.current !== 'vending' && overlayRef.current !== 'phone'
+      const paused = overlayRef.current !== 'none' && overlayRef.current !== 'death' && overlayRef.current !== 'victory' && overlayRef.current !== 'vending' && overlayRef.current !== 'elevator' && overlayRef.current !== 'phone'
       // v23：过场演出播放中、且引擎的层级切换已完成 → 冻结操作，等过场放完再交还控制权
       const cine = cutRef.current !== null && engine.transition === null
       // Give the title/cut animation exclusive frame time while it enters or
@@ -1295,6 +1324,7 @@ function Game() {
           fxScale={0}
           onPause={() => setOverlay('pause')}
           onInventory={() => { if (!hudOn(engine, 'inventory')) { engine.msg('你还没有背包。', 'system'); return } discoverFromEngine(engine); setInvTab('背包'); setOverlay('inventory') }}
+          onHotelLedger={() => { audio.uiTick(); discoverFromEngine(engine); setFactionPage('terrorhotel'); setInvTab('图鉴'); setOverlay('inventory') }}
           onPhone={openPhone}
           onSelectSlot={(i) => { engine.player.selected = i; audio.uiTick() }}
           onUseSlot={(i) => engine.useSlot('hotbar', i)}
@@ -1417,6 +1447,12 @@ function Game() {
       )}
       {overlay === 'radio' && <RadioOverlay onClose={() => setOverlay('pause')} />}
       {overlay === 'vending' && <VendingOverlay onClose={()=>setOverlay('none')}/>}
+      {overlay === 'elevator' && <ElevatorPanel onClose={()=>setOverlay('none')}/>}
+      {overlay === 'hotelnotice' && <HotelNotice data={noticeData} onClose={()=>setOverlay('none')}/>}
+      {overlay === 'beastdeal' && <BeastDeal onClose={()=>setOverlay('none')}/>}
+      {overlay === 'greeterinvite' && <GreeterInvite onClose={()=>setOverlay('none')}/>}
+      {overlay === 'jazzmenu' && <JazzMenu onClose={()=>setOverlay('none')}/>}
+      {overlay === 'casinomenu' && <CasinoMenu onClose={()=>setOverlay('none')}/>}
       {overlay === 'bank' && <BntgAtm key={atmId} atmId={atmId} onClose={()=>setOverlay('none')}/>}
       {overlay === 'facility' && <FacilityPanel faction={facilityFaction} onClose={()=>setOverlay('none')}/>}
       {overlay === 'inventory' && <InventoryOverlay key={factionPage??'all'} engine={engine} onClose={() => {setOverlay('none');setFactionPage(undefined)}} initialTab={invTab} initialFaction={factionPage} />}

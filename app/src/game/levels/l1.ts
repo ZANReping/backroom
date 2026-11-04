@@ -21,6 +21,7 @@ export const L1: LevelDef = {
   items: [
     { type: 'carkey', w: 12 },
     { type: 'gas', w: 3 }, // 火油桶：比火盐晶体更稀有（经角落生成的火盐更易得）
+    { type: 'spokesposter', w: 2 }, // [spokes] 迎宾女郎投递洞 A → Level 1：读了指向 L5
     { type: 'jerryflyer', w: 2 }, // 重制杰瑞：信众把传单撒到 Level 1，引新人下到 Level 2 的宣传间
   ],
   itemCount: [10, 14], // 有限模式忽略；无限模式按 chunk 生成

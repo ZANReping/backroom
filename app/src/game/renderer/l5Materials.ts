@@ -6,8 +6,11 @@ import type { GameMap } from '../world/mapgen'
 
 export type L5Surface = 'plaster' | 'ivory' | 'ceiling' | 'plainCeiling' | 'amber' | 'wood' | 'walnut' | 'marble' | 'redMarble' | 'gold' | 'bronze' | 'damask' | 'redPanel' | 'frieze' | 'carpet' | 'plainCarpet' | 'lobbyCarpet' | 'border' | 'upholstery' | 'leaf' | 'stem' | 'pot' | 'petal'
   | 'goldPaper' | 'whitePaint' | 'ballroomPanel' | 'roseCarpet' | 'serviceFloor' | 'boilerFloor' | 'serviceCeiling' | 'steel' | 'blackSteel' | 'brick' | 'boilerPaint' | 'rust' | 'insulation' | 'greenDeck' | 'linen' | 'poolTile' | 'flesh' | 'egg'
+  | 'lobbyFloor' | 'lobbyWall' | 'lobbyCeiling' | 'officeFloor' | 'officeWall' | 'officeCeiling' // 1d：口袋房间 118 大堂 / 117 野兽办公室（ambientCG CC0 1K PBR）
 const cache = new Map<string, THREE.Material>()
 const spec: Record<L5Surface, [string, string?, number?, number?]> = {
+  lobbyFloor:['#f2e6dc','pocket/Tiles074',.3,.3],lobbyWall:['#f0e2c8','pocket/Marble014',.32,.24],lobbyCeiling:['#f3e3c2','pocket/Plaster003',.9,.03],
+  officeFloor:['#a07454','pocket/WoodFloor070',.42,.18],officeWall:['#d6a47c','pocket/Wood051',.45,.14],officeCeiling:['#8a4436','pocket/Plaster001',.93,.02],
   flesh:['#714135',undefined,.68,.01],egg:['#402014',undefined,.19,.11],
   goldPaper:['#c9ac78','Wallpaper001A',.96,.005], whitePaint:['#e3e0d6','@plaster',.96,.005],
   ballroomPanel:['#b7a183','Wallpaper001A',.91,.01],roseCarpet:['#bf9085','../l5_carpet.jpg',1,0],
@@ -43,7 +46,7 @@ export function l5Material(surface: L5Surface): THREE.Material {
   if (hit) return hit
   const [color, asset, roughness = .85, envBase = .02] = spec[surface]
   const pbr=asset&&!/\.(jpg|png)$/.test(asset),maps=asset?(channels[asset]??[`${asset}_Color.jpg`,`${asset}_NormalGL.jpg`,`${asset}_Roughness.jpg`]):undefined
-  const relief=surface==='goldPaper'?.4:surface==='whitePaint'?.16:['brick','rust','serviceFloor','insulation'].includes(surface)?.18:.035
+  const relief=surface==='lobbyFloor'?.55:surface==='officeFloor'?.7:surface==='officeWall'?.45:surface==='lobbyCeiling'||surface==='officeCeiling'?.35:surface==='lobbyWall'?.2:surface==='goldPaper'?.4:surface==='whitePaint'?.16:['brick','rust','serviceFloor','insulation'].includes(surface)?.18:.035
   const mat = litMaterial({color, roughness, envBase, metalness: surface === 'gold' ? .65 : surface === 'bronze' ? .72 : surface==='steel'?.35:0,
     ...(asset ? {map: l5Texture(pbr ? maps![0] : asset)} : {}),
     ...(pbr ? {normalMap: l5Texture(maps![1], true), normalScale: new THREE.Vector2(relief, relief), ...(getMaterialMode() === 'realistic' && !['redMarble','boilerFloor','greenDeck','serviceFloor','boilerPaint','insulation'].includes(surface) ? {roughnessMap: l5Texture(maps![2], true)} : {})} : {}),
@@ -128,4 +131,18 @@ export function l5SurfaceBatches(geos: THREE.BufferGeometry[], m: GameMap, group
     if (legacy.length) { const mesh = new THREE.Mesh(mergeGeometries(legacy, false)!, fallback); mesh.castShadow = kind === 'wall'; mesh.receiveShadow = true; group.add(mesh); legacy.forEach(g=>g.dispose()) }
     else fallback.dispose()
   }
+}
+
+/** 1d：口袋房间（117 野兽办公室 / 118 大堂）整层换新 PBR：每种表面一个材质，世界坐标 UV */
+const POCKET_SURF: Record<number, Record<'floor' | 'ceiling' | 'wall', [L5Surface, number]>> = {
+  117: { floor: ['officeFloor', .5], wall: ['officeWall', .45], ceiling: ['officeCeiling', .5] },
+  118: { floor: ['lobbyFloor', .25], wall: ['lobbyWall', .35], ceiling: ['lobbyCeiling', .4] },
+}
+export const isPocketSurfaceLevel = (id: number) => !!POCKET_SURF[id]
+export function pocketSurfaceBatch(geos: THREE.BufferGeometry[], m: GameMap, group: THREE.Group, kind: 'floor' | 'ceiling' | 'wall', levelId: number) {
+  const [surface, scale] = POCKET_SURF[levelId][kind]
+  for (const geo of geos) { geo.deleteAttribute('color'); l5WorldUV(geo, m.inf?.ox ?? 0, m.inf?.oy ?? 0, scale) }
+  const merged = mergeGeometries(geos, false)
+  if (merged) { const mesh = new THREE.Mesh(merged, l5Material(surface)); mesh.castShadow = kind === 'wall'; mesh.receiveShadow = true; mesh.userData.pocketSurface = surface; group.add(mesh) }
+  geos.forEach(geo => geo.dispose())
 }

@@ -1,0 +1,48 @@
+/* [jazz] 爵士脑 HUD：宝蓝 + 金（乐队礼服配色） */
+.jz-show { position: fixed; right: 14px; top: 13%; width: 250px; z-index: 46; pointer-events: none; background: linear-gradient(180deg, rgba(16, 26, 58, 0.86), rgba(10, 14, 30, 0.86)); border: 1px solid #c9a24a; box-shadow: inset 0 0 0 1px rgba(201, 162, 74, 0.25), 0 4px 14px rgba(0, 0, 0, 0.5); padding: 8px 10px 8px; color: #f1e6c8; font-size: 12px; }
+.jz-show-h { font-weight: 700; letter-spacing: 0.06em; color: #e8c66a; }
+.jz-note { display: inline-block; animation: jzBob 1.2s ease-in-out infinite; }
+@keyframes jzBob { 50% { transform: translateY(-2px) rotate(-8deg); } }
+.jz-show-song { margin-top: 3px; font-size: 13px; }
+.jz-show-song span { margin-left: 4px; font-size: 11px; color: #b8b0a0; }
+.jz-show-song em { font-style: normal; color: #e8c66a; font-size: 11px; }
+.jz-bar { margin-top: 6px; height: 6px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(201, 162, 74, 0.45); overflow: hidden; }
+.jz-bar > div { height: 100%; background: linear-gradient(90deg, #2b4a9a, #e8c66a); transition: width 0.15s linear; }
+.jz-bar.sus > div { background: linear-gradient(90deg, #e8c66a, #d0402a); }
+.jz-bar.rep > div { background: linear-gradient(90deg, #6a1418, #d0402a); }
+.jz-tag { margin-top: 5px; font-size: 11px; color: #a8d8a0; }
+.jz-tag.real { color: #e07a6a; }
+.jz-fake { position: fixed; left: 50%; top: 18%; transform: translateX(-50%); width: min(360px, 86vw); z-index: 48; pointer-events: none; text-align: center; background: rgba(8, 10, 22, 0.8); border: 1px solid #c9a24a; padding: 8px 12px; color: #f1e6c8; }
+.jz-fake.bad { border-color: #d0402a; box-shadow: 0 0 18px rgba(208, 64, 42, 0.35); }
+.jz-fake-h { font-size: 12px; letter-spacing: 0.08em; color: #e8c66a; }
+.jz-rec { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #e02a2a; margin-right: 4px; animation: jzRec 1s steps(2) infinite; }
+@keyframes jzRec { 50% { opacity: 0.2; } }
+.jz-fake-t { margin-top: 4px; font-size: 14px; }
+.jz-fake-l { display: flex; justify-content: space-between; font-size: 11px; color: #b8b0a0; margin-top: 2px; }
+.jz-menu-veil { position: fixed; inset: 0; z-index: 60; background: rgba(4, 6, 14, 0.38); display: flex; align-items: center; justify-content: center; }
+.jz-menu { position: relative; width: min(430px, 92vw); z-index: 60; background: linear-gradient(180deg, rgba(18, 30, 70, 0.95), rgba(10, 14, 30, 0.95)); border: 1px solid #c9a24a; box-shadow: inset 0 0 0 3px rgba(10, 14, 30, 0.9), inset 0 0 0 4px rgba(201, 162, 74, 0.5), 0 10px 30px rgba(0, 0, 0, 0.6); padding: 12px 14px; color: #f1e6c8; }
+.jz-menu-h { font-size: 14px; color: #e8c66a; text-align: center; margin-bottom: 8px; font-style: italic; }
+.jz-menu-i { display: grid; grid-template-columns: 20px 1fr auto; grid-template-rows: auto auto; width: 100%; text-align: left; gap: 0 8px; padding: 6px 8px; margin-top: 4px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(201, 162, 74, 0.3); color: inherit; cursor: pointer; }
+.jz-menu-i:hover { background: rgba(232, 198, 106, 0.15); }
+.jz-menu-i b { grid-row: 1 / 3; color: #e8c66a; align-self: center; }
+.jz-menu-i .n { font-size: 14px; }
+.jz-menu-i .st { font-size: 11px; color: #b8b0a0; text-align: right; }
+.jz-menu-i .bf { grid-column: 2 / 4; font-size: 11px; color: #a8d8a0; }
+.jz-menu-f { margin-top: 8px; font-size: 11px; color: #b8b0a0; text-align: center; }
+.jz-report { position: fixed; left: 50%; top: 58%; transform: translateX(-50%); width: min(300px, 80vw); z-index: 48; pointer-events: none; text-align: center; color: #f1d0c8; font-size: 13px; background: rgba(20, 6, 6, 0.75); border: 1px solid #a03020; padding: 6px 10px; }
+.jz-chips { position: fixed; right: 14px; top: calc(13% + 112px); z-index: 45; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; pointer-events: none; }
+.jz-chip { font-size: 11px; color: #f1e6c8; background: rgba(16, 26, 58, 0.8); border: 1px solid rgba(201, 162, 74, 0.6); padding: 2px 8px; }
+.jz-chip.hot { border-color: #e0682a; color: #ffd0b0; }
+.jz-chip.next { color: #e8c66a; }
+.jz-subs { position: fixed; left: 50%; bottom: 27%; transform: translateX(-50%); max-width: min(720px, 92vw); display: flex; flex-direction: column; align-items: center; gap: 4px; pointer-events: none; z-index: 47; text-align: center; }
+.jz-sub { font-size: 15px; color: #f4ecd8; text-shadow: 0 1px 4px #000, 0 0 2px #000; background: rgba(10, 14, 30, 0.45); padding: 1px 8px; }
+.jz-sub b { color: #e8c66a; font-weight: 700; }
+
+.jz-menu-i { min-height: 44px; touch-action: manipulation; }
+.jz-menu-x { display: block; margin: 8px auto 0; padding: 6px 18px; min-height: 36px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(201, 162, 74, 0.45); color: #d8cfb8; cursor: pointer; font-size: 12px; }
+.jz-menu-x:hover { background: rgba(232, 198, 106, 0.15); }
+/* [修] 告发后回来的真吸魂：画面发冷 / 压暗（冷蓝半透明暗罩 + 暗角；画布不在同一层叠上下文，乘色混合不生效，用普通混合），终曲时边缘一下下往里收（被抽走） */
+.jz-realfx { position: fixed; inset: 0; pointer-events: none; z-index: 30; background: radial-gradient(ellipse at 50% 46%, rgba(16, 34, 84, 0.28) 0%, rgba(8, 18, 52, 0.55) 58%, rgba(2, 4, 16, 0.86) 100%); }
+.jz-realfx.suck { animation: jz-pull 1s ease-in-out infinite; }
+.jz-realfx-edge { position: fixed; inset: 0; pointer-events: none; z-index: 31; box-shadow: inset 0 0 160px 40px rgba(140, 20, 30, 0.55); animation: jz-pull 1s ease-in-out infinite; }
+@keyframes jz-pull { 0%, 100% { transform: scale(1); filter: none; } 55% { transform: scale(0.985); } 70% { transform: scale(1.01); } }

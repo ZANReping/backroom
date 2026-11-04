@@ -1,3 +1,4 @@
+import { hotelReadInvite, hotelDrinkPuddle, puddleDrunk } from './l5Tails' // [l5tails]
 import { creepNpcRefuse } from './creeperAI' // [creeper]
 import { usableAxe, wearSlot, slotDur, slotMaxDur } from './melee'
 import { openVending, vm36OpenBack } from './vendingAI'
@@ -31,6 +32,8 @@ import { furnitureSeats } from '../content/furnitureSeats'
 import { tinyState, tinyRefusesTalk, pokeChime, chimeRinging } from './tinyAI'
 import { thingBreathRemark } from './thingAI'
 import { arachnidInteract } from './arachnidAI' // [L8-arachnid]
+import { hotelAddAttn, hotelCanRest, hotelResting, hotelToggleRest, hotelBevDoor, hotelReadRule, hotelEnterPocket, hotelLobbyShown, hotelRuleProve, hotelValveAlmond, hotelValveReady, HT, hotelDoorBlocked, hotelCardCan, hotelCardSwipe } from './l5Hotel'
+import { openElevator } from './l5Elevator'
 import { foyerInteract, foyerTargets } from './foyer'
 import { FOYER_ID } from '../world/foyerLayout'
 
@@ -217,6 +220,9 @@ export function structureInteractionProfile(s: Structure): StructureInteractionP
     case 'megsign': lo = 0.2; hi = 2.55; horizontalRadius = 0.52; break
     case 'megdoc': lo = s.data?.ontable ? (s.data?.l0Furniture ? 0.97 : s.data?.manila ? 1.09 : 0.75) : 0; hi = s.data?.ontable ? (s.data?.l0Furniture ? 1.07 : s.data?.manila ? 1.19 : 0.84) : 0.1; horizontalRadius = 0.2; break
     case 'invitation': lo = 0; hi = 0.14; horizontalRadius = 0.25; break
+    case 'l5puddle': lo = 0; hi = 0.1; horizontalRadius = 0.42; break // [l5tails] 水洼
+    case 'l5rule': lo = s.data?.ontable ? 0.72 : 1.18; hi = s.data?.ontable ? 0.98 : 1.72; horizontalRadius = 0.26; break // 1c 守则卡
+    case 'l5pocketdoor': lo = 0.1; hi = 2.15; horizontalRadius = 0.5; break
     case 'l02fix': { // Level 0.2 设施：插座贴墙低处、板夹靠墙放地上、洗手台/马桶
       const f = s.data?.fix, h = Number(s.data?.h ?? 0.335)
       if (f === 'outlet') { lo = h - 0.09; hi = h + 0.09; horizontalRadius = 0.16 } else if (f === 'clipboard') { lo = 0; hi = 0.45; horizontalRadius = 0.24 } else if (f === 'sink') { lo = 0.6; hi = 0.95; horizontalRadius = 0.32 } else { lo = 0.1; hi = 0.8; horizontalRadius = 0.3 }
@@ -239,7 +245,6 @@ export function structureInteractionProfile(s: Structure): StructureInteractionP
     case 'arcadecab': lo = 0.15; hi = 1.65; horizontalRadius = 0.36; break
     case 'hoteldoor': case 'rollerdoor': case 'glassdoor': case 'inkdoor': case 'bargate': case 'lift':
       lo = 0.1; hi = 2.45; horizontalRadius = Math.min(0.65, Math.max(0.42, Math.min(s.w, s.h) / 2)); break
-    case 'frontdesk': lo = 0.15; hi = 1.32; horizontalRadius = Math.min(1.2, Math.max(0.45, s.w / 2)); break
     case 'table': lo = 0.55; hi = 0.88; horizontalRadius = Math.min(0.75, Math.max(0.35, Math.min(s.w, s.h) / 2)); break
     case 'alpha_desk': lo = 0.68; hi = 0.82; horizontalRadius = Math.min(0.75, Math.max(0.35, Math.min(s.w, s.h) / 2)); break
     case 'alpha_labbench': lo = 0.84; hi = 1.04; horizontalRadius = Math.min(0.75, Math.max(0.35, Math.min(s.w, s.h) / 2)); break
@@ -684,6 +689,8 @@ export function scanInteract(eng: Engine) {
     else if (s.kind === 'handspike') consider('handspike', DECOR_VIEWS.handspike.label, s, d, true)
     else if (s.kind === 'hoteldoor') {
       if (s.data?.sealed) consider('hoteldoor', '锁死的门（锁的结构闻所未闻）', s, d, true) // v41：L2 特殊锁死门——任何方式都打不开
+      else if (hotelDoorBlocked(eng)) consider('hoteldoor', '门没有锁。但它打不开。（砸门：制造响动）', s, d, true) // [l5items] O18
+      else if (s.data?.locked && hotelCardCan(eng, s)) consider('hoteldoor', `${s.data.room} 号 · 刷房卡 回你的房间`, s, d, true) // [l5items] 房卡
       else if (s.data?.locked) {
         const staffCard = s.data?.staff === 1 && eng.hasPocket('keycard')
         const axe = usableAxe(eng), canAxe = !!axe
@@ -691,8 +698,13 @@ export function scanInteract(eng: Engine) {
         const label = staffCard ? '刷员工卡 打开员工门'
           : canAxe ? `劈开 上锁的房门（斧头耐久 ${slotDur(axe!)}/${slotMaxDur(axe!)}，每次 -${DUR_DOOR}）`
           : can ? '撬开 上锁的房门' : s.data?.staff === 1 ? '上锁的员工门（需要员工卡/撬棍/万能钥匙/斧头）' : '上锁的房门（需要撬棍/万能钥匙/斧头）'
-        consider('hoteldoor', label, s, d, can)
-      } else consider('hoteldoor', s.data?.open ? '关上 房门' : '打开 房门', s, d, true)
+        consider('hoteldoor', s.data?.room ? `${s.data.room} 号 · ${label}` : label, s, d, can)
+      } else {
+        // L5：金色门牌号 /「请勿打扰」挂牌（l5Hotel.scanHotel 初始化）
+        const plate = s.data?.room ? `${s.data.room} 号` : ''
+        const label = s.data?.open ? '关上 房门' : s.data?.dnd ? `打开 挂着「请勿打扰」的 ${plate}房门` : plate ? `打开 ${plate}房门` : '打开 房门'
+        consider('hoteldoor', label, s, d, true)
+      }
     }
     else if (s.kind === 'ropeanchor') {
       const deployed = s.data?.deployed === 1
@@ -711,19 +723,28 @@ export function scanInteract(eng: Engine) {
     else if (s.kind === 'windowblack') consider('windowblack', DECOR_VIEWS.windowblack.label, s, d, true)
     else if (s.kind === 'graffiti') consider('graffiti', DECOR_VIEWS.graffiti.label, s, d, true)
     else if (s.kind === 'statue') consider('statue', DECOR_VIEWS.statue.label, s, d, true)
-    else if (s.kind === 'bigpainting') consider('bigpainting', DECOR_VIEWS.bigpainting.label, s, d, true) // v53b：L3 大幅画作
+    else if (s.kind === 'bigpainting' && (eng.levelDef.id === 3 || eng.levelDef.id === 5)) consider('bigpainting', DECOR_VIEWS.bigpainting.label, s, d, true) // v53b：仅 L3 大幅画作可阅读
     else if (s.kind === 'l02fix') { const label = l02FixLabel(eng, s); if (label) consider('l02fix', label, s, d, true) }
     else if (s.kind === 'megdoc') consider('megdoc', s.data?.doc === 'backrooms_basics' ? '阅读马尼拉玛丽基金会文件' : '阅读 M.E.G. 文档', s, d, true)
     else if (s.kind === 'landmark') consider('landmark', '查看 定居点地标', s, d, true)
     else if (s.kind === 'invitation') consider('landmark', '阅读 烫金邀请函', s, d, true) // v55b：邀请函=地标式可交互装饰（弹地标卡前往原住民）
+    else if (s.kind === 'valve' && eng.levelDef.id === 5) consider('valve', hotelValveReady(eng, s) ? '拧开 排气阀（接杏仁水）' : '排气阀（还在嘶嘶冒热气）', s, d, true) // 恐怖旅馆 1b：每阀每 10 分钟一瓶
     else if (s.kind === 'valve') consider('valve', s.data?.on ? '关闭 蒸汽阀门' : '打开 蒸汽阀门', s, d, true)
+    else if (s.kind === 'phonograph' && s.data?.o18) consider('phonograph', s.data?.on === 0 ? '一台停下的崭新留声机' : '长按 X 抬起唱针（近战：砸烂它）', s, d, false) // [l5items] O18
     else if (s.kind === 'phonograph') consider('phonograph', s.data?.on === 0 ? '摇起 留声机（恢复播放）' : '停下 留声机', s, d, true) // v55：L5 留声机启停
+    else if (s.kind === 'hotelwindow' && s.data?.profile === 'serviceLift' && eng.levelDef.id === 5) consider('servicelift', '乘 维护电梯（B1 · 1 · 6）', s, d, true)
+    else if (s.kind === 'l5walldoor') consider('bevdoor', '推开 墙上的门', s, d, true) // 恐怖旅馆 1b：贝弗莉门墙
+    else if (s.kind === 'l5floordoor') consider('bevdoor', '掀开 活板门', s, d, true)
+    else if (s.kind === 'l5puddle') consider('puddle', puddleDrunk(eng, s) ? '水洼（已喝过）' : '喝 管道下的水洼', s, d, true) // [l5tails]
+    else if (s.kind === 'l5rule') consider('hotelrule', '阅读 住客须知', s, d, true) // 恐怖旅馆 1c
+    else if (s.kind === 'l5pocketdoor' && !hotelLobbyShown(eng, s)) { /* 1d：大堂门还没「出现」，不可交互 */ }
+    else if (s.kind === 'l5pocketdoor') consider('hotelpocket', s.data?.pocket === 'lobby' ? '推开 「大堂」' : '推开 木门', s, d, true)
+    else if (hotelCanRest(eng, s)) consider('hotelrest', hotelResting(eng) ? '起身' : '躺下 休息', s, d, true) // L5：床上休息（降低酒店关注度、回理智、不受换班影响）
     else if (s.kind === 'table' && eng.levelDef.id === 5 && s.data?.drink === 1 && s.data?.searched !== 1) consider('drinktable', '拿取 桌上的饮料', s, d, true) // v55：L5 休息室桌上饮料
     else if (s.kind === 'booth' && !eng.player.leverPulled) consider('lever', '扳动 电源拉杆', s, d, true)
     else if (s.kind === 'server' && s.locked) consider('server', '刷门禁卡 进入', s, d, eng.hasPocket('keycard'))
     else if (s.kind === 'vending') consider('vending', '使用 自动售货机', s, d, true)
     else if (s.kind === 'watercooler') consider('watercooler', s.data?.almond && s.data?.searched !== 1 ? '接取 杏仁水' : '饮用 饮水机', s, d, true)
-    else if (s.kind === 'frontdesk') consider('frontdesk', '与前台交易', s, d, true)
     else if (s.kind === 'l6stairwell') consider('l6stairwell', band === 0 ? '沿废弃楼梯井下行' : '沿废弃楼梯井返回地表', s, d, true)
     else if (s.kind === 'obelisk') consider('obelisk', '辨认 方尖碑上的字迹', s, d, true)
     else if (s.kind === 'l10digsite') consider('l10digsite', s.data?.dug ? '旧挖掘点（已经被惊动）' : '挖掘 旧挖掘点（3 秒）', s, d, true)
@@ -858,6 +879,7 @@ export function doInteract(eng: Engine) {
     case 'exit': {
       const e = t.e
       if (e?.def.kind === 'remodeldoor') eng.remodelPendingSite = e.remodelSite
+      if (e && e.def.kind === 'elevatorshaft' && eng.levelDef.id === 5) { openElevator(eng, 'main', e.def); break } // 恐怖旅馆：黄铜楼层面板
       if (e) eng.takeExit(e.def)
       break
     }
@@ -1071,6 +1093,8 @@ export function doInteract(eng: Engine) {
       break
     }
     case 'bigpainting': {
+      // 大幅画作的可读文档仅属于 L3；防止旧目标或外部调用在其他层级触发文档。
+      if (eng.levelDef.id !== 3 && eng.levelDef.id !== 5) break
       // v53b：L3 大幅画作——先播报画作描述（按 data.tex），再随机展开一页笔记残页
       // （wikidot L3 多页笔记纸转录，志莽行手书风格文档；见 content/docs.ts L3_NOTES）
       // v55：按层级区分——L5 古典肖像/风景画只播报画作描述（不给 L3 笔记残页文档）
@@ -1118,6 +1142,8 @@ export function doInteract(eng: Engine) {
       const s = t.s && t.s.kind === 'hoteldoor' ? t.s : null
       if (!s) return
       if (s.data?.careerDoor && Number(s.data.access)>actualRank(eng,String(s.data.faction) as CareerId)) { eng.msg('该房间需要相应的专业资格。公共走廊与出口始终开放。','system'); return }
+      if (hotelDoorBlocked(eng)) { eng.msg('门把手转得动，门却纹丝不动。没有锁——它就是打不开。留声机还在唱。', 'system'); eng.noiseEvent(p.x, p.y, 14, true); audio.hit(); return } // [l5items] O18：撬 / 万能钥匙都无效；砸门 = 响动
+      if (s.data?.locked && hotelCardSwipe(eng, s)) return // [l5items] 房卡只开自己的房门
       if (s.data?.sealed) {
         // v41：L2 特殊锁死门——撬棍/万能钥匙/斧头全部无效（锁的结构闻所未闻）
         eng.msg('这扇门纹丝不动，锁的结构闻所未闻。', 'system')
@@ -1157,6 +1183,11 @@ export function doInteract(eng: Engine) {
         return
       }
       const open = s.data?.open ? 0 : 1
+      if (open && s.data?.dnd === 1 && eng.levelDef.id === 5) {
+        // L5「请勿打扰」：打扰住客——酒店会记住（每扇门只记一次）
+        if (s.data.dndHit !== 1) { hotelAddAttn(eng, HT.attnDnd); s.data = { ...s.data, dndHit: 1 }; hotelRuleProve(eng, 'dnd') }
+        eng.msg('门里的灯亮着，床铺整齐，没有人。可你分明听见有人翻了个身。', 'lore')
+      }
       s.data = { ...s.data, open }
       s.solid = !open
       // v58：联机——门开合状态同步（先到先得共享世界；坐标转世界系，跨端窗口无关）
@@ -1306,6 +1337,7 @@ export function doInteract(eng: Engine) {
       // v55b：邀请函（invitation 结构）同走本链路（data.outpost='originals'）
       const s = t.s && (t.s.kind === 'landmark' || t.s.kind === 'invitation') ? t.s : null
       if (!s) return
+      if (s.kind === 'invitation') hotelReadInvite(eng) // [l5tails] 记住邀请函：贝弗莉门墙改通原住民
       audio.uiTick()
       eng.emit({ kind: 'landmark', text: (s.data?.outpost as string) ?? 'alpha' })
       break
@@ -1426,6 +1458,7 @@ export function doInteract(eng: Engine) {
     case 'valve': {
       const s = t.s && t.s.kind === 'valve' ? t.s : null
       if (!s) return
+      if (hotelValveAlmond(eng, s)) break
       if (s.data?.on && !p.hasGloves && !eng.hasItem('wrench')) {
         p.hp -= 6; eng.emit({ kind: 'damage' })
         eng.msg('阀门烫得吓人！你需要扳手或隔热手套。', 'damage')
@@ -1445,6 +1478,30 @@ export function doInteract(eng: Engine) {
       s.data = { ...s.data, on: off ? 1 : 0 }
       eng.msg(off ? '你摇起曲柄。唱针落下，走调的旋律又响了起来。' : '你抬起唱针。旋律戛然而止，只剩下唱盘空转的细响。', 'system')
       audio.uiTick()
+      break
+    }
+    case 'servicelift': {
+      openElevator(eng, 'service')
+      break
+    }
+    case 'puddle': {
+      if (t.s) hotelDrinkPuddle(eng, t.s)
+      break
+    }
+    case 'bevdoor': {
+      if (t.s) hotelBevDoor(eng, t.s)
+      break
+    }
+    case 'hotelrule': {
+      if (t.s) hotelReadRule(eng, t.s)
+      break
+    }
+    case 'hotelpocket': {
+      if (t.s) hotelEnterPocket(eng, t.s.data?.pocket === 'lobby' ? 'lobby' : 'beast')
+      break
+    }
+    case 'hotelrest': {
+      if (t.s) hotelToggleRest(eng, t.s)
       break
     }
     case 'drinktable': {
@@ -1496,13 +1553,6 @@ export function doInteract(eng: Engine) {
     case 'vending': {
       // [vending] 普通售货机：打开售货界面（免费机 / 只收磁带的旧机器共用）
       if (t.s) openVending(eng, { s: t.s })
-      break
-    }
-    case 'frontdesk': {
-      if (eng.hasItem('silverware') && eng.consumeItem('silverware')) {
-        eng.addItem('sedative'); eng.addItem('almond')
-        eng.msg('前台铃铛自己响了。托盘上多了些东西。', 'lore')
-      } else { p.sanity = Math.min(100, p.sanity + 10); eng.msg('前台空无一人，但你觉得安全了一些。（理智+10）', 'lore') }
       break
     }
   }

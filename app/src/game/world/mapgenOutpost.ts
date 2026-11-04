@@ -1,5 +1,7 @@
 import { SETTLEMENTS } from '../content/settlementBlueprints'
+import { SPOKES_LOBBY } from '../content/spokesLayout' // [spokes]
 import { genSettlement } from './settlement'
+import { casinoLayout, OX, OY, CASINO_W, CASINO_D } from '../content/casinoLayout' // [casino]
 // 据点生成器（gen='outpost'）：完全手工设计的有限小层级——一切结构/灯光/出口/NPC 落位
 // 都是设计好的，无随机物品与容器（需求：据点不会凭空出现物品）。
 // 当前实现：M.E.G. Alpha 基地（布局参照 wikidot Base Alpha 构成图：
@@ -34,6 +36,9 @@ export function genOutpost(m: GameMap, rng: RNG, def: LevelDef): { cx: number; c
   if (def.id === 112) return genOriginalsParlor(m, rng, def) // v55：原住民（L5）
   if (def.id === 113) return genEmptyNestPost(m, rng, def) // Level 8：M.E.G.“空巢”前哨站
   if (def.id === 114) return genHammozCommunity(m, rng, def) // Level 8：哈莫兹洞穴社群
+  if (def.id === 117) return genBeastOffice(m, rng, def) // L5 1c：野兽办公室（口袋房间）
+  if (def.id === 118) return genHotelLobby(m, rng, def) // L5 1c：大堂（口袋房间）
+  if (def.id === 119) return genCasino(m, def) // [casino] Level 5.1 赌场（内部 id 119）
   if (def.id === 115) throw new Error('Legacy Beta map must be migrated to Level 11 before generation')
   return genAlphaOutpost(m, rng, def)
 }
@@ -2305,6 +2310,51 @@ function mkL5Helpers(m: GameMap, rng: RNG, def: LevelDef) {
   return { X, carve, room, S, L, NPC, roomLights }
 }
 
+// ---- L5 1c 口袋房间：野兽办公室（117）——书桌 / 空椅 / 画像 / 茶杯；员工期把野兽与交易接到这里 ----
+function genBeastOffice(m: GameMap, rng: RNG, def: LevelDef): { cx: number; cy: number }[] {
+  const { X, carve, room, S, L } = mkL5Helpers(m, rng, def)
+  room(10, 8, 22, 18, [[16, 18]])
+  carve(15, 19, 17, 22)
+  m.exits.push({ def: def.exits[0], x: X(16), y: X(22), discovered: true })
+  m.spawn = { x: X(16) + 0.5, y: X(16) + 0.5 } // 进门就站在办公室里，面朝书桌
+  S('rug', 13, 11, 6, 5, false, { l5: 1, rx: X(13), ry: X(11), rw: 6, rh: 5 })
+  S('table', 15, 11, 2, 1, true, { l5: 1, office: 1, color: '#4a2a1a' }) // 胡桃木书桌
+  S('officechair', 16, 10, 1, 1, false, { color: '#3a2a22', empty: 1 }) // 空椅（面朝门口）
+  S('table', 18, 12, 1, 1, true, { l5: 1, teacup: 1 }) // 茶几（茶还是热的）
+  S('bigpainting', 16, 9, 1, 1, false, { tex: 'l5_portrait1.png', pw: 1.4, ph: 1.75, gaze: 1, face: 5, beast: 1 })
+  for (const y of [10, 12, 14]) { S('libshelf', 11, y, 1, 1, true); S('libshelf', 21, y, 1, 1, true) }
+  S('candlestand', 12, 17, 1, 1, false); S('candlestand', 20, 17, 1, 1, false)
+  S('sconce', 13, 9, 1, 1, false); S('sconce', 19, 9, 1, 1, false)
+  L(16, 11, 6.5, '#ffcf9b'); L(13, 15, 5, '#ffb877'); L(19, 15, 5, '#ffb877')
+  m.zones = [{ name: '办公室', x: X(16), y: X(13) }]
+  return [{ cx: X(16), cy: X(16) }]
+}
+// ---- L5 1c 口袋房间：大堂（118）——一尘不染的前厅、服务铃、空椅；桌上一件稀有物品（每次进来一件）----
+export const LOBBY_GIFTS = ['rabbit', 'skeleton', 'nightvision', 'traumakit', 'royalration', 'luckymilk', 'xenonmarble'] as const
+function genHotelLobby(m: GameMap, rng: RNG, def: LevelDef): { cx: number; cy: number }[] {
+  const { X, carve, room, S, L } = mkL5Helpers(m, rng, def)
+  room(8, 7, 24, 19, [[16, 19]])
+  carve(15, 20, 17, 23)
+  m.exits.push({ def: def.exits[0], x: X(16), y: X(23), discovered: true })
+  m.spawn = { x: X(16) + 0.5, y: X(15) + 0.5 }
+  S('rug', 12, 12, 9, 6, false, { l5: 1, rx: X(12), ry: X(12), rw: 9, rh: 6 })
+  S('frontdesk', 15, 9, 2, 1, true, { l5: 1, bell: 1 }) // 前台 + 服务铃（[spokes] 迎宾女郎站在前台后面；她自由之后才放回那把空椅子）
+  // [spokes] 迎宾女郎 E28 的办公室：大堂北墙 x 16 的门洞 → 9 × 7 m 小间（书桌 / 皮椅 / 铭牌 / 收音机 / 北墙 A→L1、B→L11 海报投递洞）。坐标见 content/spokesLayout
+  room(12, 1, 20, 7, [[13, 7]])
+  m.structures.push({ kind: 'spokesprop', x: SPOKES_LOBBY.deskTile.x, y: SPOKES_LOBBY.deskTile.y, w: 1, h: 1, solid: true, data: { prop: 'office' } }) // 书桌 + 皮椅 + 铭牌 + 收音机（模型由 spokesRender 按 spokesLayout 摆；结构 = 桌子碰撞）
+  m.structures.push({ kind: 'spokesprop', x: Math.floor(SPOKES_LOBBY.holes.x), y: Math.floor(SPOKES_LOBBY.holes.y), w: 1, h: 1, solid: false, data: { prop: 'holes' } }) // 北墙投递洞面板
+  S('sconce', 16, 1.6, 1, 1, false); L(18, 3.5, 6, '#ffd9a0') // 办公室壁灯
+  S('chandelier', 16, 13, 1, 1, false, { l5: 1, profile: 'dining' })
+  S('sofa', 10, 14, 1, 1, true, { l5: 1, deg: 90, color: '#5a8a6a' }); S('sofa', 22, 14, 1, 1, true, { l5: 1, deg: 270, color: '#5a8a6a' })
+  S('planter', 9, 8, 1, 1, true); S('planter', 23, 8, 1, 1, true); S('planter', 9, 18, 1, 1, true); S('planter', 23, 18, 1, 1, true)
+  S('sconce', 12, 7, 1, 1, false); S('sconce', 20, 7, 1, 1, false)
+  L(16, 13, 10, '#fff0d4'); L(11, 10, 6.5); L(21, 10, 6.5); L(11, 17, 6.5); L(21, 17, 6.5)
+  const gift = LOBBY_GIFTS[rng.int(0, LOBBY_GIFTS.length - 1)]
+  m.items.push({ id: 0x5c0b0 + rng.int(0, 999), type: gift, x: X(16) + 0.5, y: X(10) + 1.0 })
+  m.zones = [{ name: '大堂', x: X(16), y: X(13) }, { name: '迎宾办公室', x: 20, y: 5 }]
+  return [{ cx: X(16), cy: X(15) }]
+}
+
 // ---- M.E.G. 哨所「家政服务」（id 110）：前厅 + 补给间 + 宿舍 + 门房 ----
 function genHousekeepingPost(m: GameMap, rng: RNG, def: LevelDef): { cx: number; cy: number }[] {
   const { X, carve, room, S, L, NPC, roomLights } = mkL5Helpers(m, rng, def)
@@ -2585,3 +2635,21 @@ function genOriginalsParlor(m: GameMap, rng: RNG, def: LevelDef): { cx: number; 
   return [{ cx: X(21), cy: X(3) }]
 }
 
+
+// ---- [casino] Level 5.1 赌场（119）：64 × 44 大厅 + 南门廊（出口）；碰撞 = casinoprop 精确盒（模型由 renderer/casinoScene 统一构建）----
+function genCasino(m: GameMap, def: LevelDef): { cx: number; cy: number }[] {
+  const L = casinoLayout()
+  m.tiles.fill(2)
+  for (let y = OY; y < OY + CASINO_D; y++) for (let x = OX; x < OX + CASINO_W; x++) m.tiles[y * m.w + x] = 1
+  const dx = Math.floor(L.door.x)
+  for (let y = OY + CASINO_D; y < OY + CASINO_D + 3; y++) for (let x = dx - 2; x <= dx + 1; x++) m.tiles[y * m.w + x] = 1 // 门廊
+  m.exits.push({ def: def.exits[0], x: dx, y: OY + CASINO_D + 2, discovered: true })
+  m.spawn = { x: L.spawn.x, y: L.spawn.y }
+  for (const b of [...L.boxes]) {
+    const x = Math.floor(b.x0), y = Math.floor(b.y0)
+    m.structures.push({ kind: 'casinoprop', x, y, w: Math.max(1, Math.ceil(b.x1) - x), h: Math.max(1, Math.ceil(b.y1) - y), solid: true, data: { x0: b.x0, y0: b.y0, x1: b.x1, y1: b.y1, top: b.top >= 9 ? 99 : b.top } })
+  }
+  for (const l of L.lights) if (!l.bake) m.lights.push({ x: l.x, y: l.y, r: l.r, color: l.color, flickerSeed: l.flicker ? (l.x * 13.7 + l.y * 7.1) % 100 : 0, fixZ: l.z + 0.2, noFix: 1 } as LightSource)
+  m.zones = L.zones.map((z) => ({ name: z.name, x: (z.x0 + z.x1) / 2, y: (z.y0 + z.y1) / 2 }))
+  return [{ cx: Math.floor(L.spawn.x), cy: Math.floor(L.spawn.y) }]
+}

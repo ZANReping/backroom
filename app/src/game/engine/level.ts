@@ -1,4 +1,9 @@
+import { beastExitBlocked } from './beastAI'
 import { resetBreakCube } from '../core/breakCube'
+import { conciergeArrive } from './conciergeAI' // [concierge]
+import { casinoArrive, casinoExitBlocked } from './casinoAI' // [casino]
+import { hotelPocketReturnSeed, hotelPocketAfterReturn, hotelPocketArrive, POCKET_LEVEL } from './l5Hotel'
+import { l5SpawnElevSlot, setL5Floor } from '../world/infiniteL5'
 import {captureTradersWorld,restoreTradersWorld} from '../world/tradersWorld'
 import { completeFoyer } from './foyer'
 import { FOYER_ID } from '../world/foyerLayout'
@@ -33,12 +38,25 @@ import { persist as persistSave } from './save'
 import { remodelOnLevelChange, remodelBeforeEnter, placeAtRemodelDoor } from './remodel'
 import { L02_ID } from '../world/l02Layout'
 import { resetL02, leaveL02 } from './l02Collapse'
+import { rememberOutpostEntry, outpostBackLevel, outpostReturnSeed, pendingOutpostReturn, placeOutpostReturn } from './outpostReturn'
+
+export function hotelArrivalFloor(eng: Engine, restoring = false): number {
+  if (restoring || eng.player.level === 5) return eng.hotel.floor
+  const returnFloor = pendingOutpostReturn(eng, 5)?.anchor?.hotelFloor
+  if (returnFloor !== undefined) return returnFloor
+  return hotelPocketReturnSeed(eng) !== null ? eng.hotel.pocket!.floor : 1
+}
 
 export function nextMapSeed(eng: Engine, id: number): number {
+  const returnSeed = outpostReturnSeed(eng, id) ?? (id === 5 ? hotelPocketReturnSeed(eng) : null)
+  if (returnSeed != null) return returnSeed
+  // L5 恐怖旅馆 1b：2F–12F / B1 每局固定一张图（同楼层回访是同一层）；1F 沿用原逻辑
+  if (id === 5 && eng.player.level === 5 && eng.hotel.floor !== 1) return (eng.seed + 0x5f00 + eng.hotel.floor * 7919) >>> 0
   return eng.mpMapSeed?.(id) ?? (id === 0 ? eng.l0World?.seed ?? eng.seed : id === 1 ? eng.l1World?.seed ?? (eng.seed===20261006?eng.seed:eng.seed+131) : id === 11 ? eng.l11World?.seed ?? (eng.seed+1441) : id===102 ? eng.tradersWorld?.seed??(eng.seed+13362) : eng.seed+eng.time*7+id*131)
 }
 
 export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; firstVisit: boolean }, preparedMapSeed?: number) {
+  const outpostBack = !restore ? pendingOutpostReturn(eng, id) : undefined
   if (eng.player.level === FOYER_ID && id !== FOYER_ID) resetBreakCube()
   // 层级任务：离开当前层级（读档恢复不算；死亡即结束本局，不会走到这里）
   if (!restore && eng.map && !eng.over && eng.player.level !== id) eng.questEvent({ t: 'leaveLevel', from: eng.player.level, to: id })
@@ -57,7 +75,8 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   if (!restore && eng.player.level === 11 && eng.map?.inf) eng.l11World = captureL11(eng)
   const l11From = eng.arriveL11From
   eng.arriveL11From = null
-  const def = levelDefOf(id)!
+  const hotelFloor = id === 5 ? hotelArrivalFloor(eng, !!restore) : undefined
+  const def = levelDefOf(id, hotelFloor)!
   // v29：初始物资仅首次到层刷新（重访 L0 不再白嫖出生点补给）
   const firstVisit = !eng.visitedLevels.has(id)
   eng.visitedLevels.add(id)
@@ -80,8 +99,11 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   const l8AvenueEnd = id === 8 && !restore && eng.arriveL8AvenueEnd
   eng.arriveL8AvenueEnd = false
   // v29a：读档恢复时复用存档记录的地图种子与首访标记，保证复现同一张图
-  const mapSeed = restore?.mapSeed ?? preparedMapSeed ?? nextMapSeed(eng, id)
+  const pocketSeed = id === 5 && !restore ? hotelPocketReturnSeed(eng) : null // L5 1c：从口袋房间回来 → 原楼层原地图
+  const mapSeed = restore?.mapSeed ?? outpostBack?.anchor?.mapSeed ?? pocketSeed ?? preparedMapSeed ?? nextMapSeed(eng, id)
   const fv = restore?.firstVisit ?? firstVisit
+  // L5 恐怖旅馆：楼层参与区域权重（模块级状态，生成前设定）；从别的层级进来回到 1F
+  if (def.l5Floor !== undefined) { eng.hotel.floor = def.l5Floor; setL5Floor(def.l5Floor) }
   eng.map = generateLevel(def, mapSeed, fv)
   if(id===102)restoreTradersWorld(eng.map,eng.tradersWorld)
   eng.mapSeed = mapSeed
@@ -96,10 +118,29 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   if(id===102&&!restore)look.yaw=-Math.PI/2
   // v51：乘电梯抵达——出生点改到本层电梯（elevatorshaft 出口）邻格；找不到可站邻格则保留默认出生点
   if (viaElevator) {
-    const elev = eng.map.exits.find((e) => e.def.kind === 'elevatorshaft')
+    const m = eng.map
+    const origin = m.inf
+    const slot = id === 5 && origin ? l5SpawnElevSlot(mapSeed) : null
+    const exits = m.exits.filter(e => e.def.kind === 'elevatorshaft')
+    const elev = slot && origin
+      ? exits.find(e => e.x + origin.ox === slot.x && e.y + origin.oy === slot.y)
+      : exits[0]
     if (elev) {
-      const m = eng.map
-      outer: for (let rad = 1; rad <= 4; rad++)
+      let placed = false
+      if (slot) {
+        // The solid back of the alcove is on the hall side. Step out toward its corridor.
+        const dx = slot.x - slot.bx, dy = slot.y - slot.by
+        for (const distance of [1, 2, 3]) {
+          const x = elev.x + 0.5 + dx * distance, y = elev.y + 0.5 + dy * distance
+          if (!canOccupy(m, x, y, PLAYER_RADIUS, { z: 0 })) continue
+          eng.player.x = x; eng.player.y = y
+          look.yaw = Math.atan2(-dx, -dy); look.pitch = 0
+          eng.player.facing = Math.atan2(dy, dx)
+          placed = true
+          break
+        }
+      }
+      outer: for (let rad = 1; !placed && rad <= 4; rad++)
         for (let dy = -rad; dy <= rad; dy++)
           for (let dx = -rad; dx <= rad; dx++) {
             if (Math.max(Math.abs(dx), Math.abs(dy)) !== rad) continue
@@ -110,6 +151,7 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
           }
     }
   }
+  if (id === 5) conciergeArrive(eng) // [concierge] 13 楼回来：员工通道醒来
   // v54：经古典楼梯下行抵达 L5——出生点改到本层古典楼梯（oldstairs 出口，出生 chunk 保底 1 部）
   // 2 格外的空旷地板（切比雪夫距 ≥2 的第一圈可站格；找不到则放宽到 4 格，再找不到保留默认出生点）
   if (viaOldstairs && id === 5) {
@@ -301,16 +343,16 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   // Level 0.2：没有嗡鸣，只有空调低频风声（远处电钻/敲击声见 audio.startAirCon）
   audio.stopAirCon()
   if (id === L02_ID) { audio.stopHum(); audio.startAirCon() } else audio.startHum(id)
+  if (id === 5) audio.stopHotelAudio() // A floor change also retires the previous room audio.
   audio.startBGM(id)
   if (id === L02_ID) audio.stopBGM()
   if (id === 6) audio.stopBGM() // L6 除罕见幻听外保持寂静
   if (id === 4) audio.startRain() // v54：L4 常驻雨声（永不止歇的大雨）；离层即停
   else audio.stopRain()
-  if (!restore && eng.career.returning && eng.career.returnAnchor?.level===id) {
-    const a=eng.career.returnAnchor
-    eng.player.x=a.x; eng.player.y=a.y; restoreSavedPlayerPosition(eng,{x:a.x,y:a.y}); look.yaw=a.yaw
-    eng.career.returning=false
-  }
+  if (outpostBack) placeOutpostReturn(eng, outpostBack)
+  if (!restore && id === 5) hotelPocketAfterReturn(eng)
+  if (!restore && (id === POCKET_LEVEL.beast || id === POCKET_LEVEL.lobby)) hotelPocketArrive(eng, id)
+  if (id === POCKET_LEVEL.casino) casinoArrive(eng, !!restore) // [casino] Level 5.1
   eng.emit({ kind: 'levelchange' })
   eng.msg(`${levelLabel(id)}「${def.name}」`, 'lore')
   if (def.sd) eng.msg(def.sd, 'system')
@@ -586,6 +628,8 @@ export function tinyBlocksLittleDoor(eng: Engine, exit?: ExitInstance): boolean 
 export function takeExit(eng: Engine, def: ExitDef) {  const p = eng.player
   if(p.level===11&&def.kind==='basebeta'&&submitL11ArchiveTapes(eng))return
   if (def.kind === 'graystairs' || def.kind === 'graystairsup') return
+  if (beastExitBlocked(eng)) return
+  if (casinoExitBlocked(eng)) return // [casino] 紫筹码为负：Louie / 假肢人 / 保安拦门
   if (def.kind === 'littledoor' && tinyBlocksLittleDoor(eng)) {
     eng.msg('小小正盘踞在门扇上方。只要它还在附近，你就不可能掀开「小小的谎言」。（它惧怕持续的巨响）', 'system')
     audio.uiTick()
@@ -669,10 +713,11 @@ export function takeExit(eng: Engine, def: ExitDef) {  const p = eng.player
   if (p.level === FOYER_ID) completeFoyer(eng) // 离开前厅：全局标记已完成（P1 临时出口；P3 由 RealityBreak 接管）
   // v23：立刻解析 random 目标——过场演出需要知道「切入」的是哪一层
   // v35：'back' 解析为进入据点前的层级（据点入口的返程）
-  const resolved = def.dest === 'back' ? (eng.outpostReturn ?? 1) : def.dest
+  const resolved = def.dest === 'back' ? outpostBackLevel(eng) : def.dest
   const dest: number | 'win' = resolved === 'random' ? Math.floor(Math.random() * NORMAL_LEVELS) : resolved
   if (def.dest === 'back') eng.career.returning = true
-  if (def.dest === 'back') eng.outpostReturn = null // 返程后清空（下次进据点重新记录）
+  // Retain the origin until arrival, including saves during the exit animation.
+  if (typeof dest === 'number' && def.dest !== 'back' && levelDefOf(dest)?.gen === 'outpost') rememberOutpostEntry(eng, dest)
   const cutIn = dest === 'win' ? undefined : (def.cutIn ?? levelDefOf(dest)?.entryAnim)
   eng.transition = { anim: def.anim, t: 0, dest, fallDamage: def.fallDamage }
   eng.emit({ kind: 'transition', anim: def.anim, fallDamage: def.fallDamage, cutIn, dest })
@@ -788,7 +833,7 @@ export function applyHomelyStay(eng: Engine) {
 /** v35：前往据点（地标弹窗「前往」/DevPanel 据点跳转共用）：记录返程层级后切入 */
 export function enterOutpost(eng: Engine, outpostId: string, dev = false) {
   const o = OUTPOSTS[outpostId]
-  if (!o || !eng.map) return false
+  if (!o || !eng.map || eng.transition) return false
   // v54：蓝色救赎（信众圣所）准入门槛——jerry 声望 >30 才放行；DevPanel 据点跳转（dev=true）不受限
   if (!dev && outpostId === 'bluesalvation' && (eng.rep.jerry ?? 0) <= 30) {
     eng.msg('你还不够虔诚。蓝色救赎只向真正的兄弟姐妹敞开。（杰瑞的信众 声望需 >30）', 'damage')
@@ -808,8 +853,7 @@ export function enterOutpost(eng: Engine, outpostId: string, dev = false) {
     eng.msg(`守卫拦下了你——${FACTIONS[o.faction]!.name}拒绝你进入。（声望 ${rep}）`, 'damage')
     return false
   }
-  eng.career.returnAnchor = {level:eng.player.level,x:eng.player.x+(eng.map?.inf?.ox??0),y:eng.player.y+(eng.map?.inf?.oy??0),yaw:look.yaw}
-  eng.outpostReturn = eng.player.level
+  rememberOutpostEntry(eng, o.levelId)
   eng.transition = { anim: 'bloom', t: 0, dest: o.levelId }
   eng.emit({ kind: 'transition', anim: 'bloom', cutIn: 'outpost', dest: o.levelId })
   return true

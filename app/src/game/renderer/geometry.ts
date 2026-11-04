@@ -1,7 +1,7 @@
 import { l7SeabedMaterial } from './l7Seabed'
 import { FOYER_ID } from '../world/foyerLayout'
 import {buildL4Terrain} from './l4Terrain'
-import { l5SurfaceBatches } from './l5Materials'
+import { l5SurfaceBatches, isPocketSurfaceLevel, pocketSurfaceBatch } from './l5Materials'
 import { buildL5Architecture } from './l5Architecture'
 import {l3Material,l3WorldUV,type L3Surface} from './l3Materials'
 import {L3_NARROW_TINT,l3Height,l3StyleAt} from '../world/l3Architecture'
@@ -503,6 +503,7 @@ if (floorGeos.length) {
   const fm=l3?l3Surface(floorGeos,'floor'):l2?l2Surface(floorGeos,'floor'):l1?l1Material(l1Style,'floor'):floorMat
   if(l2||l3)floorMat.dispose()
   if (def.id === 5) { l5SurfaceBatches(floorGeos, m, g, 'floor', fm) }
+  else if (isPocketSurfaceLevel(def.id)) { pocketSurfaceBatch(floorGeos, m, g, 'floor', def.id); fm.dispose() }
   else g.add(new THREE.Mesh(mergeGeometries(floorGeos)!, fm))
 }
 if (abyssGeos.length) {
@@ -514,6 +515,7 @@ if (floorGeos2.length) {
   const fm2=l2?l2Surface(floorGeos2,'floor'):floorMat2
   if(l2)floorMat2.dispose()
   if (def.id === 5) { l5SurfaceBatches(floorGeos2, m, g, 'floor', fm2) }
+  else if (isPocketSurfaceLevel(def.id)) { pocketSurfaceBatch(floorGeos2, m, g, 'floor', def.id); fm2.dispose() }
   else g.add(new THREE.Mesh(mergeGeometries(floorGeos2)!, fm2))
 }
 if (manilaFloorGeos.length) {
@@ -856,6 +858,7 @@ if (ceilGeos.length) {
   const cm=l3?l3Surface(ceilGeos,'ceiling'):l2?l2Surface(ceilGeos,'ceiling'):l1?l1Material(l1Style,'ceiling'):ceilMat
   if(l2||l3)ceilMat.dispose()
   if (def.id === 5) { l5SurfaceBatches(ceilGeos, m, g, 'ceiling', cm) }
+  else if (isPocketSurfaceLevel(def.id)) { pocketSurfaceBatch(ceilGeos, m, g, 'ceiling', def.id); cm.dispose() }
   else g.add(new THREE.Mesh(mergeGeometries(ceilGeos)!, cm))
 }
 
@@ -920,7 +923,7 @@ if (m.floors > 1) {
   const wSideL = def.id === 7 ? col('#9aa69c') : wSideU, wTopL = def.id === 7 ? col('#9b958a') : wTopU
   const ccL = def.id === 7 ? col('#9b958a') : cc
   // v54：踢脚线白名单（同主层墙循环）——上层墙踢脚线只对 L0/L5 与据点多层生效（L4 不变）；v55c：L5 三据点（110/111/112）同享
-  const SKIRT = def.id === 0 || def.id === 5 || def.id === 110 || def.id === 111 || def.id === 112 || def.id === 101 || def.id === 102 || def.id === 103 || def.id === 104 || def.id === 105 || def.id === 106 || def.id === 109
+  const SKIRT = def.id === 0 || def.id === 5 || def.id === 110 || def.id === 111 || def.id === 112 || def.id === 117 || def.id === 118 || def.id === 101 || def.id === 102 || def.id === 103 || def.id === 104 || def.id === 105 || def.id === 106 || def.id === 109
   // v46：只写顶点色、保留原 UV（楼板底面需要盒面原 UV 平铺吊顶贴图）
   const setVCKeepUV = (geo: THREE.BufferGeometry, cFn: (py: number) => THREE.Color) => {
     const pos = geo.attributes.position
@@ -1228,7 +1231,7 @@ for (let y = RY0; y < RY1; y++) {
     geo.translate(x + .5+(narrowLeft-narrowRight)/2, (top + base) / 2, y + .5)
     pushWallGeo(geo)
     // v35：踢脚线（L0 与据点墙面：墙根深色饰条，门洞墙不加；v46：EL3A 加入；v53b：Gamma 基地加入；v55：L5 酒店加入；v55c：L5 三据点 110/111/112 同享）
-    if (def.id === 0 || def.id === 9 || def.id === 110 || def.id === 111 || def.id === 112 || def.id === 101 || def.id === 102 || def.id === 103 || def.id === 104 || def.id === 105 || def.id === 106 || def.id === 109) {
+    if (def.id === 0 || def.id === 9 || def.id === 110 || def.id === 111 || def.id === 112 || def.id === 117 || def.id === 118 || def.id === 101 || def.id === 102 || def.id === 103 || def.id === 104 || def.id === 105 || def.id === 106 || def.id === 109) {
       const manilaBase = def.id === 0 && tnt === 1
       const l9InteriorBase = def.id === 9
       const bb = manilaBase ? col('#f0dfc8') : l9InteriorBase ? col('#c5b5a4') : wSideT.clone().multiplyScalar(def.id === 0 ? 0.82 : 0.45) // L9 由独立深木 PBR 材质二次着色
@@ -1403,6 +1406,7 @@ if (wallGeos.length) {
   const wm=l3?l3Surface(wallGeos,'wall'):l2?l2Surface(wallGeos,'wall'):l1?l1Material(l1Style,'wall'):wallMat
   if(l2||l3)wallMat.dispose()
   if (def.id === 5) { l5SurfaceBatches(wallGeos, m, g, 'wall', wm) }
+  else if (isPocketSurfaceLevel(def.id)) { pocketSurfaceBatch(wallGeos, m, g, 'wall', def.id); wm.dispose() }
   else g.add(new THREE.Mesh(mergeGeometries(wallGeos)!, wm))
 }
 if (wallGeos2.length) {
@@ -1417,6 +1421,7 @@ if (wallGeos2.length) {
   })
   if(l1)for(const geo of wallGeos2){geo.deleteAttribute('color');l1WorldUV(geo,m.inf?.ox??0,m.inf?.oy??0,l1SurfaceScale(l1Style,'wall'))}
   if (def.id === 5) { l5SurfaceBatches(wallGeos2, m, g, 'wall', wallMat2) }
+  else if (isPocketSurfaceLevel(def.id)) { pocketSurfaceBatch(wallGeos2, m, g, 'wall', def.id); wallMat2.dispose() }
   else g.add(new THREE.Mesh(mergeGeometries(wallGeos2)!, l3?l3Surface(wallGeos2,'wall'):l1?l1Material(l1Style,'wall'):wallMat2))
 }
 if (def.id === 5 && !range?.skipL5Architecture) yield* buildL5Architecture(m, H, g, range)

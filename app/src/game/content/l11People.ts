@@ -18,7 +18,7 @@ export const L11_PEOPLE: NpcDef[] = [
     personality: '爽快，熟悉交易规则。', background: '经营广场的补给摊，使用压印币交易。', avatar: { hair: 3, hairColor: '#553323' },
     currency: 'presses', trade: [{ item: 'almond', price: 2 }, { item: 'canned', price: 3 }, { item: 'bandage', price: 2 }, { item: 'battery', price: 2 }],
     lines: [{ npc: '欢迎来到新时代广场。压印币通用，寄存仓库与商人之家互通。', opts: [{ text: '看看商品。', action: 'trade' }, { text: '告辞。', action: 'leave' }] }], idle: ['繁荣缔造和平。'] },
-  { id: 'l11_caretaker', name: '伊莱·桑德斯', role: '首都市民联络员', faction: 'capital', medic: true,
+  { id: 'l11_caretaker', name: '伊莱·桑德斯', role: '首都市民联络员', faction: 'wanderer', medic: true,
     personality: '平静热心。', background: '在首都的公共服务亭帮助初来者，维护纪念街道与市民记录。', avatar: { hair: 2, hairColor: '#9b9892' },
     lines: [{ npc: '这里是首都。广场和住宅区都有人居住，饮水设施可以使用。沿导览牌能找到贸易广场和M.E.G.总部。', opts: [{ text: '街上为什么这么安静？', next: 1 }, { text: '谢谢。', action: 'leave' }] },
       { npc: '人们集中生活在安全街区。那些窗户黝黑的大厦从来没有开过门，别在门口浪费力气。', opts: [{ text: '我知道了。', action: 'leave' }] }], idle: ['请让纪念碑前的路保持畅通。'] },

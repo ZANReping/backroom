@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { textureUploadReady, uploadTexture } from './textureUpload'
 import { compileSceneJob, uploadSceneJob, type WarmupTarget } from './sceneWarmup'
 
 /** Factories/instances retain texture ownership; preparation only uploads them. */
@@ -12,7 +13,7 @@ function* prepareModel(renderer: THREE.WebGLRenderer, root: THREE.Object3D, came
       for (const value of values) if (value?.isTexture && !value.isRenderTargetTexture) textures.add(value)
     }
   })
-  for (const texture of textures) { yield; renderer.initTexture(texture) }
+  for (const texture of textures) if (!textureUploadReady(renderer, texture)) { yield; uploadTexture(renderer, texture) }
   root.updateWorldMatrix(true, true)
   yield* uploadSceneJob(renderer, root, camera, scene, false, null, typeof target === 'function' ? target() : target)
 }
@@ -34,9 +35,9 @@ export class ModelWarmupQueue {
     // The model stays hidden during preparation. Only the synchronous traversal
     // needs its root visible; preserve hidden collision proxies below it.
     root.visible = true
+    this.jobs.delete(root)
     try {
       const step = job.next()
-      this.jobs.delete(root)
       // Round-robin polling lets other models prepare while a driver is busy.
       if (!step.done) this.jobs.set(root, job)
     } finally { root.visible = visible }

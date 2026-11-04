@@ -66,6 +66,26 @@ function ballroomLight(g:THREE.Group,H:number){
   }
   cyl(g,.055,.16,'bronze',0,top-1.65)
 }
+// [l5 收尾] 厨师餐厅：枝形吊灯（取代旧的三层乳白灯碗）——青铜中柱 + 上下两层 S 形弯臂（8 + 6），臂端烛盘、白蜡烛、暖光烛焰；外圈臂间垂水晶坠
+const flame=new THREE.MeshBasicMaterial({color:'#ffcf7a'}),crystal=new THREE.MeshBasicMaterial({color:'#fff0d0',transparent:true,opacity:.85})
+function diningCandelabra(g:THREE.Group,H:number){
+  const top=H-.1,yb=top-1.05
+  cyl(g,.022,.6,'bronze',0,top-.3,0,8) // 吊链
+  cyl(g,.1,.1,'bronze',0,top-.05,0,12) // 链脚
+  cyl(g,.05,.62,'gold',0,yb+.12,0,12) // 中柱
+  mesh(g,new THREE.SphereGeometry(.13,18,12),'gold',0,yb-.2) // 球托
+  mesh(g,new THREE.OctahedronGeometry(.07),crystal,0,yb-.38)
+  for(const [n,R,yy,off] of [[8,.78,yb,0],[6,.42,yb+.32,.4]] as const){
+    for(let i=0;i<n;i++){
+      const a=i/n*Math.PI*2+off,c=Math.cos(a),s=Math.sin(a)
+      pipe(g,[[c*.05,yy+.1,s*.05],[c*R*.35,yy-.12,s*R*.35],[c*R*.75,yy-.1,s*R*.75],[c*R,yy+.04,s*R]],.016,'gold')
+      cyl(g,.06,.025,'gold',c*R,yy+.06,s*R,12) // 烛盘
+      cyl(g,.02,.16,'ivory',c*R,yy+.15,s*R,8) // 白蜡烛
+      const f=mesh(g,new THREE.SphereGeometry(.025,8,6),flame,c*R,yy+.26,s*R);f.scale.y=1.8
+      if(n===8)mesh(g,new THREE.OctahedronGeometry(.035),crystal,c*R*.62,yy-.24,s*R*.62)
+    }
+  }
+}
 function diningTable(g:THREE.Group,mahjong:boolean){
   const table=new THREE.Group();g.add(table)
   for(const x of [-.43,.43])for(const z of [-.40,.40])pipe(table,[[x*.84,.05,z],[x,.45,z*.7],[x*.90,.84,z]],.047,'wood')
@@ -95,7 +115,7 @@ function diningTable(g:THREE.Group,mahjong:boolean){
 export function buildL5RoomStructure(s:Structure,H:number,m:GameMap):THREE.Group|null{
   const profile=String(s.data?.profile??''),g=new THREE.Group();g.name=`l5-room-${s.kind}`
   switch(s.kind){
-    case 'chandelier': if(profile!=='beverly'&&profile!=='dining')return null;ballroomLight(g,H);break
+    case 'chandelier': if(profile!=='beverly'&&profile!=='dining')return null;if(profile==='dining')diningCandelabra(g,H);else ballroomLight(g,H);break // [l5 收尾] 厨师餐厅换枝形吊灯
     case 'oddtable': diningTable(g,true);break
     case 'dtable': diningTable(g,false);break
     case 'bed': {

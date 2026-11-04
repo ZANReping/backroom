@@ -9,6 +9,11 @@ import { stableAt } from './career'
 import { dullerControlsPlayer } from './dullerAI'
 import { clumpControlsPlayer } from './clumpAI'
 import { houndControlsPlayer } from './houndAI'
+import { casinoMoveMul } from './casinoAI' // [casino] 上瘾：走向大门时脚步变沉
+import { beastControlsPlayer } from './beastAI' // [beast] 熄灯 / 背后缠抓 / 办公室真身缠抓
+import { jazzMoveMul } from './jazzAI' // [jazz]
+import { chefControlsPlayer } from './chefAI' // [chef] 黑屏 / 被拖走 / 铐在冷库铁管上
+import { conciergeControlsPlayer } from './conciergeAI' // [concierge] 被扑倒 / 捆住 / 拖行 / 塞进升降梯
 import { nwControlsPlayer } from './watchAI'
 import { armsControlsPlayer } from './armsAI'
 import { windowControlsPlayer, windowPull, windowSpeedMul } from './windowAI'
@@ -65,7 +70,7 @@ function updateMovementInner(eng: Engine, dt: number, dm: DiffMult, introLock: b
   stepPressure(eng, eng.swim, dt) // [swim 阶段 3] 水压提示 + 减压病
   if (eng.over) return 0
   // A scripted wall crossing owns position temporarily; gravity must not snap onto a wall/upper floor.
-  if(bursterControlsPlayer(eng)||wranglerControlsPlayer(eng)||dullerControlsPlayer(eng)||clumpControlsPlayer(eng)||houndControlsPlayer(eng)||nwControlsPlayer(eng)||armsControlsPlayer(eng,dt)||windowControlsPlayer(eng,dt)){eng.seating=null;resetMoveVelocity(eng.mv);return 0}
+  if(bursterControlsPlayer(eng)||wranglerControlsPlayer(eng)||dullerControlsPlayer(eng)||clumpControlsPlayer(eng)||houndControlsPlayer(eng)||conciergeControlsPlayer(eng)||beastControlsPlayer(eng)||chefControlsPlayer(eng,dt)||nwControlsPlayer(eng)||armsControlsPlayer(eng,dt)||windowControlsPlayer(eng,dt)){eng.seating=null;resetMoveVelocity(eng.mv);return 0}
   if (eng.devEnabled && eng.dev.fly) {
     eng.seating = null
     resetMoveVelocity(eng.mv) // [movefeel] dev 飞行不带地面惯性
@@ -199,6 +204,8 @@ function updateMovementInner(eng: Engine, dt: number, dm: DiffMult, introLock: b
   if (eng.webbedT > 0) speed *= 0.5 // v51：缠丝麻痹——移动迟缓
   speed *= windowSpeedMul(eng) // [window] 默念时放慢脚步
   speed *= arachnidMoveMul(eng)
+  speed *= casinoMoveMul(eng) // [casino]
+  speed *= jazzMoveMul(eng) // [jazz] 听爵士乐队演出：不想走（「欠老四的钱」那首例外）
   speed *= nguithrSpeedMult(eng) // Nguithr'xurh 轻度镇静：移动略慢
   if (p.flashJamT > 0) p.flashJamT -= dt
   if (eng.dev.speed) speed *= 1.8

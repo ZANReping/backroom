@@ -24,6 +24,8 @@ import { UNIVERSAL_ITEMS } from '../content/items'
 import type { LevelDef, Structure, LightSource, ExitInstance, GroundItem } from '../core/types'
 import { CS, RS, h32, GEN_ITEM_BASE, regionHost, exitTarget } from './infinite'
 import { registerInfiniteLevel, type GenChunk } from './infiniteRegistry'
+import { chefSiteRect } from '../content/chefLayout' // [chef]
+import { jazzSiteOf } from '../content/jazzLayout' // [jazz]
 
 // ---------- 变体 ----------
 export type L5Hall = 'mainhall' | 'beverly' | 'maintenance' | 'dining'
@@ -110,11 +112,39 @@ function blockRect(seed: number, k: number, r: number) {
 
 // ---------- 大厅格（v55：2×2 街区合并为跨多 chunk 大房间）----------
 // 大厅格 (hk,hr) 覆盖街区 k∈{2hk,2hk+1}、r∈{2hr,2hr+1}；矩形内腔含被吸收的街区内墙与穿行走廊段
+// ---------- 楼层（恐怖旅馆 1b）----------
+// 仍是 level 5；楼层只改种子（engine/level nextMapSeed）与区域权重。当前楼层是模块级状态，
+// 由 engine/level.loadLevel 在生成地图前 setL5Floor（读档时取 engine.hotel.floor）。0 = B1 锅炉层。
+export interface L5FloorDef { name: string; theme: string; hallP: number; halls: [number, number, number, number]; rooms: [number, number, number, number]; silent?: boolean; flickerK?: number }
+const BH: [number, number, number, number] = [0.5, 0.25, 0.05, 0.2] // 主厅 / 餐厅 / 维修大厅 / 贝弗莉室
+const BR: [number, number, number, number] = [0.55, 0.15, 0.1, 0.2] // 客房 / 休息室 / 健身房 / 泳池
+export const L5_FLOORS: Record<number, L5FloorDef> = {
+  0: { name: 'B1', theme: '锅炉层', hallP: 0.6, halls: [0.25, 0.05, 0.6, 0.1], rooms: BR },
+  1: { name: '1F', theme: '主厅层', hallP: 0.5, halls: BH, rooms: BR },
+  2: { name: '2F', theme: '客房层', hallP: 0.35, halls: BH, rooms: [1.1, 0.15, 0.1, 0.2] },
+  3: { name: '3F', theme: '餐饮层', hallP: 0.5, halls: [0.5, 0.75, 0.05, 0.2], rooms: BR },
+  4: { name: '4F', theme: '宴会层', hallP: 0.5, halls: [0.5, 0.25, 0.05, 0.6], rooms: [0.55, 0.3, 0.1, 0.2] },
+  5: { name: '5F', theme: '休闲层', hallP: 0.45, halls: BH, rooms: [0.55, 0.15, 0.25, 0.5] },
+  6: { name: '6F', theme: '维修层', hallP: 0.5, halls: [0.5, 0.25, 0.3, 0.2], rooms: BR },
+  7: { name: '7F', theme: '藏书层', hallP: 0.45, halls: BH, rooms: [0.55, 0.4, 0.1, 0.1] },
+  8: { name: '8F', theme: '套房层', hallP: 0.45, halls: [0.5, 0.25, 0.05, 0.3], rooms: [0.85, 0.2, 0.05, 0.1], flickerK: 2 },
+  9: { name: '9F', theme: '飞蛾层', hallP: 0.55, halls: [0.4, 0.15, 0.05, 0.6], rooms: BR },
+  10: { name: '10F', theme: '行李层', hallP: 0.4, halls: BH, rooms: [0.8, 0.25, 0.05, 0.1] },
+  11: { name: '11F', theme: '静默层', hallP: 0.5, halls: BH, rooms: BR, silent: true },
+  12: { name: '12F', theme: '顶层', hallP: 0.55, halls: [0.75, 0.4, 0.05, 0.2], rooms: [0.55, 0.3, 0.1, 0.25] },
+}
+let L5_FLOOR = 1
+const PORTRAIT_FACE_COUNT = 9 // [l5tails] 与 renderer/l5Portrait PORTRAIT_FACES 一致（check:l5tails 校验）
+export const L5_PORTRAIT_FACE_COUNT = PORTRAIT_FACE_COUNT
+export function setL5Floor(f: number) { L5_FLOOR = L5_FLOORS[f] ? f : 1 }
+export function getL5Floor() { return L5_FLOOR }
+const pick4 = (v: number, w: readonly number[]) => { const t = w[0] + w[1] + w[2] + w[3]; let a = 0; for (let i = 0; i < 4; i++) { a += w[i] / t; if (v < a) return i } return 3 }
+
 export function l5HallAt(seed: number, hk: number, hr: number): L5Hall | null {
   if (hk === 0 && hr === 0) return 'mainhall' // 出生大厅格恒为主厅（挑高、灯亮、安全引入；电梯/古典楼梯保底所在）
-  if (h01(seed, 0x5b20, hk, hr) >= 0.5) return null // ~50% 大厅格（其余为房间街区群）
-  const v = h01(seed, 0x5b21, hk, hr)
-  return v < 0.5 ? 'mainhall' : v < 0.75 ? 'dining' : v < 0.80 ? 'maintenance' : 'beverly'
+  const F = L5_FLOORS[L5_FLOOR]
+  if (h01(seed, 0x5b20, hk, hr) >= F.hallP) return null // 1F ~50% 大厅格（其余为房间街区群）；各楼层见 L5_FLOORS
+  return (['mainhall', 'dining', 'maintenance', 'beverly'] as const)[pick4(h01(seed, 0x5b21, hk, hr), F.halls)]
 }
 // 大厅矩形（内腔，世界瓦片）：自街区 (2hk,2hr) 西北角到街区 (2hk+1,2hr+1) 东南角
 export function l5HallRect(seed: number, hk: number, hr: number) {
@@ -135,6 +165,32 @@ export function l5NestLayout(seed:number,hk:number,hr:number) {
   const r=l5HallRect(seed,hk,hr),x1=r.x0+9,y1=r.y0+11
   return {x0:r.x0,y0:r.y0,x1,y1,doorX:x1+1,doorY:r.y0+6,id:`${hk},${hr}`}
 }
+// [casino] Level 5.1 大门：每局一处——CASINO_DOOR.floor 层上、离出生大厅格 (0,0) 最近（切比雪夫距，同距取 hk、hr 小的）的贝弗莉室（无飞蛾巢）北墙正中。
+export const CASINO_DOOR = { floor: 1, r: 6, halfW: 3 }
+const casinoHallCache = new Map<string, { hk: number; hr: number } | null>()
+export function casinoDoorHall(seed: number, floor = L5_FLOOR): { hk: number; hr: number } | null {
+  if (floor !== CASINO_DOOR.floor) return null
+  const key = `${seed},${floor}`
+  if (casinoHallCache.has(key)) return casinoHallCache.get(key)!
+  const prev = L5_FLOOR; L5_FLOOR = floor
+  let best: { hk: number; hr: number } | null = null
+  for (let d = 1; d <= CASINO_DOOR.r && !best; d++)
+    for (let hk = -d; hk <= d && !best; hk++) for (let hr = -d; hr <= d && !best; hr++) {
+      if (Math.max(Math.abs(hk), Math.abs(hr)) !== d) continue
+      if (l5HallAt(seed, hk, hr) === 'beverly' && !l5NestLayout(seed, hk, hr)) best = { hk, hr }
+    }
+  L5_FLOOR = prev
+  casinoHallCache.set(key, best)
+  return best
+}
+/** 大门所在格（世界瓦片：北墙内侧第一行、厅中线） */
+export function casinoDoorTile(seed: number, floor = L5_FLOOR): { x: number; y: number } | null {
+  const h = casinoDoorHall(seed, floor)
+  if (!h) return null
+  const r = l5HallRect(seed, h.hk, h.hr)
+  return { x: (r.x0 + r.x1) >> 1, y: r.y0 }
+}
+
 // 大厅门洞位（普通厅每侧 2 个，共 8 个；维护区保留北半部 4 个外门；距角 ≥3 格）
 // salt 供 hoteldoor 掷点（与门位绑定，跨 chunk 一致）
 export function l5HallOpenings(seed: number, hk: number, hr: number, hall=l5HallAt(seed,hk,hr)): { x: number; y: number; salt: number }[] {
@@ -146,6 +202,7 @@ export function l5HallOpenings(seed: number, hk: number, hr: number, hall=l5Hall
     { x: x1 + 1, y: y0 + 3, salt: 0x5d36 }, { x: x1 + 1, y: y1 - 3, salt: 0x5d37 }, // 东
   ]
   if(hall==='maintenance')return openings.filter(o=>o.y<(y0+y1)/2)
+  if(hall==='dining')return openings.filter(o=>o.y>y0+10) // [chef] 北面两个、东西两侧靠北的两个门洞会直接通进后场（储藏室 / 冷库）：不开（= chefLayout.CHEF_SERVICE_ROWS）
   const nest=hall==='beverly'?l5NestLayout(seed,hk,hr):null
   return nest?openings.filter(o=>!(o.x<=nest.x1+1&&o.y<=nest.y1+1)):openings
 }
@@ -155,8 +212,8 @@ export function l5BlockBiome(seed: number, k: number, r: number): L5Variant {
   const hall = l5HallAt(seed, k >> 1, r >> 1)
   if (hall) return hall
   const v = h01(seed, 0x5b11, k, r)
-  // Plant rooms now belong exclusively to maintenance complexes.
-  return v < 0.55 ? 'guestroom' : v < 0.7 ? 'lounge' : v < 0.8 ? 'gym' : 'pool'
+  // Plant rooms now belong exclusively to maintenance complexes.（1F 权重 0.55/0.15/0.1/0.2；各楼层见 L5_FLOORS）
+  return (['guestroom', 'lounge', 'gym', 'pool'] as const)[pick4(v, L5_FLOORS[L5_FLOOR].rooms)]
 }
 /** @deprecated 旧街区锅炉片查询；自然街区已无独立锅炉房。改用 l5ServiceLayout。 */
 export function l5BoilerRoot(seed: number, k: number, r: number): boolean {
@@ -283,6 +340,16 @@ export function l5VariantOf(seed: number, cx: number, cy: number): L5Variant {
 
 // ---------- chunk 生成（纯函数：同种子同坐标必一致；GenChunk 契约见 infiniteRegistry）----------
 export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forceVariant?: string): GenChunk {
+  const previousFloor = L5_FLOOR
+  if (def.l5Floor !== undefined) setL5Floor(def.l5Floor)
+  try {
+    return generateHotelChunk(def, seed, cx, cy, forceVariant)
+  } finally {
+    L5_FLOOR = previousFloor
+  }
+}
+
+function generateHotelChunk(def: LevelDef, seed: number, cx: number, cy: number, forceVariant?: string): GenChunk {
   const rng = new RNG(h32(seed, cx, cy, 0x5a5))
   const tiles = new Uint8Array(CS * CS).fill(2)
   const wet = new Uint8Array(CS * CS)
@@ -434,7 +501,11 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     for(let x=ix0+1;x<ix1;x+=roomTint===67?2:3)
       if(x!==icx&&x!==icx+1&&freeRect(x,iy0,1,1))pushStruct('piperack',x,iy0,1,1,true,{l5:1})
     for(let y=iy0+1;y<iy1;y+=roomTint===67?2:4)for(const x of [ix0,ix1])
-      if(!backSet.has(`${x},${y}`)&&freeRect(x,y,1,1))pushStruct('pipes',x,y,1,1,false,{l5:1,axis:'y'})
+      if(!backSet.has(`${x},${y}`)&&freeRect(x,y,1,1))pushStruct('pipes',x,y,1,1,false,{l5:1,axis:'y',...(h01(seed,0x5e30,x,y)<.35?{steam:1,dir:x===ix0?1:-1}:{})}) // 恐怖旅馆 1b：约 35% 管段是会喷蒸汽的阀口
+    for(let y=iy0+1;y<iy1;y+=roomTint===67?2:4)for(const x of [ix0,ix1]){ // [l5tails] 管道下的滴落水洼（约 30%，管段内侧一格）
+      const px=x===ix0?x+1:x-1
+      if(h01(seed,0x5e31,x,y)<.3&&structures.some((q)=>q.kind==='pipes'&&q.x===x&&q.y===y)&&!backSet.has(`${px},${y}`)&&freeRect(px,y,1,1)&&!structures.some((q)=>q.x===px&&q.y===y))pushStruct('l5puddle',px,y,1,1,false,{l5:1})
+    }
     // 熔炉（贴东墙；东北内角常被管架/门前格占用——东墙中部落位，让位则下移一格）
     if (!backSet.has(`${ix1},${icy - 1}`) && !solidAtL(ix1, icy - 1)) pushStruct('furnace', ix1, icy - 1, 1, 1, true)
     else if (!backSet.has(`${ix1},${icy + 1}`) && !solidAtL(ix1, icy + 1)) pushStruct('furnace', ix1, icy + 1, 1, 1, true)
@@ -491,7 +562,7 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
         // 多扇门 + 多个走廊入口并存：每侧第 1 口装门（北恒装/南东西 50%；维修大厅=员工门四侧第 1 口恒装），
         // Staff and ballroom entrances are proper doors; public halls retain open passages.
         const doorSlot = oi % 2 === 0 && (oi === 0 || biome === 'maintenance' || h01(seed, op.salt, hk, hr) < 0.5)
-        const hasDoor = (biome==='maintenance'||biome==='beverly'||doorSlot) && !nearSpawn(op.x, op.y)
+        const hasDoor = (biome==='maintenance'||biome==='beverly'||biome==='dining'||doorSlot) && !nearSpawn(op.x, op.y) // [chef] 餐厅每个门洞都装门（打烊时一起上锁）
         if (hasDoor)
           pushStruct('hoteldoor', op.x, op.y, 1, 1, true, { open: 0, hue: h32(seed, op.salt + 1, hk, hr) % 5, profile:biome, ...(biome==='maintenance'?{staff:1,locked:h01(seed,op.salt+7,hk,hr)<.95?1:0}:{}) })
         pushStruct('ceilingbeam',op.x,op.y,1,1,false,{l5:1,profile:'portal',room:biome,axis:op.x===x0-1||op.x===x1+1?'y':'x'})
@@ -562,7 +633,7 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
         }
         for(let sx=x0+3;sx<x1-2;sx+=4) for(const sy of [y0,y1]) {
           if(Math.abs(sx-bcx)<3||backSet.has(`${sx},${sy}`)||opSet.has(`${sx},${sy===y0?y0-1:y1+1}`))continue
-          if((sx-x0-3)%8===0)pushStruct('bigpainting',sx,sy,1,1,false,{tex:'l5_portrait1.png',pw:1.12,ph:1.4})
+          if((sx-x0-3)%(L5_FLOOR===8?4:8)===0)pushStruct('bigpainting',sx,sy,1,1,false,{tex:'l5_portrait1.png',pw:1.12,ph:1.4,gaze:1,face:h32(seed,0x5e20,sx,sy)%PORTRAIT_FACE_COUNT}) // 恐怖旅馆 1b：会看人的肖像（8F 套房层密度 ×2）
           else pushStruct('photo',sx,sy,1,1,false,{l5:1})
           wallUsed.add(`${sx},${sy}`)
           pushLight(sx,sy+ (sy===y0?1:-1),5,'#ffdfa7',{fixZ:3.5,noFix:1,intensityMul:.55})
@@ -584,6 +655,32 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
         pushLight(bcx, bcy, 13, '#ffe3bd', { fixZ:4.25,noFix:1,intensityMul:2.1 })
         if (!solidAtL(bcx, bcy) && !backSet.has(`${bcx},${bcy}`))
           pushStruct('oddtable', bcx, bcy, 1, 1, true,{l5:1})
+        // 恐怖旅馆 1b：贝弗莉门墙——四面墙每 2 格一扇贴墙门（约 1/6 能推开 → 同楼层随机区域），
+        // 地毯上零星活板门（约 1/4 能掀开），天花板倒挂的门纯装饰。门洞两侧 1 格、角格、已有贴墙装饰让位。
+        {
+          const opN = new Set(hallOpenings.map(o => `${o.x},${o.y}`))
+          const nearOp = (x: number, y: number) => { for (let d = -1; d <= 1; d++) for (const [ox, oy] of [[x + d, y0 - 1], [x + d, y1 + 1], [x0 - 1, y + d], [x1 + 1, y + d]]) if (opN.has(`${ox},${oy}`)) return true; return false }
+          const cz = casinoDoorHall(seed)?.hk === hk && casinoDoorHall(seed)?.hr === hr // [casino] 本厅是 Level 5.1 大门所在
+          if (cz) {
+            for (let x = bcx - CASINO_DOOR.halfW; x <= bcx + CASINO_DOOR.halfW; x++) wallUsed.add(`${x},${y0}`)
+            pushStruct('casinodoor', bcx, y0, 1, 1, false, { l5: 1, casino: 1 })
+            pushLight(bcx, y0 + 2, 9, '#ff5a3c', { fixZ: 3.6, noFix: 1, intensityMul: 1.4 })
+          }
+          const wallDoor = (x: number, y: number, i: number) => {
+            if (backSet.has(`${x},${y}`) || wallUsed.has(`${x},${y}`) || nearOp(x, y) || solidAtL(x, y)) return
+            wallUsed.add(`${x},${y}`)
+            pushStruct('l5walldoor', x, y, 1, 1, false, { l5: 1, bev: 1, go: h01(seed, 0x5e10, x, y) < 1 / 6 ? 1 : 0, hue: (i + h32(seed, 0x5e11, hk, hr)) % 5 })
+          }
+          let i = 0
+          for (let x = x0 + 2; x <= x1 - 2; x += 2) { wallDoor(x, y0, i++); wallDoor(x, y1, i++) }
+          for (let y = y0 + 2; y <= y1 - 2; y += 2) { wallDoor(x0, y, i++); wallDoor(x1, y, i++) }
+          for (let x = x0 + 4; x <= x1 - 4; x += 5) for (let y = y0 + 4; y <= y1 - 4; y += 5) {
+            if (Math.abs(x - bcx) < 3 && Math.abs(y - bcy) < 3) continue
+            const r = h01(seed, 0x5e12, x, y)
+            if (r < 0.22 && !solidAtL(x, y)) pushStruct('l5floordoor', x, y, 1, 1, false, { l5: 1, bev: 1, go: h01(seed, 0x5e13, x, y) < 0.25 ? 1 : 0 })
+            else if (r > 0.7) pushStruct('l5ceildoor', x, y, 1, 1, false, { l5: 1, hue: h32(seed, 0x5e14, x, y) % 5, yaw: h32(seed, 0x5e15, x, y) % 4 })
+          }
+        }
         // 邀请函（原住民准入）：贝弗莉室地毯上 ~30%/厅 散落一封——v55b 起为可交互装饰结构（阅读即弹地标卡可前往）
         if (h01(seed, 0x5c22, hk, hr) < 0.3 && !solidAtL(bcx + 2, bcy + 1))
           pushStruct('invitation', bcx + 2, bcy + 1, 1, 1, false, { outpost: 'originals' })
@@ -625,7 +722,7 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
           carveRectW(op.x,op.y,op.x,op.y);tintRectW(op.x,op.y,op.x,op.y,t)
           pushStruct('hoteldoor',op.x,op.y,1,1,true,{open:0,locked:0,l5:1,profile:'boilerroom',serviceEntry:1})
           pushStruct('ceilingbeam',op.x,op.y,1,1,false,{l5:1,profile:'portal',room:'boilerroom',axis:'x'})
-          furnishBoiler(b,[op],t,i===0)
+          furnishBoiler(b,[op],t,i===0&&L5_FLOOR===0) // [l5tails] 黑门（→L6）只在 B1 锅炉层
         }
         for(let x=x0+2;x<=x1-1;x+=5)for(let y=y0+2;y<=staff.y1-1;y+=5){
           if(x===bcx)continue
@@ -637,11 +734,102 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
         for(const x of [bcx-2,bcx+2])pushStruct('hotelwindow',x,staff.y1,1,1,false,{l5:1,profile:'serviceLift'})
         pushStruct('foldladder',x0,staff.y1,1,1,false,{deg:90})
       } else {
-        // 餐厅：挑高（ceiling=1，任务3）+ 白桌布餐桌阵列 + 吊灯 ×3 + 蓝金中央长毯 + 舞台角（东南角台口两张桌 + 角上烛台；桌子不压角格邻位——防 1 格孤岛）
-        ceilRectW(x0, y0, x1, y1)
-        for (let x = x0 + 3; x <= x1 - 3; x += 5)
-          for (let y = y0 + 3; y <= y1 - 3; y += 5)
-            if (!nearSpawn(x, y) && !backSet.has(`${x},${y}`)&&Math.abs(x-bcx)>2) pushStruct('dtable', x, y, 1, 1, true,{l5:1})
+        // 餐厅：挑高（ceiling=1，任务3）+ 白桌布餐桌阵列 + 吊灯 ×3 + 舞台角（东南角台口两张桌 + 角上烛台；桌子不压角格邻位——防 1 格孤岛）
+        // [chef] 厨师 Entity 800 阶段 3：北面 10 行划为后场（储藏室 / 厨房 / 冷库，摆放见 content/chefLayout），南墙中间加双开正门；
+        //   餐桌换成餐厅专用的白桌布桌（桌面 0.74 = 厨师动画 CHEF_TABLE），部分桌子坐着着迷进食的顾客。
+        const site = chefSiteRect(hk, hr, { x0, y0, x1, y1 })
+        const sy = site ? site.sy : y0 - 1
+        ceilRectW(x0, sy + 1, x1, y1)
+        if (site) {
+          const K = site.kitchen, P = site.pantry, C = site.cold
+          // 后场三间：地面 tint（厨房灰金属 25 / 储藏室深色 24 / 冷库白瓷砖 23），墙：后场南墙 + 两道隔墙
+          tintRectW(K.x0, K.y0, K.x1, K.y1, 25); tintRectW(P.x0, P.y0, P.x1, P.y1, 24); tintRectW(C.x0, C.y0, C.x1, C.y1, 23)
+          wallRectW(x0, sy, x1, sy); wallRectW(K.x0 - 1, y0, K.x0 - 1, sy - 1); wallRectW(K.x1 + 1, y0, K.x1 + 1, sy - 1)
+          for (const d of site.swing) { carveRectW(d.x, d.y, d.x, d.y); tintRectW(d.x, d.y, d.x, d.y, 25) }
+          pushStruct('chefprop', site.swing[0].x, site.swing[0].y, 2, 1, false, { l5: 1, prop: 'swing' })
+          carveRectW(site.pantryDoor.x, site.pantryDoor.y, site.pantryDoor.x, site.pantryDoor.y); tintRectW(site.pantryDoor.x, site.pantryDoor.y, site.pantryDoor.x, site.pantryDoor.y, 24)
+          carveRectW(site.coldDoor.x, site.coldDoor.y, site.coldDoor.x, site.coldDoor.y); tintRectW(site.coldDoor.x, site.coldDoor.y, site.coldDoor.x, site.coldDoor.y, 23)
+          pushStruct('hoteldoor', site.coldDoor.x, site.coldDoor.y, 1, 1, true, { open: 0, locked: 0, l5: 1, profile: 'coldroom', chefCold: 1 })
+          // 正门（双开，两格；营业时敞开不挡路，打烊后厨师在里面绑绳闩门 → chefAI 把它变成实心）
+          carveRectW(site.front.x, site.front.y, site.front.x + 1, site.front.y); tintRectW(site.front.x, site.front.y, site.front.x + 1, site.front.y, 64)
+          pushStruct('chefprop', site.front.x, site.front.y, 2, 1, false, { l5: 1, prop: 'front' })
+          backSet.add(`${site.front.x},${y1}`); backSet.add(`${site.front.x + 1},${y1}`)
+          // 厨房：唯一的燃气灶（2×1，台面 0.90、前沿 = 本行南沿）+ 炖菜大锅 + 挂锅钩；刀墙；备餐台；中岛
+          pushStruct('chefprop', site.stove.x, site.stove.y, site.stove.w, site.stove.h, true, { l5: 1, prop: 'stove' })
+          pushStruct('chefprop', site.knife.x, site.knife.y, 1, 1, false, { l5: 1, prop: 'knives' })
+          pushStruct('chefprop', K.x0, y0 + 1, 1, 4, true, { l5: 1, prop: 'counter', axis: 'y' })
+          if (site.bcx - 4 > K.x0 + 1) pushStruct('chefprop', site.bcx - 4, y0 + 3, 2, 2, true, { l5: 1, prop: 'island' })
+          pushStruct('chefprop', site.bcx - 2, y0, 1, 1, true, { l5: 1, prop: 'sink' })
+          // 储藏室：北墙 / 西墙货架（门前格留空）
+          pushStruct('chefprop', P.x0 + 1, y0, P.x1 - P.x0 - 1, 1, true, { l5: 1, prop: 'shelf', axis: 'x' })
+          pushStruct('chefprop', P.x0, y0 + 2, 1, 5, true, { l5: 1, prop: 'shelf', axis: 'y' })
+          pushStruct('chefprop', P.x0 + 3, y0 + 4, 2, 1, true, { l5: 1, prop: 'sacks' })
+          // 冷库：北墙冻肉架、吊着的肉、东墙铁管 + 手铐（被铐的人背靠东墙坐着）
+          pushStruct('chefprop', C.x0 + 1, y0, C.x1 - C.x0 - 1, 1, true, { l5: 1, prop: 'coldshelf', axis: 'x' })
+          pushStruct('chefprop', C.x0 + 3, y0 + 5, 2, 2, false, { l5: 1, prop: 'carcass' })
+          pushStruct('chefprop', site.pipe.x, site.pipe.y, 1, 1, false, { l5: 1, prop: 'pipe' })
+          // 灯：厨房冷白灯板（亮）/ 储藏室一盏暗暖灯 / 冷库青白冷光（暗）
+          for (let x = K.x0 + 2; x <= K.x1 - 1; x += 4) for (const y of [y0 + 2, y0 + 7]) { pushLight(x, y, 4.2, '#eef2ff', { fixZ: 2.9, noFix: 1, intensityMul: 0.7 }); pushStruct('lightgrid', x, y, 1, 1, false, { l5: 1, profile: 'maintenance' }) }
+          pushLight(P.x0 + 4, y0 + 5, 4, '#e8c890', { fixZ: 2.8, noFix: 1, intensityMul: 0.32 }); pushStruct('lightgrid', P.x0 + 4, y0 + 5, 1, 1, false, { l5: 1, profile: 'boilerroom' })
+          for (const y of [y0 + 2, y0 + 7]) { pushLight(C.x0 + 4, y, 4.5, '#bfe4ff', { fixZ: 2.8, noFix: 1, intensityMul: 0.36 }); pushStruct('lightgrid', C.x0 + 4, y, 1, 1, false, { l5: 1, profile: 'maintenance' }) }
+          // 服务铃台（餐厅西南角——离厨房最远的一侧）
+          pushStruct('chefprop', site.bell.x, site.bell.y, 1, 1, true, { l5: 1, prop: 'bell' })
+          // 天鹅绒壁纸（贴在餐厅四面墙的内沿；纯视觉；长段跨 chunk，按 chunk 裁剪推送，否则起点不在本 chunk 的段整段丢掉）
+          // 门洞处断开：两侧 / 南墙还开着的门（北面与靠北的已封死）+ 正门两格
+          const dH = site.dining, gaps = new Set(hallOpenings.filter((o) => o.y > sy).map((o) => `${o.x},${o.y}`))
+          gaps.add(`${site.front.x},${site.front.y}`); gaps.add(`${site.front.x + 1},${site.front.y}`); for (const d of site.swing) gaps.add(`${d.x},${d.y}`)
+          const paper = (side: 'w' | 'e' | 'n' | 's', a0: number, a1: number, wallAt: (a: number) => [number, number], at: (a: number, n: number) => [number, number, number, number]) => {
+            let st: number | null = null // 世界坐标可以是负数：不能拿 -1 当「没开始」
+            for (let a = a0; a <= a1 + 1; a++) {
+              const open = a > a1 || gaps.has(wallAt(a).join(','))
+              if (!open && st === null) st = a
+              if (open && st !== null) { const [x, y, w, h] = at(st, a - st); pushClipped('chefprop', x, y, w, h, { l5: 1, prop: 'wallpaper', side }); st = null }
+            }
+          }
+          paper('w', dH.y0, dH.y1, (a) => [dH.x0 - 1, a], (a, n) => [dH.x0, a, 1, n])
+          paper('e', dH.y0, dH.y1, (a) => [dH.x1 + 1, a], (a, n) => [dH.x1, a, 1, n])
+          paper('n', dH.x0, dH.x1, (a) => [a, dH.y0 - 1], (a, n) => [a, dH.y0, n, 1])
+          paper('s', dH.x0, dH.x1, (a) => [a, dH.y1 + 1], (a, n) => [a, dH.y1, n, 1])
+          // 档案员遗物：冷库地上（未写完的表单 + 坏掉的胸麦 + 相机 60%）/ 某张餐桌边（拍到他的照片 60%）
+          pushItem('megform', C.x1 - 2, y0 + 7)
+          pushItem('megmic', C.x0 + 2, y0 + 2)
+          if (h01(seed, 0x5c80, hk, hr) < 0.6) pushItem('megcamera', C.x1 - 1, y0 + 5)
+          if (site.tables.length && h01(seed, 0x5c81, hk, hr) < 0.6) { const t = site.tables[h32(seed, 0x5c82, hk, hr) % site.tables.length]; pushItem('chefphoto', t.x, t.y + 1) }
+          // 餐桌：餐厅专用桌（桌面 0.74），约一半坐着两位、两成坐着一位着迷进食的顾客（东西两侧的椅子；南北两侧留给厨师上菜 / 敲桌）
+          for (const t of site.tables) {
+            if (nearSpawn(t.x, t.y) || backSet.has(`${t.x},${t.y}`)) continue
+            const v = h01(seed, 0x5c83, t.x, t.y)
+            const tdata = { l5: 1, diners: v < 0.5 ? 2 : v < 0.7 ? 1 : 0, dish: h32(seed, 0x5c85, t.x, t.y) % 3 }
+            pushStruct('chefprop', t.x, t.y, 1, 1, true, { ...tdata, prop: 'table' }) // 桌椅 + 顾客身体（静态合批）
+            pushStruct('chefprop', t.x, t.y, 1, 1, false, { ...tdata, prop: 'tabledyn' }) // 顾客拿勺的手 + 上桌的那一盘（动态）
+          }
+          // [jazz] 爵士脑 E197 阶段 3：餐厅东北角的舞台（4 × 7，台面 0.45，实心——观众上不去）+ 北沿台阶 + 立式钢琴（台上）+ 观众区地毯
+          //   + 吧台（后场墙下 5 格，台面 1.05）+ 两只高脚凳 + 东北墙角监控探头 + 南墙正门边的演出海报 + 台口顶光（摆放见 content/jazzLayout）
+          {
+            const js = jazzSiteOf(site), St = js.stage, Au = js.aud, Ba = js.bar
+            let spawnHit = false
+            for (let x = St.x0 - 10; x <= St.x1; x++) for (let y = Ba.y0; y <= St.y1; y++) if (nearSpawn(x, y)) spawnHit = true
+            if (!spawnHit) {
+              const jd = { l5: 1, jazz: js.key }
+              pushStruct('jazzprop', St.x0, St.y0, St.x1 - St.x0 + 1, St.y1 - St.y0 + 1, true, { ...jd, prop: 'stage' })
+              pushStruct('jazzprop', Math.floor(js.stepTop.x - 0.8), St.y0 - 1, 2, 1, false, { ...jd, prop: 'steps' })
+              pushStruct('jazzprop', js.piano.x, js.piano.y, 1, 2, false, { ...jd, prop: 'piano', ox: js.piano.ox - js.piano.x, oy: js.piano.oy - js.piano.y })
+              { // 观众区地毯：按 chunk 切块（同 pushClipped），每块记下自己在整块地毯里的偏移（rx / ry）→ 渲染按整块取贴图、只在整块外沿留边
+                const nx0 = Math.max(Au.x0, WX), ny0 = Math.max(Au.y0, WY), nx1 = Math.min(Au.x1, WX + CS - 1), ny1 = Math.min(Au.y1, WY + CS - 1)
+                if (nx1 >= nx0 && ny1 >= ny0) structures.push({ kind: 'jazzprop', x: nx0, y: ny0, w: nx1 - nx0 + 1, h: ny1 - ny0 + 1, solid: false, data: { ...jd, prop: 'rug', rx: nx0 - Au.x0, ry: ny0 - Au.y0, rw: Au.x1 - Au.x0 + 1, rh: Au.y1 - Au.y0 + 1 } })
+              }
+              pushStruct('jazzprop', Ba.x0, Ba.y0, Ba.x1 - Ba.x0 + 1, 1, true, { ...jd, prop: 'bar' })
+              for (const st of js.stools) pushStruct('jazzprop', Math.floor(st.x), Math.floor(st.y), 1, 1, false, { ...jd, prop: 'stool', ox: st.x - Math.floor(st.x), oy: st.y - Math.floor(st.y) })
+              pushStruct('jazzprop', Math.floor(js.cctv.x), Math.floor(js.cctv.y), 1, 1, false, { ...jd, prop: 'cctv', ox: js.cctv.x - Math.floor(js.cctv.x), oy: js.cctv.y - Math.floor(js.cctv.y), z: js.cctv.z, ax: js.audC.x - js.cctv.x, ay: js.audC.y - js.cctv.y })
+              pushStruct('jazzprop', js.poster.x, js.poster.y, 1, 1, false, { ...jd, prop: 'poster' })
+              pushLight(St.x0 + 1, St.y0 + 3, 7, '#ffd08a', { fixZ: 4.6, noFix: 1, intensityMul: 1.1 })
+            }
+          }
+        } else {
+          for (let x = x0 + 3; x <= x1 - 3; x += 5)
+            for (let y = y0 + 3; y <= y1 - 3; y += 5)
+              if (!nearSpawn(x, y) && !backSet.has(`${x},${y}`)&&Math.abs(x-bcx)>2) pushStruct('dtable', x, y, 1, 1, true,{l5:1})
+        }
         for (const [chx, chy] of [[bcx - 9, bcy], [bcx, bcy], [bcx + 9, bcy]] as const) {
           if (!solidAtL(chx, chy)) pushStruct('chandelier', chx, chy, 1, 1, false,{l5:1,profile:'dining'})
           pushLight(chx, chy, 8, '#ffe3b0', { fixZ:4.25,noFix:1,intensityMul:1.5 })
@@ -650,7 +838,7 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
         if (!solidAtL(x1, y1 - 2) && !backSet.has(`${x1},${y1 - 2}`)) pushStruct('table', x1, y1 - 2, 1, 1, true)
         if (!solidAtL(x1, y1) && !backSet.has(`${x1},${y1}`)) pushStruct('candlestand', x1, y1, 1, 1, false)
         for (let x = x0 + 2; x <= x1 - 1; x += 4) // v55（任务8）：餐厅补光加密（挑高不昏暗）
-          for (let y = y0 + 2; y <= y1 - 1; y += 8) {pushLight(x,y,4,'#ffe1b9',{fixZ:5.5,noFix:1,intensityMul:.38});pushStruct('lightgrid',x,y,1,1,false,{l5:1,plain:1})}
+          for (let y = sy + 3; y <= y1 - 1; y += 8) {pushLight(x,y,4,'#ffe1b9',{fixZ:5.5,noFix:1,intensityMul:.38});pushStruct('lightgrid',x,y,1,1,false,{l5:1,plain:1})}
       }
     }
   }
@@ -726,6 +914,11 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
           const by = bedN ? ry0 : ry1 - 1
           if (!nearSpawn(bx, by) && !solidAtL(bx, by) && !solidAtL(bx, by + 1) && !backSet.has(`${bx},${by}`) && !backSet.has(`${bx},${by + 1}`))
             pushStruct('bed', bx, by, 1, 2, true, { l5:1,deg: bedN ? 180 : 0 })
+          // [l5items] O18 留声机：约 3% 客房区（按街区 k,r + 楼层掷点），放在 0 号小间、床对面墙角的一台崭新留声机
+          if (ri === 0 && h01(seed, 0x518, k * 31 + L5_FLOOR, r) < 0.03) {
+            const px = bx === rx1 ? rx0 : rx1, py = bedN ? ry1 : ry0
+            if (!solidAtL(px, py) && !backSet.has(`${px},${py}`)) pushStruct('phonograph', px, py, 1, 1, true, { on: 1, o18: 1 })
+          }
           const dx2 = bedN ? rx1 : rx0, dy2 = bedN ? ry0 : ry1
           if (!solidAtL(dx2, dy2) && !backSet.has(`${dx2},${dy2}`)) pushStruct('dresser', dx2, dy2, 1, 1, true, { l5:1,loot: 1 })
           if(!backSet.has(`${rx1},${ry1}`)&&!solidAtL(rx1,ry1))pushStruct('hotelwindow',rx1,ry1,1,1,false,{l5:1,profile:'guestroom'})
@@ -733,6 +926,7 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
           pushClipped('rug', tx2 - 1, ty2 - 1, 2, 2) // 客房小块红金地毯（床/桌下）
           if (h01(seed, 0x5ec + ri, k, r) < 0.5 && !solidAtL(tx2, ty2) && !backSet.has(`${tx2},${ty2}`)) {
             pushStruct('table', tx2, ty2, 1, 1, true)
+            if (h01(seed, 0x5c50 + ri, k, r) < 0.35) pushStruct('l5rule', tx2, ty2, 1, 1, false, { l5: 1, ontable: 1, wx: tx2, wy: ty2 }) // 1c：桌上的住客须知卡
             if (h01(seed, 0x5ed + ri, k, r) < 0.4 && !solidAtL(tx2 + 1, ty2) && !backSet.has(`${tx2 + 1},${ty2}`))
               pushStruct('loungechair', tx2 + 1, ty2, 1, 1, false, { color: '#7a5a3a' })
           }
@@ -804,6 +998,7 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     if(info.axis!==axis)return // crossings have a single vertical owner
     const plain=info.plain
     if(plain && ((axis==='y'?y:x)%8+8)%8!==2)return
+    if(L5_FLOOR===9 && ((axis==='y'?y:x)%(plain?16:8)+(plain?16:8))%(plain?16:8)!==2)return // [l5tails] 9F 飞蛾层：走廊灯密度 ×0.5
     pushStruct('lightgrid',x,y,1,1,false,{l5:1,plain:plain?1:0,axis})
     pushLight(x,y,plain?3.5:3.8,plain?'#e7dfcd':'#ffe3b2',{fixZ:plain?3.12:2.98,noFix:1,intensityMul:plain?.5:.55})
   }
@@ -832,7 +1027,7 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
   // ---- 出口 ②：年久失修的古典楼梯（oldstairs → Level 4；8×8 超区域 ~55% 宿主 + 出生 chunk 保底 1 部）----
   // 出生 chunk 保底：玩家从 L4 经古典楼梯进 L5 的落点楼梯（engine loadLevel 把出生点放到楼梯 2 格外空旷地板）
   {
-    const oldDef = findExitDef('oldstairs')
+    const oldDef = L5_FLOOR === 1 ? findExitDef('oldstairs') : undefined // 古典楼梯（→L4）只在 1F
     const rx = Math.floor(cx / RS), ry = Math.floor(cy / RS)
     const host = regionHost(seed, rx, ry)
     const hosted = oldDef && host.cx === cx && host.cy === cy && h01(seed, 0x5e82, rx, ry) < 0.55
@@ -889,6 +1084,65 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
       if ((wE && wW) || (wS && wN)) continue // 狭窄贯通位不挂（同 L3/L4 既有约束）
       pushStruct('landmark', WX + x, WY + y, 1, 1, false, { outpost: 'housekeeping', poster: 1, tex: 'l5_notice.png' })
       break
+    }
+  }
+
+  // ---- 恐怖旅馆 1c：走廊住客须知卡（每 chunk 至多 2 张）+ 大堂门（每 16×16 超区域 0.4%）----
+  // 只用 h32 取点，不消耗 rng（保持后续物品分布与改动前一致）
+  {
+    const wallSpot = (salt: number) => {
+      for (let t = 0; t < 40; t++) {
+        const x = 1 + (h32(seed, salt, cx, cy, t) % (CS - 2)), y = 1 + (h32(seed, salt + 1, cx, cy, t) % (CS - 2))
+        if (!isF(x, y) || solidAtL(WX + x, WY + y) || nearSpawn(WX + x, WY + y)) continue
+        if (l5RegionAt(seed, WX + x, WY + y)?.variant != null) continue
+        const wE = !isF(x + 1, y), wW = !isF(x - 1, y), wS = !isF(x, y + 1), wN = !isF(x, y - 1)
+        if (!(wE || wW || wS || wN) || (wE && wW) || (wS && wN)) continue
+        if (structures.some((q) => q.x === WX + x && q.y === WY + y)) continue
+        return { x: WX + x, y: WY + y }
+      }
+      return null
+    }
+    for (let i = 0; i < 2; i++) {
+      if (cx === 0 && cy === 0 && i === 0) { /* 出生 chunk 也放一张（玩家最先读到） */ } else if (h01(seed, 0x5c10 + i, cx, cy) >= 0.45) continue
+      const sp = wallSpot(0x5c20 + i * 2)
+      if (sp) pushStruct('l5rule', sp.x, sp.y, 1, 1, false, { l5: 1, wx: sp.x, wy: sp.y }) // wx/wy：世界坐标（卡面内容按它算，窗口平移不影响）
+    }
+    let lobby = false
+    for (let q = 0; q < 4 && !lobby; q++) if (h01(seed, 0x5c30 + q, cx, cy, getL5Floor()) < 0.004) lobby = true
+    if (lobby && !(cx === 0 && cy === 0)) {
+      const sp = wallSpot(0x5c40)
+      if (sp) pushStruct('l5pocketdoor', sp.x, sp.y, 1, 1, false, { l5: 1, pocket: 'lobby' })
+    }
+  }
+
+  // ---- [l5tails] 走廊陈设：肖像（各层约每 20 m 一幅）、7F 书架化、10F 行李堆 ----
+  // 只用 h32，不消耗 rng；只放竖廊两侧格（外侧是实墙、上下各一格也是实墙 = 不挡房门）
+  {
+    const side = (wx: number, wy: number): 0 | 2 | -1 => { // 0 = 墙在东（东侧格） 2 = 墙在西
+      const fl = (x: number, y: number) => isF(x - WX, y - WY), wl = (x: number, y: number) => inChunk(x, y) && !isF(x - WX, y - WY)
+      if (!inChunk(wx, wy) || !fl(wx, wy) || l5RegionAt(seed, wx, wy)?.variant != null || solidAtL(wx, wy) || nearSpawn(wx, wy)) return -1
+      const c = l5CorridorAt(seed, wx, wy); if (c.axis !== 'y') return -1
+      for (const [dx, w] of [[1, 0], [-1, 2]] as const) {
+        if (!wl(wx + dx, wy) || !wl(wx + dx, wy - 1) || !wl(wx + dx, wy + 1)) continue
+        if (!fl(wx - dx, wy) || solidAtL(wx - dx, wy)) continue
+        if (l5RegionAt(seed, wx, wy - 2)?.variant != null || l5RegionAt(seed, wx, wy + 2)?.variant != null) continue // 远离路口
+        return w
+      }
+      return -1
+    }
+    const taken = (wx: number, wy: number) => structures.some((q) => q.x === wx && q.y === wy)
+    for (let k = kMin; k <= kMax; k++) for (const dxs of [0, 2]) {
+      const wx = l5CorrX(seed, k) + dxs
+      for (let wy = WY; wy < WY + CS; wy++) {
+        const w = side(wx, wy); if (w < 0 || taken(wx, wy)) continue
+        const yy = ((wy % 40) + 40) % 40
+        if (yy === (dxs ? 7 : 27) && L5_FLOOR !== 7) { // 两侧交错，各 40 格一幅 → 沿走廊约每 20 m 一幅 // 走廊肖像（7F 书架层除外）
+          pushStruct('bigpainting', wx, wy, 1, 1, false, { tex: 'l5_portrait1.png', pw: 0.86, ph: 1.08, gaze: 1, corridor: 1, wall: w, face: h32(seed, 0x5e21, wx, wy) % PORTRAIT_FACE_COUNT })
+          continue
+        }
+        if (L5_FLOOR === 7 && dxs === 0 && (yy % 3) !== 1) pushStruct('libshelf', wx, wy, 1, 1, true, { l5: 1, corridor: 1, wall: w }) // 7F 藏书层：走廊书架化
+        else if (L5_FLOOR === 10 && dxs === 2 && h01(seed, 0x5e22, wx, wy) < 0.2) pushStruct('l5luggage', wx, wy, 1, 1, true, { l5: 1, wall: w, v: h32(seed, 0x5e23, wx, wy) % 4 }) // 10F 行李层：行李堆
+      }
     }
   }
 

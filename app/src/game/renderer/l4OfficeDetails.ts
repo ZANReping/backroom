@@ -1,3 +1,4 @@
+import { buildToilet } from './toiletGeometry'
 import * as THREE from 'three'
 import { l4Material } from './l4Materials'
 
@@ -45,10 +46,7 @@ function pantry(g: THREE.Group) {
   box(g,trim,[2.0,.55,.32],[0,1.725,-.22]);for(const x of [-.65,0,.65]){box(g,wall,[.63,.5,.018],[x,1.725,-.047]);box(g,steel,[.10,.018,.02],[x,1.52,-.025])}
 }
 function toilet(g: THREE.Group) {
-  box(g,paper,[.42,.5,.19],[0,.64,-.32]);box(g,steel,[.07,.025,.025],[.12,.78,-.21])
-  const bowl=new THREE.Mesh(new THREE.CylinderGeometry(.235,.13,.32,16),paper);bowl.position.set(0,.25,.06);bowl.scale.z=1.2;bowl.castShadow=bowl.receiveShadow=true;g.add(bowl)
-  const seat=new THREE.Mesh(new THREE.TorusGeometry(.205,.045,6,20),paper);seat.rotation.x=Math.PI/2;seat.scale.y=1.25;seat.position.set(0,.44,.06);seat.castShadow=true;g.add(seat)
-  cyl(g,black,.17,.012,[0,.411,.06],16)
+  g.add(buildToilet({porcelain:paper,inner:paper,seat:paper,metal:steel}))
   box(g,paper,[.43,.1,.34],[.67,.82,-.28]);box(g,steel,[.30,.02,.23],[.67,.875,-.28]);cyl(g,steel,.025,.24,[.82,.97,-.36]);box(g,steel,[.12,.025,.025],[.77,1.08,-.36]);cyl(g,steel,.035,.75,[.67,.4,-.28])
   box(g,black,[.50,.59,.025],[.67,1.42,-.455]);box(g,steel,[.46,.55,.015],[.67,1.42,-.435])
   const roll=cyl(g,paper,.065,.14,[-.42,.78,-.40]);roll.rotation.z=Math.PI/2

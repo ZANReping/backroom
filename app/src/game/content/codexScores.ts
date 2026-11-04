@@ -61,12 +61,19 @@ export const ENTITY_INTEL: Record<string, string> = {
   soilworm: 'E', // 土壤蠕虫
   arms: 'D', // 手臂（Entité 15-FR）：循声出动、挑最近的连通风口、怕光会退——比本能稍多一点
   ferren: 'C', // 费伦
+  maid: 'B', // [maid] 管家：会说话、会警告、会还失物
+  concierge: 'B', // [concierge] 看门人：会搭话、会领路、会收钥匙
   jerry: 'B', // 鹉主杰瑞
   duller: 'C', // 钝人
   skinstealer: 'B', // 窃皮者（拟态成人）
   copierwraith: 'C', // 复印机幽灵
   seated: 'C', // 久坐者
-  bellhop: 'B', // 侍者（假装中立、近身暴起）
+  jazz: 'B', // [jazz] 爵士脑 Entity 197：善意、喜剧、精神影响；听演出回理智，终曲配合装被吸
+  chef: 'A', // [chef] 厨师 Entity 800：只碰看见他的人；敲桌、背身抡锅、冷库限时；铃声 / 偷锅 / 关灶
+  greeter: 'B', // [spokes] 迎宾女郎 Entity 28：心声里有真线索；兔子把人带去员工手里或餐厅
+  windup: 'C', // [spokes] 发条兔
+  beast: 'A', // [beast] 第五层的野兽 Entity 18：交易、余光、画像；违约者会被拖进办公室
+  bellhop: 'B', // [bellhop] 行李员 Entity 135：不说话，只摇铃；会寄存、会送还、会记住你
   mirrorself: 'B', // 镜中人
   mimicry: 'B', // 模仿者（声音诱骗）
   tiny: 'D', // 微小
@@ -260,7 +267,7 @@ export const CECS_HAZARD = new Set(['RAD', 'NRO', 'TXC', 'PYR'])
  *  Chimeric 混合 / Leviathan 巨型 / Itemic 物品型 / Enigmatic 隐秘 */
 export const ENTITY_CECS_CLASS: Record<string, string> = {
   hound: 'Anthropoid', deathmoth: 'Zoophoid', corpserat: 'Zoophoid', pipeworm: 'Zoophoid',
-  soilworm: 'Zoophoid', tiny: 'Zoophoid', camocrawler: 'Zoophoid', ferren: 'Zoophoid', jerry: 'Zoophoid',
+  soilworm: 'Zoophoid', tiny: 'Zoophoid', camocrawler: 'Zoophoid', ferren: 'Zoophoid', jerry: 'Zoophoid', maid: 'Anthropoid', concierge: 'Anthropoid',
   dryshrimp: 'Zoophoid', arachnid: 'Zoophoid', curabitur: 'Zoophoid',
   faceling: 'Anthropoid', duller: 'Anthropoid', skinstealer: 'Anthropoid', bellhop: 'Anthropoid',
   mimicry: 'Anthropoid', seated: 'Anthropoid', wretch: 'Anthropoid', strider: 'Anthropoid',
@@ -280,8 +287,8 @@ export const ENTITY_CECS_CLASS: Record<string, string> = {
 export const ENTITY_CECS: Record<string, string[]> = {
   faceling: ['BNV'], smiler: ['AGR'], hound: ['AGR'], deathmoth: ['AGR', 'HVM'], corpserat: ['NCR', 'AGR'],
   clump: ['AGR'], carrier: ['AGR'], pipeworm: ['AGR'], soilworm: ['AGR'], arms: ['AGR'],
-  ferren: ['BNV'], jerry: ['PSY', 'DMN'], dryshrimp: ['BNV'], arachnid: ['AGR'], duller: ['AGR'], skinstealer: ['AGR'],
-  copierwraith: ['AGR'], seated: ['BNV'], bellhop: ['AGR'],
+  maid: ['AGR'], concierge: ['AGR', 'PSY'], ferren: ['BNV'], jerry: ['PSY', 'DMN'], dryshrimp: ['BNV'], arachnid: ['AGR'], duller: ['AGR'], skinstealer: ['AGR'],
+  copierwraith: ['AGR'], seated: ['BNV'], bellhop: ['BNV'], beast: ['PSY', 'AGR'], greeter: ['BNV', 'PSY'], windup: ['BNV'], chef: ['AGR', 'PSY'], jazz: ['BNV', 'PSY'], // [bellhop] 行李员从不攻击（旧侍者是 AGR）
   mirrorself: ['AGR', 'RLA'], mimicry: ['AGR', 'PSY'], tiny: ['AGR'], thething: ['AGR'],
   wrangler: ['AGR', 'RLA'], camocrawler: ['AGR'], lightguide: ['BNV'], curabitur: ['BNV'], wretch: ['AGR'],
   watcher: ['AGR'], strider: ['AGR'], mangled: ['AGR'], partygoer: ['AGR', 'VRL-A'],

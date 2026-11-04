@@ -60,9 +60,12 @@ export class TradersSceneStream{
   for(const [key,record] of this.groups)if(key!=='@global'&&!chunks.has(key)){this.host.remove(key,record.group,record.models);this.host.retire(record.group);this.groups.delete(key)}
   if(!this.globalReady&&!this.jobs.has('@global'))this.jobs.add({key:'@global',stamp:'',iter:this.build(undefined,'')})
   const visible=tradersVisibleChunks(this.map,engine.player.x,engine.player.y,Math.min(94,this.host.camera.far))
-  const walls=[...chunks.values()].filter(c=>!this.architecture.has(c.key)&&!this.architectureJobs.has(c.key)).sort((a,b)=>Number(visible.has(b.key))-Number(visible.has(a.key))||dist(a,engine.player.x,engine.player.y)-dist(b,engine.player.x,engine.player.y))
+  // Prepare exactly the same readiness set first: adjacent rooms plus every visible wall.
+  // Distant hidden architecture/furniture resumes after entry, with unchanged geometry.
+  const near=(c:TradersChunk)=>dist(c,engine.player.x,engine.player.y)<=24
+  const walls=[...chunks.values()].filter(c=>!this.architecture.has(c.key)&&!this.architectureJobs.has(c.key)&&(!paused||near(c)||visible.has(c.key))).sort((a,b)=>Number(near(b))-Number(near(a))||Number(visible.has(b.key))-Number(visible.has(a.key))||dist(a,engine.player.x,engine.player.y)-dist(b,engine.player.x,engine.player.y))
   for(const c of walls){if(this.architectureJobs.size>=4)break;this.architectureJobs.add({key:c.key,iter:this.buildArchitecture(c)})}
-  const pending=[...chunks.values()].filter(c=>this.architecture.has(c.key)&&(!this.groups.has(c.key)||this.groups.get(c.key)!.stamp!==this.stamps.get(c.key))&&!this.jobs.has(c.key)).sort((a,b)=>dist(a,engine.player.x,engine.player.y)-dist(b,engine.player.x,engine.player.y))
+  const pending=[...chunks.values()].filter(c=>(!paused||near(c))&&this.architecture.has(c.key)&&(!this.groups.has(c.key)||this.groups.get(c.key)!.stamp!==this.stamps.get(c.key))&&!this.jobs.has(c.key)).sort((a,b)=>dist(a,engine.player.x,engine.player.y)-dist(b,engine.player.x,engine.player.y))
   for(const c of pending){if(this.jobs.size>=3)break;this.jobs.add({key:c.key,stamp:this.stamps.get(c.key)!,iter:this.build(c,this.stamps.get(c.key)!)})}
   // Catch up the visible architecture and nearby furniture after a jump. Doubling the
   // normal slice (capped at the 6 ms loading budget) avoids empty scenery while
@@ -71,8 +74,8 @@ export class TradersSceneStream{
   const slice=urgent?Math.min(6,Math.max(.4,budget)*2):Math.max(.4,budget),start=performance.now()
   // Architecture has its own queue: a distant wall never waits for hundreds of
   // parcels, furniture baking or item meshes in an earlier chunk to finish.
-  this.architectureJobs.advance(slice*.65,paused||urgent?1024:160)
-  this.jobs.advance(Math.max(.15,slice-(performance.now()-start)),paused||urgent?1024:160)
+  this.architectureJobs.advance(slice*.65,paused||urgent?4096:160)
+  this.jobs.advance(Math.max(.15,slice-(performance.now()-start)),paused||urgent?4096:160)
  }
  ready(x:number,y:number,reach=24){
   if(!this.globalReady||this.map.traders!.pendingNearNpcs)return false

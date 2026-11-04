@@ -1,5 +1,6 @@
 // 手机（前厅起随身）：装在副手，提供 手电 / 笔记 / 时钟 / 相机 四项功能，独立电量，需在充电处充电。
 // 状态写入 player.phone（随存档）；物品本体是 'phone'（content/items.ts），可装副手或放在背包/快捷栏。
+import { o18ClockOffset } from './l5Objects' // [l5items]
 import type { Engine, PlayerState } from '../engine'
 import { audio } from '../core/audio'
 import { FOYER_ID, foyerRoomAt } from '../world/foyerLayout'
@@ -51,7 +52,7 @@ export function gameClockMinutes(eng: Engine): number {
 }
 export function clockText(eng: Engine, withSec = false): string {
   const t = eng.player.prologueClock ?? 0
-  const m = gameClockMinutes(eng)
+  const m = ((gameClockMinutes(eng) + Math.round(o18ClockOffset(eng) / 60)) % 1440 + 1440) % 1440 // [l5items] O18 房里时钟乱跳
   const hh = String(Math.floor(m / 60)).padStart(2, '0'), mm = String(m % 60).padStart(2, '0')
   return withSec ? `${hh}:${mm}:${String(Math.floor(t % 60)).padStart(2, '0')}` : `${hh}:${mm}`
 }

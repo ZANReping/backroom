@@ -1,6 +1,6 @@
 import type { L11DecorDef } from './l11Decor'
 export type L11PropSurface='metal'|'paint'|'wood'|'rawwood'|'bark'|'concrete'|'glass'|'sealedglass'|'grass'|'tile'|'brick'|'fabric'|'rubber'|'paper'|'porcelain'|'plastic'
-export interface L11PropPart {x:number;y:number;z:number;w:number;h:number;d:number;surface:L11PropSurface;color?:string;shape:'box'|'cylinder'|'sphere'|'ring'|'plane';solid:boolean;rx?:number;ry?:number;rz?:number;taper?:number;arc?:number;profile?:[number,number][];bevel?:number;crown?:number;nose?:number;grain?:'x'|'y'|'z';uvScale?:number;uvOffset?:[number,number];foliage?:'ellipsoid'|'trimmed'}
+export interface L11PropPart {x:number;y:number;z:number;w:number;h:number;d:number;surface:L11PropSurface;color?:string;shape:'box'|'cylinder'|'sphere'|'ring'|'plane';solid:boolean;rx?:number;ry?:number;rz?:number;taper?:number;arc?:number;profile?:[number,number][];latheProfile?:[number,number][];bevel?:number;crown?:number;nose?:number;grain?:'x'|'y'|'z';uvScale?:number;uvOffset?:[number,number];foliage?:'ellipsoid'|'trimmed'}
 /** Coordinates: x/z centred on the footprint, front is -z, y is height above the floor.
  * rx/ry/rz use Three's XYZ Euler convention, shared by rendering and collision. */
 export class L11PropBuilder {

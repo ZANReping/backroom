@@ -1,0 +1,868 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 3402,
+  "cdp": 3403,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:3402/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Fri, 30 Oct 2026 11:25:45 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 249,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 3402,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 113679.04415,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 2.468,
+        "sendEnd": 2.509,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 58.348,
+        "receiveHeadersEnd": 58.467
+      },
+      "responseTime": 1793359545269.116,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l02-props-20261030\\validated-realistic\\qa-1793359532650-52924",
+    "--remote-debugging-port=3403",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 40492,
+    "server": 7528
+  },
+  "appBootMs": 11261.2984,
+  "entryMs": 1621.5126000000018,
+  "firstPlayableMs": 16853.035399999997,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 643,
+      "textures": 146
+    },
+    "frame": {
+      "cpu": 387.79999999701977,
+      "calls": 800,
+      "triangles": 442783
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "propChecks": []
+  },
+  "houseSetup": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      80,
+      82,
+      -2.7
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0.8926770190458493,
+      "pitch": 0.03243669877888874,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 231,
+      "textures": 78
+    },
+    "frame": {
+      "cpu": 5.300000011920929,
+      "calls": 81,
+      "triangles": 180969
+    },
+    "pin": null,
+    "l02": {
+      "t": 127.88310000000011,
+      "stage": 3,
+      "dust": 0.6552585200617473,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 4,
+    "hole": {
+      "id": 1,
+      "open": {
+        "x": 13.2,
+        "y": 15.9,
+        "w": 5.6,
+        "h": 4.2
+      },
+      "house": {
+        "x": 11.899999999999999,
+        "y": 14.6,
+        "w": 8.2,
+        "h": 6.800000000000001
+      },
+      "ramp": {
+        "x": 13.2,
+        "y": 15.9,
+        "w": 5.6,
+        "h": 1.25
+      },
+      "rampDir": "nx",
+      "depth": 2.7,
+      "t0": 125.1,
+      "dropped": true
+    }
+  },
+  "coneClose": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      82.19999999999999,
+      81.55,
+      -2.7
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -0.6794138054078547,
+      "pitch": -0.6722320615881193,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 233,
+      "textures": 78
+    },
+    "frame": {
+      "cpu": 1.5,
+      "calls": 62,
+      "triangles": 168471
+    },
+    "pin": null,
+    "l02": {
+      "t": 128.89149999999935,
+      "stage": 3,
+      "dust": 0.7230608265130117,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 2
+      }
+    },
+    "round5Checks": 4,
+    "fixed": true,
+    "stripes": [
+      {
+        "height": 0.17,
+        "first": "l02-house-props-coneWhite",
+        "distance": 0.3116668638689646
+      },
+      {
+        "height": 0.2,
+        "first": "l02-house-props-coneWhite",
+        "distance": 0.3182186126709041
+      },
+      {
+        "height": 0.29,
+        "first": "l02-house-props-coneWhite",
+        "distance": 0.33787384866298
+      },
+      {
+        "height": 0.32,
+        "first": "l02-house-props-coneWhite",
+        "distance": 0.3444255662238618
+      }
+    ],
+    "camera": [
+      82.19999999999999,
+      -1.1500000000000001,
+      81.55
+    ]
+  },
+  "coneBack": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      82.69999999999999,
+      79.15,
+      -2.7
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -2.6779450445889768,
+      "pitch": -0.8245067185389456,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 235,
+      "textures": 78
+    },
+    "frame": {
+      "cpu": 6.699999988079071,
+      "calls": 74,
+      "triangles": 168675
+    },
+    "pin": null,
+    "l02": {
+      "t": 129.79969999999852,
+      "stage": 3,
+      "dust": 0.6105546166898649,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 4
+      }
+    },
+    "round5Checks": 4,
+    "fixed": true,
+    "stripes": [
+      {
+        "height": 0.17,
+        "first": "l02-house-props-coneWhite",
+        "distance": 0.3116668638689646
+      },
+      {
+        "height": 0.2,
+        "first": "l02-house-props-coneWhite",
+        "distance": 0.3182186126709041
+      },
+      {
+        "height": 0.29,
+        "first": "l02-house-props-coneWhite",
+        "distance": 0.33787384866298
+      },
+      {
+        "height": 0.32,
+        "first": "l02-house-props-coneWhite",
+        "distance": 0.3444255662238618
+      }
+    ]
+  },
+  "lampClose": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      79.69999990463256,
+      81.93999996185303,
+      -2.7
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -4.026659469478405,
+      "pitch": -0.59887710751082,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 267,
+      "textures": 78
+    },
+    "frame": {
+      "cpu": 1.5,
+      "calls": 66,
+      "triangles": 166577
+    },
+    "pin": null,
+    "l02": {
+      "t": 130.73309999999768,
+      "stage": 3,
+      "dust": 0.5274663673775991,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 5
+      }
+    },
+    "round5Checks": 4,
+    "lamp": {
+      "x": 14.599999904632568,
+      "y": 18.839999961853028,
+      "z": -1.199999988079071
+    },
+    "clearance": [
+      0.9020000953674305,
+      0.9899494262262117
+    ],
+    "camera": [
+      79.69999990463256,
+      -1.1500000000000001,
+      81.93999996185303
+    ]
+  },
+  "sinkClose": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      77.55,
+      69.3,
+      0
+    ],
+    "origin": [
+      -128,
+      -128
+    ],
+    "look": {
+      "yaw": -4.08836592740793,
+      "pitch": -0.4265560317424979,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 268,
+      "textures": 85
+    },
+    "frame": {
+      "cpu": 5.5999999940395355,
+      "calls": 105,
+      "triangles": 279665
+    },
+    "pin": null,
+    "l02": {
+      "t": 133.0246999999959,
+      "stage": 3,
+      "dust": 0.18371426272472643,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 7
+      }
+    },
+    "round5Checks": 5,
+    "firstSurfaceHeight": 0.7720000147819519
+  },
+  "toiletClose": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      79.2,
+      69.25,
+      0
+    ],
+    "origin": [
+      -128,
+      -128
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -0.9903981394010242,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 129,
+      "textures": 85
+    },
+    "frame": {
+      "cpu": 7.200000002980232,
+      "calls": 66,
+      "triangles": 179643
+    },
+    "pin": null,
+    "l02": {
+      "t": 1.700099999999991,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 7
+  },
+  "tileSetup": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      75.8,
+      78.4,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -0.4899573262537267,
+      "pitch": 0.6889243882148618,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 202,
+      "textures": 85
+    },
+    "frame": {
+      "cpu": 12.799999997019768,
+      "calls": 97,
+      "triangles": 375923
+    },
+    "pin": null,
+    "l02": {
+      "t": 2.970799999999996,
+      "stage": 0,
+      "dust": 0.20220193066728756,
+      "stopped": true,
+      "stats": {
+        "tiles": 1,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 11,
+    "plenumBatches": 8,
+    "tile": {
+      "x": 12,
+      "y": 12.6,
+      "w": 1.2,
+      "h": 0.6,
+      "t0": 0.06260000000000582
+    }
+  },
+  "entranceSetup": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 8,
+    "player": [
+      77.237,
+      92.5685,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -1.5707963267948966,
+      "pitch": -0.44794209416966174,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 271,
+      "textures": 94
+    },
+    "frame": {
+      "cpu": 2.7999999970197678,
+      "calls": 207,
+      "triangles": 267283
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.5831999999999944,
+      "stage": 0,
+      "dust": 0.2412554627630282,
+      "stopped": true,
+      "stats": {
+        "tiles": 1,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 11
+  },
+  "entranceCone": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 8,
+    "player": [
+      81.5011965778724,
+      93.01419300864666,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0.4499999999999975,
+      "pitch": -0.6465906973148433,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 361,
+      "textures": 95
+    },
+    "frame": {
+      "cpu": 2.4000000059604645,
+      "calls": 170,
+      "triangles": 294605
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.5831999999999944,
+      "stage": 0,
+      "dust": 0.2412554627630282,
+      "stopped": true,
+      "stats": {
+        "tiles": 1,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 11,
+    "kind": "cone",
+    "bounds": {
+      "min": [
+        80.64699999284744,
+        0.0004999999254941927,
+        91.43849999284744
+      ],
+      "max": [
+        81.00700000715256,
+        0.6949999928474426,
+        91.79850000715255
+      ]
+    },
+    "meshes": 3
+  },
+  "entranceSign": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 8,
+    "player": [
+      82.5068953994881,
+      89.45659805910574,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -3.9123889803846925,
+      "pitch": -0.6465906973148468,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 477,
+      "textures": 99
+    },
+    "frame": {
+      "cpu": 2.300000011920929,
+      "calls": 197,
+      "triangles": 247097
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.5831999999999944,
+      "stage": 0,
+      "dust": 0.2412554627630282,
+      "stopped": true,
+      "stats": {
+        "tiles": 1,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 11,
+    "kind": "sign",
+    "bounds": {
+      "min": [
+        81.11660747436814,
+        0.00142210244666785,
+        90.21907837008598
+      ],
+      "max": [
+        81.73739252563185,
+        0.8799999952316284,
+        90.91792162991402
+      ]
+    },
+    "meshes": 3
+  },
+  "entranceBarrier": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 8,
+    "player": [
+      80.5011965778724,
+      89.82280699135335,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -3.5915926535897906,
+      "pitch": -0.6465906973148433,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 477,
+      "textures": 99
+    },
+    "frame": {
+      "cpu": 2.2999999970197678,
+      "calls": 188,
+      "triangles": 238161
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.5831999999999944,
+      "stage": 0,
+      "dust": 0.2412554627630282,
+      "stopped": true,
+      "stats": {
+        "tiles": 1,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 11,
+    "kind": "barricade",
+    "bounds": {
+      "min": [
+        79.20699999523163,
+        0.00014391612785402685,
+        91.02133290147782
+      ],
+      "max": [
+        80.44700000476837,
+        1.0950000001490117,
+        91.41566709852219
+      ]
+    },
+    "meshes": 4
+  },
+  "entranceLamp": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 8,
+    "player": [
+      80.2250629036122,
+      90.34596771236954,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 1.5207963267949043,
+      "pitch": -0.46106363542364875,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 500,
+      "textures": 99
+    },
+    "frame": {
+      "cpu": 2.0999999940395355,
+      "calls": 182,
+      "triangles": 299313
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.5831999999999944,
+      "stage": 0,
+      "dust": 0.2412554627630282,
+      "stopped": true,
+      "stats": {
+        "tiles": 1,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 11,
+    "kind": "worklamp",
+    "bounds": {
+      "min": [
+        78.41450628958675,
+        -0.00023968791023695039,
+        89.93343967060575
+      ],
+      "max": [
+        78.99889111170494,
+        1.4499999960490633,
+        90.49483411562817
+      ]
+    },
+    "meshes": 4
+  },
+  "resources": {
+    "level": 0,
+    "seed": 424242,
+    "checks": 8,
+    "player": [
+      79.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0.8926770190458493,
+      "pitch": 0.03243669877888874,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 283,
+      "textures": 97
+    },
+    "frame": {
+      "cpu": 5.9000000059604645,
+      "calls": 106,
+      "triangles": 164895
+    },
+    "pin": null,
+    "l02": {
+      "t": 127.83740000000056,
+      "stage": 3,
+      "dust": 0.6365338244201746,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 23,
+    "rounds": [
+      {
+        "geometries": 298,
+        "textures": 97
+      },
+      {
+        "geometries": 283,
+        "textures": 97
+      },
+      {
+        "geometries": 283,
+        "textures": 97
+      }
+    ]
+  }
+}

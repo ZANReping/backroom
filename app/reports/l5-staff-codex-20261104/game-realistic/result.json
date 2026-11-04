@@ -1,0 +1,110 @@
+{
+  "seed": 515151.25,
+  "mode": "realistic",
+  "port": 11257,
+  "cdp": 11258,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:11257/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Wed, 04 Nov 2026 13:20:10 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 266,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 11257,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 102795.595235,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.376,
+        "sendEnd": 0.434,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 7.925,
+        "receiveHeadersEnd": 8.036
+      },
+      "responseTime": 1793798410277.345,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l5-staff-codex-20261104\\game-realistic\\qa-1793798389666-55440",
+    "--remote-debugging-port=11258",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 47476,
+    "server": 48532
+  },
+  "appBootMs": 18689.4011,
+  "entryMs": 5033.7961,
+  "firstPlayableMs": 32666.2654,
+  "locked-ledger": true,
+  "ledger": {
+    "stats": {
+      "builds": 7,
+      "renders": 7,
+      "hits": 0,
+      "cached": 7,
+      "bytes": 717532,
+      "queued": 0,
+      "active": null,
+      "studio": true,
+      "memory": {
+        "geometries": 10,
+        "textures": 42
+      }
+    }
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Timeout: entity cards\",\"lineNumber\":10,\"columnNumber\":9,\"scriptId\":\"934\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"waitFor\",\"scriptId\":\"934\",\"url\":\"http://127.0.0.1:11257/verifier/l5-staff-codex-check.ts\",\"lineNumber\":9,\"columnNumber\":8}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Timeout: entity cards\\n    at waitFor (http://127.0.0.1:11257/verifier/l5-staff-codex-check.ts:10:9)\\n    at async Object.entityList (http://127.0.0.1:11257/verifier/l5-staff-codex-check.ts:88:7)\",\"objectId\":\"-3494605299768519354.2.1\"}}",
+  "partial": true,
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 16825.89999999106
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 5\n恐怖酒店\nB5\n磁带\n0/6\n1F · 红金长廊\n100%\n1\n2\n3\n4\n5\n6\n7\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n➤\n你感觉到明显的气流（4m）\n开发者模式\n🛠 开发者模式 · DEV\n▾\n召唤\n状态\n传送\n世界\n信息\n实体\n物品\n装饰物\n搜索实体 / 变种\n自然生成层级\n全部层级\n当前层级\nLevel 0 · 教学关卡\nLevel 1 · 宜居地带\nLevel 2 · 废弃公共带\nLevel 3 · 电站\nLevel 4 · 废弃办公室\nLevel 5 · 恐怖酒店\nLevel 6 · 熄灯\nLevel 7 · 深海恐惧\nLevel 8 · 洞穴系统\nLevel 9 · 郊区\nLevel 10 · 丰裕\nLevel 11 · 不夜城\nLevel 601 · 终末\n其他 / 无自然生成\n47 类实体\n52 个子变种 / 初始状态\n\n在前方 3 米的安全位置召唤。\n\n● 笑魇\nsmiler\n自动 · 按原生成规则\n普通笑魇\n幽影笑魇\n饥饿笑魇\n犬形笑魇\n巨笑魇\n召唤\n● 手臂\narms\n标准形态\n召唤\n● 爆酸者\nburster\n标准形态\n召唤\n● 电弧体\narcwraith\n标准形态\n召唤\n● 人制品售货机\nvendingmachine\n标准形态\n召唤\n● Nguithr'xurh\nnguithr\n标准形态\n召唤\n● 疫疾\nmalady\n标准形态\n召唤\n● 活化的人制品售货机\nvmad\n标准形态\n召唤\n● 钝人\nduller\n标准形态\n召唤\n● 窃皮者\nskinstealer\n自动 · 按原生成规则\n人皮伪装（初始状态）\n温顺真身（初始状态）\n饥饿真身（初始状态）\n召唤\n● 无面灵\nfaceling\n自动 · 按原生成规则\n普通种\n进化种（易怒）\n召唤\n● 复印机幽灵\ncopierwraith\n标准形态\n召唤\n● 久坐者\nseated\n标准形态\n召唤\n● 管家\nmaid\n标准形态\n召唤\n● 看门人\nconcierge\n标准形态\n召唤\n● 行李员\nbellhop\n标准形态\n召唤\n● 厨师\nchef\n标准形态\n召唤\n● 爵士脑\njazz\n标准形态\n召唤\n● 迎宾女郎\ngreeter\n标准形态\n召唤\n● 发条兔\nwindup\n标准形态\n召唤\n● 第五层的野兽\nbeast\n标准形态\n召唤\n● 镜中人\nmirrorself\n标准形态\n召唤\n● 旱虾\ndryshrimp\n标准形态\n召唤\n● 蛛形纲\narachnid\n自动 · 按原生成规则\n洞穴狼蛛\n织网蛛\n跳蛛\n盲眼洞蛛\n群居幼蛛潮\n长脚盲蛛\n水蛛\n极巨蛛\n寡妇毒蛛\n再生蛛\n不死蛛\n抗火蛛\n无氧蛛\n洞蝎\n鞭蝎\n吸附蜱\n螨群\n食草型\n召唤\n● 猎犬\nhound\n自动 · 按原生成规则\n普通猎犬\n中立猎犬\n高智能猎犬\n召唤\n● 肢团\nclump\n自动 · 按原生成规则\n普通肢团\n高智能肢团\n召唤\n● 死亡飞蛾\ndeathmoth\n自动 · 按原生成规则\n雄性\n雌性\n幼虫\n禁卫级\n召唤\n● 运输车\ncarrier\n标准形态\n召唤\n● 管道蠕虫\npipeworm\n标准形态\n召唤\n● 尸鼠\ncorpserat\n自动 · 按原生成规则\n常见尸鼠\n无毛尸鼠\n旅馆尸鼠\n水豚尸鼠\n罗特尼斯尸鼠\n召唤\n● Ferren\nferren\n标准形态\n召唤\n● 鹉主杰瑞\njerry\n标准形态\n召唤\n● 爬菌感染体\ncreeper\n自动 · 按原生成规则\n尸鼠感染体\n蛛形纲感染体\n爬菌人\n召唤\n● 模仿者\nmimicry\n标准形态\n召唤\n● 小小\ntiny\n标准形态\n召唤\n● 7 层之物\nthething\n标准形态\n召唤\n● 牧蛇\nwrangler\n自动 · 按原生成规则\n雄性牧蛇\n雌性牧蛇\n牧蛇幼体\n召唤\n● 迷彩爬行者\ncamocrawler\n标准形态\n召唤\n● 微光向导\nlightguide\n标准形态\n召唤\n● 受眷鸟\ncurabitur\n标准形态\n召唤\n● 悲尸\nwretch\n自动 · 按原生成规则\n蹒跚型\n疾行型\n有智型\n突变型\n召唤\n● 观察者\nwatcher\n标准形态\n召唤\n● 挺进者\nstrider\n标准形态\n召唤\n● 残缺者\nmangled\n标准形态\n"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

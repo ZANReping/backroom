@@ -29,6 +29,7 @@ export const L11: LevelDef = {
   items: [
     { type: 'presses', w: 14 },
     { type: 'pamphlet', w: 10 },
+    { type: 'spokesposter', w: 4 }, // [spokes] 迎宾女郎投递洞 B → Level 11：读了指向 L5
     { type: 'citywater', w: 14 },
   ],
   itemCount: [0, 0],

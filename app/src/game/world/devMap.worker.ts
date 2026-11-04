@@ -30,7 +30,7 @@ function pump(id:number){
    continue
   }
   if(job.def.id===7){self.postMessage({id:job.id,cell:l7Preview(job.seed,at.cx,at.cy)});continue}
-  const key=JSON.stringify([job.def.id,job.seed,at,job.state?.revisions[`${at.cx},${at.cy}`]??0,job.state?.redProgress])
+  const key=JSON.stringify([job.def.id,job.def.l5Floor,job.seed,at,job.state?.revisions[`${at.cx},${at.cy}`]??0,job.state?.redProgress])
   let raw=cache.get(key)
   if(!raw){raw=job.def.id===0?genL0Architecture(job.def,job.seed,at.cx,at.cy,undefined,job.state?.revisions[`${at.cx},${at.cy}`]??0,job.state?.redProgress):infiniteImplFor(job.def.id).genRaw(job.def,job.seed,at.cx,at.cy);cache.set(key,raw);if(cache.size>256)cache.delete(cache.keys().next().value!)}
   const tiles=job.floor<0?raw.dn:job.floor===1?raw.up:job.floor===2?raw.up2:raw.tiles

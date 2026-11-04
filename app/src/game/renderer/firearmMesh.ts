@@ -7,6 +7,7 @@
 // 地面掉落 / 第三人称共用同一模型（buildFirearmGroundMesh）。
 import * as THREE from 'three'
 import { litMaterial } from './shared'
+import { ammoBoxGeometry, ammoBoxTexture } from './ammoBoxMesh'
 import { AMMO, type AmmoType, type Chamber, type GunType } from '../content/firearms'
 import { buildLeverRifle, buildRevolver, buildMusket, buildTrapdoor, buildCartMesh as buildMetalCart } from './firearmGuns'
 
@@ -203,7 +204,7 @@ export function buildShellMesh(ammo: AmmoType, spent = false): THREE.Group {
   // 壳口：未击发 = 六瓣星形卷口（平面）；已击发 = 张开的空口
   const capR = spent ? SHELL.r * 1.04 : SHELL.r * .985
   if (!spent) {
-    const cap = new THREE.CircleGeometry(capR, 6); cap.translate(0, 0, -SHELL.len + 0.0005); cap.rotateY(Math.PI)
+    const cap = new THREE.CircleGeometry(capR, 6); cap.rotateY(Math.PI); cap.translate(0, 0, -SHELL.len + 0.0005) // 先翻面再移到壳口（此前顺序反了，卷口片落在底缘后方 +len 处悬空）
     g.add(mesh(cap, litMaterial({ color: AMMO[ammo].hull, roughness: .7 })))
   } else {
     const ins = cyl(capR * .9, capR * .9, 0.03, 16, ); ins.rotateX(-Math.PI / 2); ins.translate(0, 0, -SHELL.len + 0.015)
@@ -422,14 +423,15 @@ export function buildFirearmGroundMesh(type: GunType): THREE.Group {
 /** 地面弹药：一小盒（纸盒 + 露出几发） */
 export function buildAmmoGroundMesh(type: AmmoType): THREE.Group {
   const g = new THREE.Group(), a = AMMO[type]
-  const col: Record<AmmoType, string> = { shell_clump: '#c9a23a', shell_buck: '#8e3a2a', shell_bird: '#4b6a40', cart_4440: '#5a6a7a', cart_paper: '#b8a888', cart_4570: '#6a5a46' }
-  const box = litMaterial({ color: col[type], roughness: .8 })
+  // 印刷纸盒：正/背面标签（弹种、口径、鎏金兵械库），其余面纸板色条（ammoBoxMesh）
+  const box = litMaterial({ color: '#ffffff', map: ammoBoxTexture(type), roughness: .8 })
   const big = a.cal === '12ga'
-  const b = new THREE.BoxGeometry(big ? 0.075 : 0.06, big ? 0.03 : 0.022, big ? 0.05 : 0.04); b.translate(0, big ? 0.015 : 0.011, 0)
+  const b = ammoBoxGeometry(big ? 0.075 : 0.06, big ? 0.03 : 0.022, big ? 0.05 : 0.04); b.translate(0, big ? 0.015 : 0.011, 0)
   g.add(mesh(b, box))
   for (let i = 0; i < 3; i++) {
     const s = buildCartMesh(type)
-    s.rotation.set(-Math.PI / 2, 0, 0); s.position.set((-1 + i) * (big ? 0.0235 : 0.015), big ? 0.03 : 0.022, 0.006)
+    // 弹头 / 卷口朝上（-Z → +Y）立在盒里，底缘离盒底 4 mm，上半截露出盒顶（此前 -π/2 让弹体从盒底穿出去）
+    s.rotation.set(Math.PI / 2, 0, 0); s.position.set((-1 + i) * (big ? 0.0235 : 0.015), 0.004, 0.006)
     g.add(s)
   }
   return g

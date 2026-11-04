@@ -1,0 +1,257 @@
+{
+  "seed": 515151.25,
+  "mode": "realistic",
+  "port": 10221,
+  "cdp": 10222,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:10221/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Wed, 04 Nov 2026 08:22:10 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 306,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 10221,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 84918.748685,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.563,
+        "sendEnd": 0.598,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 84.264,
+        "receiveHeadersEnd": 84.414
+      },
+      "responseTime": 1793780530810.857,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l5-full-import-20261104\\game-realistic\\qa-1793780506959-63640",
+    "--remote-debugging-port=10222",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 45908,
+    "server": 44924
+  },
+  "appBootMs": 16015.4655,
+  "entryMs": 3855.191199999994,
+  "firstPlayableMs": 28256.867100000003,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 5,
+    "point": {
+      "x": 15.5,
+      "y": 15.5,
+      "z": 0,
+      "seed": 515151.25,
+      "floor": 1
+    },
+    "checks": [],
+    "draws": 1,
+    "triangles": 1
+  },
+  "one": {
+    "level": 5,
+    "point": {
+      "x": 15.5,
+      "y": 15.5,
+      "z": 0,
+      "seed": 515151.25,
+      "floor": 1
+    },
+    "checks": [
+      "Correct loaded hotel floor 1",
+      "Streamed tiles match floor-specific generation 1",
+      "L5 minimap rendered 1"
+    ],
+    "draws": 1,
+    "triangles": 1
+  },
+  "six": {
+    "level": 5,
+    "point": {
+      "x": -61.5,
+      "y": -23.5,
+      "z": 0,
+      "seed": 586985,
+      "floor": 6
+    },
+    "checks": [
+      "Correct loaded hotel floor 1",
+      "Streamed tiles match floor-specific generation 1",
+      "L5 minimap rendered 1",
+      "Correct loaded hotel floor 6",
+      "Streamed tiles match floor-specific generation 6",
+      "L5 minimap rendered 6"
+    ],
+    "draws": 1,
+    "triangles": 1
+  },
+  "outpostReturn": {
+    "level": 5,
+    "point": {
+      "x": -61.5,
+      "y": -23.5,
+      "z": 0,
+      "seed": 586985,
+      "floor": 6
+    },
+    "checks": [
+      "Correct loaded hotel floor 1",
+      "Streamed tiles match floor-specific generation 1",
+      "L5 minimap rendered 1",
+      "Correct loaded hotel floor 6",
+      "Streamed tiles match floor-specific generation 6",
+      "L5 minimap rendered 6",
+      "Enter outpost from 6F",
+      "Returns to same hotel floor and seed",
+      "Returns to same entrance coordinates",
+      "Return collision clear"
+    ],
+    "draws": 1,
+    "triangles": 1
+  },
+  "basement": {
+    "level": 5,
+    "point": {
+      "x": -62.5,
+      "y": -62.5,
+      "z": 0,
+      "seed": 539471,
+      "floor": 0
+    },
+    "checks": [
+      "Correct loaded hotel floor 1",
+      "Streamed tiles match floor-specific generation 1",
+      "L5 minimap rendered 1",
+      "Correct loaded hotel floor 6",
+      "Streamed tiles match floor-specific generation 6",
+      "L5 minimap rendered 6",
+      "Enter outpost from 6F",
+      "Returns to same hotel floor and seed",
+      "Returns to same entrance coordinates",
+      "Return collision clear",
+      "Correct loaded hotel floor 0",
+      "Streamed tiles match floor-specific generation 0",
+      "L5 minimap rendered 0"
+    ],
+    "draws": 1,
+    "triangles": 1
+  },
+  "four": {
+    "level": 5,
+    "point": {
+      "x": 15.5,
+      "y": 18.5,
+      "z": 0,
+      "seed": 571147,
+      "floor": 4
+    },
+    "checks": [
+      "Correct loaded hotel floor 1",
+      "Streamed tiles match floor-specific generation 1",
+      "L5 minimap rendered 1",
+      "Correct loaded hotel floor 6",
+      "Streamed tiles match floor-specific generation 6",
+      "L5 minimap rendered 6",
+      "Enter outpost from 6F",
+      "Returns to same hotel floor and seed",
+      "Returns to same entrance coordinates",
+      "Return collision clear",
+      "Correct loaded hotel floor 0",
+      "Streamed tiles match floor-specific generation 0",
+      "L5 minimap rendered 0",
+      "Correct loaded hotel floor 4",
+      "Streamed tiles match floor-specific generation 4",
+      "L5 minimap rendered 4"
+    ],
+    "draws": 1,
+    "triangles": 1
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Generated casino door on 4F\",\"lineNumber\":14,\"columnNumber\":23,\"scriptId\":\"931\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"ok\",\"scriptId\":\"931\",\"url\":\"http://127.0.0.1:10221/verifier/l5-full-import-game.ts\",\"lineNumber\":13,\"columnNumber\":22},{\"functionName\":\"casinoDoor\",\"scriptId\":\"931\",\"url\":\"http://127.0.0.1:10221/verifier/l5-full-import-game.ts\",\"lineNumber\":103,\"columnNumber\":6},{\"functionName\":\"\",\"scriptId\":\"954\",\"url\":\"\",\"lineNumber\":0,\"columnNumber\":9}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Generated casino door on 4F\\n    at ok (http://127.0.0.1:10221/verifier/l5-full-import-game.ts:14:23)\\n    at Object.casinoDoor (http://127.0.0.1:10221/verifier/l5-full-import-game.ts:104:7)\\n    at <anonymous>:1:10\",\"objectId\":\"6600059886761396976.2.1\"}}",
+  "partial": {
+    "level": 5,
+    "point": {
+      "x": 15.5,
+      "y": 18.5,
+      "z": 0,
+      "seed": 571147,
+      "floor": 4
+    },
+    "checks": [
+      "Correct loaded hotel floor 1",
+      "Streamed tiles match floor-specific generation 1",
+      "L5 minimap rendered 1",
+      "Correct loaded hotel floor 6",
+      "Streamed tiles match floor-specific generation 6",
+      "L5 minimap rendered 6",
+      "Enter outpost from 6F",
+      "Returns to same hotel floor and seed",
+      "Returns to same entrance coordinates",
+      "Return collision clear",
+      "Correct loaded hotel floor 0",
+      "Streamed tiles match floor-specific generation 0",
+      "L5 minimap rendered 0",
+      "Correct loaded hotel floor 4",
+      "Streamed tiles match floor-specific generation 4",
+      "L5 minimap rendered 4"
+    ],
+    "draws": 1,
+    "triangles": 1
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 14044.59999999404
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 5\n恐怖酒店\nB5\n磁带\n0/6\n4F · 红金长廊\n100%\nLevel 5「恐怖酒店」\nSurvival Difficulty: Class 2 · M.E.G. Outpost「Housekeeping」驻扎\n入口：古典楼梯底部\n出口线索：电梯井在等两枚保险丝。\n1\n2\n3\n4\n5\n6\n7\n空格\n跳跃\nC\n蹲伏\nF\n手电\n左Alt\n取出主手\n➤\n你感觉到明显的气流（1m）\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

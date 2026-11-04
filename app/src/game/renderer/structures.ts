@@ -1,4 +1,13 @@
+import { buildToilet } from './toiletGeometry'
 import { l1PlanTile } from '../world/l1Plan'
+import { buildCasinoMarquee } from './casinoScene' // [casino]
+import { buildSpokesProp } from './spokesRender' // [spokes]
+import { buildChefProp } from './chefRender' // [chef]
+import { buildJazzProp } from './jazzRender' // [jazz]
+import { buildNotice, buildPocketDoor, registerLobbyDoor } from './l5Notice'
+import { ruleCardAt } from '../content/l5Rules'
+import { getL5Floor } from '../world/infiniteL5'
+import { buildL5Portrait } from './l5Portrait'
 import { buildRemodelDoor } from './remodelSites'
 import { factionSignTexture, signStyleFor, highVoltageTexture, type SignStyle } from './factionSigns'
 import {isAlphaKind} from '../content/alphaDecor'
@@ -14,6 +23,7 @@ import {buildTradeDecor} from './tradeMeshes'
 import { buildSettlementStation, buildSettlementBoard } from './settlementMeshes'
 // 结构/出口低模（按 StructKind 建造，含可动盖板/门铰链 userData 约定）
 import * as THREE from 'three'
+import { buildPhonograph } from './phonographModel' // [l5items v2]
 import { buildFerrenNestMesh, buildFerrenBowlMesh, buildFerrenCageMesh } from './ferrenMesh'
 import { FERREN_RENDER } from './ferrenRender' // [ferren] 阶段 3：雪貂笼的窝与食盆
 import { buildTarWriting } from './tarWriting'
@@ -1224,6 +1234,11 @@ function windowHost(s:Structure,model:THREE.Object3D,level:number):THREE.Object3
   return root
 }
 export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: number): THREE.Object3D | null {
+  if (s.kind === 'jazzprop') return buildJazzProp(s) // [jazz] 餐厅舞台 / 台阶 / 立式钢琴 / 观众区地毯 / 吧台 / 高脚凳 / 监控探头 / 演出海报
+  if (s.kind === 'chefprop') return buildChefProp(s) // [chef] 餐厅后场 / 餐厅：燃气灶 / 刀墙 / 铁管手铐 / 弹簧门 / 正门 / 服务铃 / 餐桌与顾客（模型已摆在世界坐标；结构 = 碰撞）
+  if (s.kind === 'casinoprop') return null // [casino] 赌场碰撞代理：模型由 renderer/casinoScene 统一构建
+  if (s.kind === 'casinodoor') { const mq = buildCasinoMarquee(); mq.group.position.set(s.x + 0.5, 0, s.y); mq.group.userData.casinoUpdate = mq.update; return mq.group } // [casino] L5 贝弗莉室北墙的 TH 跑马灯大门（门面贴墙内表面 y = s.y、朝南）
+  if (s.kind === 'spokesprop') return buildSpokesProp(s) // [spokes] 迎宾女郎办公室：书桌 / 皮椅 / 铭牌 / 收音机 / 北墙投递洞（模型已摆在世界坐标；结构 = 碰撞）
   if (s.kind === 'foyerprop') return null // 前厅：模型由 renderer/foyerHome.ts 统一构建（结构仅作碰撞代理）
   if(_def.id===0){const furniture=buildL0Furniture(s);if(furniture)return furniture}
   if(isAlphaKind(s.kind))return m.settlement?.blueprint.id==='alpha'?null:buildAlphaDecor(s)
@@ -5503,6 +5518,15 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       const tex = (s.data?.tex as string | undefined) ?? 'l3_art_angel.png'
       const pw = Math.min(3.2, Math.max(0.8, (s.data?.pw as number | undefined) ?? 1.8))
       const ph = Math.min(2.6, Math.max(0.8, (s.data?.ph as number | undefined) ?? 1.3))
+      if ((_def.id === 5 || _def.id === 117) && s.data?.gaze) { // 117：野兽办公室的画像
+        // 恐怖旅馆 1b：会看人的肖像（程序化油画 + 独立瞳孔；renderer.updateStructs 每帧对准镜头）
+        const por = buildL5Portrait(Number(s.data.face ?? 0), pw, ph, !!s.data.flipped)
+        por.position.y = Math.min(H - ph / 2 - 0.15, 1.05 + ph / 2)
+        grp.add(por)
+        mountOnWall(por, grp, s, m)
+        grp.userData.portraitRig = por
+        break
+      }
       const pcy = Math.min(H - ph / 2 - 0.1, 0.9 + ph / 2) // 底边 ~0.9m，且不超出墙顶
       const inner = new THREE.Group()
       grp.add(inner)
@@ -5514,6 +5538,75 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       panel.position.set(0, pcy, 0.021)
       inner.add(panel)
       mountOnWall(inner, grp, s, m)
+      break
+    }
+    case 'l5walldoor': case 'l5ceildoor': {
+      // 恐怖旅馆 1b：贝弗莉门墙——贴墙的整扇门（框 + 门板 + 黄铜把手 + 门牌）；l5ceildoor 同一扇门倒挂在天花板上
+      const hues = ['#5a1e1c', '#23382c', '#d8cdb4', '#4a3424', '#1c1a1a']
+      const panelC = hues[Number(s.data?.hue ?? 0) % hues.length]
+      const door = new THREE.Group()
+      door.add(box(1.02, 2.2, 0.06, '#2a1a10', 0, 1.1, 0)) // 门框
+      door.add(box(0.86, 2.08, 0.05, panelC, 0, 1.06, 0.03))
+      for (const yy of [0.55, 1.5]) door.add(box(0.62, yy > 1 ? 0.8 : 0.62, 0.012, panelC === '#d8cdb4' ? '#b9ab8c' : '#2a1a12', 0, yy, 0.058))
+      door.add(box(0.05, 0.16, 0.02, '#c9a24a', 0.33, 1.02, 0.07))
+      door.add(box(0.06, 0.06, 0.06, '#e2bd62', 0.33, 1.04, 0.1))
+      door.add(box(0.2, 0.08, 0.008, '#c9a24a', 0, 1.86, 0.06))
+      if (s.kind === 'l5walldoor') { door.position.y = 0; grp.add(door); mountOnWall(door, grp, s, m, 0.46) }
+      else { door.rotation.x = Math.PI / 2; door.position.set(0, CH - 0.07, -1.1); const piv = new THREE.Group(); piv.add(door); piv.rotation.y = Number(s.data?.yaw ?? 0) * Math.PI / 2; grp.add(piv) } // 倒挂：门面朝下
+      break
+    }
+    case 'l5rule': {
+      // 恐怖旅馆 1c：住客须知卡——卡面即该位置那张卡的真实内容
+      const inf = m.inf
+      const card = ruleCardAt(inf?.seed ?? 0, inf?.l5Floor ?? getL5Floor(), s.data?.wx !== undefined ? Number(s.data.wx) : Math.floor(s.x + (inf?.ox ?? 0)), s.data?.wy !== undefined ? Number(s.data.wy) : Math.floor(s.y + (inf?.oy ?? 0)))
+      const g = buildNotice(card, !!s.data?.ontable)
+      grp.add(g)
+      if (!s.data?.ontable) mountOnWall(g, grp, s, m, 0.43) // 离墙 7 cm，避开墙上的壁柱线脚
+      break
+    }
+    case 'l5pocketdoor': {
+      const door = buildPocketDoor(s.data?.pocket === 'lobby' ? 'lobby' : 'beast')
+      grp.add(door); mountOnWall(door, grp, s, m, 0.45)
+      if (s.data?.pocket === 'lobby') registerLobbyDoor(door, `${s.x + (m.inf?.ox ?? 0)},${s.y + (m.inf?.oy ?? 0)}`) // 1d：不被注视时才出现
+      break
+    }
+    case 'l5puddle': { // [l5tails] 锅炉房管道下的滴落水洼：不规则深色水面（低粗糙度、微反光）+ 湿边；喝过后只剩湿印
+      const drunk = !!s.data?.drunk, k = (h: number) => (((s.x * 73856093) ^ (s.y * 19349663) ^ h) >>> 0) % 1000 / 1000
+      const blob = (r: number, n: number, sd: number) => { const sh = new THREE.Shape(); for (let i = 0; i <= n; i++) { const a = (i / n) * Math.PI * 2, rr = r * (0.72 + 0.28 * k(sd + i * 7)); const x = Math.cos(a) * rr, y = Math.sin(a) * rr * 0.78; if (i) sh.lineTo(x, y); else sh.moveTo(x, y) } return new THREE.ShapeGeometry(sh) }
+      const wet = new THREE.Mesh(blob(0.42, 14, 11), new THREE.MeshStandardMaterial({ color: '#1c1712', roughness: 0.55, transparent: true, opacity: 0.55, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -1 }))
+      wet.rotation.x = -Math.PI / 2; wet.position.y = 0.004; grp.add(wet)
+      if (!drunk) {
+        const water = new THREE.Mesh(blob(0.32, 14, 29), new THREE.MeshStandardMaterial({ color: '#2e2a20', roughness: 0.06, metalness: 0.2, transparent: true, opacity: 0.85, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 }))
+        water.rotation.x = -Math.PI / 2; water.position.y = 0.008; water.name = 'puddleWater'; grp.add(water)
+      }
+      grp.userData.puddle = 1
+      break
+    }
+    case 'l5luggage': { // [l5tails] 10F 行李层：叠放的旧皮箱 + 帽盒 + 行李牌（贴墙一侧）
+      const v = Number(s.data?.v ?? 0), cols = ['#5a3a26', '#3f2e22', '#6b4a2c', '#2f2a26'], trim = '#c9a24a'
+      const stack = [[0.72, 0.24, 0.46], [0.6, 0.2, 0.4], [0.46, 0.18, 0.32]].slice(0, 2 + (v % 2))
+      let y = 0
+      stack.forEach(([w, h, d], i) => {
+        const c = cols[(v + i) % 4], rot = ((v * 37 + i * 53) % 9 - 4) * 0.04
+        const b = box(w, h, d, c, 0, y + h / 2, 0); b.rotation.y = rot; grp.add(b)
+        for (const px of [-w * 0.3, w * 0.3]) { const st = box(0.05, h + 0.01, d + 0.01, '#2a1d14', px, y + h / 2, 0); st.rotation.y = rot; grp.add(st) }
+        const hd = box(0.16, 0.035, 0.04, '#2a1d14', 0, y + h + 0.018, 0); hd.rotation.y = rot; grp.add(hd)
+        const lk = box(0.05, 0.04, 0.012, trim, w * 0.12, y + h * 0.6, d / 2 + 0.006); lk.rotation.y = rot; grp.add(lk)
+        y += h
+      })
+      if (v >= 2) { const hb = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.2, 18), new THREE.MeshLambertMaterial({ color: v === 2 ? '#7a2c2c' : '#2c4a5a' })); hb.position.set(0.05, y + 0.1, 0.02); grp.add(hb); grp.add(box(0.36, 0.012, 0.36, '#c9a24a', 0.05, y + 0.2, 0.02)) }
+      const tag = box(0.06, 0.09, 0.004, '#efe2c0', -0.3, 0.16, 0.24); tag.rotation.z = 0.3; grp.add(tag)
+      const D = [[1, 0], [0, 1], [-1, 0], [0, -1]][Number(s.data?.wall ?? 0) & 3]
+      grp.children.forEach((c) => { c.position.x += D[0] * 0.18; c.position.z += D[1] * 0.18 })
+      break
+    }
+    case 'l5floordoor': {
+      // 地毯上的活板门：木框 + 门板 + 铜拉环（与地面齐平略高 1 cm）
+      grp.add(box(0.96, 0.02, 0.96, '#2a1a10', 0, 0.01, 0))
+      grp.add(box(0.84, 0.024, 0.84, '#4a2e1c', 0, 0.014, 0))
+      for (const x of [-0.21, 0.21]) grp.add(box(0.03, 0.026, 0.8, '#3a2214', x, 0.016, 0))
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.01, 6, 16), new THREE.MeshLambertMaterial({ color: '#c9a24a' }))
+      ring.rotation.x = Math.PI / 2; ring.position.set(0, 0.03, 0.3); grp.add(ring)
       break
     }
     case 'stainedglass': {
@@ -6050,56 +6143,12 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
     }
     // ===================== v54：Level 5「恐怖酒店」无限化 =====================
     case 'phonograph': {
-      // 留声机（L5 休息室；v55 深化：收分木柜座 + 黑胶唱盘[持续旋转，updateStructs 驱动] +
-      // 唱臂 + 曲柄 + 黄铜大喇叭[锥形多节]；data.off=1 时停转停播[E 交互切换]）
-      const wood = '#4a3226', woodD = '#38241a', brass = '#b8924a', brassD = '#8a6d2e'
-      grp.add(box(0.6, 0.6, 0.5, wood, 0, 0.3, 0)) // 木柜座
-      grp.add(box(0.64, 0.06, 0.54, woodD, 0, 0.06, 0)) // 底座踢脚
-      grp.add(box(0.56, 0.04, 0.46, woodD, 0, 0.62, 0)) // 顶板
-      grp.add(box(0.5, 0.03, 0.4, brassD, 0, 0.645, 0)) // 机芯金属衬板
-      // 唱盘组（旋转件：userData.spin——黑胶唱片 + 中心轴 + 标签）
-      const spin = new THREE.Group()
-      spin.position.set(-0.08, 0.67, 0)
-      spin.add(cyl(0.17, 0.17, 0.025, '#1a1a1c', 0, 0, 0, 20)) // 黑胶唱片
-      spin.add(cyl(0.05, 0.05, 0.028, '#a03a3a', 0, 0.002, 0, 12)) // 唱片标签
-      spin.add(cyl(0.012, 0.012, 0.06, brass, 0, 0.02, 0, 6)) // 中心轴
-      spin.add(box(0.3, 0.004, 0.02, '#2a2a2e', 0.02, 0.014, 0)) // 唱片纹（旋转可辨）
-      grp.add(spin)
-      grp.userData.spin = spin
-      // 唱臂（S 形近似：立柱 + 横臂 + 唱头）
-      grp.add(cyl(0.02, 0.025, 0.12, brass, 0.18, 0.72, -0.16, 8))
-      const arm = box(0.02, 0.02, 0.3, brass, 0.1, 0.76, -0.05)
-      arm.rotation.y = 0.5
-      grp.add(arm)
-      grp.add(box(0.045, 0.03, 0.05, brassD, -0.03, 0.745, 0.03)) // 唱头（搭在盘缘）
-      // 曲柄（侧面摇把）
-      grp.add(cyl(0.015, 0.015, 0.1, brassD, 0.31, 0.4, 0.1, 6).rotateZ(Math.PI / 2))
-      grp.add(box(0.02, 0.1, 0.02, wood, 0.37, 0.35, 0.1))
-      grp.add(cyl(0.018, 0.018, 0.05, woodD, 0.37, 0.28, 0.1, 6))
-      // 黄铜大喇叭（v55d 重做：4 段圆台沿「前+上」轴堆叠成整体闭合漏斗——轴向 rotation.x=0.58
-      // （轴 = +y 前倾向 +z 抬升 33°）；尾径 0.045 与曲颈前端口相接，段间 15% 重叠防裂缝；
-      // 段对象入 userData.hornSegs（离线 AABB 自检用）
-      grp.add(cyl(0.025, 0.035, 0.3, brass, 0.2, 0.82, -0.14, 8)) // 喇叭支柱（柜座后角竖立）
-      const neck = cyl(0.045, 0.032, 0.2, brassD, 0.2, 1.04, -0.11, 10) // 曲颈（前弯，接喇叭尾端）
-      neck.rotation.x = 0.5
-      grp.add(neck)
-      const hornGrp = new THREE.Group()
-      const ay = Math.cos(0.58), az = Math.sin(0.58) // 喇叭轴方向（0, ay, az）
-      let hy = 1.1, hz = -0.07 // 喇叭尾端（与曲颈前端口相接）
-      const hornSegs: THREE.Object3D[] = []
-      for (const [r0, r1, len] of [[0.045, 0.07, 0.1], [0.07, 0.12, 0.12], [0.12, 0.2, 0.14], [0.2, 0.3, 0.16]] as const) {
-        const seg = cyl(r1, r0, len * 1.15, brass, 0.2, hy + (ay * len) / 2, hz + (az * len) / 2, 14)
-        seg.rotation.x = 0.58
-        hornGrp.add(seg)
-        hornSegs.push(seg)
-        hy += ay * len; hz += az * len
-      }
-      const lip = cyl(0.33, 0.3, 0.04, '#c9a24a', 0.2, hy + ay * 0.02, hz + az * 0.02, 16) // 口沿外翻唇
-      lip.rotation.x = 0.58
-      hornGrp.add(lip)
-      hornSegs.push(lip)
-      grp.add(hornGrp)
-      grp.userData.hornSegs = hornSegs
+      // [l5items v2] 写实喇叭留声机（phonographModel）：data.o18 = Object 18 崭新亮漆版，否则休息室做旧版；
+      // 唱盘旋转 / 唱臂抬起（data.arm）/ 砸烂（data.broke）/ 受击凹陷（data.dent）由 updateStructs → applyPhonographState 驱动；LOD0/LOD1
+      const ph = buildPhonograph(s.data?.o18 ? 'new' : 'old', { arm: Number(s.data?.arm) || 0, broke: Number(s.data?.broke) || 0, dent: Number(s.data?.dent) || 0 })
+      grp.add(ph)
+      grp.userData.spin = ph.userData.spins[0]
+      grp.userData.phono = ph
       if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
       else flushToWall(grp, s, m, 0.5)
       break
@@ -6895,8 +6944,9 @@ export function buildExit(kind: string, def: LevelDef, structure?: Structure): T
       break
     }
     case 'l9toilet': {
-      grp.add(cyl(.29, .24, .34, '#dddcd5', 0, .23, .06, 14)); grp.add(cyl(.27, .27, .06, '#eceae2', 0, .43, .06, 14))
-      grp.add(box(.48, .58, .22, '#d7d6cf', 0, .55, -.27)); grp.add(box(.5, .06, .24, '#eceae2', 0, .86, -.27))
+      const porcelain=litMaterial({color:'#d7d6cf',roughness:.3}),seat=litMaterial({color:'#e5e1d5',roughness:.4}),inner=litMaterial({color:'#a5aaa1',roughness:.3}),metal=litMaterial({color:'#9ea8a8',roughness:.4,metalness:.45})
+      grp.add(buildToilet({porcelain,seat,inner,metal},'worn'))
+      grp.rotation.y=Number(s.data?.deg??0)*Math.PI/180
       break
     }
     case 'l9bathtub': {

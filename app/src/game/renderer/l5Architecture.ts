@@ -5,6 +5,7 @@ import { tallCeilH } from '../world/mapgen'
 import type { TerrainRange } from './geometry'
 import { l5Material, l5WorldUV, type L5Surface } from './l5Materials'
 import { l5CorridorAt } from '../world/infiniteL5'
+import { jazzWallClear } from '../content/jazzLayout' // [jazz]
 
 const unitBox=new THREE.BoxGeometry(1,1,1)
 const unitEgg=new THREE.SphereGeometry(1,8,6)
@@ -22,6 +23,8 @@ export function* buildL5Architecture(m: GameMap, height: number, root: THREE.Gro
   const portals=new Set(m.structures.filter(s=>s.kind==='hoteldoor'||s.data?.profile==='portal').map(s=>`${s.x},${s.y}`))
   for(const e of m.exits)if(['darkwooddoor','elevatorshaft'].includes(e.def.kind))portals.add(`${Math.floor(e.x)},${Math.floor(e.y)}`)
   const recesses=new Map<string,string>()
+  // [jazz] 爵士脑舞台 / 吧台 / 钢琴 / 监控 / 海报 / 台阶背后的墙面不做壁柱（否则木壁柱穿过台面、吧台；舞台的柱子改成台口装饰柱）
+  const jazzProps=m.structures.filter(s=>s.kind==='jazzprop'&&['stage','steps','bar','piano','cctv','poster'].includes(String(s.data?.prop))).map(s=>({x0:s.x,y0:s.y,x1:s.x+(s.w??1)-1,y1:s.y+(s.h??1)-1}))
   for(const e of m.exits)if(e.def.kind==='boilerdeep')for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){
     const x=Math.floor(e.x),y=Math.floor(e.y)
     if(wall(x+dx,y+dy)){recesses.set(`${x},${y}`,`${dx},${dy}`);break}
@@ -153,7 +156,7 @@ export function* buildL5Architecture(m: GameMap, height: number, root: THREE.Gro
           part(1,.09,.17,0,H-.07,.07,'ivory');part(1,.055,.23,0,H-.16,.08,'ballroomPanel')
           if(!pool){
             part(1,.77,.025,0,.57,.032,ballroom?'ballroomPanel':'wood')
-            if(mod(axis,3)===0){
+            if(mod(axis,3)===0&&!jazzWallClear(jazzProps,x,y)){
               part(.16,H-.24,.08,0,(H-.24)/2,.062,ballroom?'ivory':'wood')
               for(const side of [-1,1])part(.023,H-.4,.016,side*.061,(H-.4)/2+.1,.111,'gold')
             }

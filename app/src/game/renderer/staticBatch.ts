@@ -103,12 +103,31 @@ export function* batchStaticRootsJob(target: THREE.Group, roots: THREE.Object3D[
     }
   }
 
-  const exact = new Map<string, StaticMeshPart[]>()
+  // First partition by cheap layout signals.  Most groups are too small to
+  // instantiate, so avoid scanning every attribute array with geometryDataKey.
+  const candidates = new Map<string, StaticMeshPart[]>()
   for (const part of parts) {
     yield
-    const key = `${materialKey(part.material)}|${geometryDataKey(part.geometry)}|${part.noCastShadow ? 1 : 0}`
-    const bucket = exact.get(key)
-    if (bucket) bucket.push(part); else exact.set(key, [part])
+    const indexCount = part.geometry.index?.count ?? 0
+    const key = `${materialKey(part.material)}|${geometryLayoutKey(part.geometry, true)}|${indexCount}|${part.noCastShadow ? 1 : 0}`
+    const bucket = candidates.get(key)
+    if (bucket) bucket.push(part); else candidates.set(key, [part])
+  }
+  const exact = new Map<string, StaticMeshPart[]>()
+  const geometryHashes = new Map<THREE.BufferGeometry, string>()
+  for (const bucket of candidates.values()) {
+    if (bucket.length < 4) continue
+    for (const part of bucket) {
+      yield
+      let hash = geometryHashes.get(part.geometry)
+      if (hash === undefined) {
+        hash = geometryDataKey(part.geometry)
+        geometryHashes.set(part.geometry, hash)
+      }
+      const key = `${materialKey(part.material)}|${hash}|${part.noCastShadow ? 1 : 0}`
+      const exactBucket = exact.get(key)
+      if (exactBucket) exactBucket.push(part); else exact.set(key, [part])
+    }
   }
   const instanced = new Set<StaticMeshPart>()
   for (const bucket of exact.values()) {

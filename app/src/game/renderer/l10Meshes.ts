@@ -1,3 +1,4 @@
+import { latrineSeatGeometry } from './toiletGeometry'
 // Level 10 v64 建筑与植被模型：谷仓 / 马厩 / 小棚 / 外屋 / 树篱节点 / 等高树 / 圆草捆。
 //
 // 约定：模型原点位于结构占地中心、地面高度 0；门朝局部 +Z，按 s.data.deg 绕 Y 旋转
@@ -360,9 +361,14 @@ function outhouse(c: Ctx, W: number, D: number) {
   const moon = new THREE.Shape(); moon.absarc(0, 0, .11, Math.PI * .3, Math.PI * 1.7, false); moon.absarc(.05, 0, .085, Math.PI * 1.62, Math.PI * .38, true)
   const mg = new THREE.Mesh(new THREE.ShapeGeometry(moon), M.dark()); mg.position.set(-.4, 1.62, .062); mg.userData.noCollision = 1; door.add(mg)
   boxMesh({ g: door }, trim, .7, .08, .02, -.4, .5, .07, { noCol: true })
-  // 室内坐凳
-  boxMesh(c, M.wood(), W - .2, .45, .5, 0, .23, -D / 2 + .32, { uv: .8 })
-  const hole = new THREE.Mesh(new THREE.CircleGeometry(.13, 16), M.dark()); hole.rotation.x = -Math.PI / 2; hole.position.set(0, .456, -D / 2 + .32); hole.userData.noCollision = 1; c.g.add(hole)
+  // 空心坐凳和真实开孔；暗色内筒位于板下，不再用黑圆片盖住实心方块。
+  const seatZ=-D/2+.43,top=new THREE.Mesh(latrineSeatGeometry(W-.2),M.wood())
+  top.position.set(0,.42,seatZ);top.castShadow=top.receiveShadow=true;c.g.add(top)
+  for(const x of [-(W-.2)/2+.025,(W-.2)/2-.025])boxMesh(c,M.wood(),.05,.42,.60,x,.21,seatZ,{uv:.8})
+  boxMesh(c,M.wood(),W-.2,.42,.045,0,.21,seatZ-.2775,{uv:.8})
+  boxMesh(c,M.wood(),W-.2,.42,.045,0,.21,seatZ+.2775,{uv:.8})
+  const liner=new THREE.Mesh(new THREE.LatheGeometry([new THREE.Vector2(.136,.42),new THREE.Vector2(.136,.08)],16),M.dark());liner.position.set(0,0,seatZ);liner.userData.noCollision=1;c.g.add(liner)
+
 }
 
 // ---------------------------------------------------------------- 树篱节点（统一高度）

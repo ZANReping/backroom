@@ -1,0 +1,207 @@
+{
+  "seed": 515151.25,
+  "mode": "classic",
+  "port": 10116,
+  "cdp": 10117,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:10116/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Wed, 04 Nov 2026 15:10:57 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 277,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 10116,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 109442.478656,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.643,
+        "sendEnd": 0.677,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 177.103,
+        "receiveHeadersEnd": 177.546
+      },
+      "responseTime": 1793805057329.944,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    },
+    {
+      "url": "http://127.0.0.1:10116/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Wed, 04 Nov 2026 15:10:57 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 277,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 10116,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 109442.525538,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 131.541,
+        "sendEnd": 131.604,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 157.97,
+        "receiveHeadersEnd": 162.191
+      },
+      "responseTime": 1793805057357.693,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l5-polish-20261104\\classic-final\\qa-1793805030297-43404",
+    "--remote-debugging-port=10117",
+    "--headless=new",
+    "--autoplay-policy=no-user-gesture-required",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 46700,
+    "server": 69096
+  },
+  "appBootMs": 25063.9786,
+  "entryMs": 4703.5206000000035,
+  "firstPlayableMs": 39144.3723,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 5,
+    "point": {
+      "x": 15.5,
+      "y": 15.5,
+      "z": 0,
+      "seed": 515151.25,
+      "floor": 1
+    },
+    "checks": [],
+    "draws": 1,
+    "triangles": 1
+  },
+  "uiOrder": {
+    "defaultOrder": [
+      "wanderer",
+      "meg",
+      "bntg",
+      "ariane",
+      "brc",
+      "jerry",
+      "terrorhotel",
+      "homely",
+      "originals",
+      "argos",
+      "tom",
+      "hammoz"
+    ],
+    "active": "terrorhotel",
+    "outposts": 16,
+    "compassDirections": 4
+  },
+  "icons": {
+    "decoded": 22,
+    "hotbar": true
+  },
+  "hudLedger": true,
+  "hudTouch": true,
+  "audio": {
+    "calls": 1,
+    "focusSwitch": true,
+    "afterExit": "room",
+    "context": "running",
+    "ringPeak": 0.019217517226934433
+  },
+  "beast": {
+    "frames": 148,
+    "samples": 32,
+    "black": 0,
+    "minPeak": 253,
+    "maxGapMs": 631,
+    "contextLost": false
+  },
+  "jazz": {
+    "frames": 1165,
+    "samples": 181,
+    "black": 0,
+    "minPeak": 85,
+    "maxGapMs": 386,
+    "contextLost": false,
+    "clips": [
+      "trumpetPlay",
+      "saxPlay",
+      "bassPlay",
+      "drumPlay"
+    ]
+  },
+  "enterLobby": true,
+  "rabbit": {
+    "frames": 903,
+    "samples": 54,
+    "black": 0,
+    "minPeak": 42,
+    "maxGapMs": 1574,
+    "contextLost": false,
+    "rabbits": 1
+  }
+}

@@ -1,0 +1,5871 @@
+{
+  "run": "entry-1793283264064-57340",
+  "label": "baseline-60hz",
+  "mode": "realistic",
+  "port": 7289,
+  "cdp": 7290,
+  "cases": [
+    {
+      "id": 1,
+      "name": "Level 1",
+      "title": "宜居地带",
+      "seed": 424242,
+      "mode": "realistic",
+      "cpu": {
+        "warmFlashModel": {
+          "steps": 35,
+          "ms": 13.5,
+          "maxMs": 8.600000001490116
+        },
+        "warmShrimpHeld": {
+          "steps": 119,
+          "ms": 108.40000001341105,
+          "maxMs": 61.399999998509884
+        },
+        "warmNguithrModel": {
+          "steps": 116,
+          "ms": 83.19999998807907,
+          "maxMs": 30.299999997019768
+        },
+        "warmArmsModels": {
+          "steps": 207,
+          "ms": 271.09999999403954,
+          "maxMs": 156.10000000149012
+        },
+        "warmSceneTextures": {
+          "steps": 242,
+          "ms": 102.19999998807907,
+          "maxMs": 33.599999994039536
+        },
+        "buildInfiniteChunk": {
+          "steps": 25576,
+          "ms": 2132.199999950826,
+          "maxMs": 79.10000000149012
+        }
+      },
+      "compiles": [
+        {
+          "submitMs": 3.5,
+          "elapsedMs": 482.79999999701977
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 347.19999999552965
+        },
+        {
+          "submitMs": 2.3000000044703484,
+          "elapsedMs": 1176.6000000014901
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 1140.0999999940395
+        },
+        {
+          "submitMs": 11.399999998509884,
+          "elapsedMs": 1214.5
+        },
+        {
+          "submitMs": 3.600000001490116,
+          "elapsedMs": 1066.7000000029802
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 307.79999999701977
+        },
+        {
+          "submitMs": 4.200000002980232,
+          "elapsedMs": 1125
+        },
+        {
+          "submitMs": 0.8999999985098839,
+          "elapsedMs": 983
+        },
+        {
+          "submitMs": 0.6000000014901161,
+          "elapsedMs": 897.1000000014901
+        },
+        {
+          "submitMs": 2.899999998509884,
+          "elapsedMs": 1219.3999999985099
+        },
+        {
+          "submitMs": 0.6000000014901161,
+          "elapsedMs": 813.6999999955297
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 797
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 1169.2999999970198
+        },
+        {
+          "submitMs": 9,
+          "elapsedMs": 1555.4000000059605
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 764.0999999940395
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 45.19999999552965
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 1119.5
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 736.8000000044703
+        },
+        {
+          "submitMs": 0.4000000059604645,
+          "elapsedMs": 700.7000000029802
+        },
+        {
+          "submitMs": 4.100000001490116,
+          "elapsedMs": 1126.3999999985099
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 630.2999999970198
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 585.5
+        },
+        {
+          "submitMs": 3.4000000059604645,
+          "elapsedMs": 1065.4000000059605
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 510.8999999985099
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 463.5
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 823.7999999970198
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 261.29999999701977
+        },
+        {
+          "submitMs": 2.8000000044703484,
+          "elapsedMs": 900.8999999985099
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 0.30000000447034836
+        },
+        {
+          "submitMs": 4.700000002980232,
+          "elapsedMs": 814
+        },
+        {
+          "submitMs": 2.600000001490116,
+          "elapsedMs": 1093.5
+        },
+        {
+          "submitMs": 10.600000001490116,
+          "elapsedMs": 1535.3000000044703
+        },
+        {
+          "submitMs": 6.100000001490116,
+          "elapsedMs": 1478.6000000014901
+        },
+        {
+          "submitMs": 7.5,
+          "elapsedMs": 1477
+        },
+        {
+          "submitMs": 0.6000000014901161,
+          "elapsedMs": 1449.6000000014901
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 1187.2999999970198
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1424.8999999985099
+        },
+        {
+          "submitMs": 1,
+          "elapsedMs": 1313.8999999985099
+        },
+        {
+          "submitMs": 0.6000000014901161,
+          "elapsedMs": 1051.7000000029802
+        },
+        {
+          "submitMs": 0.6000000014901161,
+          "elapsedMs": 1.2000000029802322
+        },
+        {
+          "submitMs": 1.4000000059604645,
+          "elapsedMs": 300.90000000596046
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1276
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 1298.3999999985099
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 298.69999999552965
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 1036.2999999970198
+        },
+        {
+          "submitMs": 0.8000000044703484,
+          "elapsedMs": 1036.1000000014901
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 1273.6999999955297
+        },
+        {
+          "submitMs": 0.6000000014901161,
+          "elapsedMs": 3.5
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2.600000001490116
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 2.100000001490116
+        },
+        {
+          "submitMs": 1,
+          "elapsedMs": 189.80000000447035
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 3.7999999970197678
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 2.899999998509884
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 2.399999998509884
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 10.699999995529652
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 10.199999995529652
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 9.699999995529652
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 9.5
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 9.299999997019768
+        },
+        {
+          "submitMs": 8.5,
+          "elapsedMs": 1054.3000000044703
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 1.6000000014901161
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 1.1000000014901161
+        },
+        {
+          "submitMs": 0.6000000014901161,
+          "elapsedMs": 2
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 1.2999999970197678
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 0.8999999985098839
+        }
+      ],
+      "milestones": [
+        {
+          "ms": 1740.8999999985099,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": true,
+          "moth": true,
+          "arms": true,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 3,
+          "entities": 1,
+          "images": 0,
+          "memory": {
+            "geometries": 7,
+            "textures": 3
+          },
+          "programs": 31
+        },
+        {
+          "ms": 1749.7999999970198,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": true,
+          "moth": true,
+          "arms": true,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 4,
+          "entities": 1,
+          "images": 0,
+          "memory": {
+            "geometries": 7,
+            "textures": 3
+          },
+          "programs": 31
+        },
+        {
+          "ms": 2254,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": true,
+          "moth": true,
+          "arms": true,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 12,
+          "entities": 4,
+          "images": 0,
+          "memory": {
+            "geometries": 7,
+            "textures": 5
+          },
+          "programs": 48
+        },
+        {
+          "ms": 2755.7999999970198,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": true,
+          "moth": true,
+          "arms": true,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 12,
+          "entities": 5,
+          "images": 0,
+          "memory": {
+            "geometries": 8,
+            "textures": 11
+          },
+          "programs": 60
+        },
+        {
+          "ms": 3272.2999999970198,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": true,
+          "moth": true,
+          "arms": true,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 12,
+          "entities": 5,
+          "images": 0,
+          "memory": {
+            "geometries": 17,
+            "textures": 21
+          },
+          "programs": 62
+        },
+        {
+          "ms": 3825.39999999851,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 3,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": true,
+          "moth": true,
+          "arms": true,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 12,
+          "entities": 5,
+          "images": 0,
+          "memory": {
+            "geometries": 17,
+            "textures": 21
+          },
+          "programs": 64
+        },
+        {
+          "ms": 4423.79999999702,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": true,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 12,
+          "entities": 5,
+          "images": 6,
+          "memory": {
+            "geometries": 38,
+            "textures": 42
+          },
+          "programs": 64
+        },
+        {
+          "ms": 4897.79999999702,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": true,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 12,
+          "entities": 5,
+          "images": 0,
+          "memory": {
+            "geometries": 73,
+            "textures": 77
+          },
+          "programs": 83
+        },
+        {
+          "ms": 5413.89999999851,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": true,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 12,
+          "entities": 5,
+          "images": 0,
+          "memory": {
+            "geometries": 73,
+            "textures": 77
+          },
+          "programs": 83
+        },
+        {
+          "ms": 5930.70000000298,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 12,
+          "entities": 5,
+          "images": 0,
+          "memory": {
+            "geometries": 76,
+            "textures": 79
+          },
+          "programs": 83
+        },
+        {
+          "ms": 6498.39999999851,
+          "ready": false,
+          "built": true,
+          "chunks": 4,
+          "chunkJobs": 3,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 12,
+          "entities": 5,
+          "images": 0,
+          "memory": {
+            "geometries": 134,
+            "textures": 79
+          },
+          "programs": 84
+        },
+        {
+          "ms": 7030.79999999702,
+          "ready": false,
+          "built": true,
+          "chunks": 4,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 12,
+          "entities": 5,
+          "images": 0,
+          "memory": {
+            "geometries": 134,
+            "textures": 79
+          },
+          "programs": 84
+        },
+        {
+          "ms": 7576.20000000298,
+          "ready": false,
+          "built": true,
+          "chunks": 7,
+          "chunkJobs": 2,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 12,
+          "entities": 5,
+          "images": 0,
+          "memory": {
+            "geometries": 171,
+            "textures": 93
+          },
+          "programs": 91
+        },
+        {
+          "ms": 8039,
+          "ready": false,
+          "built": true,
+          "chunks": 7,
+          "chunkJobs": 2,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 12,
+          "entities": 5,
+          "images": 0,
+          "memory": {
+            "geometries": 171,
+            "textures": 96
+          },
+          "programs": 91
+        }
+      ],
+      "status": "ready",
+      "started": 6633.70000000298,
+      "prepareMs": 967.2999999970198,
+      "generationMs": 85.5,
+      "frames": 324,
+      "cpuMs": 4225.499999985099,
+      "cpuMaxMs": 687.7999999970198,
+      "frameMaxMs": 689.1999999955297,
+      "elapsedMs": 8852.89999999851,
+      "readyMs": 8852.89999999851,
+      "loadMs": 8967.70000000298,
+      "final": {
+        "ready": true,
+        "built": true,
+        "chunks": 9,
+        "chunkJobs": 4,
+        "finite": false,
+        "env": false,
+        "flash": false,
+        "flashKey": true,
+        "shrimp": false,
+        "shrimpKey": true,
+        "nguithr": false,
+        "moth": true,
+        "arms": false,
+        "watch": true,
+        "wrangler": true,
+        "burster": true,
+        "foyer": true,
+        "npcs": 0,
+        "items": 12,
+        "entities": 5,
+        "images": 0,
+        "memory": {
+          "geometries": 268,
+          "textures": 116
+        },
+        "programs": 109
+      },
+      "spawn": {
+        "x": 79.5,
+        "y": 79.5,
+        "z": 0
+      },
+      "structures": 919,
+      "lightCount": 1030
+    },
+    {
+      "id": 5,
+      "name": "Level 5",
+      "title": "恐怖酒店",
+      "seed": 424242,
+      "mode": "realistic",
+      "cpu": {
+        "buildInfiniteChunk": {
+          "steps": 89073,
+          "ms": 2660.10000000149,
+          "maxMs": 26.700000002980232
+        },
+        "warmFlashModel": {
+          "steps": 70,
+          "ms": 14.599999994039536,
+          "maxMs": 8
+        },
+        "warmShrimpHeld": {
+          "steps": 120,
+          "ms": 134.29999999701977,
+          "maxMs": 80.5
+        },
+        "warmNguithrModel": {
+          "steps": 120,
+          "ms": 71.29999999701977,
+          "maxMs": 19.80000000447035
+        },
+        "warmMothModels": {
+          "steps": 130,
+          "ms": 50.99999997764826,
+          "maxMs": 31.899999998509884
+        },
+        "warmSceneTextures": {
+          "steps": 367,
+          "ms": 300.59999998658895,
+          "maxMs": 23.100000001490116
+        }
+      },
+      "compiles": [
+        {
+          "submitMs": 3.2000000029802322,
+          "elapsedMs": 1251.3000000044703
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 1077.1000000014901
+        },
+        {
+          "submitMs": 0.9000000059604645,
+          "elapsedMs": 67.40000000596046
+        },
+        {
+          "submitMs": 5.5,
+          "elapsedMs": 1181.8000000044703
+        },
+        {
+          "submitMs": 0.6000000014901161,
+          "elapsedMs": 1059.5
+        },
+        {
+          "submitMs": 2.1999999955296516,
+          "elapsedMs": 1249.1000000014901
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 916.2999999970198
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 1180
+        },
+        {
+          "submitMs": 6.899999998509884,
+          "elapsedMs": 196.39999999850988
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 838.2000000029802
+        },
+        {
+          "submitMs": 0.4000000059604645,
+          "elapsedMs": 777.4000000059605
+        },
+        {
+          "submitMs": 0.6000000014901161,
+          "elapsedMs": 702.1000000014901
+        },
+        {
+          "submitMs": 9.599999994039536,
+          "elapsedMs": 1556.5999999940395
+        },
+        {
+          "submitMs": 3.8000000044703484,
+          "elapsedMs": 1373.8000000044703
+        },
+        {
+          "submitMs": 1,
+          "elapsedMs": 1342.7000000029802
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 551.6999999955297
+        },
+        {
+          "submitMs": 0.6000000014901161,
+          "elapsedMs": 833.8000000044703
+        },
+        {
+          "submitMs": 2,
+          "elapsedMs": 1274.3999999985099
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 483.79999999701977
+        },
+        {
+          "submitMs": 4,
+          "elapsedMs": 1286
+        },
+        {
+          "submitMs": 0.7000000029802322,
+          "elapsedMs": 466.80000000447035
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 414.6000000014901
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 700.7999999970198
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 1132.5
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 351.5
+        },
+        {
+          "submitMs": 0.6999999955296516,
+          "elapsedMs": 316.3999999985099
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 485.19999999552965
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 1040.3999999985099
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 184
+        },
+        {
+          "submitMs": 0.6999999955296516,
+          "elapsedMs": 0.8999999985098839
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 0.29999999701976776
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 0.30000000447034836
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 0.29999999701976776
+        },
+        {
+          "submitMs": 4.700000002980232,
+          "elapsedMs": 1177.8999999985099
+        },
+        {
+          "submitMs": 1.1000000014901161,
+          "elapsedMs": 1173.1000000014901
+        },
+        {
+          "submitMs": 1.8999999985098839,
+          "elapsedMs": 1139.7999999970198
+        },
+        {
+          "submitMs": 1.1999999955296516,
+          "elapsedMs": 1159.7999999970198
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1147.7000000029802
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1158.3999999985099
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 1158.1999999955297
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 1157.6000000014901
+        },
+        {
+          "submitMs": 2.1999999955296516,
+          "elapsedMs": 2.7999999970197678
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 6.299999997019768
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 5.600000001490116
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 1143.6999999955297
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 1143.2999999970198
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 1143
+        },
+        {
+          "submitMs": 0.7000000029802322,
+          "elapsedMs": 4
+        },
+        {
+          "submitMs": 0.8000000044703484,
+          "elapsedMs": 3.100000001490116
+        },
+        {
+          "submitMs": 0.6000000014901161,
+          "elapsedMs": 2
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 1.1999999955296516
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 6.699999995529652
+        },
+        {
+          "submitMs": 1.8999999985098839,
+          "elapsedMs": 1127.6999999955297
+        },
+        {
+          "submitMs": 0.9000000059604645,
+          "elapsedMs": 1125.6000000014901
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 1124.2999999970198
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 1123.6999999955297
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 1100.8999999985099
+        },
+        {
+          "submitMs": 0.4000000059604645,
+          "elapsedMs": 1100.2000000029802
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 1110.6000000014901
+        },
+        {
+          "submitMs": 2,
+          "elapsedMs": 661.1999999955297
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 1097.2999999970198
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1107.5
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 1096.2000000029802
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1106.8999999985099
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 1106.3999999985099
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 10.899999998509884
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1094.1000000014901
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 1093.6999999955297
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 1093.2999999970198
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1093.1000000014901
+        },
+        {
+          "submitMs": 2.4000000059604645,
+          "elapsedMs": 1100.6000000014901
+        },
+        {
+          "submitMs": 1.1999999955296516,
+          "elapsedMs": 1089.2999999970198
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 5
+        },
+        {
+          "submitMs": 4.299999997019768,
+          "elapsedMs": 1077.6999999955297
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 33.5
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 6.200000002980232
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 6
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 5.800000004470348
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 5.700000002980232
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 5.5
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 5.5
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 5.300000004470348
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 5.100000001490116
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 5
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.9000000059604645
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 21
+        },
+        {
+          "submitMs": 2.100000001490116,
+          "elapsedMs": 1049.6000000014901
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 2.100000001490116
+        },
+        {
+          "submitMs": 0.7000000029802322,
+          "elapsedMs": 588.5
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 1046.2999999970198
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 0.9000000059604645
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 0.7000000029802322
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1046
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 0.5
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 1045.8999999985099
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 14.200000002980232
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 3.7000000029802322
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 3.3000000044703484
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2.9000000059604645
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.600000001490116
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.4000000059604645
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 2.2000000029802322
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1.8000000044703484
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 1.5
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 6.5
+        },
+        {
+          "submitMs": 1,
+          "elapsedMs": 725.8000000044703
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 5
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.799999997019768
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 4.699999995529652
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.5
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.399999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.299999997019768
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 4.100000001490116
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 3.899999998509884
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 3.6999999955296516
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.600000001490116
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.5
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 3.2999999970197678
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 3.1999999955296516
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.100000001490116
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 3
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 2.899999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.899999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.7999999970197678
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2.600000001490116
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2.399999998509884
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 1.6999999955296516
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1.5
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 1.2999999970197678
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1.1000000014901161
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 0.8999999985098839
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 0.8999999985098839
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 0.6000000014901161
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 6.200000002980232
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 11.699999995529652
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 5.299999997019768
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 5.200000002980232
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.899999998509884
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 4.600000001490116
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.399999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.200000002980232
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 4.100000001490116
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 3.7999999970197678
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 3.600000001490116
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 3.2999999970197678
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 3.100000001490116
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 3
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.899999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.7000000029802322
+        },
+        {
+          "submitMs": 0.7000000029802322,
+          "elapsedMs": 2.5
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1.7000000029802322
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1.3999999985098839
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1.1000000014901161
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 0.7999999970197678
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 0.5
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 5.100000001490116
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 4.5
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 4.200000002980232
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 3.899999998509884
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 3.399999998509884
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 2.899999998509884
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 2.7000000029802322
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.2000000029802322
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 1
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 0.5
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 6.100000001490116
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 5.799999997019768
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 5.5
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 5.100000001490116
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.899999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.399999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.299999997019768
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 3.600000001490116
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.399999998509884
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2.899999998509884
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2.600000001490116
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1.5
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1.1000000014901161
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 6.299999997019768
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 6.100000001490116
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 5.600000001490116
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 5.299999997019768
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.899999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.399999998509884
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 4.199999995529652
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.7999999970197678
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 3.399999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.899999998509884
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 2.2999999970197678
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 1.2999999970197678
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 0.6999999955296516
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 6.200000002980232
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 5.399999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 5.200000002980232
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.800000004470348
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 4.600000001490116
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.5
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 3.899999998509884
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 3.3000000044703484
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 2.600000001490116
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 1.5
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 0.7000000029802322
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 0.5
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 6.299999997019768
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 5.899999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 5.5
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 5.299999997019768
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 5.199999995529652
+        },
+        {
+          "submitMs": 0.6999999955296516,
+          "elapsedMs": 2.5
+        },
+        {
+          "submitMs": 0.6000000014901161,
+          "elapsedMs": 1.8000000044703484
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1.2000000029802322
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 6
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 5.5
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 5
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 4.699999995529652
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 4.5
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 4.199999995529652
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.7999999970197678
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 3.6999999955296516
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 3.399999998509884
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 3.1999999955296516
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 2.7999999970197678
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2.600000001490116
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.399999998509884
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 2.2999999970197678
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.100000001490116
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1.7999999970197678
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1.6000000014901161
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 3.399999998509884
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2.899999998509884
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 2.6999999955296516
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 2.399999998509884
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2.2999999970197678
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1.7999999970197678
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 1.5999999940395355
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 6.199999995529652
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 5.5
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 5.199999995529652
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 5
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 4.699999995529652
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.7999999970197678
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.6999999955296516
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 3.5999999940395355
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 3.5
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.1999999955296516
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 3.0999999940395355
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 3
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2.7999999970197678
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2.5
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 2.2999999970197678
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1.8999999985098839
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 1.5999999940395355
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1.5
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1.2999999970197678
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 1.1999999955296516
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 0.8999999985098839
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 0.6999999955296516
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 0.6999999955296516
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 0.5
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 4.799999997019768
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 4.399999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.200000002980232
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 4.100000001490116
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.899999998509884
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 3.7000000029802322
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 3.7000000029802322
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.5
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.399999998509884
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 3.2999999970197678
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 2.899999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.7000000029802322
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.600000001490116
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2.5
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 2.2999999970197678
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2.100000001490116
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 1.8999999985098839
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1.6000000014901161
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 4.399999998509884
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 3.899999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.600000001490116
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.399999998509884
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 3.1999999955296516
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2.899999998509884
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 2.6999999955296516
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 2.600000001490116
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 2.1999999955296516
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 1.7999999970197678
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1.5
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 1.2999999970197678
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 1.1000000014901161
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 0.7999999970197678
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 0.6999999955296516
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 0.3999999985098839
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 4
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 3.5
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 3.3000000044703484
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 3.100000001490116
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 2.899999998509884
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 2.7000000029802322
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2.7000000029802322
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.5
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 2.399999998509884
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2.4000000059604645
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2.2000000029802322
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 2
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1.9000000059604645
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1.7000000029802322
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 1.6000000014901161
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1.4000000059604645
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 1.2000000029802322
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 1.2000000029802322
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 0.9000000059604645
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 0.7000000029802322
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 0.6000000014901161
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 5.5
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 5.100000001490116
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 4.799999997019768
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 4.5
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 4.299999997019768
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 4
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 3.600000001490116
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 3.2000000029802322
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 2.899999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.600000001490116
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.5
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 2.399999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.2000000029802322
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 1.7999999970197678
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1.6000000014901161
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1.3999999985098839
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 1.2999999970197678
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1.1000000014901161
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 0.8999999985098839
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 0.7999999970197678
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 0.6000000014901161
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 0.29999999701976776
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 5.399999998509884
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 5
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.799999997019768
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.600000001490116
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.399999998509884
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 4.299999997019768
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 4
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 3.6999999955296516
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 3.5
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 3.1999999955296516
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.899999998509884
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 2.7999999970197678
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 7.5999999940395355
+        },
+        {
+          "submitMs": 0.5999999940395355,
+          "elapsedMs": 7.0999999940395355
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 6.5
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 6.299999997019768
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 6
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 5.699999995529652
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 5.5999999940395355
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 5.5
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 5.299999997019768
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 5
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 4.699999995529652
+        },
+        {
+          "submitMs": 0.4000000059604645,
+          "elapsedMs": 4.5
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 4
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 3.6999999955296516
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 3.399999998509884
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 3.1999999955296516
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 3
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 2.6999999955296516
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.399999998509884
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2.2999999970197678
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 2.0999999940395355
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 2
+        },
+        {
+          "submitMs": 0.6999999955296516,
+          "elapsedMs": 6.399999998509884
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 5.700000002980232
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 5.200000002980232
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 5
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 4.799999997019768
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 4.600000001490116
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.399999998509884
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 4.299999997019768
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 3.899999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.7000000029802322
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 3.600000001490116
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 3.399999998509884
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 3.2000000029802322
+        },
+        {
+          "submitMs": 1.2999999970197678,
+          "elapsedMs": 12.399999998509884
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 1.7000000029802322
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 1.3999999985098839
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1.2000000029802322
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 0.7999999970197678
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 0.6000000014901161
+        }
+      ],
+      "milestones": [
+        {
+          "ms": 607.6999999955297,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": true,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 1,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 7,
+            "textures": 3
+          },
+          "programs": 31
+        },
+        {
+          "ms": 1114.3999999985099,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": true,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 4,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 7,
+            "textures": 5
+          },
+          "programs": 34
+        },
+        {
+          "ms": 1612.3999999985099,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": true,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 7,
+            "textures": 5
+          },
+          "programs": 52
+        },
+        {
+          "ms": 2117.1999999955297,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": true,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 7,
+            "textures": 5
+          },
+          "programs": 55
+        },
+        {
+          "ms": 2617,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": true,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 12,
+            "textures": 16
+          },
+          "programs": 55
+        },
+        {
+          "ms": 3118,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": true,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 12,
+            "textures": 16
+          },
+          "programs": 55
+        },
+        {
+          "ms": 3619.6999999955297,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 22,
+            "textures": 24
+          },
+          "programs": 55
+        },
+        {
+          "ms": 4127.39999999851,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 22,
+            "textures": 27
+          },
+          "programs": 55
+        },
+        {
+          "ms": 4623.60000000149,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 22,
+            "textures": 61
+          },
+          "programs": 68
+        },
+        {
+          "ms": 5119.89999999851,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 22,
+            "textures": 61
+          },
+          "programs": 68
+        },
+        {
+          "ms": 5642.19999999553,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 182,
+            "textures": 61
+          },
+          "programs": 72
+        },
+        {
+          "ms": 6137.10000000149,
+          "ready": false,
+          "built": true,
+          "chunks": 1,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 315,
+            "textures": 77
+          },
+          "programs": 83
+        },
+        {
+          "ms": 6658.79999999702,
+          "ready": false,
+          "built": true,
+          "chunks": 1,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 315,
+            "textures": 77
+          },
+          "programs": 83
+        },
+        {
+          "ms": 7157.89999999851,
+          "ready": false,
+          "built": true,
+          "chunks": 2,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 330,
+            "textures": 77
+          },
+          "programs": 83
+        },
+        {
+          "ms": 7666.39999999851,
+          "ready": false,
+          "built": true,
+          "chunks": 2,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 330,
+            "textures": 89
+          },
+          "programs": 85
+        },
+        {
+          "ms": 8165.69999999553,
+          "ready": false,
+          "built": true,
+          "chunks": 4,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 572,
+            "textures": 97
+          },
+          "programs": 86
+        },
+        {
+          "ms": 8678.60000000149,
+          "ready": false,
+          "built": true,
+          "chunks": 4,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 572,
+            "textures": 97
+          },
+          "programs": 86
+        },
+        {
+          "ms": 9181,
+          "ready": false,
+          "built": true,
+          "chunks": 4,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 572,
+            "textures": 100
+          },
+          "programs": 86
+        },
+        {
+          "ms": 9689.79999999702,
+          "ready": false,
+          "built": true,
+          "chunks": 5,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 717,
+            "textures": 100
+          },
+          "programs": 86
+        },
+        {
+          "ms": 10193.69999999553,
+          "ready": false,
+          "built": true,
+          "chunks": 5,
+          "chunkJobs": 4,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 717,
+            "textures": 108
+          },
+          "programs": 86
+        },
+        {
+          "ms": 10711.79999999702,
+          "ready": false,
+          "built": true,
+          "chunks": 6,
+          "chunkJobs": 3,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 1005,
+            "textures": 110
+          },
+          "programs": 86
+        },
+        {
+          "ms": 11223,
+          "ready": false,
+          "built": true,
+          "chunks": 7,
+          "chunkJobs": 2,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 1005,
+            "textures": 110
+          },
+          "programs": 86
+        },
+        {
+          "ms": 11722.39999999851,
+          "ready": false,
+          "built": true,
+          "chunks": 8,
+          "chunkJobs": 1,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 1005,
+            "textures": 115
+          },
+          "programs": 87
+        },
+        {
+          "ms": 12222.60000000149,
+          "ready": false,
+          "built": true,
+          "chunks": 8,
+          "chunkJobs": 1,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 15,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 1005,
+            "textures": 115
+          },
+          "programs": 87
+        }
+      ],
+      "status": "ready",
+      "started": 1254.7000000029802,
+      "prepareMs": 512.1000000014901,
+      "generationMs": 30.599999994039536,
+      "frames": 668,
+      "cpuMs": 4229.999999903142,
+      "cpuMaxMs": 361.80000000447035,
+      "frameMaxMs": 365.5,
+      "elapsedMs": 12648.89999999851,
+      "readyMs": 12648.89999999851,
+      "loadMs": 12682.10000000149,
+      "final": {
+        "ready": true,
+        "built": true,
+        "chunks": 9,
+        "chunkJobs": 4,
+        "finite": false,
+        "env": false,
+        "flash": false,
+        "flashKey": true,
+        "shrimp": false,
+        "shrimpKey": true,
+        "nguithr": false,
+        "moth": false,
+        "arms": false,
+        "watch": true,
+        "wrangler": true,
+        "burster": true,
+        "foyer": true,
+        "npcs": 0,
+        "items": 15,
+        "entities": 0,
+        "images": 0,
+        "memory": {
+          "geometries": 1347,
+          "textures": 138
+        },
+        "programs": 104
+      },
+      "spawn": {
+        "x": 79.5,
+        "y": 79.5,
+        "z": 0
+      },
+      "structures": 1903,
+      "lightCount": 870
+    },
+    {
+      "id": 11,
+      "name": "Level 11",
+      "title": "不夜城",
+      "seed": 424242,
+      "mode": "realistic",
+      "cpu": {
+        "buildInfiniteChunk": {
+          "steps": 21713,
+          "ms": 1003.8000000044703,
+          "maxMs": 161.79999999701977
+        },
+        "warmFlashModel": {
+          "steps": 16,
+          "ms": 12.600000001490116,
+          "maxMs": 7.600000001490116
+        },
+        "warmShrimpHeld": {
+          "steps": 89,
+          "ms": 152.19999999552965,
+          "maxMs": 78.5
+        },
+        "warmMothModels": {
+          "steps": 62,
+          "ms": 33.1000000089407,
+          "maxMs": 26.799999997019768
+        },
+        "warmSceneTextures": {
+          "steps": 107,
+          "ms": 234.5999999716878,
+          "maxMs": 161.79999999701977
+        }
+      },
+      "compiles": [
+        {
+          "submitMs": 1,
+          "elapsedMs": 344.29999999701977
+        },
+        {
+          "submitMs": 5.600000001490116,
+          "elapsedMs": 456.6000000014901
+        },
+        {
+          "submitMs": 4.799999997019768,
+          "elapsedMs": 1137.8999999985099
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 430.6000000014901
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 411.20000000298023
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 235.10000000149012
+        },
+        {
+          "submitMs": 5.699999995529652,
+          "elapsedMs": 1088.5
+        },
+        {
+          "submitMs": 4,
+          "elapsedMs": 1098.1000000014901
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 1094
+        },
+        {
+          "submitMs": 5.5,
+          "elapsedMs": 1125.3999999985099
+        },
+        {
+          "submitMs": 4.299999997019768,
+          "elapsedMs": 1295.6999999955297
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1048
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 1047.7000000029802
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 1047.5
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1047.2000000029802
+        },
+        {
+          "submitMs": 7.100000001490116,
+          "elapsedMs": 1094.7999999970198
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 0.19999999552965164
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 4.100000001490116
+        },
+        {
+          "submitMs": 3.399999998509884,
+          "elapsedMs": 617.2000000029802
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 1.3999999985098839
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 0.8999999985098839
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 0.8000000044703484
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 0.6000000014901161
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1.5
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1.2999999970197678
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 1.0999999940395355
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 0.8999999985098839
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 0.7999999970197678
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 3.100000001490116
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 2.5
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 2.2000000029802322
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 1.8000000044703484
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1.6000000014901161
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 1.5
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 1.3999999985098839
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 1.3000000044703484
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 0.8000000044703484
+        }
+      ],
+      "milestones": [
+        {
+          "ms": 619.8000000044703,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 1,
+          "finite": false,
+          "env": true,
+          "flash": false,
+          "flashKey": false,
+          "shrimp": false,
+          "shrimpKey": false,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 0,
+          "entities": 1,
+          "images": 0,
+          "memory": {
+            "geometries": 0,
+            "textures": 0
+          },
+          "programs": 28
+        },
+        {
+          "ms": 1633.6000000014901,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 1,
+          "finite": false,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 0,
+          "entities": 4,
+          "images": 0,
+          "memory": {
+            "geometries": 13,
+            "textures": 4
+          },
+          "programs": 31
+        },
+        {
+          "ms": 2085.5,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 1,
+          "finite": false,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 0,
+          "entities": 4,
+          "images": 0,
+          "memory": {
+            "geometries": 13,
+            "textures": 5
+          },
+          "programs": 31
+        },
+        {
+          "ms": 2564.8000000044703,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 1,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 0,
+          "entities": 4,
+          "images": 12,
+          "memory": {
+            "geometries": 14,
+            "textures": 29
+          },
+          "programs": 55
+        },
+        {
+          "ms": 3073.3000000044703,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 1,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 0,
+          "entities": 4,
+          "images": 0,
+          "memory": {
+            "geometries": 15,
+            "textures": 22
+          },
+          "programs": 55
+        },
+        {
+          "ms": 3584.60000000149,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 1,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 0,
+          "entities": 4,
+          "images": 0,
+          "memory": {
+            "geometries": 19,
+            "textures": 39
+          },
+          "programs": 55
+        },
+        {
+          "ms": 4102.70000000298,
+          "ready": false,
+          "built": true,
+          "chunks": 1,
+          "chunkJobs": 1,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 0,
+          "entities": 4,
+          "images": 0,
+          "memory": {
+            "geometries": 82,
+            "textures": 59
+          },
+          "programs": 59
+        },
+        {
+          "ms": 4597.20000000298,
+          "ready": false,
+          "built": true,
+          "chunks": 1,
+          "chunkJobs": 1,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 0,
+          "entities": 4,
+          "images": 0,
+          "memory": {
+            "geometries": 82,
+            "textures": 59
+          },
+          "programs": 61
+        },
+        {
+          "ms": 5115.60000000149,
+          "ready": false,
+          "built": true,
+          "chunks": 3,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": false,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 0,
+          "items": 0,
+          "entities": 4,
+          "images": 0,
+          "memory": {
+            "geometries": 107,
+            "textures": 62
+          },
+          "programs": 63
+        }
+      ],
+      "status": "ready",
+      "started": 1208.3999999985099,
+      "prepareMs": 508.80000000447035,
+      "generationMs": 39,
+      "frames": 163,
+      "cpuMs": 3339.5000000074506,
+      "cpuMaxMs": 461.29999999701977,
+      "frameMaxMs": 464,
+      "elapsedMs": 5679.4000000059605,
+      "readyMs": 5679.5,
+      "loadMs": 5707.60000000149,
+      "final": {
+        "ready": true,
+        "built": true,
+        "chunks": 4,
+        "chunkJobs": 1,
+        "finite": false,
+        "env": false,
+        "flash": false,
+        "flashKey": true,
+        "shrimp": false,
+        "shrimpKey": true,
+        "nguithr": false,
+        "moth": false,
+        "arms": false,
+        "watch": true,
+        "wrangler": true,
+        "burster": true,
+        "foyer": true,
+        "npcs": 0,
+        "items": 0,
+        "entities": 4,
+        "images": 5,
+        "memory": {
+          "geometries": 212,
+          "textures": 90
+        },
+        "programs": 83
+      },
+      "spawn": {
+        "x": 90.5,
+        "y": 90.5,
+        "z": 0
+      },
+      "structures": 390,
+      "lightCount": 49
+    },
+    {
+      "id": 102,
+      "name": "商人之家",
+      "title": "商人之家",
+      "seed": 424242,
+      "mode": "realistic",
+      "cpu": {
+        "warmFlashModel": {
+          "steps": 40,
+          "ms": 8.099999986588955,
+          "maxMs": 4.799999997019768
+        },
+        "warmShrimpHeld": {
+          "steps": 43,
+          "ms": 134.89999998360872,
+          "maxMs": 60.600000001490116
+        },
+        "warmSceneTextures": {
+          "steps": 510,
+          "ms": 243.60000003874302,
+          "maxMs": 84.5
+        }
+      },
+      "compiles": [
+        {
+          "submitMs": 6,
+          "elapsedMs": 763.7999999970198
+        },
+        {
+          "submitMs": 5.399999998509884,
+          "elapsedMs": 423.79999999701977
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 129.10000000149012
+        },
+        {
+          "submitMs": 1.7000000029802322,
+          "elapsedMs": 73.79999999701977
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 214.5
+        },
+        {
+          "submitMs": 0.8999999985098839,
+          "elapsedMs": 155.10000000149012
+        },
+        {
+          "submitMs": 0.7000000029802322,
+          "elapsedMs": 106.89999999850988
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 64.89999999850988
+        },
+        {
+          "submitMs": 3.5,
+          "elapsedMs": 159.69999999552965
+        },
+        {
+          "submitMs": 0.5999999940395355,
+          "elapsedMs": 39.69999999552965
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 0.30000000447034836
+        },
+        {
+          "submitMs": 6.800000004470348,
+          "elapsedMs": 1004.8999999985099
+        },
+        {
+          "submitMs": 2.2999999970197678,
+          "elapsedMs": 938.6000000014901
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 872.8000000044703
+        },
+        {
+          "submitMs": 1.3999999985098839,
+          "elapsedMs": 904.6000000014901
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 405.3999999985099
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 437.20000000298023
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 423.70000000298023
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 276.3999999985099
+        },
+        {
+          "submitMs": 1.5,
+          "elapsedMs": 853.7999999970198
+        },
+        {
+          "submitMs": 2.3000000044703484,
+          "elapsedMs": 852.1000000014901
+        },
+        {
+          "submitMs": 2.3000000044703484,
+          "elapsedMs": 839.6000000014901
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 288
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 5.100000001490116
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 5.200000002980232
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.7000000029802322
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 2.5
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 6
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 5.0999999940395355
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 4.399999998509884
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 2.899999998509884
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 5.799999997019768
+        },
+        {
+          "submitMs": 2.899999998509884,
+          "elapsedMs": 740.6000000014901
+        },
+        {
+          "submitMs": 2.399999998509884,
+          "elapsedMs": 723.5
+        },
+        {
+          "submitMs": 1.5,
+          "elapsedMs": 772.2999999970198
+        },
+        {
+          "submitMs": 1.6999999955296516,
+          "elapsedMs": 706.2999999970198
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 1.7000000029802322
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 7
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 4.799999997019768
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 6.5
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 5.4000000059604645
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 7
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 6.800000004470348
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 6.700000002980232
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 6.4000000059604645
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 6.300000004470348
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 6.200000002980232
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 0.7999999970197678
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 1.3999999985098839
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 2.600000001490116
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.399999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.8000000044703484
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 6.5
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 3.8000000044703484
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 6.5
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 5.100000001490116
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 4.799999997019768
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.6999999955296516
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 3.3000000044703484
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 6.0999999940395355
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 5.299999997019768
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 4.699999995529652
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 4
+        },
+        {
+          "submitMs": 1,
+          "elapsedMs": 639.2000000029802
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 4
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 6.399999998509884
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 5.100000001490116
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 4.299999997019768
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.5
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.5
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 6.600000001490116
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 3.7000000029802322
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 6.5
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 6.199999995529652
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 6.199999995529652
+        },
+        {
+          "submitMs": 0.09999999403953552,
+          "elapsedMs": 6.0999999940395355
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 6
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 4.699999995529652
+        },
+        {
+          "submitMs": 1.7999999970197678,
+          "elapsedMs": 187.19999999552965
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 85.29999999701977
+        },
+        {
+          "submitMs": 1.5999999940395355,
+          "elapsedMs": 656.2999999970198
+        },
+        {
+          "submitMs": 1.6000000014901161,
+          "elapsedMs": 104.10000000149012
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 1.5
+        }
+      ],
+      "milestones": [
+        {
+          "ms": 345.69999999552965,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 1,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 7,
+            "textures": 3
+          },
+          "programs": 17
+        },
+        {
+          "ms": 652.7999999970198,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 6,
+          "memory": {
+            "geometries": 7,
+            "textures": 12
+          },
+          "programs": 28
+        },
+        {
+          "ms": 1230.2999999970198,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 15,
+            "textures": 17
+          },
+          "programs": 33
+        },
+        {
+          "ms": 1668,
+          "ready": false,
+          "built": true,
+          "chunks": 1,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 21,
+            "textures": 20
+          },
+          "programs": 33
+        },
+        {
+          "ms": 2168.10000000149,
+          "ready": false,
+          "built": true,
+          "chunks": 1,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 21,
+            "textures": 35
+          },
+          "programs": 41
+        },
+        {
+          "ms": 2737.10000000149,
+          "ready": false,
+          "built": true,
+          "chunks": 1,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 21,
+            "textures": 36
+          },
+          "programs": 43
+        },
+        {
+          "ms": 3253.10000000149,
+          "ready": false,
+          "built": true,
+          "chunks": 5,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 63,
+            "textures": 36
+          },
+          "programs": 44
+        },
+        {
+          "ms": 3753,
+          "ready": false,
+          "built": true,
+          "chunks": 6,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 97,
+            "textures": 36
+          },
+          "programs": 44
+        },
+        {
+          "ms": 4253.60000000149,
+          "ready": false,
+          "built": true,
+          "chunks": 9,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 146,
+            "textures": 36
+          },
+          "programs": 44
+        },
+        {
+          "ms": 4769.79999999702,
+          "ready": false,
+          "built": true,
+          "chunks": 10,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 159,
+            "textures": 36
+          },
+          "programs": 44
+        },
+        {
+          "ms": 5270.39999999851,
+          "ready": false,
+          "built": true,
+          "chunks": 10,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 159,
+            "textures": 45
+          },
+          "programs": 51
+        },
+        {
+          "ms": 5776.5,
+          "ready": false,
+          "built": true,
+          "chunks": 10,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 159,
+            "textures": 45
+          },
+          "programs": 51
+        },
+        {
+          "ms": 6282.39999999851,
+          "ready": false,
+          "built": true,
+          "chunks": 15,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 260,
+            "textures": 45
+          },
+          "programs": 51
+        },
+        {
+          "ms": 6782.10000000149,
+          "ready": false,
+          "built": true,
+          "chunks": 17,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 275,
+            "textures": 45
+          },
+          "programs": 51
+        },
+        {
+          "ms": 7298.89999999851,
+          "ready": false,
+          "built": true,
+          "chunks": 20,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 303,
+            "textures": 45
+          },
+          "programs": 51
+        },
+        {
+          "ms": 7798.69999999553,
+          "ready": false,
+          "built": true,
+          "chunks": 21,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 326,
+            "textures": 45
+          },
+          "programs": 51
+        },
+        {
+          "ms": 8300.10000000149,
+          "ready": false,
+          "built": true,
+          "chunks": 21,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 326,
+            "textures": 45
+          },
+          "programs": 51
+        },
+        {
+          "ms": 8805.79999999702,
+          "ready": false,
+          "built": true,
+          "chunks": 23,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 375,
+            "textures": 51
+          },
+          "programs": 52
+        },
+        {
+          "ms": 9303.39999999851,
+          "ready": false,
+          "built": true,
+          "chunks": 25,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 429,
+            "textures": 51
+          },
+          "programs": 52
+        },
+        {
+          "ms": 9807,
+          "ready": false,
+          "built": true,
+          "chunks": 27,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 467,
+            "textures": 51
+          },
+          "programs": 52
+        },
+        {
+          "ms": 10307.19999999553,
+          "ready": false,
+          "built": true,
+          "chunks": 27,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 467,
+            "textures": 51
+          },
+          "programs": 52
+        },
+        {
+          "ms": 10825.69999999553,
+          "ready": false,
+          "built": true,
+          "chunks": 27,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 467,
+            "textures": 51
+          },
+          "programs": 52
+        },
+        {
+          "ms": 11340.5,
+          "ready": false,
+          "built": true,
+          "chunks": 27,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 6,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 467,
+            "textures": 52
+          },
+          "programs": 56
+        }
+      ],
+      "status": "ready",
+      "started": 1240.3000000044703,
+      "prepareMs": 0.10000000149011612,
+      "generationMs": 132,
+      "frames": 667,
+      "cpuMs": 5706.899999976158,
+      "cpuMaxMs": 599.6999999955297,
+      "frameMaxMs": 235.60000000149012,
+      "elapsedMs": 12433.19999999553,
+      "readyMs": 12433.19999999553,
+      "loadMs": 12459.39999999851,
+      "final": {
+        "ready": true,
+        "built": true,
+        "chunks": 28,
+        "chunkJobs": 0,
+        "finite": false,
+        "env": false,
+        "flash": false,
+        "flashKey": true,
+        "shrimp": false,
+        "shrimpKey": true,
+        "nguithr": false,
+        "moth": true,
+        "arms": false,
+        "watch": true,
+        "wrangler": true,
+        "burster": true,
+        "foyer": true,
+        "npcs": 6,
+        "items": 0,
+        "entities": 0,
+        "images": 0,
+        "memory": {
+          "geometries": 522,
+          "textures": 88
+        },
+        "programs": 71
+      },
+      "spawn": {
+        "x": 9,
+        "y": 109,
+        "z": 0
+      },
+      "structures": 1569,
+      "lightCount": 352
+    },
+    {
+      "id": 900,
+      "name": "前厅",
+      "title": "前厅",
+      "seed": 424242,
+      "mode": "realistic",
+      "cpu": {
+        "buildLevel": {
+          "steps": 58543,
+          "ms": 2731.5999999791384,
+          "maxMs": 385
+        },
+        "warmFlashModel": {
+          "steps": 139,
+          "ms": 19.299999989569187,
+          "maxMs": 6.800000004470348
+        },
+        "warmShrimpHeld": {
+          "steps": 179,
+          "ms": 116.49999999254942,
+          "maxMs": 52.20000000298023
+        },
+        "warmSceneTextures": {
+          "steps": 170,
+          "ms": 511.40000001341105,
+          "maxMs": 87.89999999850988
+        }
+      },
+      "compiles": [
+        {
+          "submitMs": 8.299999997019768,
+          "elapsedMs": 230.39999999850988
+        },
+        {
+          "submitMs": 1.2000000029802322,
+          "elapsedMs": 266
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 1.1999999955296516
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 4.399999998509884
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 8.700000002980232
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 0.8000000044703484
+        },
+        {
+          "submitMs": 3.2000000029802322,
+          "elapsedMs": 302.1000000014901
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 0.3999999985098839
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 0.5
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 0.20000000298023224
+        },
+        {
+          "submitMs": 384.8999999985099,
+          "elapsedMs": 1408.3999999985099
+        },
+        {
+          "submitMs": 1.3999999985098839,
+          "elapsedMs": 1006.6000000014901
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 994.8999999985099
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 994.6999999955297
+        },
+        {
+          "submitMs": 0.6000000014901161,
+          "elapsedMs": 1019.5
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 1018.8999999985099
+        },
+        {
+          "submitMs": 0.5999999940395355,
+          "elapsedMs": 985.7999999970198
+        },
+        {
+          "submitMs": 1.7000000029802322,
+          "elapsedMs": 1030.4000000059605
+        },
+        {
+          "submitMs": 3,
+          "elapsedMs": 1049.1000000014901
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 1003.2999999970198
+        },
+        {
+          "submitMs": 1.8000000044703484,
+          "elapsedMs": 1002.7000000029802
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 1004.3999999985099
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 1004.2000000029802
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 1014.5
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 1014
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 1002.7999999970198
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 1013.2000000029802
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 969
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 991.3000000044703
+        },
+        {
+          "submitMs": 1.3999999985098839,
+          "elapsedMs": 283.1000000014901
+        },
+        {
+          "submitMs": 5,
+          "elapsedMs": 758.2999999970198
+        },
+        {
+          "submitMs": 0.6000000014901161,
+          "elapsedMs": 1007.5
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 1006.7999999970198
+        },
+        {
+          "submitMs": 0.6000000014901161,
+          "elapsedMs": 1006.2999999970198
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 984.1999999955297
+        },
+        {
+          "submitMs": 0.8000000044703484,
+          "elapsedMs": 962.5
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 1004.2999999970198
+        },
+        {
+          "submitMs": 4.100000001490116,
+          "elapsedMs": 961.1999999955297
+        },
+        {
+          "submitMs": 4.300000004470348,
+          "elapsedMs": 960.1000000014901
+        },
+        {
+          "submitMs": 4.799999997019768,
+          "elapsedMs": 867.1999999955297
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 850.5
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 844.8999999985099
+        },
+        {
+          "submitMs": 0.4000000059604645,
+          "elapsedMs": 844.6000000014901
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 844.1999999955297
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 5.899999998509884
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 5.5
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 5.100000001490116
+        },
+        {
+          "submitMs": 1.1000000014901161,
+          "elapsedMs": 854.2000000029802
+        },
+        {
+          "submitMs": 0.6000000014901161,
+          "elapsedMs": 852.8000000044703
+        },
+        {
+          "submitMs": 2.1999999955296516,
+          "elapsedMs": 852.1000000014901
+        },
+        {
+          "submitMs": 3.2999999970197678,
+          "elapsedMs": 847.7999999970198
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 844.2999999970198
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 843.7999999970198
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 832.8999999985099
+        },
+        {
+          "submitMs": 3.7999999970197678,
+          "elapsedMs": 842.8999999985099
+        },
+        {
+          "submitMs": 0.6000000014901161,
+          "elapsedMs": 826.5
+        },
+        {
+          "submitMs": 1.2999999970197678,
+          "elapsedMs": 826
+        },
+        {
+          "submitMs": 1.3000000044703484,
+          "elapsedMs": 824.4000000059605
+        },
+        {
+          "submitMs": 0.6999999955296516,
+          "elapsedMs": 811.8999999985099
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 815.5
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 825.2000000029802
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 824.7000000029802
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 795.2999999970198
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 805.7999999970198
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 805.5
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 794.0999999940395
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 804.7999999970198
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 804.5
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 793
+        },
+        {
+          "submitMs": 0.4000000059604645,
+          "elapsedMs": 792.6000000014901
+        },
+        {
+          "submitMs": 0.5,
+          "elapsedMs": 792.1999999955297
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 802.8000000044703
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 802.7000000029802
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 791
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 790.6999999955297
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 801.6000000014901
+        },
+        {
+          "submitMs": 0.3999999985098839,
+          "elapsedMs": 801.3000000044703
+        },
+        {
+          "submitMs": 0.30000000447034836,
+          "elapsedMs": 800.9000000059605
+        },
+        {
+          "submitMs": 0.4000000059604645,
+          "elapsedMs": 783.4000000059605
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 794.1000000014901
+        },
+        {
+          "submitMs": 0.29999999701976776,
+          "elapsedMs": 794
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 793.7000000029802
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 793.3999999985099
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 793.2000000029802
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 793
+        },
+        {
+          "submitMs": 1.5,
+          "elapsedMs": 813.2999999970198
+        },
+        {
+          "submitMs": 0.6000000014901161,
+          "elapsedMs": 791.2000000029802
+        },
+        {
+          "submitMs": 0.20000000298023224,
+          "elapsedMs": 790.5
+        },
+        {
+          "submitMs": 0.19999999552965164,
+          "elapsedMs": 790.2999999970198
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 0.09999999403953552
+        },
+        {
+          "submitMs": 0.10000000149011612,
+          "elapsedMs": 6.300000004470348
+        },
+        {
+          "submitMs": 5.799999997019768,
+          "elapsedMs": 778.1000000014901
+        },
+        {
+          "submitMs": 1.5,
+          "elapsedMs": 228.60000000149012
+        },
+        {
+          "submitMs": 4.799999997019768,
+          "elapsedMs": 723.5
+        },
+        {
+          "submitMs": 0,
+          "elapsedMs": 0.10000000149011612
+        }
+      ],
+      "milestones": [
+        {
+          "ms": 80.29999999701977,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": true,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 1,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 0,
+            "textures": 1
+          },
+          "programs": 14
+        },
+        {
+          "ms": 543.3999999985099,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": true,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 7,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 0,
+            "textures": 3
+          },
+          "programs": 21
+        },
+        {
+          "ms": 1058.6999999955297,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": true,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 7,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 4,
+            "textures": 11
+          },
+          "programs": 24
+        },
+        {
+          "ms": 1573.6999999955297,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": true,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 7,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 5,
+            "textures": 11
+          },
+          "programs": 24
+        },
+        {
+          "ms": 2081,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": true,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 7,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 5,
+            "textures": 11
+          },
+          "programs": 24
+        },
+        {
+          "ms": 2654.5999999940395,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": true,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": false,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 7,
+          "items": 0,
+          "entities": 0,
+          "images": 11,
+          "memory": {
+            "geometries": 5,
+            "textures": 93
+          },
+          "programs": 24
+        },
+        {
+          "ms": 3335.7999999970198,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": true,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 7,
+          "items": 0,
+          "entities": 0,
+          "images": 6,
+          "memory": {
+            "geometries": 22,
+            "textures": 173
+          },
+          "programs": 39
+        },
+        {
+          "ms": 3830,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": true,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 7,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 22,
+            "textures": 167
+          },
+          "programs": 57
+        },
+        {
+          "ms": 4328.89999999851,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": true,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 7,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 22,
+            "textures": 167
+          },
+          "programs": 57
+        },
+        {
+          "ms": 6298.19999999553,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": true,
+          "npcs": 7,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 642,
+            "textures": 204
+          },
+          "programs": 107
+        },
+        {
+          "ms": 6808.0999999940395,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": true,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": false,
+          "npcs": 7,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 642,
+            "textures": 203
+          },
+          "programs": 135
+        },
+        {
+          "ms": 7326.39999999851,
+          "ready": false,
+          "built": true,
+          "chunks": 0,
+          "chunkJobs": 0,
+          "finite": false,
+          "env": false,
+          "flash": false,
+          "flashKey": true,
+          "shrimp": true,
+          "shrimpKey": true,
+          "nguithr": false,
+          "moth": true,
+          "arms": false,
+          "watch": true,
+          "wrangler": true,
+          "burster": true,
+          "foyer": false,
+          "npcs": 7,
+          "items": 0,
+          "entities": 0,
+          "images": 0,
+          "memory": {
+            "geometries": 642,
+            "textures": 203
+          },
+          "programs": 135
+        }
+      ],
+      "status": "ready",
+      "started": 1245.1000000014901,
+      "prepareMs": 0.19999999552965164,
+      "generationMs": 30,
+      "frames": 266,
+      "cpuMs": 4918.80000012368,
+      "cpuMaxMs": 1673.5,
+      "frameMaxMs": 1690,
+      "elapsedMs": 7544.19999999553,
+      "readyMs": 7544.19999999553,
+      "loadMs": 7562.5,
+      "final": {
+        "ready": true,
+        "built": true,
+        "chunks": 0,
+        "chunkJobs": 0,
+        "finite": false,
+        "env": false,
+        "flash": false,
+        "flashKey": true,
+        "shrimp": false,
+        "shrimpKey": true,
+        "nguithr": false,
+        "moth": true,
+        "arms": false,
+        "watch": true,
+        "wrangler": true,
+        "burster": true,
+        "foyer": false,
+        "npcs": 7,
+        "items": 0,
+        "entities": 0,
+        "images": 0,
+        "memory": {
+          "geometries": 643,
+          "textures": 218
+        },
+        "programs": 147
+      },
+      "spawn": {
+        "x": 5.5,
+        "y": 5.5,
+        "z": 0
+      },
+      "structures": 135,
+      "lightCount": 45
+    }
+  ],
+  "protocol": "Each entry has a new incognito browser context, empty HTTP / IndexedDB / JS caches. Time starts at destination chunk preparation, ends at real readiness + two real frames. Browser boot/import excluded.",
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\entry-speed-20261029\\baseline-60hz\\entry-1793283264064-57340",
+    "--remote-debugging-port=7290",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 60652,
+    "browser": 63928
+  },
+  "environment": {
+    "levels": [
+      {
+        "id": 0,
+        "name": "Level 0",
+        "title": "教学关卡",
+        "infinite": true,
+        "gen": "rooms"
+      },
+      {
+        "id": 1,
+        "name": "Level 1",
+        "title": "宜居地带",
+        "infinite": true,
+        "gen": "garage"
+      },
+      {
+        "id": 2,
+        "name": "Level 2",
+        "title": "废弃公共带",
+        "infinite": true,
+        "gen": "pipes"
+      },
+      {
+        "id": 3,
+        "name": "Level 3",
+        "title": "电站",
+        "infinite": true,
+        "gen": "grid"
+      },
+      {
+        "id": 4,
+        "name": "Level 4",
+        "title": "废弃办公室",
+        "infinite": true,
+        "gen": "office"
+      },
+      {
+        "id": 5,
+        "name": "Level 5",
+        "title": "恐怖酒店",
+        "infinite": true,
+        "gen": "hotel"
+      },
+      {
+        "id": 6,
+        "name": "Level 6",
+        "title": "熄灯",
+        "infinite": true,
+        "gen": "darkhall"
+      },
+      {
+        "id": 7,
+        "name": "Level 7",
+        "title": "深海恐惧",
+        "infinite": true,
+        "gen": "ocean"
+      },
+      {
+        "id": 8,
+        "name": "Level 8",
+        "title": "洞穴系统",
+        "infinite": true,
+        "gen": "caves"
+      },
+      {
+        "id": 9,
+        "name": "Level 9",
+        "title": "郊区",
+        "infinite": true,
+        "gen": "suburb"
+      },
+      {
+        "id": 10,
+        "name": "Level 10",
+        "title": "丰裕",
+        "infinite": true,
+        "gen": "field"
+      },
+      {
+        "id": 11,
+        "name": "Level 11",
+        "title": "不夜城",
+        "infinite": true,
+        "gen": "city"
+      },
+      {
+        "id": 12,
+        "name": "Level 601",
+        "title": "终末",
+        "infinite": false,
+        "gen": "library"
+      },
+      {
+        "id": 101,
+        "name": "Alpha 基地",
+        "title": "M.E.G. Alpha 基地",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 102,
+        "name": "商人之家",
+        "title": "商人之家",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 103,
+        "name": "希波克拉底 - 1",
+        "title": "希波克拉底 - 1",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 104,
+        "name": "Tom 的餐馆",
+        "title": "Tom 的餐馆",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 105,
+        "name": "办公区EL3A",
+        "title": "办公区EL3A",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 106,
+        "name": "M.E.G. Gemma 基地",
+        "title": "M.E.G. Gemma 基地",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 107,
+        "name": "存储设施",
+        "title": "B.N.T.G. 存储设施",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 108,
+        "name": "蓝色救赎",
+        "title": "蓝色救赎",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 109,
+        "name": "M.E.G. Omega 基地",
+        "title": "M.E.G. Omega 基地",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 110,
+        "name": "M.E.G. 哨所「家政服务」",
+        "title": "M.E.G. 哨所「家政服务」",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 111,
+        "name": "家常酒店",
+        "title": "家常酒店",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 112,
+        "name": "原住民",
+        "title": "原住民",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 113,
+        "name": "M.E.G.“空巢”前哨站",
+        "title": "M.E.G.“空巢”前哨站",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 114,
+        "name": "哈莫兹洞穴社群",
+        "title": "哈莫兹洞穴社群",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 116,
+        "name": "丰饶角",
+        "title": "丰饶角",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 274,
+        "name": "Level 274 · 杰瑞的房间",
+        "title": "杰瑞的房间",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 900,
+        "name": "前厅",
+        "title": "前厅",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 902,
+        "name": "Level 0.2",
+        "title": "重塑的混乱",
+        "infinite": true,
+        "gen": "rooms"
+      }
+    ],
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "cores": 32,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "mode": "realistic",
+    "settings": {
+      "textureQuality": 1,
+      "detailDistance": 100,
+      "sceneLightLimit": 16,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "shadows": true,
+      "lightShadows": 2,
+      "bloom": true,
+      "ao": 1,
+      "dpr": 1
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "network": [
+    {
+      "session": "07A355B84E6284EA1C59A154638A745F",
+      "requestId": "56968.659",
+      "loaderId": "35094B3BE2211804AD8326EE5E6D0EBA",
+      "timestamp": 37403.094216,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:7289/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 29 Oct 2026 14:14:32 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 2275,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 7289,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 37403.08801,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.161,
+          "sendEnd": 0.203,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 5.823,
+          "receiveHeadersEnd": 5.856
+        },
+        "responseTime": 1793283272325.969,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "0E6953B5E2AE6567CC2A205309CC79F0"
+    }
+  ]
+}

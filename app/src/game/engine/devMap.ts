@@ -51,7 +51,7 @@ export function requestDevMapPreview(eng:Engine,view:{x:number;y:number;span:num
  const ready:DevMapPreview={cells:[],labels:[],level,seed:inf.seed},missing:typeof coords=[],keys=new Map<string,string>()
  const stateKey=JSON.stringify(inf.l0?.redProgress??{})
  for(const c of coords){
-  const cellKey=`${c.cx},${c.cy}`,key=`${level}:${inf.seed}:${floor}:${cellKey}:${inf.l0?.revisions[cellKey]??0}:${stateKey}`,live=inf.chunks.get(cellKey)
+  const cellKey=`${c.cx},${c.cy}`,key=`${level}:${inf.seed}:${inf.l5Floor ?? ""}:${floor}:${cellKey}:${inf.l0?.revisions[cellKey]??0}:${stateKey}`,live=inf.chunks.get(cellKey)
   keys.set(cellKey,key)
   if(level===7){
    const chart=live?.seaFloor&&live.liquid?rememberL7ChartCell(inf.seed,{...c,seaFloor:live.seaFloor,liquid:live.liquid,elev:live.elev}):recalledL7ChartCell(inf.seed,c.cx,c.cy)
@@ -67,7 +67,7 @@ export function requestDevMapPreview(eng:Engine,view:{x:number;y:number;span:num
  publish()
  if(signal.aborted)return Promise.reject(new DOMException('Cancelled','AbortError'))
  if(!missing.length)return Promise.resolve(ready)
- if(level===7)missing.sort((a,b)=>Math.hypot(a.cx*32+16-view.x,a.cy*32+16-view.y)-Math.hypot(b.cx*32+16-view.x,b.cy*32+16-view.y))
+ if(level===7||level===5)missing.sort((a,b)=>Math.hypot(a.cx*32+16-view.x,a.cy*32+16-view.y)-Math.hypot(b.cx*32+16-view.x,b.cy*32+16-view.y))
  ensureWorker();const id=++serial
  return new Promise<DevMapPreview>((resolve,reject)=>{
   const task:Task={id,level,seed:inf.seed,resolve,reject,data:ready,keys,signal,abort:()=>{if(active===task){close(task);worker?.postMessage({cancel:true,id});reject(new DOMException('Cancelled','AbortError'))}},publish:onProgress?publish:undefined}

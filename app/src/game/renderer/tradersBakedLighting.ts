@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { requestTradersBake } from './tradersBakeQueue'
 import {l0StaticPointMask} from './l0PointMask'
 import {l1BakedPointLights} from './l1BakedShader'
 import {tradersArchPosts,tradersHallPosts} from '../content/tradersRibs'
@@ -93,6 +94,19 @@ export type TradersProbe=ReadonlyArray<readonly [number,number,number]>
 export interface TradersProbeField{axis:'x'|'z';low:number;high:number;probes:readonly TradersProbe[];bottom?:number;top?:number;rows?:readonly (readonly TradersProbe[])[]}
 export function* bakeTradersGeometry(geo:THREE.BufferGeometry,matrix?:THREE.Matrix4,probe?:TradersProbe|TradersProbeField):Generator<void,void,unknown>{
  const p=geo.getAttribute('position'),n=geo.getAttribute('normal');if(!p||!n)return
+ // Static architecture has world-space vertices and fixed emitters/blockers. The worker
+ // uses the exact same solver, while dynamic props retain their existing local probes.
+ if(!matrix&&!probe){
+  const job=requestTradersBake(p,n)
+  if(job){
+   try{
+    const deadline=performance.now()+8000
+    while(job.pending&&performance.now()<deadline)yield
+    if(job.colors?.length===p.count*3){geo.setAttribute('tradersLight',new THREE.BufferAttribute(job.colors,3));return}
+   }finally{job.cancel()}
+   // Unsupported/failed/timed-out worker: complete the original solve before publishing.
+  }
+ }
  const data=new Float32Array(p.count*3),v=new THREE.Vector3(),normal=new THREE.Vector3(),normalMatrix=matrix?new THREE.Matrix3().getNormalMatrix(matrix):undefined
  for(let i=0;i<p.count;i++){
   v.fromBufferAttribute(p,i);normal.fromBufferAttribute(n,i)

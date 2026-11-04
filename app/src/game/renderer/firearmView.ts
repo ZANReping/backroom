@@ -490,6 +490,7 @@ export class GunWorldFx {
       d.lookAt(p.clone().add(n))
       d.rotateZ(Math.random() * 6.28)
       d.scale.setScalar(big ? 0.032 : 0.016 + Math.random() * 0.008)
+      d.userData.born = performance.now() / 1000; d.userData.life = 90 + Math.random() * 60 // L5 自洁：90–150 s
       this.scene.add(d); this.decals.push(d)
       while (this.decals.length > 90) this.decals.shift()!.removeFromParent()
       this.puff(this.sparkMat, p.clone().addScaledVector(n, 0.02), n.clone().multiplyScalar(0.4), 0.07, 0.04, 0, 1)
@@ -510,6 +511,22 @@ export class GunWorldFx {
     s.renderOrder = 3
     this.scene.add(s); this.puffs.push({ s, v, t: 0, life, grow, a0 })
     while (this.puffs.length > 70) { const p = this.puffs.shift()!; p.s.removeFromParent(); p.s.material.dispose() }
+  }
+  private cleanFrustum = new THREE.Frustum()
+  private cleanMat = new THREE.Matrix4()
+  /** L5「恐怖旅馆」自洁：弹孔到期且不在镜头里（6 m 内一律保留）时移除 */
+  selfClean(camera: THREE.Camera, px: number, py: number) {
+    if (!this.decals.length) return
+    const now = performance.now() / 1000
+    this.cleanMat.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse)
+    this.cleanFrustum.setFromProjectionMatrix(this.cleanMat)
+    for (let i = this.decals.length - 1; i >= 0; i--) {
+      const d = this.decals[i]
+      if (now - (d.userData.born ?? now) < (d.userData.life ?? 120)) continue
+      const near = Math.hypot(d.position.x - px, d.position.z - py) < 6
+      if (near || this.cleanFrustum.containsPoint(d.position)) continue
+      d.removeFromParent(); this.decals.splice(i, 1)
+    }
   }
   update(dt: number) {
     this.burstK = Math.max(0, this.burstK - dt / 0.12)

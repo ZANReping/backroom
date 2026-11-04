@@ -1,0 +1,19 @@
+
+> my-app@0.0.0 check:entry-compile-variants
+> esbuild scripts/check-entry-compile-variants.ts --bundle --platform=node --format=esm --outfile=.cache/check-entry-compile-variants.mjs && node .cache/check-entry-compile-variants.mjs
+
+
+  .cache\check-entry-compile-variants.mjs  664.6kb
+
+Done in 101ms
+file:///C:/Users/ZANRe/Documents/GitHub/backroom/app/.cache/check-entry-compile-variants.mjs:16001
+      renderer2.compile(view, camera2, scene2);
+                ^
+
+TypeError: renderer2.compile is not a function
+    at compileSceneJob (file:///C:/Users/ZANRe/Documents/GitHub/backroom/app/.cache/check-entry-compile-variants.mjs:16001:17)
+    at compileSceneJob.next (<anonymous>)
+    at run (file:///C:/Users/ZANRe/Documents/GitHub/backroom/app/.cache/check-entry-compile-variants.mjs:16139:13)
+    at async file:///C:/Users/ZANRe/Documents/GitHub/backroom/app/.cache/check-entry-compile-variants.mjs:16144:1
+
+Node.js v24.11.1

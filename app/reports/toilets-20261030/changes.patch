@@ -1,0 +1,417 @@
+diff --git a/before/app/src/game/content/furnitureSeats.ts b/after/app/src/game/content/furnitureSeats.ts
+index e1e09a3..25f3b15 100644
+--- a/before/app/src/game/content/furnitureSeats.ts
++++ b/after/app/src/game/content/furnitureSeats.ts
+@@ -1,3 +1,4 @@
++import { toiletSeat } from './toiletParts'
+ // Seat surfaces are authored in the furniture's local model space, in metres.
+ import type { Structure } from '../core/types'
+ import { l11DecorDef } from './l11Decor'
+@@ -10,6 +11,7 @@ export interface FurnitureSeat {
+   yaw: number // Three.js rotation: model front is +Z
+   label: string
+   relaxed?: boolean
++  toilet?: boolean
+ }
+ 
+ const seat = (y: number, x = 0, z = 0, yaw = 0, label = '座椅', relaxed = false): FurnitureSeat => ({ x, y, z, yaw, label, relaxed })
+@@ -17,6 +19,7 @@ const seat = (y: number, x = 0, z = 0, yaw = 0, label = '座椅', relaxed = fals
+ /** Explicit seat surfaces, never inferred from a prop's bounding box (tables are not seats). */
+ export function furnitureSeats(s: Structure, level: number): FurnitureSeat[] {
+   if (s.data?.fallen || s.data?.hidden || s.data?.noSit) return []
++  if(s.data?.dressing==='wcstall')return [{...toiletSeat(),z:toiletSeat().z-.42}]
+   if(s.data?.tradersModel==='waiting')return [-1.18,0,1.18].map(x=>seat(.46,x,0,0,'候场排椅'))
+   if(s.data?.tradersModel==='workstation')return [seat(.46,0,.76,Math.PI,'工作椅')]
+   if(s.data?.tradersModel==='lounge')return [-1,1].flatMap(side=>[-.7,.7].map(z=>seat(.54,side*1.55,z,-side*Math.PI/2,'休息软座',true)))
+@@ -29,6 +32,18 @@ export function furnitureSeats(s: Structure, level: number): FurnitureSeat[] {
+       const count = Math.max(1, Math.min(32, Number(s.data?.seatCount ?? 1)))
+       return Array.from({ length: count }, (_, i) => seat(height, (i + .5) * w / count - w / 2, 0, Number(s.data?.seatYaw ?? 0), String(s.data?.seatLabel ?? '座椅'), !!s.data?.seatRelaxed))
+     }
++    case 'l02fix': {
++      if(s.data?.fix!=='toilet')return []
++      const a=Number(s.data?.yaw??0),p=toiletSeat()
++      return [{...p,x:Math.sin(a)*p.z,z:Math.cos(a)*p.z,yaw:a}]
++    }
++    case 'l4prop': return s.data?.detail==='toilet'?[toiletSeat()]:[]
++    case 'l10outhouse': return level===10?[{x:0,y:.46,z:-(Number(s.data?.deg??0)%180?s.w:s.h)/2+.43,yaw:0,label:'旱厕坐凳',toilet:true}]:[]
++    case 'l9toilet': return [toiletSeat('worn')]
++    case 'stoneinstruments': {
++      const a=Number(s.data?.rot??0)+Math.PI+.15,yaw=Math.atan2(-Math.cos(a),-Math.sin(a)),p=toiletSeat('stone')
++      return [{...p,x:Math.cos(a)*1.3+Math.sin(yaw)*p.z,z:Math.sin(a)*1.3+Math.cos(yaw)*p.z,yaw}]
++    }
+     case 'table': return s.data?.chair ? [seat(s.data?.l0Furniture ? .488 : .475)] : []
+     case 'officechair': return [seat(level === 4 ? .52 : .475, 0, 0, level === 4 ? Math.PI : 0, '办公椅')]
+     case 'barberchair': return [seat(.5125, 0, .02, 0, '理发椅')]
+@@ -53,6 +68,7 @@ export function furnitureSeats(s: Structure, level: number): FurnitureSeat[] {
+   const city = l11DecorDef(k)
+   if (!city) return []
+   switch (k) {
++    case 'l11_toilet': {const p=toiletSeat();return [{...p,z:-p.z,yaw:Math.PI}]}
+     case 'l11_task_chair': return [seat(.55, 0, -.03, Math.PI, '办公椅')]
+     case 'l11_cafe_chair': return [seat(.4775, 0, -.025, Math.PI, '咖啡椅')]
+     case 'l11_dining_chair': return [seat(.492, 0, -.03, Math.PI, '餐椅')]
+diff --git a/before/app/src/game/content/l11InteriorParts.ts b/after/app/src/game/content/l11InteriorParts.ts
+index 5f9149e..f41e9f9 100644
+--- a/before/app/src/game/content/l11InteriorParts.ts
++++ b/after/app/src/game/content/l11InteriorParts.ts
+@@ -1,3 +1,4 @@
++import { toiletParts } from './toiletParts'
+ import { L11PropBuilder } from './l11PropKit'
+ 
+ /** Purpose-built interior prop parts for Level 11. Coordinates are metres. */
+@@ -42,11 +43,8 @@ export function l11InteriorParts(key: string, b: L11PropBuilder): boolean {
+     case 'dining_table': b.box(0, H - .08, 0, w, .16, d, 'wood'); legs(4, .07, H * .8, 'wood'); b.sphere(0, H + .04, 0, .22, .1, .22, 'metal'); return true
+     case 'dining_chair': legs(4, .06, H * .44, 'wood'); b.box(0, H * .48, 0, w, .12, d, 'wood'); for (const x of [-w / 2 + .08, w / 2 - .08]) b.box(x, H * .75, d / 2 - .05, .06, H * .5, .06, 'wood'); for (let i = 0; i < 3; i++) b.box(0, H * (.62 + i * .15), d / 2 - .05, w - .12, .05, .05, 'wood'); return true
+     case 'toilet': {
+-      b.cylinder(0,.18,.04,.14,.32,'porcelain','#ebe9df').taper=1.12
+-      b.sphere(0,.38,-.07,w*.95,.29,d*.72,'porcelain','#ebe9df',true)
+-      const seat=b.ring(0,.525,-.075,w*.49,.035,'porcelain','#f4f0df');seat.h=d*.69;seat.rx=Math.PI/2
+-      b.box(0,.60,d/2-.08,w*.86,.38,.16,'porcelain','#ebe9df');b.box(0,.805,d/2-.08,w*.88,.035,.18,'porcelain','#ebe9df')
+-      b.cylinder(w*.22,.83,d/2-.08,.025,.01,'metal',undefined,false)
++      // City furnishings face -Z. Rotate the shared physical fixture once, including its hollow profile.
++      for(const part of toiletParts())b.parts.push({...part,x:-part.x,z:-part.z,ry:Math.PI,color:part.finish==='metal'?'#a7afa9':part.finish==='inner'?'#c7c8bc':part.finish==='seat'?'#f4f0df':'#ebe9df'})
+       return true
+     }
+     case 'wash_basin': {
+diff --git a/before/app/src/game/content/l11PropKit.ts b/after/app/src/game/content/l11PropKit.ts
+index 07a4873..51b79d7 100644
+--- a/before/app/src/game/content/l11PropKit.ts
++++ b/after/app/src/game/content/l11PropKit.ts
+@@ -1,6 +1,6 @@
+ import type { L11DecorDef } from './l11Decor'
+ export type L11PropSurface='metal'|'paint'|'wood'|'rawwood'|'bark'|'concrete'|'glass'|'sealedglass'|'grass'|'tile'|'brick'|'fabric'|'rubber'|'paper'|'porcelain'|'plastic'
+-export interface L11PropPart {x:number;y:number;z:number;w:number;h:number;d:number;surface:L11PropSurface;color?:string;shape:'box'|'cylinder'|'sphere'|'ring'|'plane';solid:boolean;rx?:number;ry?:number;rz?:number;taper?:number;arc?:number;profile?:[number,number][];bevel?:number;crown?:number;nose?:number;grain?:'x'|'y'|'z';uvScale?:number;uvOffset?:[number,number];foliage?:'ellipsoid'|'trimmed'}
++export interface L11PropPart {x:number;y:number;z:number;w:number;h:number;d:number;surface:L11PropSurface;color?:string;shape:'box'|'cylinder'|'sphere'|'ring'|'plane';solid:boolean;rx?:number;ry?:number;rz?:number;taper?:number;arc?:number;profile?:[number,number][];latheProfile?:[number,number][];bevel?:number;crown?:number;nose?:number;grain?:'x'|'y'|'z';uvScale?:number;uvOffset?:[number,number];foliage?:'ellipsoid'|'trimmed'}
+ /** Coordinates: x/z centred on the footprint, front is -z, y is height above the floor.
+  * rx/ry/rz use Three's XYZ Euler convention, shared by rendering and collision. */
+ export class L11PropBuilder {
+diff --git a/before/app/src/game/content/l11PropShapes.ts b/after/app/src/game/content/l11PropShapes.ts
+index de9c69f..3a6d72d 100644
+--- a/before/app/src/game/content/l11PropShapes.ts
++++ b/after/app/src/game/content/l11PropShapes.ts
+@@ -12,7 +12,11 @@ const prepared=new WeakMap<L11PropPart,{geometry:THREE.BufferGeometry;matrix:THR
+ export function l11PropShape(p:L11PropPart){
+   const hit=prepared.get(p);if(hit)return hit
+   let geometry:THREE.BufferGeometry,sz=p.d
+-  if(p.profile){
++  if(p.latheProfile){
++    const key='lathe:'+JSON.stringify(p.latheProfile)
++    geometry=roundUnits.get(key)??new THREE.LatheGeometry(p.latheProfile.map(([r,y])=>new THREE.Vector2(r,y)),20)
++    roundUnits.set(key,geometry)
++  }else if(p.profile){
+     // A longitudinal (z,y) silhouette extruded across the vehicle width.
+     // The same closed mesh supplies render geometry and collision triangles.
+     const key='profile:'+JSON.stringify([p.profile,p.bevel,p.crown,p.nose])
+diff --git a/before/app/src/game/renderer/l02Props.ts b/after/app/src/game/renderer/l02Props.ts
+index 6e1d8ee..6292430 100644
+--- a/before/app/src/game/renderer/l02Props.ts
++++ b/after/app/src/game/renderer/l02Props.ts
+@@ -1,3 +1,4 @@
++import { toiletGeometries } from './toiletGeometry'
+ // Level 0.2 装饰物细化（第五轮）：洗手间设施（马桶/隔断/洗手台）、Wi‑Fi 路由器、板夹的分件倒角建模，
+ // 以及设备层（喷淋管法兰/管卡/吊杆、保温风管、电缆桥架）与未完工房屋里的管卡、接线盒、施工灯、工具、锥桶等小件。
+ // 材质延续 l02Scene/l02Pbr 的约定：MeshBasic（不吃实时光、不触发整层着色器重编译），
+@@ -109,17 +110,8 @@ function worldUVBox(g: THREE.BufferGeometry, scale: number) {
+  *  冲水按钮（双键）、角阀 + 编织软管、地脚螺栓盖。 */
+ export function toiletModel(g: THREE.Group) {
+   const k = new Kit()
+-  // Keep the bowl open at the lip: the old profile returned to the axis at y=.4,
+-  // producing a solid disk instead of a cavity.  The separate inner profile is
+-  // the visible porcelain wall/floor (and deliberately has no coplanar cap).
+-  k.lathe('porcelain', [[0.0, 0], [0.13, 0], [0.135, 0.02], [0.11, 0.08], [0.1, 0.2], [0.14, 0.3], [0.18, 0.37], [0.19, 0.395], [0.175, 0.405], [0.155, 0.4]], 0, 0, 0.06, 24, 1, 1.22)
+-  k.lathe('porcelainDim', [[0.155, 0.4], [0.14, 0.365], [0.10, 0.315], [0.0, 0.30]], 0, 0, 0.06, 20, 1, 1.22) // 碗内（略暗）
+-  k.add('porcelain', new THREE.TorusGeometry(0.155, 0.022, 8, 28).scale(1, 1.22, 1), 0, 0.42, 0.075, Math.PI / 2) // 座圈
+-  k.box('porcelain', 0.36, 0.42, 0.022, 0, 0.62, -0.115, 0.01, -0.12) // 翻起的座盖（靠在水箱上）
+-  k.box('porcelain', 0.4, 0.34, 0.17, 0, 0.6, -0.215, 0.025) // 水箱
+-  k.box('porcelain', 0.42, 0.035, 0.19, 0, 0.785, -0.215, 0.012) // 箱盖
+-  k.cyl('chrome', 0.026, 0.026, 0.01, 0, 0.806, -0.215, 20) // 双键冲水按钮
+-  k.box('chromeDark', 0.003, 0.012, 0.05, 0, 0.809, -0.215)
++  const keys = {porcelain:'porcelain',inner:'porcelainDim',seat:'porcelain',metal:'chrome'} as const
++  for(const [finish, geometry] of toiletGeometries())k.add(keys[finish],geometry)
+   k.cyl('chrome', 0.012, 0.012, 0.05, -0.15, 0.2, -0.285, 10, Math.PI / 2) // 角阀
+   k.box('chrome', 0.018, 0.03, 0.01, -0.15, 0.2, -0.255, 0.004)
+   k.cyl('braid', 0.006, 0.006, 0.24, -0.15, 0.32, -0.25, 6) // 编织软管
+diff --git a/before/app/src/game/renderer/l4OfficeDetails.ts b/after/app/src/game/renderer/l4OfficeDetails.ts
+index 89302bb..1065659 100644
+--- a/before/app/src/game/renderer/l4OfficeDetails.ts
++++ b/after/app/src/game/renderer/l4OfficeDetails.ts
+@@ -1,3 +1,4 @@
++import { buildToilet } from './toiletGeometry'
+ import * as THREE from 'three'
+ import { l4Material } from './l4Materials'
+ 
+@@ -45,10 +46,7 @@ function pantry(g: THREE.Group) {
+   box(g,trim,[2.0,.55,.32],[0,1.725,-.22]);for(const x of [-.65,0,.65]){box(g,wall,[.63,.5,.018],[x,1.725,-.047]);box(g,steel,[.10,.018,.02],[x,1.52,-.025])}
+ }
+ function toilet(g: THREE.Group) {
+-  box(g,paper,[.42,.5,.19],[0,.64,-.32]);box(g,steel,[.07,.025,.025],[.12,.78,-.21])
+-  const bowl=new THREE.Mesh(new THREE.CylinderGeometry(.235,.13,.32,16),paper);bowl.position.set(0,.25,.06);bowl.scale.z=1.2;bowl.castShadow=bowl.receiveShadow=true;g.add(bowl)
+-  const seat=new THREE.Mesh(new THREE.TorusGeometry(.205,.045,6,20),paper);seat.rotation.x=Math.PI/2;seat.scale.y=1.25;seat.position.set(0,.44,.06);seat.castShadow=true;g.add(seat)
+-  cyl(g,black,.17,.012,[0,.411,.06],16)
++  g.add(buildToilet({porcelain:paper,inner:paper,seat:paper,metal:steel}))
+   box(g,paper,[.43,.1,.34],[.67,.82,-.28]);box(g,steel,[.30,.02,.23],[.67,.875,-.28]);cyl(g,steel,.025,.24,[.82,.97,-.36]);box(g,steel,[.12,.025,.025],[.77,1.08,-.36]);cyl(g,steel,.035,.75,[.67,.4,-.28])
+   box(g,black,[.50,.59,.025],[.67,1.42,-.455]);box(g,steel,[.46,.55,.015],[.67,1.42,-.435])
+   const roll=cyl(g,paper,.065,.14,[-.42,.78,-.40]);roll.rotation.z=Math.PI/2
+diff --git a/before/app/src/game/renderer/foyerHome.ts b/after/app/src/game/renderer/foyerHome.ts
+index 0ce7ae6..d49f636 100644
+--- a/before/app/src/game/renderer/foyerHome.ts
++++ b/after/app/src/game/renderer/foyerHome.ts
+@@ -1,3 +1,4 @@
++import { toiletGeometries } from './toiletGeometry'
+ // 前厅（序章）渲染：玩家的家——地面/墙面/吊顶（替代通用瓦片地形）+ 全部家具与陈设的程序化建模。
+ // 静态部分按材质合批（mergeGeometries），可动部件（门、抽屉、衣柜门、冰箱门）各自独立为铰链组，
+ // 由 FoyerScene.update 按 engine.foyer.open 状态插值。贴图见 foyerTextures.ts（运行时 Canvas 生成）。
+@@ -973,10 +974,8 @@ export class FoyerScene {
+         break
+       }
+       case 'toilet': {
+-        c.cushion(M.ceramic(), 0.36, 0.36, 0.5, 0, 0, 0.02, 0.1)
+-        c.cushion(M.ceramic(), 0.38, 0.04, 0.48, 0, 0.36, 0.04, 0.02)
+-        c.cushion(M.ceramic(), 0.4, 0.4, 0.16, 0, 0.4, back + 0.08, 0.03)
+-        c.box(M.chrome(), 0.05, 0.012, 0.03, 0, 0.8, back + 0.08)
++        const ceramic = M.ceramic(), inner = this.mats.lit('toilet-inner', {color:'#c8c9bf',roughness:.24})
++        for(const [finish, geometry] of toiletGeometries('compact'))c.add(finish==='metal'?M.chrome():finish==='inner'?inner:ceramic,geometry,0,0,0)
+         // 卷纸（壁挂卷纸架：底座贴墙）
+         c.box(M.chrome(), 0.14, 0.05, 0.01, 0.32, 0.72, back + 0.005)
+         c.cyl(M.chrome(), 0.006, 0.006, 0.12, 0.32, 0.745, back + 0.065, 8, 0, Math.PI / 2)
+diff --git a/before/app/src/game/renderer/structures.ts b/after/app/src/game/renderer/structures.ts
+index 84f8e62..2c89c60 100644
+--- a/before/app/src/game/renderer/structures.ts
++++ b/after/app/src/game/renderer/structures.ts
+@@ -1,3 +1,4 @@
++import { buildToilet } from './toiletGeometry'
+ import { l1PlanTile } from '../world/l1Plan'
+ import { buildRemodelDoor } from './remodelSites'
+ import { factionSignTexture, signStyleFor, highVoltageTexture, type SignStyle } from './factionSigns'
+@@ -6895,8 +6896,9 @@ export function buildExit(kind: string, def: LevelDef, structure?: Structure): T
+       break
+     }
+     case 'l9toilet': {
+-      grp.add(cyl(.29, .24, .34, '#dddcd5', 0, .23, .06, 14)); grp.add(cyl(.27, .27, .06, '#eceae2', 0, .43, .06, 14))
+-      grp.add(box(.48, .58, .22, '#d7d6cf', 0, .55, -.27)); grp.add(box(.5, .06, .24, '#eceae2', 0, .86, -.27))
++      const porcelain=litMaterial({color:'#d7d6cf',roughness:.3}),seat=litMaterial({color:'#e5e1d5',roughness:.4}),inner=litMaterial({color:'#a5aaa1',roughness:.3}),metal=litMaterial({color:'#9ea8a8',roughness:.4,metalness:.45})
++      grp.add(buildToilet({porcelain,seat,inner,metal},'worn'))
++      grp.rotation.y=Number(s.data?.deg??0)*Math.PI/180
+       break
+     }
+     case 'l9bathtub': {
+diff --git a/before/app/src/game/renderer/stoneInstrumentsMesh.ts b/after/app/src/game/renderer/stoneInstrumentsMesh.ts
+index 786b130..5cc1cf5 100644
+--- a/before/app/src/game/renderer/stoneInstrumentsMesh.ts
++++ b/after/app/src/game/renderer/stoneInstrumentsMesh.ts
+@@ -1,3 +1,4 @@
++import { toiletGeometries } from './toiletGeometry'
+ // [kazoo] L8「乐器洞」——参照中文维基 Level 8 正文里那段石头乐器洞穴的叙事：
+ // 整个洞穴装满天然长成的石头乐器：小提琴、吉他、看起来像长号的东西，以古怪角度嵌在岩壁上；
+ // 头顶一组风铃由复杂的石链系着；一个马桶，周围不可理喻地围了一圈邦戈鼓（有几架倒了）；
+@@ -113,15 +114,9 @@ function trombone(): THREE.BufferGeometry {
+   return finish(L, 0.004, 10, 3)
+ }
+ function toilet(): THREE.BufferGeometry {
+-  const L: THREE.BufferGeometry[] = []
+-  const bowl = new THREE.LatheGeometry([[0.0, 0], [0.11, 0], [0.12, 0.05], [0.1, 0.2], [0.17, 0.36], [0.19, 0.4], [0.15, 0.41], [0.08, 0.32], [0.0, 0.3]].map(([x, y]) => new THREE.Vector2(x, y)), 18)
+-  bowl.scale(1, 1, 1.25); L.push(bowl)
+-  L.push(at(new THREE.TorusGeometry(0.16, 0.025, 6, 20).scale(1, 1.25, 1), 0, 0.42, 0, Math.PI / 2)) // 座圈
+-  L.push(at(new THREE.BoxGeometry(0.42, 0.36, 0.17), 0, 0.6, -0.27)) // 水箱
+-  L.push(at(new THREE.BoxGeometry(0.45, 0.04, 0.2), 0, 0.8, -0.27)) // 水箱盖
+-  L.push(at(new THREE.CylinderGeometry(0.17, 0.17, 0.03, 18).scale(1, 1, 1.25), 0, 0.57, -0.17, -1.35)) // 掀起的马桶盖
+-  return finish(L, 0.008, 7, 4)
++  return finish([...toiletGeometries('stone').values()], 0.008, 7, 4)
+ }
++
+ function bongo(): THREE.BufferGeometry {
+   const L: THREE.BufferGeometry[] = []
+   for (const [x, r, h] of [[-0.11, 0.1, 0.2], [0.11, 0.082, 0.19]] as const) {
+diff --git a/before/app/src/game/renderer/tradersDressingMeshes.ts b/after/app/src/game/renderer/tradersDressingMeshes.ts
+index 9828222..3a8f477 100644
+--- a/before/app/src/game/renderer/tradersDressingMeshes.ts
++++ b/after/app/src/game/renderer/tradersDressingMeshes.ts
+@@ -1,3 +1,4 @@
++import { toiletGeometries } from './toiletGeometry'
+ import * as THREE from 'three'
+ import type {Structure} from '../core/types'
+ import {DressingParts,DRESSING_COLORS as C} from './tradersDressingParts'
+@@ -92,10 +93,10 @@ export function buildTradersDressing(source:Structure,assets:TradersAssets){
+  case 'wcstall':{
+   for(const x of [-w/2+.03,w/2-.03]){p.box(x,1.19,0,.06,1.86,d,'paint',C.cream,.01);for(const z of [-d/2+.06,d/2-.06])p.box(x,.14,z,.04,.28,.04,'steel',C.steel)}
+   p.box(w/2-.10,1.19,d/2-.42,.045,1.82,.78,'paint',C.green,.01);p.box(w/2-.14,1.07,d/2-.12,.06,.12,.025,'steel',C.steel)
+-  p.box(0,.095,-.45,.24,.19,.35,'ceramic',C.paper,.035)
+-  const g=new THREE.LatheGeometry([[.10,0],[.14,.12],[.23,.27],[.26,.31],[.21,.31],[.15,.25]].map(([r,y])=>new THREE.Vector2(r,y)),14);g.scale(1,1,1.15);g.translate(0,.16,-.42);p.add(g,'ceramic',C.paper)
+-  const ring=new THREE.TorusGeometry(.225,.04,5,16);ring.rotateX(Math.PI/2);ring.scale(1,1,1.2);ring.translate(0,.49,-.42);p.add(ring,'paint',C.cream)
+-  p.box(0,.70,-.775,.40,.42,.30,'ceramic',C.paper,.025);p.box(.12,.90,-.68,.08,.012,.045,'steel',C.steel)
++  for(const [finish,g] of toiletGeometries()){
++   g.translate(0,0,-.42)
++   p.add(g,finish==='metal'?'steel':'ceramic',finish==='metal'?C.steel:finish==='inner'?'#b8bdb2':finish==='seat'?C.cream:C.paper)
++  }
+   const roll=new THREE.CylinderGeometry(.065,.065,.10,10);roll.rotateZ(Math.PI/2);roll.translate(-w/2+.14,.67,.17);p.add(roll,'paper',C.paper);break}
+  case 'urinal':{
+   p.box(0,.91,-.15,.43,.63,.13,'ceramic',C.paper,.045)
+diff --git a/before/app/src/game/renderer/l10Meshes.ts b/after/app/src/game/renderer/l10Meshes.ts
+index bc2878b..559284e 100644
+--- a/before/app/src/game/renderer/l10Meshes.ts
++++ b/after/app/src/game/renderer/l10Meshes.ts
+@@ -1,3 +1,4 @@
++import { latrineSeatGeometry } from './toiletGeometry'
+ // Level 10 v64 建筑与植被模型：谷仓 / 马厩 / 小棚 / 外屋 / 树篱节点 / 等高树 / 圆草捆。
+ //
+ // 约定：模型原点位于结构占地中心、地面高度 0；门朝局部 +Z，按 s.data.deg 绕 Y 旋转
+@@ -360,9 +361,14 @@ function outhouse(c: Ctx, W: number, D: number) {
+   const moon = new THREE.Shape(); moon.absarc(0, 0, .11, Math.PI * .3, Math.PI * 1.7, false); moon.absarc(.05, 0, .085, Math.PI * 1.62, Math.PI * .38, true)
+   const mg = new THREE.Mesh(new THREE.ShapeGeometry(moon), M.dark()); mg.position.set(-.4, 1.62, .062); mg.userData.noCollision = 1; door.add(mg)
+   boxMesh({ g: door }, trim, .7, .08, .02, -.4, .5, .07, { noCol: true })
+-  // 室内坐凳
+-  boxMesh(c, M.wood(), W - .2, .45, .5, 0, .23, -D / 2 + .32, { uv: .8 })
+-  const hole = new THREE.Mesh(new THREE.CircleGeometry(.13, 16), M.dark()); hole.rotation.x = -Math.PI / 2; hole.position.set(0, .456, -D / 2 + .32); hole.userData.noCollision = 1; c.g.add(hole)
++  // 空心坐凳和真实开孔；暗色内筒位于板下，不再用黑圆片盖住实心方块。
++  const seatZ=-D/2+.43,top=new THREE.Mesh(latrineSeatGeometry(W-.2),M.wood())
++  top.position.set(0,.42,seatZ);top.castShadow=top.receiveShadow=true;c.g.add(top)
++  for(const x of [-(W-.2)/2+.025,(W-.2)/2-.025])boxMesh(c,M.wood(),.05,.42,.60,x,.21,seatZ,{uv:.8})
++  boxMesh(c,M.wood(),W-.2,.42,.045,0,.21,seatZ-.2775,{uv:.8})
++  boxMesh(c,M.wood(),W-.2,.42,.045,0,.21,seatZ+.2775,{uv:.8})
++  const liner=new THREE.Mesh(new THREE.LatheGeometry([new THREE.Vector2(.136,.42),new THREE.Vector2(.136,.08)],16),M.dark());liner.position.set(0,0,seatZ);liner.userData.noCollision=1;c.g.add(liner)
++
+ }
+ 
+ // ---------------------------------------------------------------- 树篱节点（统一高度）
+diff --git a/before/app/src/game/world/foyerLayout.ts b/after/app/src/game/world/foyerLayout.ts
+index 8eca334..3ff53a2 100644
+--- a/before/app/src/game/world/foyerLayout.ts
++++ b/after/app/src/game/world/foyerLayout.ts
+@@ -1,3 +1,4 @@
++import { toiletSeat } from '../content/toiletParts'
+ // 前厅（序章，level id 900）：玩家的家——手工布局数据（地图生成、渲染与交互共用）。
+ // 坐标：地图 x=东，y=南（Three.js z），单位米；1 瓦片 = 1m。
+ // 外墙沿用瓦片墙（tiles=2），室内隔墙为 0.12m 薄墙结构（foyerprop/wall），门洞位于隔墙缺口。
+@@ -195,7 +196,7 @@ const SOLID_KINDS_OVERRIDE: Record<string, boolean> = {}
+  * 可坐家具（复用项目座椅系统 engine/seating.ts：靠近出现「坐下」，坐姿眼高/朝向/视角限制/起身检查都由它处理）。
+  * 返回相对家具占地中心的座面（地图坐标偏移 x=东、z=南；y=座面高度；yaw=坐下后面朝方向，0=南、π/2=东）。
+  */
+-export function foyerSeats(pid: string): { x: number; y: number; z: number; yaw: number; label: string; relaxed?: boolean }[] {
++export function foyerSeats(pid: string): { x: number; y: number; z: number; yaw: number; label: string; relaxed?: boolean; toilet?: boolean }[] {
+   const p = FOYER_PROPS.find((v) => v.id === pid)
+   if (!p) return []
+   const yaw = (p.rot * Math.PI) / 180
+@@ -206,7 +207,7 @@ export function foyerSeats(pid: string): { x: number; y: number; z: number; yaw:
+     case 'chair': return [{ x: 0, z: 0, y: 0.47, yaw, label: '餐椅' }]
+     case 'stool': return [{ x: 0, z: 0, y: 0.68, yaw, label: '吧凳' }]
+     case 'deskchair': return [{ x: 0, z: 0, y: 0.5, yaw, label: '电脑椅' }]
+-    case 'toilet': { const f = fwd(0.04); return [{ ...f, y: 0.42, yaw, label: '马桶' }] }
++    case 'toilet': { const p = toiletSeat('compact'), f = fwd(p.z); return [{ ...p, ...f, yaw }] }
+     case 'bed': // 床沿：西侧（面朝房间）与床尾
+       return [{ x: -p.w / 2 + 0.28, z: 0.15, y: 0.56, yaw: -Math.PI / 2, label: '床边' }, { x: 0.1, z: p.d / 2 - 0.26, y: 0.56, yaw: 0, label: '床尾' }]
+   }
+diff --git a/before/app/src/game/world/seating.ts b/after/app/src/game/world/seating.ts
+index 445d536..3f16a74 100644
+--- a/before/app/src/game/world/seating.ts
++++ b/after/app/src/game/world/seating.ts
+@@ -10,6 +10,7 @@ export interface SeatAnchor {
+   index: number
+   label: string
+   relaxed: boolean
++  toilet?: boolean
+   floor: FloorBand
+ }
+ interface ModelSeat extends FurnitureSeat { index: number }
+@@ -22,11 +23,11 @@ export function seatsFor(s: Structure, m: GameMap, level: number): SeatAnchor[]
+   const cx = s.x + s.w / 2, cy = s.y + s.h / 2
+   const floor = s.floor ?? 0, base = floorHeight(m, cx, cy, floor)
+   const cached = modeledSeats.get(s)
+-  if (cached) return cached.map(p => ({ x: cx + p.x, y: cy + p.z, z: base + p.y, yaw: p.yaw, index: p.index, label: p.label, relaxed: !!p.relaxed, floor }))
++  if (cached) return cached.map(p => ({ x: cx + p.x, y: cy + p.z, z: base + p.y, yaw: p.yaw, index: p.index, label: p.label, relaxed: !!p.relaxed, toilet: p.toilet, floor }))
+   const a = Number(s.data?.deg ?? 0) * Math.PI / 180, c = Math.cos(a), sn = Math.sin(a)
+   return furnitureSeats(s, level).map((p, index) => ({
+     x: cx + c * p.x + sn * p.z, y: cy - sn * p.x + c * p.z,
+     z: base + p.y * (s.data?.l0Furniture ? 1.17 : 1) + Number(s.data?.z ?? 0) + Number(s.data?.mount ?? 0),
+-    yaw: a + p.yaw, index, label: p.label, relaxed: !!p.relaxed, floor,
++    yaw: a + p.yaw, index, label: p.label, relaxed: !!p.relaxed, toilet: p.toilet, floor,
+   }))
+ }
+diff --git a/before/app/src/game/renderer/furnitureSeats.ts b/after/app/src/game/renderer/furnitureSeats.ts
+index 22b0cd5..533c873 100644
+--- a/before/app/src/game/renderer/furnitureSeats.ts
++++ b/after/app/src/game/renderer/furnitureSeats.ts
+@@ -1,3 +1,4 @@
++import { toiletSeat } from '../content/toiletParts'
+ import * as THREE from 'three'
+ import type { Structure } from '../core/types'
+ import { furnitureSeats } from '../content/furnitureSeats'
+@@ -6,9 +7,9 @@ import { setModelSeats } from '../world/seating'
+ /** Capture the actual built model transform, including wall flush, scale and nested chair rotation. */
+ export function syncFurnitureSeats(s: Structure, root: THREE.Object3D, ground: number, level: number) {
+   if (s.kind.startsWith('alpha_')) return // Alpha's instanced parts already use world coordinates.
+-  const defs = furnitureSeats(s, level)
++  const defs = s.kind === 'stoneinstruments' ? [toiletSeat('stone')] : furnitureSeats(s, level)
+   if (!defs.length) return
+-  const owner = s.kind === 'table' && s.data?.chair && !s.data?.l0Furniture ? root.children.find(o => o.type === 'Group') ?? root : root
++  const owner = s.kind === 'stoneinstruments' ? root.getObjectByName('instr:toilet') ?? root : s.kind === 'l10outhouse' && root.userData.l10Building ? root.children[0] ?? root : s.kind === 'table' && s.data?.chair && !s.data?.l0Furniture ? root.children.find(o => o.type === 'Group') ?? root : root
+   root.updateWorldMatrix(true, true)
+   setModelSeats(s, defs.map((seat, index) => {
+     const p = owner.localToWorld(new THREE.Vector3(seat.x, seat.y, seat.z))
+diff --git a/before/app/src/game/engine/seating.ts b/after/app/src/game/engine/seating.ts
+index 2341caf..4edb2ba 100644
+--- a/before/app/src/game/engine/seating.ts
++++ b/after/app/src/game/engine/seating.ts
+@@ -46,6 +46,12 @@ function clearPath(eng: Engine, s: Structure, from: Point, to: Point, floor: Sea
+     if (!safeFloor(eng, x, y, floor, from.z, s)) return false
+     // Combined picnic/dining-table meshes own both seats and a tabletop. The
+     // furniture exemption covers the low seat only, never a path through that table.
++    // The toilet exemption covers the bowl, not the enclosing stall's tall partitions.
++    if(s.data?.dressing==='wcstall'||s.kind==='l10outhouse')for(const b of structColliders(s,eng.map!)){
++      if(b.top<1.1||(b.bottom??0)>1.65)continue
++      const dx=x-Math.max(b.x0,Math.min(b.x1,x)),dy=y-Math.max(b.y0,Math.min(b.y1,y))
++      if(dx*dx+dy*dy<PLAYER_RADIUS*PLAYER_RADIUS)return false
++    }
+     if (s.kind === 'alpha_home_table' || s.kind === 'l11_picnic_table') {
+       for (const b of structColliders(s, eng.map!)) {
+         if (b.top < (s.kind === 'l11_picnic_table' ? .40 : .60)) continue
+diff --git a/before/app/src/game/engine/special.ts b/after/app/src/game/engine/special.ts
+index 30889cf..2154006 100644
+--- a/before/app/src/game/engine/special.ts
++++ b/after/app/src/game/engine/special.ts
+@@ -1,3 +1,4 @@
++import { toiletSpecial } from './toilet'
+ // [window] 特殊交互键（默认 X，可在设置里改绑；移动端是情境按钮，只在有可用动作时出现）。
+ // 一个键、多种情境：每个情境在下表登记「此刻能不能用 + 显示什么」，按顺序取第一个可用的。
+ // 按住型动作（hold）由 engine.specialHeld 持续为真来驱动；点按型以后需要时再加 onPress。
+@@ -24,6 +25,7 @@ interface SpecialProvider { id: string; test: (eng: Engine) => SpecialAction | n
+ const PROVIDERS: SpecialProvider[] = [
+   { id: 'houndPin', test: (eng) => houndSpecial(eng) }, // 被扑倒时优先挣脱
+   { id: 'creep', test: (eng) => creepSpecial(eng) }, // 爬菌一阶烧灼，优先于普通情境交互
++  { id: 'toiletFart', test: toiletSpecial },
+   { id: 'murmur', test: (eng) => murmurAvailable(eng) ? { id: 'murmur', label: '默念', hint: '在心里重复自我确认，抵抗窗户的诱引', hold: true } : null },
+   // v90 无面灵：哭闹的幼体就在身边时，按住安抚（约 2.4 秒）
+   { id: 'soothe', test: (eng) => sootheAvailable(eng) ? { id: 'soothe', label: '安抚', hint: '蹲下来轻拍哭闹的幼年无面灵，让它平静下来', hold: true } : null },
+diff --git a/before/app/src/game/engine.ts b/after/app/src/game/engine.ts
+index 98462ee..ed6b994 100644
+--- a/before/app/src/game/engine.ts
++++ b/after/app/src/game/engine.ts
+@@ -1,3 +1,4 @@
++import { useToiletSpecial } from './engine/toilet'
+ import { newMoveFeel, resetMoveVelocity, type MoveFeelState } from './engine/moveTuning' // [movefeel]
+ import {ensureTradersAt} from './world/tradersWorld'
+ import { beginFoyerRun, updateFoyer, enterFoyer } from './engine/foyer'
+@@ -1152,7 +1153,8 @@ export class Engine {
+     if (this.specialPressed) {
+       const sa = specialAction(this)
+       const n = this.interactTarget?.npc
+-      if (sa?.id === 'trade' && n) { this.specialPressed = false; if (!n.def.workLoop) n.facing = Math.atan2(this.player.y - n.y, this.player.x - n.x); audio.uiTick(); this.emit({ kind: 'shop', text: n.id }) }
++      if (sa?.id === 'toiletFart') { this.specialPressed = false; useToiletSpecial(this) }
++      else if (sa?.id === 'trade' && n) { this.specialPressed = false; if (!n.def.workLoop) n.facing = Math.atan2(this.player.y - n.y, this.player.x - n.x); audio.uiTick(); this.emit({ kind: 'shop', text: n.id }) }
+       else if (!sa) this.specialPressed = false
+     }
+     if (this.input.interact) {
+diff --git a/before/app/package.json b/after/app/package.json
+index ac24c43..acb24c2 100644
+--- a/before/app/package.json
++++ b/after/app/package.json
+@@ -304,7 +304,9 @@
+     "check:entry-compile-variants": "esbuild scripts/check-entry-compile-variants.ts --bundle --platform=node --format=esm --outfile=.cache/check-entry-compile-variants.mjs && node .cache/check-entry-compile-variants.mjs",
+     "check:foyer-survival": "esbuild scripts/check-foyer-survival.ts --bundle --platform=node --format=esm --outfile=.cache/check-foyer-survival.mjs && node .cache/check-foyer-survival.mjs",
+     "check:l02-props": "esbuild scripts/check-l02-props.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l02-props.mjs && node .cache/check-l02-props.mjs",
+-    "verify:l02-props": "node scripts/verify-l02-props.mjs --steps=houseSetup,coneClose,coneBack,lampClose,sinkClose,toiletClose,tileSetup,entranceSetup,entranceCone,entranceSign,entranceBarrier,entranceLamp,resources"
++    "verify:l02-props": "node scripts/verify-l02-props.mjs --steps=houseSetup,coneClose,coneBack,lampClose,sinkClose,toiletClose,tileSetup,entranceSetup,entranceCone,entranceSign,entranceBarrier,entranceLamp,resources",
++    "check:toilets": "esbuild scripts/check-toilets.ts --bundle --platform=node --format=esm --outfile=.cache/check-toilets.mjs && node .cache/check-toilets.mjs",
++    "verify:toilets": "node scripts/verify-toilets.mjs"
+   },
+   "dependencies": {
+     "@hookform/resolvers": "^5.2.2",

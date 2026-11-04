@@ -1,4 +1,6 @@
+import { isHotelStaffType } from '../entities'
 import {bursterHear,updateBurster} from './bursterAI'
+import { hotelHear, hotelHearMul } from './l5Hotel'
 import { isWrangler, updateWrangler, wranglerHear } from './wranglerAI'
 import { stableAt } from './career'
 import { updateMothDoors } from './moths'
@@ -37,6 +39,13 @@ import { tinyHear, updateTiny } from './tinyAI'
 import { updateWindowEntity } from './windowAI'
 import { updateVm36 } from './vendingAI'
 import { updateFerren } from './ferrenAI'
+import { updateMaid, maidHear } from './maidAI' // [maid]
+import { updateConcierge } from './conciergeAI' // [concierge]
+import { updateBellhop } from './bellhopAI' // [bellhop]
+import { updateBeast } from './beastAI' // [beast]
+import { updateSpokes, updateWindup } from './spokesAI' // [spokes]
+import { updateChef } from './chefAI' // [chef]
+import { updateJazz } from './jazzAI' // [jazz]
 import { updateCreeper,creeperHear } from './creeperAI' // [creeper]
 import { thingHear, updateThing, THINGM } from './thingAI'
 
@@ -50,12 +59,21 @@ export function isLit(eng: Engine, x: number, y: number): boolean {
 }
 
 export function noiseEvent(eng: Engine, x: number, y: number, radius: number, sprint: boolean) {
+  hotelHear(eng, radius, sprint) // L5：响动计入酒店关注度
+  radius *= hotelHearMul(eng, radius) // L5：换班 / 「清理」档时实体听得更远
   camoSound(eng, x, y, radius)
   armsHear(eng, x, y, radius, sprint) // 手臂：风口听得见的响动累计到噪音计（stationary，不走下面的通用循环）
   eng.playerNoiseT = 0.8 // 玩家噪音残余计时（猎犬威慑「持续发声」判定；脚步/挥击/搜索等都会刷新）
   for (const e of eng.map!.entities) {
     if (e.dead || e.def.stationary) continue
     // [tiny] 小小：断续的明显响动（快速游泳、投掷物落水、爆炸、破门…）记恼怒，两次追杀；石卡祖笛另走 tinyKazoo（tinyAI）
+    if (e.def.type === 'maid') { maidHear(eng, e, x, y, radius, sprint); continue } // [maid] 打扰值（隔墙也听得见）
+    if (e.def.type === 'concierge') continue // [concierge] 看门人不靠耳朵：眼睛已经挂在你身上
+    if (e.def.type === 'greeter' || e.def.type === 'windup') continue // [spokes] 迎宾女郎 / 发条兔不靠耳朵
+    if (e.def.type === 'jazz') continue // [jazz] 乐手不靠耳朵（他们自己就是噪音）
+    if (e.def.type === 'chef') continue // [chef] 厨师不靠耳朵：铃声 / 闪光另走 chefAI（耳朵抽搐）
+    if (e.def.type === 'beast') continue // [beast] 野兽不靠耳朵：他闻得到恐惧（理智）、看得见酒店的关注
+    if (e.def.type === 'bellhop') continue // [bellhop] 行李员不听响动：他只看你有没有在看他
     if(e.def.type==='creeper'){creeperHear(eng,e,x,y,radius);continue}
     if (e.def.type === 'tiny') { tinyHear(eng, e, x, y, radius, sprint); continue }
     if (e.def.type === 'thething' && thingHear(eng, e, x, y, radius, sprint)) continue
@@ -207,6 +225,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     // 死亡动画计时（倒地/消散后移除）
     if (e.dead && e.def.type === 'arms') armsRevive(eng, e) // 手臂永不死亡（兜底：其它系统直接写 dead 时转为「被赶走」）
     if (e.dead) { e.deathT -= dt; continue }
+    if (isHotelStaffType(e.def.type)) e.stunT = Math.max(0, e.stunT - dt)
     if (e.presentationPending) continue
     if (e.l10BurrowT !== undefined) {
       e.l10BurrowT -= dt
@@ -241,6 +260,14 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     if (e.targetEnt?.dead) e.targetEnt = undefined
     if (def.type === 'tiny' && updateTiny(eng, e, dt, d)) continue
     if (def.type === 'vendingmachine' || def.type === 'vmad') { updateVm36(eng, e, dt, d); continue } // [vending] Entity 36：出货/补货/活化/劈砍/归位（vendingAI）
+    if (def.type === 'maid') { updateMaid(eng, e, dt); continue } // [maid] Entity 111：巡楼 / 打扰值 / 打扫（maidAI）
+    if (def.type === 'greeter') { updateSpokes(eng, e, dt); continue } // [spokes] Entity 28：大堂日程 / 迎宾 / 邀请 / 海报 / 放兔子 / 照片支线（spokesAI）
+    if (def.type === 'windup') { updateWindup(eng, e, dt); continue }
+    if (def.type === 'jazz') { updateJazz(eng, e, dt); continue } // [jazz] Entity 197：上台 / 调音 / 演奏 / 独奏 / 假吸魂 / 谢幕 / 吧台 / 钢琴 / 吵架劝和 / 搭话（jazzAI）
+    if (def.type === 'chef') { updateChef(eng, e, dt); continue } // [chef] Entity 800：灶前 / 上菜 / 应铃 / 盯上→敲桌→背身抡锅 / 拖进冷库 / 打烊闩门 / 守灶 / 暴怒追偷锅贼（chefAI） // [spokes] 发条兔：等待 / 引路 / 停下回头 / 停摆（spokesAI）
+    if (def.type === 'beast') { updateBeast(eng, e, dt); continue } // [beast] Entity 18：余光 / 正视即隐 / 办公室待客 / 签约握手 / 怀疑→真身缠抓（beastAI）
+    if (def.type === 'bellhop') { updateBellhop(eng, e, dt); continue } // [bellhop] Entity 135：注视冻结 / 视线外拧头换脸 / 走廊尽头候命 / 服务（bellhopAI）
+    if (def.type === 'concierge') { updateConcierge(eng, e, dt); continue } // [concierge] Entity 131：前台 / 追踪 / 拦截 / 追逐 / 捆绑 / 升降梯（conciergeAI）
     if (def.type === 'ferren') { updateFerren(eng, e, dt); continue } // [ferren] Entity 92：作息 / 切行 / 交互（ferrenAI），不走通用游荡
     if (def.type === 'windowent') { updateWindowEntity(eng, e, dt); continue } // [window] 窗户 Entity 2：诱引/伸手/拖拽/新生/衰亡（windowAI）
     if (def.type === 'lightguide') { updateLightguide(eng, e, dt, d); continue } // [L8-lightguide] 微光向导专属 AI（带路/警示/守巢/逃离）
@@ -457,7 +484,6 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
       e.stateT = 0.8
     }
     const canSee = !(def.type === 'thething' && e.th?.lost) && !lightRecoiling && (hearP || (d < def.sight + darkBonus && (!def.lightHunter || lightOn || l3) && eng.los(e.x, e.y, p.x, p.y)))
-    const feigning = def.feignNeutral && d > 2.4 && e.state !== 'chase' && e.state !== 'attack' // 侍者装中立
     // v23「Level 11 Effect」：本层敌对实体更不倾向于攻击——但主动挑衅（攻击过任何实体）会解除
     const pacified = eng.levelDef.id === 11
       ? !e.provoked && !def.ignorePacify && (def.type === 'faceling' || def.type === 'hound')
@@ -465,16 +491,11 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     if (eng.levelDef.id === 11 && !e.provoked && !def.ignorePacify && m.entities.some(q=>q!==e && q.provoked && q.def.type===def.type && Math.hypot(q.x-e.x,q.y-e.y)<8)) {
       e.provoked=true;e.state='chase';e.stateT=0
     }
-    if (canSee && !def.passive && !feigning && !pacified && e.state !== 'chase' && e.state !== 'attack') {
+    if (canSee && !def.passive && !pacified && e.state !== 'chase' && e.state !== 'attack') {
       e.state = 'chase'
       if (def.aggroStinger) audio.aggro()
     }
-    // 侍者近身暴起（派对客已走 partygoerAI，有自己的暴起提示）
-    if (def.feignNeutral && d <= 2.4 && e.state !== 'chase' && e.state !== 'attack' && eng.los(e.x, e.y, p.x, p.y)) {
-      e.state = 'chase'
-      eng.msg('侍者不笑了。', 'damage')
-      audio.aggro()
-    }
+    // [bellhop] 旧「侍者」的 feignNeutral 近身暴起已删除（type bellhop 现为 Entity 135 行李员，由 bellhopAI 驱动、从不攻击）；派对客的 feignNeutral 只是设定标记，走 partygoerAI
     // 被动实体（无面灵）：脱战 8 秒后平息（不再反击）；无视线/听觉/贴身索敌——只有被打才反击。
     // v42：grudge（尸鼠=合并死亡鼠）记仇不放——激怒后持续仇恨，永不平息
     if (def.passive && !def.grudge && e.state === 'chase' && e.stateT < -8) { e.state = 'wander'; e.provoked = false; e.targetEnt = undefined }

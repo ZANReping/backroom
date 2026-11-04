@@ -1,0 +1,218 @@
+diff --git a/E:/ZAN/backroom/app/.cache/l02-props-20261030/before/src/game/renderer/l02Props.ts b/E:/ZAN/backroom/app/src/game/renderer/l02Props.ts
+index b27e448..6e1d8ee 100644
+--- a/E:/ZAN/backroom/app/.cache/l02-props-20261030/before/src/game/renderer/l02Props.ts
++++ b/E:/ZAN/backroom/app/src/game/renderer/l02Props.ts
+@@ -8,6 +8,7 @@ import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeom
+ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
+ import { installL02Pbr, l02Tex, type L02PbrName } from './l02Pbr'
+ import { mirrorSurface } from './mirrorSurface'
++import { stripedConeGeometry, supportGeometry } from './constructionGeometry'
+ 
+ const L = new THREE.Vector3(0.32, 0.86, 0.4).normalize()
+ /** 烘焙式明暗：朗伯（顶光偏前）+ 环境底 + 贴地 AO；k=整体亮度。 */
+@@ -108,8 +109,11 @@ function worldUVBox(g: THREE.BufferGeometry, scale: number) {
+  *  冲水按钮（双键）、角阀 + 编织软管、地脚螺栓盖。 */
+ export function toiletModel(g: THREE.Group) {
+   const k = new Kit()
+-  k.lathe('porcelain', [[0.0, 0], [0.13, 0], [0.135, 0.02], [0.11, 0.08], [0.1, 0.2], [0.14, 0.3], [0.18, 0.37], [0.19, 0.395], [0.17, 0.4], [0.0, 0.4]], 0, 0, 0.06, 24, 1, 1.22)
+-  k.lathe('porcelainDim', [[0.0, 0.33], [0.13, 0.33], [0.155, 0.385], [0.0, 0.385]], 0, 0.006, 0.06, 20, 1, 1.22) // 碗内（略暗）
++  // Keep the bowl open at the lip: the old profile returned to the axis at y=.4,
++  // producing a solid disk instead of a cavity.  The separate inner profile is
++  // the visible porcelain wall/floor (and deliberately has no coplanar cap).
++  k.lathe('porcelain', [[0.0, 0], [0.13, 0], [0.135, 0.02], [0.11, 0.08], [0.1, 0.2], [0.14, 0.3], [0.18, 0.37], [0.19, 0.395], [0.175, 0.405], [0.155, 0.4]], 0, 0, 0.06, 24, 1, 1.22)
++  k.lathe('porcelainDim', [[0.155, 0.4], [0.14, 0.365], [0.10, 0.315], [0.0, 0.30]], 0, 0, 0.06, 20, 1, 1.22) // 碗内（略暗）
+   k.add('porcelain', new THREE.TorusGeometry(0.155, 0.022, 8, 28).scale(1, 1.22, 1), 0, 0.42, 0.075, Math.PI / 2) // 座圈
+   k.box('porcelain', 0.36, 0.42, 0.022, 0, 0.62, -0.115, 0.01, -0.12) // 翻起的座盖（靠在水箱上）
+   k.box('porcelain', 0.4, 0.34, 0.17, 0, 0.6, -0.215, 0.025) // 水箱
+@@ -143,18 +147,36 @@ export function stallModel(g: THREE.Group, end: boolean) {
+ /** 洗手台（局部：背靠 -z 墙）：台面（倒角）+ 车削台盆 + 鹅颈龙头/单把手 + 下水 P 弯 + 柜体 + 带框镜子。 */
+ export function sinkModel(g: THREE.Group) {
+   const k = new Kit()
+-  k.box('counter', 0.52, 0.05, 0.55, 0, 0.84, 0, 0.012)
+-  k.lathe('porcelain', [[0.0, -0.12], [0.06, -0.12], [0.15, -0.07], [0.19, -0.01], [0.2, 0.0], [0.185, 0.006], [0.0, 0.006]], 0, 0.866, 0.02, 24, 1, 0.8)
+-  k.cyl('chromeDark', 0.022, 0.022, 0.004, 0, 0.75, 0.02, 12) // 下水口（碗底）
++  // Countertop is a thin slab with an actual elliptical cut-out, rather than a
++  // solid box intersecting the basin.  ExtrudeGeometry's local XY becomes XZ
++  // after the -90° rotation; the hole is centred over the basin.
++  const slabShape = new THREE.Shape()
++  slabShape.moveTo(-0.256, -0.271); slabShape.lineTo(0.256, -0.271); slabShape.lineTo(0.256, 0.271); slabShape.lineTo(-0.256, 0.271); slabShape.closePath()
++  const basinHole = new THREE.Path()
++  basinHole.absellipse(0, -0.02, 0.188, 0.150, 0, Math.PI * 2, false, 0)
++  slabShape.holes.push(basinHole)
++  const slab = new THREE.ExtrudeGeometry(slabShape, { depth: 0.05, steps: 1, bevelEnabled: true, bevelSegments: 1, bevelSize: 0.004, bevelThickness: 0.004 })
++  slab.rotateX(-Math.PI / 2)
++  k.add('counter', slab, 0, 0.815, 0)
++  k.lathe('porcelain', [[0.0, -0.12], [0.06, -0.12], [0.15, -0.07], [0.19, -0.01], [0.2, 0.0], [0.185, 0.006], [0.176, -0.012], [0.14, -0.065], [0.06, -0.10], [0.0, -0.10]], 0, 0.866, 0.02, 24, 1, 0.8)
++  k.cyl('chromeDark', 0.022, 0.022, 0.004, 0, 0.77, 0.02, 12) // 下水口（碗底）
+   k.cyl('chrome', 0.022, 0.026, 0.05, 0, 0.89, -0.18, 14) // 龙头底座
+   k.cyl('chrome', 0.011, 0.011, 0.18, 0, 0.99, -0.18, 10)
+   k.torus('chrome', 0.06, 0.011, 0, 1.08, -0.12, Math.PI, 0, Math.PI / 2, 0, 12) // 鹅颈
+-  k.cyl('chrome', 0.013, 0.011, 0.03, 0, 1.03, -0.06, 10)
++  k.cyl('chrome', 0.013, 0.011, 0.075, 0, 1.044, -0.06, 10)
+   k.box('chrome', 0.012, 0.012, 0.08, 0.04, 0.93, -0.2, 0.005, 0, 0.6) // 单把手
+   k.cyl('chrome', 0.016, 0.016, 0.12, 0, 0.7, 0.02, 10) // 下水立管
+   k.torus('chrome', 0.05, 0.016, 0, 0.62, 0.02 - 0.05, Math.PI, 0, Math.PI / 2, Math.PI) // P 弯
+   k.cyl('chrome', 0.016, 0.016, 0.2, 0, 0.67, -0.17, 10, Math.PI / 2)
+-  k.box('vanity', 0.5, 0.78, 0.5, 0, 0.4, -0.02, 0.012) // 柜体
++  // Open vanity shell: side/back/bottom panels and two front doors leave the
++  // underside of the basin visibly hollow and avoid a solid block behind it.
++  k.box('vanity', 0.025, 0.805, 0.5, -0.2375, 0.4125, -0.02, 0.008)
++  k.box('vanity', 0.025, 0.805, 0.5, 0.2375, 0.4125, -0.02, 0.008)
++  k.box('vanity', 0.5, 0.805, 0.025, 0, 0.4125, -0.2575, 0.008)
++  k.box('vanity', 0.5, 0.04, 0.5, 0, 0.04, -0.02, 0.008)
++  k.box('vanity', 0.247, 0.75, 0.018, -0.125, 0.415, 0.228, 0.004)
++  k.box('vanity', 0.247, 0.75, 0.018, 0.125, 0.415, 0.228, 0.004)
++  k.box('vanity', 0.5, 0.025, 0.025, 0, 0.8025, 0.222, 0.004)
+   k.box('vanityLine', 0.003, 0.7, 0.003, 0, 0.42, 0.232)
+   k.box('chromeDark', 0.012, 0.1, 0.014, -0.05, 0.62, 0.238, 0.004); k.box('chromeDark', 0.012, 0.1, 0.014, 0.05, 0.62, 0.238, 0.004) // 柜门拉手
+   k.box('mirrorFrame', 0.58, 0.74, 0.018, 0, 1.5, -0.262, 0.006)
+@@ -247,21 +269,29 @@ export function houseProps(root: THREE.Group, F: { x: number; y: number; w: numb
+   k.box('black', 0.03, 0.02, 0.012, bx - 0.2, fy + 0.018, bz - 0.21, 0.003)
+   const ccx = O.x + O.w + 0.45, ccz = O.y + 0.35
+   if (ccx < F.x + F.w - 0.2) {
+-    k.box('black', 0.3, 0.025, 0.3, ccx, fy + 0.012, ccz, 0.01)
+-    k.lathe('coneOrange', [[0.12, 0.025], [0.025, 0.46], [0.0, 0.46]], ccx, fy, ccz, 16)
+-    k.lathe('coneWhite', [[0.092, 0.15], [0.07, 0.22], [0.068, 0.221], [0.09, 0.151]], ccx, fy + 0.001, ccz, 16)
+-    k.lathe('coneWhite', [[0.058, 0.28], [0.045, 0.33], [0.044, 0.331], [0.057, 0.281]], ccx, fy + 0.001, ccz, 16)
++    k.box('black', 0.3, 0.025, 0.3, ccx, fy + 0.0125, ccz, 0.01)
++    const cone = stripedConeGeometry({ bottomY: .025, topY: .46, bottomRadius: .12, topRadius: .025, bands: [[.15, .22], [.28, .33]] })
++    k.add('coneOrange', cone.body, ccx, fy, ccz)
++    k.add('coneWhite', cone.reflective, ccx, fy, ccz)
+   }
+   for (let i = 0; i < 3; i++) k.box('galv', 0.6 - i * 0.12, 0.04, 0.09, F.x + 0.7 + i * 0.25, fy + 0.025 + i * 0.04, F.y + F.h - 0.45, 0.004, 0, 0.3 + i * 0.5)
+   k.build(root, 'l02-house-props')
+ }
+ /** 施工灯（三脚架 + 中柱卡箍 + 灯头壳/玻璃/护网 + 电线拖地）：世界坐标，(x,y)=地面位置，z=灯头高度。 */
+ export function workLamp(k: Kit, x: number, y: number, z: number, floor: number) {
+-  for (let i = 0; i < 3; i++) { const a = i / 3 * Math.PI * 2; k.add('black', new THREE.CylinderGeometry(0.011, 0.011, 1.0, 6).rotateZ(Math.cos(a) * 0.3).rotateX(Math.sin(a) * 0.3), x + Math.cos(a) * 0.15, floor + 0.48, y + Math.sin(a) * 0.15) }
++  const hub = new THREE.Vector3(x, floor + .96, y)
++  for (let i = 0; i < 3; i++) {
++    const a = i / 3 * Math.PI * 2
++    k.add('black', supportGeometry(new THREE.Vector3(x + Math.cos(a) * .3, floor + .004, y + Math.sin(a) * .3), hub, .022, .022, true))
++  }
+   k.cyl('black', 0.012, 0.012, z - floor - 0.5, x, floor + 0.5 + (z - floor - 0.5) / 2, y, 8)
+   k.cyl('galv', 0.02, 0.02, 0.04, x, floor + 0.95, y, 10) // 卡箍
+   k.box('lampYellow', 0.34, 0.26, 0.14, x, z, y, 0.025)
+   k.box('lampGlass', 0.28, 0.2, 0.02, x, z, y + 0.075)
+   for (let i = 0; i < 4; i++) k.box('black', 0.3, 0.008, 0.008, x, z - 0.09 + i * 0.06, y + 0.088)
+-  k.cyl('black', 0.008, 0.008, 0.45, x - 0.2, floor + 0.2, y, 6, 0, 0, 0.9) // 电线
++  const cable = new THREE.CatmullRomCurve3([
++    new THREE.Vector3(x - .16, z - .05, y - .07), new THREE.Vector3(x - .21, floor + .55, y - .06),
++    new THREE.Vector3(x - .28, floor + .03, y - .04), new THREE.Vector3(x - .48, floor + .009, y + .12),
++  ])
++  k.add('black', new THREE.TubeGeometry(cable, 10, .008, 5, false)) // 接灯背后并落地的电缆
+ }
+
+diff --git a/E:/ZAN/backroom/app/.cache/l02-props-20261030/before/src/game/renderer/l02Scene.ts b/E:/ZAN/backroom/app/src/game/renderer/l02Scene.ts
+index 5f7a80c..67df15e 100644
+--- a/E:/ZAN/backroom/app/.cache/l02-props-20261030/before/src/game/renderer/l02Scene.ts
++++ b/E:/ZAN/backroom/app/src/game/renderer/l02Scene.ts
+@@ -140,13 +140,24 @@ function worldUV(g: THREE.BufferGeometry, scale: number) {
+   }
+   return g
+ }
++/** Keep tripod feet on level flooring, clear of studs and the rubble ramp. */
++export function houseLampPositions(h: Hole) {
++  const F = h.house, O = h.open, clearance = .36, obstacles = [h.ramp, ...housePartition(h)]
++  const clear = (x: number, y: number) => x >= F.x + clearance && y >= F.y + clearance && x <= F.x + F.w - clearance && y <= F.y + F.h - clearance && obstacles.every(r => Math.hypot(Math.max(r.x - x, 0, x - r.x - r.w), Math.max(r.y - y, 0, y - r.y - r.h)) >= clearance)
++  const grid: { x: number; y: number }[] = []
++  for (let y = F.y + .5; y <= F.y + F.h - .5; y += .25) for (let x = F.x + .5; x <= F.x + F.w - .5; x += .25) if (clear(x, y)) grid.push({ x, y })
++  const result: { x: number; y: number; z: number }[] = []
++  for (const preferred of [{ x: O.x + O.w * .25, y: O.y + O.h * .7 }, { x: F.x + F.w - .6, y: F.y + .6 }]) {
++    const candidates = [preferred, ...grid].filter(p => clear(p.x, p.y) && result.every(q => Math.hypot(q.x - p.x, q.y - p.y) >= .8))
++    candidates.sort((a, b) => (a.x - preferred.x) ** 2 + (a.y - preferred.y) ** 2 - (b.x - preferred.x) ** 2 - (b.y - preferred.y) ** 2)
++    if (candidates[0]) result.push({ ...candidates[0], z: -h.depth + 1.5 })
++  }
++  return result
++}
+ function buildHouse(h: Hole): THREE.Group {
+   const root = new THREE.Group(); root.name = 'l02-house:' + h.id
+   const F = h.house, O = h.open, D = h.depth, slab = 0.25
+-  const lamps = [
+-    { x: O.x + O.w * 0.25, y: O.y + O.h * 0.7, z: -D + 1.5 },
+-    { x: F.x + F.w - 0.6, y: F.y + 0.6, z: -D + 1.5 },
+-  ]
++  const lamps = houseLampPositions(h)
+   const buckets = new Map<string, THREE.BufferGeometry[]>()
+   const add = (k: string, g: THREE.BufferGeometry) => { const l = buckets.get(k) ?? []; l.push(g); buckets.set(k, l) }
+   // 地面（胶合板）
+
+diff --git a/E:/ZAN/backroom/app/.cache/l02-props-20261030/before/src/game/renderer/remodelSites.ts b/E:/ZAN/backroom/app/src/game/renderer/remodelSites.ts
+index e0064ee..6dd1cfd 100644
+--- a/E:/ZAN/backroom/app/.cache/l02-props-20261030/before/src/game/renderer/remodelSites.ts
++++ b/E:/ZAN/backroom/app/src/game/renderer/remodelSites.ts
+@@ -2,6 +2,8 @@
+ // 全部为程序几何 + Canvas 贴图（无外部素材）。按施工点 id 缓存，每帧按无限窗口原点平移；
+ // 改造渐变期间路障从地面升起（scale），门从墙面「显影」（透明度）。
+ import * as THREE from 'three'
++import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
++import { stripedConeGeometry, supportGeometry } from './constructionGeometry'
+ import { afterSceneCompile } from './sceneWarmup'
+ import type { Engine } from '../engine'
+ import { REMODEL_TUNING, remodelProgress, type RemodelProp, type RemodelSite } from '../world/remodelSites'
+@@ -33,7 +35,7 @@ const signTex = () => canvasTex('sign', 256, 320, (g) => {
+   g.fillStyle = '#efc419'; g.beginPath(); g.moveTo(128, 62); g.lineTo(184, 148); g.lineTo(72, 148); g.closePath(); g.fill()
+   g.fillStyle = '#1c1b18'; g.fillRect(122, 84, 12, 38); g.fillRect(122, 130, 12, 10)
+   g.font = 'bold 54px "Noto Sans CJK SC","Microsoft YaHei",sans-serif'; g.textAlign = 'center'; g.fillText('施工中', 128, 222)
+-  g.font = 'bold 20px sans-serif'; g.fillText('UNDER CONSTRUCTION', 128, 254)
++  g.font = 'bold 20px sans-serif'; g.fillText('UNDER CONSTRUCTION', 128, 254, 216)
+   g.font = '18px "Noto Sans CJK SC",sans-serif'; g.fillText('后室装修公司', 128, 288)
+ })
+ const doorTex = () => canvasTex('door', 256, 512, (g) => {
+@@ -94,26 +96,33 @@ function buildProp(p: RemodelProp): THREE.Group {
+     const leg = mat('leg', () => std('#d9d7cf', { roughness: 0.5 }))
+     const lamp = mat('blink', () => new THREE.MeshBasicMaterial({ color: '#ffb22e' }))
+     for (const y of [0.92, 0.6]) box(g, 1.24, 0.16, 0.025, 0, y, 0, board)
+-    for (const sx of [-0.52, 0.52]) for (const sz of [-1, 1]) { const l = box(g, 0.05, 1.02, 0.045, sx, 0.5, sz * 0.09, leg); l.rotation.x = sz * 0.17 }
++    const legs: THREE.BufferGeometry[] = []
++    for (const sx of [-.52, .52]) for (const sz of [-1, 1]) legs.push(supportGeometry(new THREE.Vector3(sx, .004, sz * .175), new THREE.Vector3(sx, 1.01, 0), .05, .045))
++    const supports = new THREE.Mesh(mergeGeometries(legs), leg); legs.forEach(geo => geo.dispose()); supports.castShadow = supports.receiveShadow = true; g.add(supports)
+     const b = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 0.07, 12), lamp); b.position.set(0.52, 1.06, 0); b.name = 'remodel-blink'; g.add(b)
+   } else if (p.kind === 'cone') {
+     const orange = mat('cone', () => std('#e8541b', { roughness: 0.55, emissiveIntensity: 0.3 }))
+     const white = mat('band', () => std('#f4f4f0', { roughness: 0.3, emissiveIntensity: 0.35 }))
+     const base = mat('coneBase', () => std('#25231f', { roughness: 0.9, emissiveIntensity: 0.05 }))
+     box(g, 0.36, 0.035, 0.36, 0, 0.018, 0, base)
+-    const c = new THREE.Mesh(new THREE.ConeGeometry(0.15, 0.66, 18, 1, true), orange); c.position.y = 0.36; c.castShadow = true; g.add(c)
+-    const band = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.098, 0.11, 18, 1, true), white); band.position.y = 0.43; g.add(band)
++    const cone = stripedConeGeometry({ bottomY: .035, topY: .695, bottomRadius: .15, topRadius: .012, bands: [[.375, .485]], segments: 18 })
++    const c = new THREE.Mesh(cone.body, orange); c.castShadow = c.receiveShadow = true; g.add(c)
++    const band = new THREE.Mesh(cone.reflective, white); band.receiveShadow = true; g.add(band)
+   } else if (p.kind === 'sign') {
+     const face = mat('signFace', () => std('#ffffff', { map: signTex(), emissiveMap: signTex(), emissiveIntensity: 0.3, roughness: 0.5 }))
+-    for (const s of [-1, 1]) { const panel = box(g, 0.56, 0.72, 0.02, 0, 0.5, s * 0.12, face, s > 0 ? 0 : Math.PI); panel.rotation.x = s * 0.24 }
++    for (const s of [-1, 1]) { const panel = box(g, .56, .72, .02, 0, .5, s * Math.sin(.24) * .36, face, s > 0 ? 0 : Math.PI); panel.rotation.x = -s * .24 }
+     const hinge = mat('leg', () => std('#d9d7cf'))
+-    box(g, 0.58, 0.04, 0.05, 0, 0.88, 0, hinge)
++    const frame: THREE.BufferGeometry[] = [new THREE.BoxGeometry(.58, .04, .05).translate(0, .86, 0)]
++    for (const x of [-.255, .255]) for (const side of [-1, 1]) frame.push(supportGeometry(new THREE.Vector3(x, .005, side * .21), new THREE.Vector3(x, .86, 0), .03, .03))
++    const support = new THREE.Mesh(mergeGeometries(frame), hinge); frame.forEach(geo => geo.dispose()); support.castShadow = support.receiveShadow = true; g.add(support)
+   } else {
+     // 施工灯：三脚架 + 冷白方形泛光灯（自发光；不另加实时光源，避免挤占光源池）
+     const metal = mat('lampLeg', () => std('#2c2c2a', { metalness: 0.6, roughness: 0.4, emissiveIntensity: 0.05 }))
+     const head = mat('lampHead', () => std('#e6c21a', { metalness: 0.3, roughness: 0.4 }))
+     const glass = mat('lampGlass', () => new THREE.MeshBasicMaterial({ color: '#f2f8ff' }))
+-    for (let i = 0; i < 3; i++) { const a = (i / 3) * Math.PI * 2, l = box(g, 0.025, 1.2, 0.025, Math.cos(a) * 0.16, 0.58, Math.sin(a) * 0.16, metal); l.rotation.set(Math.sin(a) * 0.25, 0, -Math.cos(a) * 0.25) }
++    const legs: THREE.BufferGeometry[] = []
++    for (let i = 0; i < 3; i++) { const a = i / 3 * Math.PI * 2; legs.push(supportGeometry(new THREE.Vector3(Math.cos(a) * .3, .004, Math.sin(a) * .3), new THREE.Vector3(0, 1.16, 0), .025)) }
++    const tripod = new THREE.Mesh(mergeGeometries(legs), metal); legs.forEach(geo => geo.dispose()); tripod.castShadow = tripod.receiveShadow = true; g.add(tripod)
+     box(g, 0.03, 0.45, 0.03, 0, 1.35, 0, metal)
+     box(g, 0.34, 0.26, 0.12, 0, 1.62, 0, head)
+     box(g, 0.28, 0.2, 0.01, 0, 1.62, 0.062, glass)
+
+diff --git a/E:/ZAN/backroom/app/.cache/l02-props-20261030/before/package.json b/E:/ZAN/backroom/app/package.json
+index 89d6c1a..ac24c43 100644
+--- a/E:/ZAN/backroom/app/.cache/l02-props-20261030/before/package.json
++++ b/E:/ZAN/backroom/app/package.json
+@@ -302,7 +302,9 @@
+     "verify:entry-app-speed": "node scripts/verify-entry-app-speed.mjs",
+     "check:entry-resources": "esbuild scripts/check-entry-resources.ts --bundle --platform=node --format=esm --outfile=.cache/check-entry-resources.mjs && node .cache/check-entry-resources.mjs",
+     "check:entry-compile-variants": "esbuild scripts/check-entry-compile-variants.ts --bundle --platform=node --format=esm --outfile=.cache/check-entry-compile-variants.mjs && node .cache/check-entry-compile-variants.mjs",
+-    "check:foyer-survival": "esbuild scripts/check-foyer-survival.ts --bundle --platform=node --format=esm --outfile=.cache/check-foyer-survival.mjs && node .cache/check-foyer-survival.mjs"
++    "check:foyer-survival": "esbuild scripts/check-foyer-survival.ts --bundle --platform=node --format=esm --outfile=.cache/check-foyer-survival.mjs && node .cache/check-foyer-survival.mjs",
++    "check:l02-props": "esbuild scripts/check-l02-props.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l02-props.mjs && node .cache/check-l02-props.mjs",
++    "verify:l02-props": "node scripts/verify-l02-props.mjs --steps=houseSetup,coneClose,coneBack,lampClose,sinkClose,toiletClose,tileSetup,entranceSetup,entranceCone,entranceSign,entranceBarrier,entranceLamp,resources"
+   },
+   "dependencies": {
+     "@hookform/resolvers": "^5.2.2",
+

@@ -1,0 +1,516 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 2795,
+  "cdp": 2796,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:2795/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Fri, 30 Oct 2026 13:25:57 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 247,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 2795,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 120891.178688,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.232,
+        "sendEnd": 0.269,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 60.614,
+        "receiveHeadersEnd": 60.827
+      },
+      "responseTime": 1793366757405.92,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\toilets-20261030\\before-realistic\\qa-1793366743186-30560",
+    "--remote-debugging-port=2796",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 28360,
+    "server": 5600
+  },
+  "appBootMs": 14027.4837,
+  "entryMs": 1592.8087000000014,
+  "firstPlayableMs": 20033.134700000002,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 643,
+      "textures": 145
+    },
+    "frame": {
+      "cpu": 473.90000000596046,
+      "calls": 800,
+      "triangles": 442783
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null
+  },
+  "galleryl02": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 651,
+      "textures": 173
+    },
+    "frame": {
+      "cpu": 11.5,
+      "calls": 956,
+      "triangles": 686995
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null,
+    "id": "l02",
+    "meshes": 5,
+    "triangles": 2576,
+    "bounds": {
+      "min": [
+        -0.20999999344348907,
+        0,
+        -0.3100000023841858
+      ],
+      "max": [
+        0.20999999344348907,
+        0.8286095261573792,
+        0.29179999232292175
+      ]
+    },
+    "fixtureOnly": true
+  },
+  "galleryfoyer": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 662,
+      "textures": 177
+    },
+    "frame": {
+      "cpu": 7.199999988079071,
+      "calls": 586,
+      "triangles": 166963
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null,
+    "id": "foyer",
+    "meshes": 3,
+    "triangles": 1408,
+    "bounds": {
+      "min": [
+        -0.20000000298023224,
+        -7.1525572131747595e-9,
+        -0.28999999165534973
+      ],
+      "max": [
+        0.38999998569488525,
+        0.8119999766349792,
+        0.2800000011920929
+      ]
+    },
+    "fixtureOnly": true
+  },
+  "galleryl4": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 678,
+      "textures": 186
+    },
+    "frame": {
+      "cpu": 3.5,
+      "calls": 586,
+      "triangles": 166963
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null,
+    "id": "l4",
+    "meshes": 13,
+    "triangles": 596,
+    "bounds": {
+      "min": [
+        -0.4900000002980232,
+        0.025000000000000022,
+        -0.46750000018626453
+      ],
+      "max": [
+        0.92,
+        1.714999986886978,
+        0.3725
+      ]
+    },
+    "fixtureOnly": true
+  },
+  "gallerystone": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 678,
+      "textures": 186
+    },
+    "frame": {
+      "cpu": 3,
+      "calls": 586,
+      "triangles": 166963
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null,
+    "id": "stone",
+    "meshes": 1,
+    "triangles": 624,
+    "bounds": {
+      "min": [
+        -0.22746196389198303,
+        -0.005821263883262873,
+        -0.3701733946800232
+      ],
+      "max": [
+        0.22706496715545654,
+        0.8224619626998901,
+        0.23584924638271332
+      ]
+    },
+    "fixtureOnly": true
+  },
+  "galleryl9": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 678,
+      "textures": 186
+    },
+    "frame": {
+      "cpu": 3.2000000029802322,
+      "calls": 586,
+      "triangles": 166963
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null,
+    "id": "l9",
+    "meshes": 4,
+    "triangles": 136,
+    "bounds": {
+      "min": [
+        -0.2827290892601013,
+        0.05999999821186067,
+        -0.389999997317791
+      ],
+      "max": [
+        0.2827290892601013,
+        0.8899999993294477,
+        0.34999999165534973
+      ]
+    },
+    "fixtureOnly": true
+  },
+  "galleryl11": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 678,
+      "textures": 189
+    },
+    "frame": {
+      "cpu": 5.299999997019768,
+      "calls": 586,
+      "triangles": 166963
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null,
+    "id": "l11",
+    "meshes": 3,
+    "triangles": 640,
+    "bounds": {
+      "min": [
+        -0.19599999487400055,
+        0.019999999552965164,
+        -0.32199999690055847
+      ],
+      "max": [
+        0.19599999487400055,
+        0.8349999785423279,
+        0.36000001430511475
+      ]
+    },
+    "fixtureOnly": true
+  },
+  "gallerytraders": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 678,
+      "textures": 192
+    },
+    "frame": {
+      "cpu": 4.699999988079071,
+      "calls": 586,
+      "triangles": 166963
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null,
+    "id": "traders",
+    "meshes": 5,
+    "triangles": 952,
+    "bounds": {
+      "min": [
+        -0.7749999761581421,
+        -5.9604643443123e-10,
+        -0.925000011920929
+      ],
+      "max": [
+        0.7749999761581421,
+        2.120000123977661,
+        0.925000011920929
+      ]
+    },
+    "fixtureOnly": true
+  },
+  "gallerylatrine": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 678,
+      "textures": 198
+    },
+    "frame": {
+      "cpu": 4,
+      "calls": 586,
+      "triangles": 166963
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null,
+    "id": "latrine",
+    "meshes": 15,
+    "triangles": 212,
+    "bounds": {
+      "min": [
+        -1.149999976158142,
+        -0.0799999986588955,
+        -1.1513606455286713
+      ],
+      "max": [
+        1.149999976158142,
+        2.4417046547289507,
+        1.5855539001421866
+      ]
+    },
+    "fixtureOnly": true
+  }
+}

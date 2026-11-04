@@ -46,6 +46,12 @@ function clearPath(eng: Engine, s: Structure, from: Point, to: Point, floor: Sea
     if (!safeFloor(eng, x, y, floor, from.z, s)) return false
     // Combined picnic/dining-table meshes own both seats and a tabletop. The
     // furniture exemption covers the low seat only, never a path through that table.
+    // The toilet exemption covers the bowl, not the enclosing stall's tall partitions.
+    if(s.data?.dressing==='wcstall'||s.kind==='l10outhouse')for(const b of structColliders(s,eng.map!)){
+      if(b.top<1.1||(b.bottom??0)>1.65)continue
+      const dx=x-Math.max(b.x0,Math.min(b.x1,x)),dy=y-Math.max(b.y0,Math.min(b.y1,y))
+      if(dx*dx+dy*dy<PLAYER_RADIUS*PLAYER_RADIUS)return false
+    }
     if (s.kind === 'alpha_home_table' || s.kind === 'l11_picnic_table') {
       for (const b of structColliders(s, eng.map!)) {
         if (b.top < (s.kind === 'l11_picnic_table' ? .40 : .60)) continue

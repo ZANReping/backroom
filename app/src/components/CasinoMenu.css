@@ -1,0 +1,46 @@
+/* [casino] Level 5.1 覆盖层菜单 / HUD */
+.cm-veil { background: radial-gradient(ellipse at 50% 40%, rgba(70, 8, 34, .92), rgba(8, 2, 6, .96)); color: #f4e2c0; gap: 10px; }
+.cm-title { font: 700 22px/1.2 Georgia, 'Noto Serif SC', serif; color: #ffcf6a; letter-spacing: .12em; text-shadow: 0 0 12px rgba(255, 120, 40, .5); }
+.cm-wallet { display: flex; align-items: center; gap: 6px; font-size: 14px; }
+.cm-chip { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 3px dashed #fff; margin-left: 6px; }
+.cm-chip.r { background: #c8261e } .cm-chip.b { background: #1f4fb8 } .cm-chip.y { background: #e0b020 } .cm-chip.g { background: #1d7a3a }
+.cm-purple { margin-left: 10px; padding: 2px 10px; border-radius: 12px; background: #5b2a8c; border: 2px dashed #e8d0ff; font-weight: 700; }
+.cm-purple.neg { color: #ffb0b0; box-shadow: 0 0 10px #ff3060; }
+.cm-drunk { margin-left: 10px; color: #ffb468; }
+.cm-reels { display: flex; gap: 10px; padding: 14px; background: #120612; border: 3px solid #d8a84a; border-radius: 10px; }
+.cm-reels.win { box-shadow: 0 0 30px #ffd040; animation: cmflash .4s 3; }
+.cm-reels.near .cm-reel:last-child { transform: translateY(18px); opacity: .7; }
+.cm-reel { width: 86px; height: 96px; display: grid; place-items: center; font: 800 34px/1 Georgia, serif; background: linear-gradient(#fff8e8, #e8d8b8 60%, #b8a888); color: #8a1020; border-radius: 6px; transition: transform .3s; }
+@keyframes cmflash { 50% { filter: brightness(1.8) } }
+.cm-pay, .cm-rou, .cm-dice { font-size: 12px; opacity: .85; max-width: 640px; text-align: center; }
+.cm-felt { background: radial-gradient(#b01868, #6a0838); border: 4px solid #d8a84a; border-radius: 120px 120px 16px 16px; padding: 14px 28px; display: grid; gap: 10px; min-width: 420px; }
+.cm-hand { display: flex; gap: 6px; align-items: center; } .cm-hand > span:first-child { width: 90px; font-size: 13px; }
+.cm-card { background: #fffdf6; color: #111; border-radius: 4px; padding: 6px 8px; font: 700 18px/1 Georgia, serif; min-width: 34px; text-align: center; box-shadow: 0 2px 4px #0008; }
+.cm-card.red { color: #c01020 } .cm-card.back { background: #3a1060; color: #e8d0ff }
+.cm-score { font-size: 15px; color: #ffcf6a; }
+.cm-ball { display: inline-grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; font: 800 22px/1 Georgia, serif; margin-right: 10px; border: 3px solid #d8a84a; }
+.cm-ball.red { background: #c01020 } .cm-ball.black { background: #111 } .cm-ball.green { background: #0a7a3a }
+.cm-die { display: inline-block; font-size: 52px; margin: 0 4px; color: #fff; }
+.cm-line { max-width: 640px; text-align: center; font-size: 15px; min-height: 22px; }
+.cm-rig { font-size: 13px; color: #a8e8ff; font-style: italic; }
+.cm-bet { font-size: 14px; }
+.cm-btns { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 720px; }
+.cm-btn i { font-style: normal; font-size: 10px; opacity: .6; margin-left: 6px; border: 1px solid currentColor; padding: 0 4px; border-radius: 3px; }
+.cm-btn.hot { background: #8a1838; border-color: #ffcf6a; } .cm-btn.on { outline: 2px solid #ffcf6a; }
+.cm-btn.red { background: #8a1020 } .cm-btn.blk { background: #1a1a1a }
+.cm-cashier { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; max-height: 52vh; overflow: auto; }
+.cm-h { font-size: 13px; color: #ffcf6a; margin: 6px 0 4px; } .cm-h.rare { color: #d8a8ff; }
+.cm-row { display: flex; justify-content: space-between; width: 260px; padding: 4px 10px; margin: 2px 0; background: #2a0c18; color: #f4e2c0; border: 1px solid #6a3040; border-radius: 4px; font-size: 13px; cursor: pointer; }
+.cm-row:disabled { opacity: .4; cursor: default; } .cm-row b { color: #ffd36a; }
+.cm-ending { max-width: 560px; font: 16px/1.8 'Noto Serif SC', serif; text-align: center; }
+.cm-veil.cm-m-ending { background: #050203; } .cm-m-ending .cm-title { color: #ff5a5a; }
+.ch-hud { position: absolute; top: 64px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 4px; pointer-events: none; color: #f4e2c0; font-size: 13px; text-shadow: 0 1px 3px #000; z-index: 6; }
+.ch-row { display: flex; align-items: center; gap: 4px; background: rgba(20, 4, 12, .6); padding: 3px 10px; border-radius: 12px; }
+.ch-bar { width: 120px; height: 6px; background: #3a1020; border-radius: 3px; overflow: hidden; } .ch-bar > i { display: block; height: 100%; background: linear-gradient(90deg, #ff9a3a, #ff2a6a); }
+.ch-voice { font-style: italic; color: #ffc0e0; font-size: 15px; }
+.ch-block { color: #ff9090; font-weight: 700; }
+
+/* [casino] 4b 入座键位提示（屏幕下方小字，不挡牌桌） */
+.ch-seat{position:fixed;left:50%;bottom:9%;transform:translateX(-50%);text-align:center;pointer-events:none;max-width:72vw;font-size:13px;color:#f4e6c4;text-shadow:0 1px 3px #000}
+.ch-seat-line{margin-bottom:4px;opacity:.92}.ch-seat-line.rig{color:#ff9a8a;font-style:italic}
+.ch-seat-keys{display:inline-block;padding:3px 10px;border-radius:4px;background:rgba(10,6,4,.55);border:1px solid rgba(217,178,90,.45);font-size:12px}

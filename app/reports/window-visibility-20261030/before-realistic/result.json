@@ -1,0 +1,692 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 6279,
+  "cdp": 6280,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\window-visibility-20261030\\before-realistic\\qa-1793354756747-66568",
+    "--remote-debugging-port=6280",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 37348,
+    "server": 36392
+  },
+  "appBootMs": 11830.474900000001,
+  "entryMs": 2454.5363000000034,
+  "firstPlayableMs": 19108.4081,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 79.5,
+        "y": 79.5,
+        "z": 0
+      },
+      "entities": 0,
+      "memory": {
+        "geometries": 466,
+        "textures": 66
+      },
+      "calls": 1,
+      "checks": 0
+    }
+  },
+  "windowL2": {
+    "level": 2,
+    "player": {
+      "x": 82.5,
+      "y": 66.86,
+      "z": 0
+    },
+    "entities": 1,
+    "memory": {
+      "geometries": 534,
+      "textures": 128
+    },
+    "calls": 1,
+    "checks": 4,
+    "style": "l2",
+    "mount": {
+      "wx": 82.5,
+      "wy": 0.06,
+      "yaw": 0,
+      "nx": 0,
+      "ny": 1
+    },
+    "diag": {
+      "origin": [
+        0,
+        -64
+      ],
+      "host": {
+        "kind": "windowtrap",
+        "x": 82,
+        "y": 64,
+        "w": 1,
+        "h": 1,
+        "solid": false,
+        "data": {
+          "sid": 33554433
+        }
+      },
+      "ent": {
+        "x": 82.5,
+        "y": 64.31,
+        "hidden": false,
+        "pending": false,
+        "win": {
+          "key": "2:330:0",
+          "style": "l2",
+          "wx": 82.5,
+          "wy": 0.06,
+          "yaw": 0,
+          "nx": 0,
+          "ny": 1,
+          "reg": {
+            "life": "occupied",
+            "sil": 0.849494333333333,
+            "lifeT": 0,
+            "seed": 3
+          },
+          "mode": "lure",
+          "modeT": 1,
+          "cd": 0,
+          "lineT": 2,
+          "stripT": 1,
+          "dragD0": 1,
+          "prey": null
+        }
+      },
+      "root": {
+        "p": [
+          82.5,
+          0,
+          64.06
+        ],
+        "world": [
+          82.5,
+          0,
+          64.06
+        ],
+        "visible": true,
+        "scale": [
+          1.015,
+          1.015,
+          1.015
+        ],
+        "rot": [
+          0,
+          0,
+          0,
+          "XYZ"
+        ]
+      },
+      "pane": {
+        "p": [
+          82.5,
+          1.47175,
+          64.07218
+        ],
+        "visible": true,
+        "side": 0,
+        "clip": [
+          -3.946849495181767e-15,
+          0.04226085328430086,
+          0.965765039837677
+        ],
+        "uniforms": {
+          "sil": 0.969494333333333,
+          "vanish": 0,
+          "bright": 1
+        }
+      },
+      "camera": {
+        "p": [
+          82.5,
+          1.55,
+          66.86
+        ],
+        "rot": [
+          -0.058755822715722814,
+          0,
+          0,
+          "YXZ"
+        ]
+      },
+      "hits": [
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 2.737640277457313,
+          "p": [
+            82.49999999999999,
+            1.4731887225053983,
+            64.12343750000001
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 2.7706407693710315,
+          "p": [
+            82.49999999999999,
+            1.472262811982122,
+            64.09045
+          ],
+          "entity": false
+        },
+        {
+          "name": "scenery",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 2.7889179648924745,
+          "p": [
+            82.49999999999999,
+            1.4717499999999997,
+            64.07218
+          ],
+          "entity": true
+        }
+      ]
+    }
+  },
+  "windowL4": {
+    "level": 4,
+    "player": {
+      "x": 78.5,
+      "y": 69,
+      "z": 0
+    },
+    "entities": 1,
+    "memory": {
+      "geometries": 660,
+      "textures": 81
+    },
+    "calls": 1,
+    "checks": 8,
+    "style": "l4",
+    "mount": {
+      "wx": 14.5,
+      "wy": 2.2,
+      "yaw": 6.283185307179586,
+      "nx": -2.4492935982947064e-16,
+      "ny": 1
+    },
+    "diag": {
+      "origin": [
+        -64,
+        -64
+      ],
+      "host": {
+        "kind": "glasswin",
+        "x": 78,
+        "y": 66,
+        "w": 1,
+        "h": 1,
+        "solid": true,
+        "data": {
+          "l4": 1,
+          "deg": 180,
+          "rain": 1,
+          "coast": 1,
+          "l4Facade": 1,
+          "mullion": 0,
+          "revealLeft": 1,
+          "revealRight": 0,
+          "windowId": "0:0:n:2",
+          "sid": 3922584764
+        }
+      },
+      "ent": {
+        "x": 78.5,
+        "y": 66.45,
+        "hidden": false,
+        "pending": false,
+        "win": {
+          "key": "4:58:9",
+          "style": "l4",
+          "wx": 14.5,
+          "wy": 2.2,
+          "yaw": 6.283185307179586,
+          "nx": -2.4492935982947064e-16,
+          "ny": 1,
+          "reg": {
+            "life": "occupied",
+            "sil": 0.8494388666666662,
+            "lifeT": 0,
+            "seed": 3
+          },
+          "mode": "lure",
+          "modeT": 1,
+          "cd": 0,
+          "lineT": 2,
+          "stripT": 1,
+          "dragD0": 1,
+          "prey": null
+        }
+      },
+      "root": {
+        "p": [
+          78.5,
+          0,
+          66.2
+        ],
+        "world": [
+          78.5,
+          0,
+          66.2
+        ],
+        "visible": true,
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "rot": [
+          0,
+          6.283185307179586,
+          0,
+          "XYZ"
+        ]
+      },
+      "pane": {
+        "p": [
+          78.5,
+          1.755,
+          66.212
+        ],
+        "visible": true,
+        "side": 0,
+        "clip": [
+          0,
+          0.020153740437562236,
+          0.9658629489282572
+        ],
+        "uniforms": {
+          "sil": 0.9694388666666662,
+          "vanish": 0,
+          "bright": 1
+        }
+      },
+      "camera": {
+        "p": [
+          78.5,
+          1.55,
+          69
+        ],
+        "rot": [
+          0.05875582271572272,
+          0,
+          0,
+          "YXZ"
+        ]
+      },
+      "hits": [
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 2.7473970236048606,
+          "p": [
+            78.5,
+            1.7514705883339048,
+            66.2599999986589
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 2.7774780115549533,
+          "p": [
+            78.5,
+            1.753676470588235,
+            66.23
+          ],
+          "entity": false
+        },
+        {
+          "name": "scenery",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 2.7955266051318453,
+          "p": [
+            78.5,
+            1.755,
+            66.212
+          ],
+          "entity": true
+        },
+        {
+          "name": "window-host-instances",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 2.8978013567349397,
+          "p": [
+            78.5,
+            1.7624999551212088,
+            66.11000061035156
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 3.0080989294819034,
+          "p": [
+            78.5,
+            1.7705882352941178,
+            66
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 3.0080989294819034,
+          "p": [
+            78.5,
+            1.7705882352941178,
+            66
+          ],
+          "entity": false
+        },
+        {
+          "name": "window-host-instances",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 4.121096145389502,
+          "p": [
+            78.5,
+            1.8522059272317328,
+            64.88999938964844
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 18.409566748927734,
+          "p": [
+            78.5,
+            2.9000000953674316,
+            50.639998703002945
+          ],
+          "entity": false
+        }
+      ]
+    }
+  },
+  "windowL601": {
+    "level": 12,
+    "player": {
+      "x": 31.5,
+      "y": 58.14,
+      "z": 0
+    },
+    "entities": 1,
+    "memory": {
+      "geometries": 724,
+      "textures": 69
+    },
+    "calls": 1,
+    "checks": 12,
+    "style": "l601",
+    "mount": {
+      "wx": 31.5,
+      "wy": 60.94,
+      "yaw": 3.141592653589793,
+      "nx": 1.2246467991473532e-16,
+      "ny": -1
+    },
+    "diag": {
+      "origin": [
+        null,
+        null
+      ],
+      "host": {
+        "kind": "libwindow",
+        "x": 31,
+        "y": 60,
+        "w": 1,
+        "h": 1,
+        "solid": false,
+        "data": {
+          "winDir": 2
+        }
+      },
+      "ent": {
+        "x": 31.5,
+        "y": 60.69,
+        "hidden": false,
+        "pending": false,
+        "win": {
+          "key": "12:126:244",
+          "style": "l601",
+          "wx": 31.5,
+          "wy": 60.94,
+          "yaw": 3.141592653589793,
+          "nx": 1.2246467991473532e-16,
+          "ny": -1,
+          "reg": {
+            "life": "occupied",
+            "sil": 0.8498138000000004,
+            "lifeT": 0,
+            "seed": 3
+          },
+          "mode": "lure",
+          "modeT": 1,
+          "cd": 0,
+          "lineT": 2,
+          "stripT": 1,
+          "dragD0": 1,
+          "prey": null
+        }
+      },
+      "root": {
+        "p": [
+          31.5,
+          0,
+          60.94
+        ],
+        "world": [
+          31.5,
+          0,
+          60.94
+        ],
+        "visible": true,
+        "scale": [
+          1.015,
+          1.015,
+          1.015
+        ],
+        "rot": [
+          0,
+          3.141592653589793,
+          0,
+          "XYZ"
+        ]
+      },
+      "pane": {
+        "p": [
+          31.5,
+          1.8066999999999998,
+          60.92782
+        ],
+        "visible": true,
+        "side": 0,
+        "clip": [
+          0,
+          0.04552580076609624,
+          0.9658994982168289
+        ],
+        "uniforms": {
+          "sil": 0.9698138000000004,
+          "vanish": 0,
+          "bright": 1
+        }
+      },
+      "camera": {
+        "p": [
+          31.5,
+          1.55,
+          58.14
+        ],
+        "rot": [
+          0.05875582271572272,
+          -3.141592653589793,
+          0,
+          "YXZ"
+        ]
+      },
+      "hits": [
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 2.7277531939953525,
+          "p": [
+            31.5,
+            1.8001110483804004,
+            60.85626249667257
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 2.749080535760951,
+          "p": [
+            31.5,
+            1.8020665786020877,
+            60.877499996721745
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 2.7812661212545855,
+          "p": [
+            31.5,
+            1.8050177145583286,
+            60.909549999999996
+          ],
+          "entity": false
+        },
+        {
+          "name": "scenery",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 2.799613409454952,
+          "p": [
+            31.5,
+            1.8066999999999993,
+            60.92782
+          ],
+          "entity": true
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "ShaderMaterial",
+          "d": 2.801802631582858,
+          "p": [
+            31.5,
+            1.8069007324719673,
+            60.93
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshBasicMaterial",
+          "d": 2.819878777593071,
+          "p": [
+            31.5,
+            1.8085581565524316,
+            60.948
+          ],
+          "entity": false
+        },
+        {
+          "name": "",
+          "type": "Mesh",
+          "mat": "MeshStandardMaterial",
+          "d": 2.8720987549559047,
+          "p": [
+            31.5,
+            1.813346270562662,
+            61
+          ],
+          "entity": false
+        }
+      ]
+    }
+  },
+  "summary": {
+    "checks": [
+      "Generated Level 2 has a safely approachable window",
+      "Window entity attaches to an existing generated window",
+      "Occupied window scenery is visible in the actual scene",
+      "Entity uses layer-specific window model",
+      "Generated Level 4 has a safely approachable window",
+      "Window entity attaches to an existing generated window",
+      "Occupied window scenery is visible in the actual scene",
+      "Entity uses layer-specific window model",
+      "Generated Level 12 has a safely approachable window",
+      "Window entity attaches to an existing generated window",
+      "Occupied window scenery is visible in the actual scene",
+      "Entity uses layer-specific window model"
+    ],
+    "status": {
+      "level": 12,
+      "player": {
+        "x": 31.5,
+        "y": 58.14,
+        "z": 0
+      },
+      "entities": 1,
+      "memory": {
+        "geometries": 724,
+        "textures": 69
+      },
+      "calls": 1,
+      "checks": 12
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

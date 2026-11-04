@@ -1,0 +1,80 @@
+[
+  {
+    "command": "npm --prefix app ls --depth=0",
+    "exitCode": 0,
+    "durationMs": 11289,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261104\\dependency-check.txt"
+  },
+  {
+    "command": "npm run build",
+    "exitCode": 0,
+    "durationMs": 144364,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261104\\build-check.txt"
+  },
+  {
+    "command": "node app/scripts/check-vercel-config.mjs --built",
+    "exitCode": 0,
+    "durationMs": 17182,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261104\\config-built-check.txt"
+  },
+  {
+    "command": "npm --prefix app run check:l5-integration",
+    "exitCode": 0,
+    "durationMs": 5217,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261104\\check-04.txt"
+  },
+  {
+    "command": "npm --prefix app run check:l5map",
+    "exitCode": 0,
+    "durationMs": 6786,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261104\\check-05.txt"
+  },
+  {
+    "command": "npm --prefix app run check:l5hotel",
+    "exitCode": 0,
+    "durationMs": 6105,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261104\\check-06.txt"
+  },
+  {
+    "command": "npm --prefix app run check:casino",
+    "exitCode": 0,
+    "durationMs": 5330,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261104\\check-07.txt"
+  },
+  {
+    "command": "npm --prefix app run check:outpost-return",
+    "exitCode": 0,
+    "durationMs": 6834,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261104\\check-08.txt"
+  },
+  {
+    "command": "npm --prefix app run check:toilets",
+    "exitCode": 0,
+    "durationMs": 1614,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261104\\check-09.txt"
+  },
+  {
+    "command": "npm --prefix app run check:l02-props",
+    "exitCode": 0,
+    "durationMs": 1810,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261104\\check-10.txt"
+  },
+  {
+    "command": "npm --prefix app run check:entry-texture-upload",
+    "exitCode": 0,
+    "durationMs": 1394,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261104\\check-11.txt"
+  },
+  {
+    "command": "npm --prefix app run check:entry-resources",
+    "exitCode": 0,
+    "durationMs": 1443,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261104\\check-12.txt"
+  },
+  {
+    "command": "npm --prefix app run check:entry-compile-variants",
+    "exitCode": 1,
+    "durationMs": 1401,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261104\\check-13.txt"
+  }
+]

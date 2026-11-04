@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:l02-props
+> esbuild scripts/check-l02-props.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l02-props.mjs && node .cache/check-l02-props.mjs
+
+
+  .cache\check-l02-props.mjs  1004.8kb
+
+Done in 98ms
+{"checks":1100,"failures":0,"fixtureMeshes":{"sink":8,"toilet":4,"lamp":4}}

@@ -1,0 +1,54 @@
+/* [maid] Entity 111 图鉴专页：恐怖旅馆员工档案（墨绿外框 + 金线 + 羊皮纸内页，与 HotelLedger 同一套配色） */
+.mcf { position: relative; overflow: hidden; margin-top: 12px; padding: 14px 14px 12px; border: 1px solid #b8924a; background: linear-gradient(160deg, #10201a, #070d0b 72%); box-shadow: inset 0 0 0 3px #070d0b, inset 0 0 0 4px rgba(184,146,74,.55); font-family: 'Songti SC','SimSun','Noto Serif CJK SC','Noto Serif SC',serif; color: #e8d9b0; }
+.mcf-seal { position: absolute; right: -18px; top: -14px; width: 150px; opacity: .12; filter: invert(72%) sepia(40%) saturate(500%) hue-rotate(5deg); pointer-events: none; }
+.mcf-head { position: relative; }
+.mcf-dept { font-size: 11px; letter-spacing: 4px; color: #8a7a5a; }
+.mcf-title { font-size: 20px; font-weight: 700; letter-spacing: 5px; color: #e2c47a; }
+.mcf-title span { font-family: Georgia,'Times New Roman',serif; font-size: 14px; letter-spacing: 1px; color: #c9a85e; margin-left: 4px; }
+.mcf-en { font-family: Georgia,'Times New Roman',serif; font-size: 11px; letter-spacing: 6px; color: #a8915e; border-top: 1px solid rgba(184,146,74,.45); border-bottom: 1px solid rgba(184,146,74,.45); display: inline-block; padding: 1px 6px; margin-top: 3px; }
+.mcf-stamp { position: absolute; right: 18px; top: 22px; padding: 2px 8px; border: 2px solid #9a2a22; color: #b8342a; font-size: 15px; font-weight: 700; letter-spacing: 4px; transform: rotate(-12deg); opacity: .78; box-shadow: inset 0 0 0 1px rgba(154,42,34,.4); }
+.mcf-epi { position: relative; margin: 10px 0 10px; font-style: italic; font-size: 13px; color: #d9c48a; text-align: center; letter-spacing: 2px; }
+.mcf-epi::before, .mcf-epi::after { content: '◆'; font-style: normal; font-size: 8px; color: #8a6a32; margin: 0 8px; vertical-align: middle; }
+.mcf-sheet { position: relative; padding: 10px 12px; background: linear-gradient(#efe4c8, #e2d3ae); color: #2a1c10; border: 1px solid #8a6a32; box-shadow: 0 2px 0 #050806, inset 0 0 18px rgba(120,80,30,.25); }
+.mcf-grid { display: grid; grid-template-columns: 4.2em 1fr; gap: 4px 10px; font-size: 12px; line-height: 1.6; margin: 0; }
+.mcf-grid dt { color: #7a5a2a; letter-spacing: 2px; border-right: 1px solid rgba(122,90,42,.35); }
+.mcf-grid dd { margin: 0; }
+.mcf-tag { display: inline-block; margin: 0 4px 2px 0; padding: 0 6px; font-size: 11px; border: 1px solid #7a5a2a; color: #4a3218; background: rgba(255,250,235,.5); }
+.mcf-dim { color: #8a7a5a; font-size: 12px; }
+.mcf-sheet .mcf-dim { color: #8a7a62; }
+.mcf-sec { position: relative; margin-top: 12px; }
+.mcf-sec h4 { margin: 0 0 6px; font-size: 13px; letter-spacing: 4px; color: #e2c47a; display: flex; align-items: center; gap: 8px; }
+.mcf-sec h4::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(184,146,74,.6), transparent); }
+.mcf-locked { font-size: 12px; color: #6a6250; }
+.mcf-lines { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.mcf-lines li { display: grid; grid-template-columns: 7.5em 1fr; gap: 8px; font-size: 12px; line-height: 1.55; }
+.mcf-when { color: #8a7a5a; font-size: 11px; padding-top: 1px; }
+.mcf-lines q { color: #efe2c0; quotes: '「' '」'; }
+.mcf-meter { display: grid; gap: 5px; }
+.mcf-row { display: grid; grid-template-columns: 7.5em 1fr; gap: 8px; align-items: center; font-size: 11px; }
+.mcf-src { color: #cdbb90; }
+.mcf-bar { position: relative; height: 9px; background: #0b1410; border: 1px solid #3a4a3a; }
+.mcf-bar.plain { background: none; border: none; height: 14px; }
+.mcf-bar i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, #4a6a4a, #7a9a6a); }
+.mcf-bar i.warm { background: linear-gradient(90deg, #6a6a3a, #c9a248); }
+.mcf-bar i.hot { background: linear-gradient(90deg, #7a3a2a, #c9483a); }
+.mcf-mark { position: absolute; top: -3px; bottom: -3px; width: 1px; background: #d9b06a; }
+.mcf-mark.act { background: #e0584a; }
+.mcf-bar em { position: absolute; top: 0; transform: translateX(-50%); font-style: normal; font-size: 10px; color: #d9b06a; }
+.mcf-bar em.act { color: #e0584a; }
+.mcf-note { margin: 6px 0 0; font-size: 11px; line-height: 1.65; color: #a8987a; }
+.mcf-stats { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: #cdbb90; }
+.mcf-stats b { color: #e2c47a; font-family: Georgia,serif; }
+.mcf-cart { list-style: none; margin: 6px 0 0; padding: 8px 10px; display: flex; flex-wrap: wrap; gap: 4px 6px; background: linear-gradient(#efe4c8, #e2d3ae); border: 1px solid #8a6a32; }
+.mcf-cart li { font-size: 11px; color: #2a1c10; padding: 0 6px; border: 1px dashed #8a6a32; background: rgba(255,250,235,.6); }
+.mcf + .mcf { margin-top: 8px; }
+
+.mcf-staff-sheet { display: flex; gap: 12px; align-items: flex-start; }
+.mcf-staff-sheet .mcf-grid {
+  flex: 1; min-width: 0; grid-template-columns: 4.2em minmax(0, 1fr); overflow-wrap: anywhere;
+}
+@media (max-width: 480px) {
+  .mcf-staff-file .mcf-en { letter-spacing: 2px; }
+  .mcf-staff-file .mcf-stamp { top: 10px; right: 10px; font-size: 11px; letter-spacing: 2px; }
+  .mcf-staff-file .mcf-lines li { grid-template-columns: 5em minmax(0, 1fr); }
+}

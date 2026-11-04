@@ -123,6 +123,7 @@ export interface ChunkDynState {
 }
 
 export interface InfiniteState {
+  l5Floor?: number
   l0TestField?: import('./l0Architecture').L0Rect // Transient; reapplied when a chunk returns to the window.
   cityInstances?: Map<string, Structure>
   cityReferences?: Map<string, number>
@@ -503,6 +504,7 @@ export function generateInfinite(def: LevelDef, seed: number, firstVisit = true)
     l10LakeTerrain: def.id === 10,
     inf: {
       seed, ox: -WIN_R * CS, oy: -WIN_R * CS,
+      l5Floor: def.l5Floor,
       l0: def.id===0?newL0Space():undefined,
       l02: def.id===L02_ID,
       chunks: new Map(), explored: new Map(), state: new Map(),

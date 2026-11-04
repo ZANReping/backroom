@@ -92,20 +92,6 @@
 @keyframes shopStamp{from{opacity:0;transform:rotate(-3deg) scale(1.8)}to{opacity:1;transform:rotate(-3deg) scale(1)}}
 .shop--meg .shop-key kbd{color:#e9dfc3;background:#4b5434}
 
-/* ===== 首都共同体：首都百货——海军蓝 + 金色装饰艺术、霓虹灯泡边框、橱窗格 ===== */
-.shop--capital .shop-sheet{--paper:#101a33;--ink:#f3e9cc;--dim:#a9a58c;--edge:#c9a54a66;--acc:#e7c25b;--row:rgba(231,194,91,.05);--rowon:rgba(231,194,91,.14);
- background:radial-gradient(ellipse at 50% -20%,#2a3d75 0,transparent 60%),#101a33;border:2px solid #e7c25b}
-.shop--capital .shop-deco{inset:6px;border:1px solid #e7c25b55;background:radial-gradient(circle,#ffe9a0 0 2px,transparent 2.5px) 0 0/18px 18px repeat-x,radial-gradient(circle,#ffe9a0 0 2px,transparent 2.5px) 0 100%/18px 18px repeat-x;filter:drop-shadow(0 0 3px #ffd56a)}
-.shop--capital .shop-head{padding-top:26px;background:repeating-conic-gradient(from -90deg at 50% 120%,#e7c25b14 0 6deg,transparent 6deg 12deg)}
-.shop--capital .shop-title{font-family:'Limelight','Noto Serif SC',serif;font-weight:400;font-size:30px;color:#e7c25b;text-shadow:0 0 12px #e7c25b66}
-.shop--capital .shop-emblem{border-radius:0;transform:rotate(45deg);width:46px;height:46px;font-size:20px}
-.shop--capital .shop-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));align-content:start}
-.shop--capital .shop-row{flex-direction:column;align-items:center;gap:4px;padding:10px 6px 0;border:1px solid #e7c25b44;background:linear-gradient(180deg,#1b2a52,#101a33)}
-.shop--capital .shop-row.on{border-color:#e7c25b;box-shadow:0 0 14px #e7c25b44 inset}
-.shop--capital .shop-name{text-align:center;white-space:normal;font-size:13px}
-.shop--capital .shop-price{align-self:stretch;max-width:none;text-align:center;padding:3px;color:#101a33;background:#e7c25b}
-.shop--capital .shop-act{background:linear-gradient(180deg,#f2d27a,#c9a03c);color:#101a33}
-
 /* ===== 阿丽亚娜集团：诊所处方单——白底蓝线、Rx、绿十字 ===== */
 .shop--ariane .shop-sheet{--paper:#f6f8fb;--ink:#1d2a3a;--dim:#5f7184;--edge:#c7d3e0;--acc:#2a6fb0;--row:#fff;--rowon:#e8f1fb;--good:#1f7a4a;--bad:#c0392b;
  font-family:'Noto Sans SC',sans-serif;background:#f6f8fb;border:none;border-top:8px solid #2a6fb0}
@@ -179,8 +165,6 @@
 /* 版式修正：大标题与店员行留空；首都百货的灯泡边框不压页脚 */
 .shop--meg .shop-title{margin-bottom:6px}
 .shop--originals .shop-title{margin:0 0 8px}
-.shop--capital .shop-foot{padding-bottom:22px}
-.shop--capital .shop-list{padding-bottom:16px}
 
 /* Bound both scrolling panes to the available sheet height; checkout stays outside them. */
 .shop-sheet{max-height:min(720px,calc(100dvh - 32px))}

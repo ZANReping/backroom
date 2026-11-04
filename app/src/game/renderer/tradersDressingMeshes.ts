@@ -1,3 +1,4 @@
+import { toiletGeometries } from './toiletGeometry'
 import * as THREE from 'three'
 import type {Structure} from '../core/types'
 import {DressingParts,DRESSING_COLORS as C} from './tradersDressingParts'
@@ -92,10 +93,10 @@ export function buildTradersDressing(source:Structure,assets:TradersAssets){
  case 'wcstall':{
   for(const x of [-w/2+.03,w/2-.03]){p.box(x,1.19,0,.06,1.86,d,'paint',C.cream,.01);for(const z of [-d/2+.06,d/2-.06])p.box(x,.14,z,.04,.28,.04,'steel',C.steel)}
   p.box(w/2-.10,1.19,d/2-.42,.045,1.82,.78,'paint',C.green,.01);p.box(w/2-.14,1.07,d/2-.12,.06,.12,.025,'steel',C.steel)
-  p.box(0,.095,-.45,.24,.19,.35,'ceramic',C.paper,.035)
-  const g=new THREE.LatheGeometry([[.10,0],[.14,.12],[.23,.27],[.26,.31],[.21,.31],[.15,.25]].map(([r,y])=>new THREE.Vector2(r,y)),14);g.scale(1,1,1.15);g.translate(0,.16,-.42);p.add(g,'ceramic',C.paper)
-  const ring=new THREE.TorusGeometry(.225,.04,5,16);ring.rotateX(Math.PI/2);ring.scale(1,1,1.2);ring.translate(0,.49,-.42);p.add(ring,'paint',C.cream)
-  p.box(0,.70,-.775,.40,.42,.30,'ceramic',C.paper,.025);p.box(.12,.90,-.68,.08,.012,.045,'steel',C.steel)
+  for(const [finish,g] of toiletGeometries()){
+   g.translate(0,0,-.42)
+   p.add(g,finish==='metal'?'steel':'ceramic',finish==='metal'?C.steel:finish==='inner'?'#b8bdb2':finish==='seat'?C.cream:C.paper)
+  }
   const roll=new THREE.CylinderGeometry(.065,.065,.10,10);roll.rotateZ(Math.PI/2);roll.translate(-w/2+.14,.67,.17);p.add(roll,'paper',C.paper);break}
  case 'urinal':{
   p.box(0,.91,-.15,.43,.63,.13,'ceramic',C.paper,.045)

@@ -1,0 +1,181 @@
+[
+  {
+    "label": "toilets-bundle",
+    "args": [
+      "node_modules/esbuild/bin/esbuild",
+      "scripts/check-toilets.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/check-toilets.mjs"
+    ],
+    "exit": 0,
+    "ms": 208,
+    "tail": "\n  .cache\\check-toilets.mjs  809.7kb\n\nDone in 69ms\n"
+  },
+  {
+    "label": "toilets",
+    "args": [
+      ".cache/check-toilets.mjs"
+    ],
+    "exit": 0,
+    "ms": 272,
+    "tail": "{\"checks\":155,\"failures\":0,\"triangleCounts\":{\"standard\":1068,\"compact\":1068,\"worn\":1068,\"stone\":1068},\"audio\":[{\"rate\":22050,\"seed\":0,\"samples\":15435,\"rms\":0.08265447111256498,\"peak\":0.31716102361679077},{\"rate\":22050,\"seed\":42,\"samples\":15435,\"rms\":0.0829007519714373,\"peak\":0.3287004232406616},{\"rate\":22050,\"seed\":-7,\"samples\":15435,\"rms\":0.08287335166749438,\"peak\":0.30990710854530334},{\"rate\":44100,\"seed\":0,\"samples\":30870,\"rms\":0.08346837337745273,\"peak\":0.3388139009475708},{\"rate\":44100,\"seed\":42,\"samples\":30870,\"rms\":0.08345366372444357,\"peak\":0.32850584387779236},{\"rate\":44100,\"seed\":-7,\"samples\":30870,\"rms\":0.08313763693805534,\"peak\":0.32994627952575684},{\"rate\":48000,\"seed\":0,\"samples\":33600,\"rms\":0.08282017087547018,\"peak\":0.3304590880870819},{\"rate\":48000,\"seed\":42,\"samples\":33600,\"rms\":0.08296936289293903,\"peak\":0.3164128065109253},{\"rate\":48000,\"seed\":-7,\"samples\":33600,\"rms\":0.08292979425099563,\"peak\":0.32522282004356384}],\"profiles\":9}\n"
+  },
+  {
+    "label": "seating-bundle",
+    "args": [
+      "node_modules/esbuild/bin/esbuild",
+      "scripts/check-seating.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/check-seating.mjs"
+    ],
+    "exit": 0,
+    "ms": 192,
+    "tail": "\n  .cache\\check-seating.mjs  861.2kb\n\nDone in 59ms\n"
+  },
+  {
+    "label": "seating",
+    "args": [
+      ".cache/check-seating.mjs"
+    ],
+    "exit": 0,
+    "ms": 201,
+    "tail": "Seating: 310 checks passed (3 avatar configurations, 6 seat heights, 5 animation stages).\n"
+  },
+  {
+    "label": "l02-props-bundle",
+    "args": [
+      "node_modules/esbuild/bin/esbuild",
+      "scripts/check-l02-props.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/check-l02-props.mjs"
+    ],
+    "exit": 0,
+    "ms": 204,
+    "tail": "\n  .cache\\check-l02-props.mjs  991.0kb\n\nDone in 67ms\n"
+  },
+  {
+    "label": "l02-props",
+    "args": [
+      ".cache/check-l02-props.mjs"
+    ],
+    "exit": 0,
+    "ms": 363,
+    "tail": "{\"checks\":1100,\"failures\":0,\"fixtureMeshes\":{\"sink\":8,\"toilet\":4,\"lamp\":4}}\n"
+  },
+  {
+    "label": "l02-round5-bundle",
+    "args": [
+      "node_modules/esbuild/bin/esbuild",
+      "scripts/check-l02-round5.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/check-l02-round5.mjs"
+    ],
+    "exit": 0,
+    "ms": 260,
+    "tail": "\n  .cache\\check-l02-round5.mjs  5.4mb\n\nDone in 130ms\n"
+  },
+  {
+    "label": "l02-round5",
+    "args": [
+      ".cache/check-l02-round5.mjs"
+    ],
+    "exit": 0,
+    "ms": 1114,
+    "tail": "{\"checks\":30940,\"failures\":0,\"seeds\":400,\"routers\":400,\"clipboards\":400,\"doorCount\":4939,\"sceneMeshes\":45,\"sceneVertices\":16432,\"disposedGeometry\":45,\"disposedShared\":0}\n"
+  },
+  {
+    "label": "foyer-v2-bundle",
+    "args": [
+      "node_modules/esbuild/bin/esbuild",
+      "scripts/check-foyer-v2.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/check-foyer-v2.mjs"
+    ],
+    "exit": 0,
+    "ms": 274,
+    "tail": "\n  .cache\\check-foyer-v2.mjs  6.4mb\n\nDone in 145ms\n"
+  },
+  {
+    "label": "foyer-v2",
+    "args": [
+      ".cache/check-foyer-v2.mjs"
+    ],
+    "exit": 0,
+    "ms": 16173,
+    "tail": "{\"checks\":230,\"ok\":true,\"walkers\":5,\"seats\":7,\"reachableCells\":1645}\n"
+  },
+  {
+    "label": "l11-meshes-bundle",
+    "args": [
+      "node_modules/esbuild/bin/esbuild",
+      "scripts/check-l11-meshes.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/check-l11-meshes.mjs"
+    ],
+    "exit": 0,
+    "ms": 185,
+    "tail": "\n  .cache\\check-l11-meshes.mjs  3.0mb\n\nDone in 72ms\n"
+  },
+  {
+    "label": "l11-meshes",
+    "args": [
+      ".cache/check-l11-meshes.mjs"
+    ],
+    "exit": 0,
+    "ms": 10949,
+    "tail": "0.6499999761581421,\n      -871.9700000286102,\n      -708.1533317565918,\n      13.75,\n      -837.1533317565918\n    ],\n    \"building:sports-hall\": [\n      -230.18000000715256,\n      -0.6499999761581421,\n      -677.5133333404859,\n      -201.486665725708,\n      11.03499984741211,\n      -648.7750333150228\n    ],\n    \"building:transit-station\": [\n      -704.5133333404859,\n      -0.6499999761581421,\n      -871.2094999998808,\n      -670.4866650899252,\n      14.03499984741211,\n      -837.1533317565918\n    ],\n    \"building:municipal\": [\n      -742.2099999934435,\n      -0.6499999761581421,\n      -666.8766666601101,\n      -708.1232986450195,\n      23.84000015258789,\n      -631.2204653422037\n    ],\n    \"building:unfinished-frame\": [\n      -742,\n      -3.619999885559082,\n      -704.3333333333334,\n      -708.3333320617676,\n      36.79999923706055,\n      -670.666665395101\n    ],\n    \"building:barred-brick\": [\n      -531.0900000035763,\n      -0.18000000715255737,\n      -871.5550000071526,\n      -517.9099998474121,\n      12.010000228881836,\n      -837.3333320617676\n    ],\n    \"building:reference-quay-collision\": [\n      800.9724998474121,\n      -1.6200000047683716,\n      835.7100000083447,\n      903.2900009155273,\n      68.83999633789062,\n      923.2900009155273\n    ],\n    \"model\": [\n      -400.3140563964844,\n      -6.449999809265137,\n      -393.2774658203125,\n      828.0673217773438,\n      84.2767333984375,\n      770.8087158203125\n    ]\n  },\n  \"uniqueMaterials\": 826,\n  \"uniqueTextures\": 24\n}\n"
+  },
+  {
+    "label": "tiny-bundle",
+    "args": [
+      "node_modules/esbuild/bin/esbuild",
+      "scripts/check-tiny.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/check-tiny.mjs"
+    ],
+    "exit": 0,
+    "ms": 306,
+    "tail": "\n  .cache\\check-tiny.mjs  10.2mb\n\nDone in 156ms\n"
+  },
+  {
+    "label": "tiny",
+    "args": [
+      ".cache/check-tiny.mjs"
+    ],
+    "exit": 0,
+    "ms": 8917,
+    "tail": "拦截）\n✔ 声源离它 > 8m：不计数\n✔ 提示笛声离它太远\n✔ 近处吹了 2 声\n✔ 停下来（窗口过期不足 4 声）：算一次断续噪音，恼怒 1\n✔ 提示「断断续续的笛声只让它更烦躁了」\n✔ 再半途而废一次：恼怒 2 → 追杀\n✔ 普通游动（半径 4、非奔跑）：不计\n✔ 20m 外快速游泳：恼怒 1，只转向低鸣\n✔ 同一阵噪音 4s 内只记一次\n✔ 低鸣时最多离门 3m：门照样被挡\n✔ 第二次（投掷物落水）：恼怒 2 → 追杀\n✔ 安静 45s：恼怒 -1\n✔ 超出听觉 38.4m：听不见\n✔ 贴身 1m 内 = 肢体接触：激怒\n✔ 盘踞时可以交谈\n✔ 对话里提门：第一次警告（恼怒 1）\n✔ 再提一次：激怒，拒绝对话\n✔ 追杀：交给通用追击\n✔ 追杀中的小小也能被持续笛声逼退（仍处于激怒）\n✔ 逼退结束时玩家已离水：不再追，游回门上\n✔ 回到门上方\n✔ 激怒期间拒绝对话\n✔ 回门安静 120s 后消气，重新愿意交谈\n✔ 追杀中玩家远于 45m 持续 6s：放弃\n✔ 水下吹一声：屏气 +5s（8.00，含动作期间 updateItemUse 不计时）\n✔ L7 屏气上限 35s → 满屏气最多吹 7 声\n✔ 水面上吹：不耗氧\n✔ 洞穴：射线打到岩壁，回声点在命中点前 0.45m（x=49.65）\n✔ 回声点附近的实体被引向回声点（而不是玩家）\n✔ 22m 内没碰到墙：从玩家身上传出\n✔ L7 开阔水面：从玩家身上传出\n✔ 规则：锚在第九大道 2 号路标，沿法线偏 12m（8/8 个种子）\n✔ 从路标沿洞管走到洞心：余量 >0.9m、净高 >1.9m、坡度 <0.3m/0.25m（8/8）\n✔ 洞心是干燥可走的洞底（8/8）\n✔ 每层恰好一处：1 组石乐器 + 1 个石风铃 + 断口下 1 支石卡祖笛（8/8）\n✔ 洞厅低矮：洞心净高 3.10m（风铃伸手可及）\n✔ L8 层级定义登记了两种新结构\n✔ 8 个种子：24 件岩壁乐器贴着岩面（最深 0.063m < 0.09m，背面中位间隙 ≤ 0.093m < 0.12m），56 件马桶/邦戈鼓压进洞底 ≤ 0.021m（目标 0.03/0.015m）\n✔ 石风铃：石链插进洞顶、铃盘和石管悬空、离地 > 1m（8/8）\n✔ 断口钟乳石补柱整圈插进洞顶、断口离地 > 1.8m（8/8）\n✔ 徒手拨不响\n✔ 用石卡祖笛一戳：铃声响起\n✔ 附近的实体被铃声引向风铃\n✔ 88s 时铃声还在\n✔ 约 90s 后归于安静\n✔ 真实 L7：门在场心实心石台上，小小出生在门上方\n✔ 真实 L7：主手使用连吹 4 声 → repel\n✔ 真实 L7：水下 4 声屏气至少 +20s（实际 +22.1s，含吹奏动作本身的时间）\n✔ 真实 L7：被逼退后 0.87s 离开门区 5m（游下实心石台），门放行\n✔ 真实 L7：25s 后游回门上（回程 5.3s，没被外环水管/石柱卡住），门重新被挡\n✔ 真实 L7：激怒后能从门上冲下来追人（1.5s 内 4.8m → 1.4m）\n✔ 对话 10 节\n✔ 每节都有台词和选项，跳转都落在树内\n✔ 从开场能走到全部 10 节（10）\n✔ 每节都能离开或继续\n✔ 小小自己从不提「出口」\n✔ 玩家提门/出路的选项走 scorn（2 个）\n✔ 台词参照维基访谈：外号来历（2019 年 6 月）、契约、案板上的鱼肉、游得更快\n✔ 厌恶肢体接触与噪音、讨厌听人讲道理\n✔ 流式窗口平移后，退避目标世界坐标不变\n✔ 流式窗口平移后，回门目标世界坐标不变\n\ncheck:tiny 87/87 全部通过\n"
+  },
+  {
+    "label": "build",
+    "args": [
+      "C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js",
+      "run",
+      "build"
+    ],
+    "exit": 0,
+    "ms": 48668,
+    "tail": "g.ttf referenced in ./fonts/zhimangxing.ttf didn't resolve at build time, it will remain unchanged to be resolved at runtime\n\nA PostCSS plugin did not pass the `from` option to `postcss.parse`. This may cause imported assets to be incorrectly transformed. If you've recently added a PostCSS plugin that raised this warning, please contact the package author to fix the issue.\n[plugin vite:reporter] \n(!) E:/ZAN/backroom/app/src/game/renderer/l11Materials.ts is dynamically imported by E:/ZAN/backroom/app/src/game/core/preload.ts but also statically imported by E:/ZAN/backroom/app/src/game/renderer/foyerStreet.ts, E:/ZAN/backroom/app/src/game/renderer/l11BridgeSkin.ts, E:/ZAN/backroom/app/src/game/renderer/l11Bridges.ts, E:/ZAN/backroom/app/src/game/renderer/l11DistantTerrain.ts, E:/ZAN/backroom/app/src/game/renderer/l11Exits.ts, E:/ZAN/backroom/app/src/game/renderer/l11Meshes.ts, E:/ZAN/backroom/app/src/game/renderer/l11ReferenceFacades.ts, E:/ZAN/backroom/app/src/game/renderer/l11RoofDetails.ts, E:/ZAN/backroom/app/src/game/renderer/l11Signs.ts, E:/ZAN/backroom/app/src/game/renderer/structures.ts, dynamic import will not move module into another chunk.\n\n\n(!) Some chunks are larger than 500 kB after minification. Consider:\n- Using dynamic import() to code-split the application\n- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks\n- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.\n"
+  }
+]

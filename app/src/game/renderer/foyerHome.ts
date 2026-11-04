@@ -1,3 +1,4 @@
+import { toiletGeometries } from './toiletGeometry'
 // 前厅（序章）渲染：玩家的家——地面/墙面/吊顶（替代通用瓦片地形）+ 全部家具与陈设的程序化建模。
 // 静态部分按材质合批（mergeGeometries），可动部件（门、抽屉、衣柜门、冰箱门）各自独立为铰链组，
 // 由 FoyerScene.update 按 engine.foyer.open 状态插值。贴图见 foyerTextures.ts（运行时 Canvas 生成）。
@@ -973,10 +974,8 @@ export class FoyerScene {
         break
       }
       case 'toilet': {
-        c.cushion(M.ceramic(), 0.36, 0.36, 0.5, 0, 0, 0.02, 0.1)
-        c.cushion(M.ceramic(), 0.38, 0.04, 0.48, 0, 0.36, 0.04, 0.02)
-        c.cushion(M.ceramic(), 0.4, 0.4, 0.16, 0, 0.4, back + 0.08, 0.03)
-        c.box(M.chrome(), 0.05, 0.012, 0.03, 0, 0.8, back + 0.08)
+        const ceramic = M.ceramic(), inner = this.mats.lit('toilet-inner', {color:'#c8c9bf',roughness:.24})
+        for(const [finish, geometry] of toiletGeometries('compact'))c.add(finish==='metal'?M.chrome():finish==='inner'?inner:ceramic,geometry,0,0,0)
         // 卷纸（壁挂卷纸架：底座贴墙）
         c.box(M.chrome(), 0.14, 0.05, 0.01, 0.32, 0.72, back + 0.005)
         c.cyl(M.chrome(), 0.006, 0.006, 0.12, 0.32, 0.745, back + 0.065, 8, 0, Math.PI / 2)

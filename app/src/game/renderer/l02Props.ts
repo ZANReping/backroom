@@ -1,3 +1,4 @@
+import { toiletGeometries } from './toiletGeometry'
 // Level 0.2 装饰物细化（第五轮）：洗手间设施（马桶/隔断/洗手台）、Wi‑Fi 路由器、板夹的分件倒角建模，
 // 以及设备层（喷淋管法兰/管卡/吊杆、保温风管、电缆桥架）与未完工房屋里的管卡、接线盒、施工灯、工具、锥桶等小件。
 // 材质延续 l02Scene/l02Pbr 的约定：MeshBasic（不吃实时光、不触发整层着色器重编译），
@@ -8,6 +9,7 @@ import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeom
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { installL02Pbr, l02Tex, type L02PbrName } from './l02Pbr'
 import { mirrorSurface } from './mirrorSurface'
+import { stripedConeGeometry, supportGeometry } from './constructionGeometry'
 
 const L = new THREE.Vector3(0.32, 0.86, 0.4).normalize()
 /** 烘焙式明暗：朗伯（顶光偏前）+ 环境底 + 贴地 AO；k=整体亮度。 */
@@ -108,14 +110,8 @@ function worldUVBox(g: THREE.BufferGeometry, scale: number) {
  *  冲水按钮（双键）、角阀 + 编织软管、地脚螺栓盖。 */
 export function toiletModel(g: THREE.Group) {
   const k = new Kit()
-  k.lathe('porcelain', [[0.0, 0], [0.13, 0], [0.135, 0.02], [0.11, 0.08], [0.1, 0.2], [0.14, 0.3], [0.18, 0.37], [0.19, 0.395], [0.17, 0.4], [0.0, 0.4]], 0, 0, 0.06, 24, 1, 1.22)
-  k.lathe('porcelainDim', [[0.0, 0.33], [0.13, 0.33], [0.155, 0.385], [0.0, 0.385]], 0, 0.006, 0.06, 20, 1, 1.22) // 碗内（略暗）
-  k.add('porcelain', new THREE.TorusGeometry(0.155, 0.022, 8, 28).scale(1, 1.22, 1), 0, 0.42, 0.075, Math.PI / 2) // 座圈
-  k.box('porcelain', 0.36, 0.42, 0.022, 0, 0.62, -0.115, 0.01, -0.12) // 翻起的座盖（靠在水箱上）
-  k.box('porcelain', 0.4, 0.34, 0.17, 0, 0.6, -0.215, 0.025) // 水箱
-  k.box('porcelain', 0.42, 0.035, 0.19, 0, 0.785, -0.215, 0.012) // 箱盖
-  k.cyl('chrome', 0.026, 0.026, 0.01, 0, 0.806, -0.215, 20) // 双键冲水按钮
-  k.box('chromeDark', 0.003, 0.012, 0.05, 0, 0.809, -0.215)
+  const keys = {porcelain:'porcelain',inner:'porcelainDim',seat:'porcelain',metal:'chrome'} as const
+  for(const [finish, geometry] of toiletGeometries())k.add(keys[finish],geometry)
   k.cyl('chrome', 0.012, 0.012, 0.05, -0.15, 0.2, -0.285, 10, Math.PI / 2) // 角阀
   k.box('chrome', 0.018, 0.03, 0.01, -0.15, 0.2, -0.255, 0.004)
   k.cyl('braid', 0.006, 0.006, 0.24, -0.15, 0.32, -0.25, 6) // 编织软管
@@ -143,18 +139,36 @@ export function stallModel(g: THREE.Group, end: boolean) {
 /** 洗手台（局部：背靠 -z 墙）：台面（倒角）+ 车削台盆 + 鹅颈龙头/单把手 + 下水 P 弯 + 柜体 + 带框镜子。 */
 export function sinkModel(g: THREE.Group) {
   const k = new Kit()
-  k.box('counter', 0.52, 0.05, 0.55, 0, 0.84, 0, 0.012)
-  k.lathe('porcelain', [[0.0, -0.12], [0.06, -0.12], [0.15, -0.07], [0.19, -0.01], [0.2, 0.0], [0.185, 0.006], [0.0, 0.006]], 0, 0.866, 0.02, 24, 1, 0.8)
-  k.cyl('chromeDark', 0.022, 0.022, 0.004, 0, 0.75, 0.02, 12) // 下水口（碗底）
+  // Countertop is a thin slab with an actual elliptical cut-out, rather than a
+  // solid box intersecting the basin.  ExtrudeGeometry's local XY becomes XZ
+  // after the -90° rotation; the hole is centred over the basin.
+  const slabShape = new THREE.Shape()
+  slabShape.moveTo(-0.256, -0.271); slabShape.lineTo(0.256, -0.271); slabShape.lineTo(0.256, 0.271); slabShape.lineTo(-0.256, 0.271); slabShape.closePath()
+  const basinHole = new THREE.Path()
+  basinHole.absellipse(0, -0.02, 0.188, 0.150, 0, Math.PI * 2, false, 0)
+  slabShape.holes.push(basinHole)
+  const slab = new THREE.ExtrudeGeometry(slabShape, { depth: 0.05, steps: 1, bevelEnabled: true, bevelSegments: 1, bevelSize: 0.004, bevelThickness: 0.004 })
+  slab.rotateX(-Math.PI / 2)
+  k.add('counter', slab, 0, 0.815, 0)
+  k.lathe('porcelain', [[0.0, -0.12], [0.06, -0.12], [0.15, -0.07], [0.19, -0.01], [0.2, 0.0], [0.185, 0.006], [0.176, -0.012], [0.14, -0.065], [0.06, -0.10], [0.0, -0.10]], 0, 0.866, 0.02, 24, 1, 0.8)
+  k.cyl('chromeDark', 0.022, 0.022, 0.004, 0, 0.77, 0.02, 12) // 下水口（碗底）
   k.cyl('chrome', 0.022, 0.026, 0.05, 0, 0.89, -0.18, 14) // 龙头底座
   k.cyl('chrome', 0.011, 0.011, 0.18, 0, 0.99, -0.18, 10)
   k.torus('chrome', 0.06, 0.011, 0, 1.08, -0.12, Math.PI, 0, Math.PI / 2, 0, 12) // 鹅颈
-  k.cyl('chrome', 0.013, 0.011, 0.03, 0, 1.03, -0.06, 10)
+  k.cyl('chrome', 0.013, 0.011, 0.075, 0, 1.044, -0.06, 10)
   k.box('chrome', 0.012, 0.012, 0.08, 0.04, 0.93, -0.2, 0.005, 0, 0.6) // 单把手
   k.cyl('chrome', 0.016, 0.016, 0.12, 0, 0.7, 0.02, 10) // 下水立管
   k.torus('chrome', 0.05, 0.016, 0, 0.62, 0.02 - 0.05, Math.PI, 0, Math.PI / 2, Math.PI) // P 弯
   k.cyl('chrome', 0.016, 0.016, 0.2, 0, 0.67, -0.17, 10, Math.PI / 2)
-  k.box('vanity', 0.5, 0.78, 0.5, 0, 0.4, -0.02, 0.012) // 柜体
+  // Open vanity shell: side/back/bottom panels and two front doors leave the
+  // underside of the basin visibly hollow and avoid a solid block behind it.
+  k.box('vanity', 0.025, 0.805, 0.5, -0.2375, 0.4125, -0.02, 0.008)
+  k.box('vanity', 0.025, 0.805, 0.5, 0.2375, 0.4125, -0.02, 0.008)
+  k.box('vanity', 0.5, 0.805, 0.025, 0, 0.4125, -0.2575, 0.008)
+  k.box('vanity', 0.5, 0.04, 0.5, 0, 0.04, -0.02, 0.008)
+  k.box('vanity', 0.247, 0.75, 0.018, -0.125, 0.415, 0.228, 0.004)
+  k.box('vanity', 0.247, 0.75, 0.018, 0.125, 0.415, 0.228, 0.004)
+  k.box('vanity', 0.5, 0.025, 0.025, 0, 0.8025, 0.222, 0.004)
   k.box('vanityLine', 0.003, 0.7, 0.003, 0, 0.42, 0.232)
   k.box('chromeDark', 0.012, 0.1, 0.014, -0.05, 0.62, 0.238, 0.004); k.box('chromeDark', 0.012, 0.1, 0.014, 0.05, 0.62, 0.238, 0.004) // 柜门拉手
   k.box('mirrorFrame', 0.58, 0.74, 0.018, 0, 1.5, -0.262, 0.006)
@@ -247,21 +261,29 @@ export function houseProps(root: THREE.Group, F: { x: number; y: number; w: numb
   k.box('black', 0.03, 0.02, 0.012, bx - 0.2, fy + 0.018, bz - 0.21, 0.003)
   const ccx = O.x + O.w + 0.45, ccz = O.y + 0.35
   if (ccx < F.x + F.w - 0.2) {
-    k.box('black', 0.3, 0.025, 0.3, ccx, fy + 0.012, ccz, 0.01)
-    k.lathe('coneOrange', [[0.12, 0.025], [0.025, 0.46], [0.0, 0.46]], ccx, fy, ccz, 16)
-    k.lathe('coneWhite', [[0.092, 0.15], [0.07, 0.22], [0.068, 0.221], [0.09, 0.151]], ccx, fy + 0.001, ccz, 16)
-    k.lathe('coneWhite', [[0.058, 0.28], [0.045, 0.33], [0.044, 0.331], [0.057, 0.281]], ccx, fy + 0.001, ccz, 16)
+    k.box('black', 0.3, 0.025, 0.3, ccx, fy + 0.0125, ccz, 0.01)
+    const cone = stripedConeGeometry({ bottomY: .025, topY: .46, bottomRadius: .12, topRadius: .025, bands: [[.15, .22], [.28, .33]] })
+    k.add('coneOrange', cone.body, ccx, fy, ccz)
+    k.add('coneWhite', cone.reflective, ccx, fy, ccz)
   }
   for (let i = 0; i < 3; i++) k.box('galv', 0.6 - i * 0.12, 0.04, 0.09, F.x + 0.7 + i * 0.25, fy + 0.025 + i * 0.04, F.y + F.h - 0.45, 0.004, 0, 0.3 + i * 0.5)
   k.build(root, 'l02-house-props')
 }
 /** 施工灯（三脚架 + 中柱卡箍 + 灯头壳/玻璃/护网 + 电线拖地）：世界坐标，(x,y)=地面位置，z=灯头高度。 */
 export function workLamp(k: Kit, x: number, y: number, z: number, floor: number) {
-  for (let i = 0; i < 3; i++) { const a = i / 3 * Math.PI * 2; k.add('black', new THREE.CylinderGeometry(0.011, 0.011, 1.0, 6).rotateZ(Math.cos(a) * 0.3).rotateX(Math.sin(a) * 0.3), x + Math.cos(a) * 0.15, floor + 0.48, y + Math.sin(a) * 0.15) }
+  const hub = new THREE.Vector3(x, floor + .96, y)
+  for (let i = 0; i < 3; i++) {
+    const a = i / 3 * Math.PI * 2
+    k.add('black', supportGeometry(new THREE.Vector3(x + Math.cos(a) * .3, floor + .004, y + Math.sin(a) * .3), hub, .022, .022, true))
+  }
   k.cyl('black', 0.012, 0.012, z - floor - 0.5, x, floor + 0.5 + (z - floor - 0.5) / 2, y, 8)
   k.cyl('galv', 0.02, 0.02, 0.04, x, floor + 0.95, y, 10) // 卡箍
   k.box('lampYellow', 0.34, 0.26, 0.14, x, z, y, 0.025)
   k.box('lampGlass', 0.28, 0.2, 0.02, x, z, y + 0.075)
   for (let i = 0; i < 4; i++) k.box('black', 0.3, 0.008, 0.008, x, z - 0.09 + i * 0.06, y + 0.088)
-  k.cyl('black', 0.008, 0.008, 0.45, x - 0.2, floor + 0.2, y, 6, 0, 0, 0.9) // 电线
+  const cable = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(x - .16, z - .05, y - .07), new THREE.Vector3(x - .21, floor + .55, y - .06),
+    new THREE.Vector3(x - .28, floor + .03, y - .04), new THREE.Vector3(x - .48, floor + .009, y + .12),
+  ])
+  k.add('black', new THREE.TubeGeometry(cable, 10, .008, 5, false)) // 接灯背后并落地的电缆
 }

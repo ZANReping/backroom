@@ -1,3 +1,4 @@
+import { currentFactionTerritory, TERROR_HOTEL_MARK } from '@/game/content/factionTerritory'
 import { GunHud } from './GunHud'
 import { isGun } from '../game/content/firearms'
 import {drawL7Map} from '@/game/content/l7Map'
@@ -18,7 +19,7 @@ import { seedString } from '@/game/core/rng'
 import { look } from '@/game/core/renderer3d'
 import { exitArrowRotation } from '@/game/content/guide'
 import { CS, infiniteImplFor } from '@/game/world/infinite'
-import { l5CorridorAt, l5RegionAt } from '@/game/world/infiniteL5' // v55：L5 区域名按大厅/房间矩形判定
+import { l5CorridorAt, l5RegionAt, L5_FLOORS, getL5Floor } from '@/game/world/infiniteL5' // v55：L5 区域名按大厅/房间矩形判定
 import { l7ZoneOfDepth } from '@/game/world/infiniteL7' // v57q：L7 深度带按玩家当前下潜深度显示
 import { l1StyleAt } from '@/game/world/l1Architecture'
 import { stairServesBand, bandOfPlayerZ } from '@/game/world/mapgen'
@@ -45,6 +46,8 @@ import AlphaMapPanel from './AlphaMapPanel'
 import TradersMapPanel from './TradersMapPanel'
 import {drawTradersMap} from '@/game/content/tradersMap'
 import L11MapPanel, { L11Minimap } from './L11MapPanel'
+import L5MapPanel, { L5Minimap } from './L5MapPanel' // [l5map]
+import { isL5MapLevel } from '@/game/content/l5Map'
 import DevExitTools from './DevExitTools'
 import {drawL0Map} from '@/game/content/l0Map'
 import {drawL1Map} from '@/game/content/l1Map'
@@ -54,6 +57,12 @@ import { mapSight } from '@/game/world/mapSight'
 import { jerryOverlay, jerryLureMarks } from '@/game/engine/jerryAI'
 import ArachnidHud from './arachnidHud' // [L8-arachnid]
 import HoundPinHud from './houndPinHud' // [hound] 扑倒压制挣脱进度条
+import BeastHud from './BeastHud' // [beast] 字幕 / 熄灯黑幕 / 契约倒计时
+import GreeterHud from './GreeterHud' // [spokes] 迎宾女郎双字幕（音箱推销 / 心声）
+import CasinoHud from './CasinoHud' // [casino] Level 5.1：筹码 / 紫筹码 / 上瘾 / 醉意 / 心声 / 拦门
+import JazzHud from './JazzHud' // [jazz] 爵士脑：演出进度 / 装死提示 / 点歌菜单 / 乐手字幕 / 曲目增益 / 辣椒酱
+import ChefHud from './ChefHud' // [chef] 厨师：念头字幕 / 黑屏 / 吃饭变暖 / 闪光 / 冷库面板 / 打烊
+import ConciergeHud from './ConciergeHud' // [concierge] 挂眼提示 / 挣脱条 / 13 楼黑屏
 import { armsOverlay, armsStruggleTap } from '@/game/engine/armsAI'
 import { nguithrOverlay } from '@/game/engine/nguithrAI'
 import { windowOverlay } from '@/game/engine/windowAI' // [window]
@@ -82,6 +91,7 @@ interface Props {
   fxScale: number // 减闪烁设置 0-1
   onPause: () => void
   onInventory: () => void
+  onHotelLedger: () => void
   onSelectSlot: (i: number) => void
   onUseSlot: (i: number) => void
   /** 打开手机界面（副手装着手机时）。 */
@@ -360,12 +370,13 @@ function LegacyMinimap({ engine, size }: { engine: Engine; size: number }) {
 
 // Level 11 uses the city-plan map while all other levels keep the legacy minimap.
 function Minimap({ engine, size }: { engine: Engine; size: number }) {
+  if (isL5MapLevel(engine.levelDef.id)) return <L5Minimap engine={engine} size={size} /> // [l5map] L5 / 大堂 / 赌场：酒店导览图
   return engine.player.level === 11 && engine.map?.inf
     ? <L11Minimap engine={engine} size={size} />
     : <LegacyMinimap engine={engine} size={size} />
 }
 
-export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, onPause, onInventory, onSelectSlot, onUseSlot, onPhone }: Props) {
+export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, onPause, onInventory, onSelectSlot, onUseSlot, onPhone, onHotelLedger }: Props) {
   const p = engine.player
   // HUD 权限（前厅逐步解锁；缺省全开；设置「始终显示全部 HUD」覆盖）+ 首次解锁的胶片刻度浮现动画
   const H = (k: HudKey) => hudAllowed(p, k, engine.hudShowAll)
@@ -447,6 +458,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
       curVariant = reg?.variant ?? null
       const corridor = l5CorridorAt(infMap.seed, Math.floor(infMap.ox + p.x), Math.floor(infMap.oy + p.y))
       areaName = reg?.variant ? (impl.variantNames?.[reg.variant] ?? null) : corridor.plain ? '白墙客房走廊' : '红金长廊'
+      if (areaName) areaName = `${L5_FLOORS[getL5Floor()]?.name ?? '1F'} · ${areaName}` // 恐怖旅馆 1b：楼层前缀「5F · 主厅」
     } else if (engine.levelDef.id === 6 && bandOfPlayerZ(engine.map!, p.z) === -1) {
       // v58：L6 地下层（FloorBand -1）全部统一显示为「地下廊道」区域，不再跟随地表变体名
       curVariant = 'underground'
@@ -637,6 +649,11 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
             return <div className="font-mono2 mt-1.5 border-t pt-1.5 text-[10px]" style={{ color: c, borderColor: 'var(--panel-edge)' }}>◈ 福友玉：{txt}</div>
           })()}
         </div>}
+        {p.level === 5 && <button type="button" data-hotel-ledger-shortcut onClick={onHotelLedger}
+          className="hud-panel pointer-events-auto flex max-w-[224px] items-center gap-2 px-2 py-1.5 text-left text-[10px] leading-snug text-amber-100 focus-visible:outline focus-visible:outline-amber-300">
+          <img src={`${import.meta.env.BASE_URL}${TERROR_HOTEL_MARK}`} alt="" width={22} height={22} className="shrink-0 bg-[#d1b878] object-contain" draggable={false} />
+          <span>请在团体界面查看恐怖旅馆登记簿</span>
+        </button>}
         {phenomena.length > 0 && (
           <div className="hud-panel pointer-events-auto flex flex-col gap-1 px-2 py-1.5">
             {phenomena.map((d) => {
@@ -652,8 +669,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
         )}
         {/* v35：身处据点时显示与该据点团体的声望；v41：衔尾段（BRC 领域）显示 BRC 声望；v45：信众宣传间（信众领地）显示 jerry 声望 */}
         {(() => {
-          const o = outpostDef
-          const factionId = o ? o.faction : curVariant === 'ouroboros' ? 'brc' : engine.jerryTerritory ? 'jerry' : null
+          const factionId = currentFactionTerritory(engine)
           const fac = factionId ? FACTIONS[factionId] : null
           if (!fac?.hasRep) return null
           const rep = engine.rep[fac.id] ?? 0
@@ -833,6 +849,12 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
 
       {/* 手机相机快门闪白 */}
       {p.level === 902 && (engine.l02?.dust ?? 0) > 0.02 && <div data-l02-dust className="pointer-events-none fixed inset-0 z-[31]" style={{ background: 'radial-gradient(ellipse at center, rgba(205,198,182,.55) 0%, rgba(176,168,150,.85) 100%)', opacity: Math.min(0.55, (engine.l02?.dust ?? 0) * 0.75) }} />}
+      {engine.hotelVanishT > 0 && <div data-hotel-vanish className="pointer-events-none fixed inset-0 z-[46]" style={{ background: '#000', opacity: engine.hotelVanishT < 2.4 ? 1 : 0.55 + 0.1 * Math.sin(engine.time * 9) }} />}
+      {engine.hotelGazeT > 0 && (() => {
+        // L5「先生」的注视：墙纸花纹在一瞬间全变成眼睛（成对的暗金瞳点平铺）+ 收紧的黑色暗角
+        const k = Math.min(1, engine.hotelGazeT / 0.6) * Math.min(1, (2.2 - engine.hotelGazeT) / 0.25 + 0.2)
+        return <div data-hotel-gaze className="pointer-events-none fixed inset-0 z-[44]" style={{ opacity: k, boxShadow: 'inset 0 0 260px 120px rgba(8,4,2,0.92)', backgroundImage: 'radial-gradient(circle at 34% 50%, rgba(214,170,90,.55) 0 3px, rgba(20,8,4,.85) 4px 9px, transparent 10px), radial-gradient(circle at 66% 50%, rgba(214,170,90,.55) 0 3px, rgba(20,8,4,.85) 4px 9px, transparent 10px)', backgroundSize: '86px 64px', mixBlendMode: 'multiply' }} />
+      })()}
       {engine.photoFlashT > 0 && <div className="pointer-events-none fixed inset-0 z-[45]" style={{ background: '#fff', opacity: Math.min(0.85, engine.photoFlashT / 0.35 * 0.85) }} />}
       {(() => { const fd = inFoyer ? foyerFadeView(engine) : null; return fd ? <div data-foyer-fade className="pointer-events-none fixed inset-0 z-[46] flex items-center justify-center" style={{ background: `rgba(0,0,0,${fd.k})` }}><span className="text-sm tracking-[0.3em] text-neutral-300" style={{ opacity: fd.k }}>{fd.text}</span></div> : null })()}
       {/* v57o：水下视野额外蓝绿晕影（与渲染层雾/低通叠加） */}
@@ -1003,6 +1025,12 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
       <ArachnidHud engine={engine} />
       {/* [hound] 猎犬扑倒压制：挣脱进度 / 被咬红闪 / 剩余压制时间（只在被压住时显示） */}
       <HoundPinHud engine={engine} isMobile={isMobile} />
+      <ConciergeHud engine={engine} isMobile={isMobile} />
+      <BeastHud engine={engine} />
+      <GreeterHud engine={engine} />
+      <ChefHud engine={engine} isMobile={isMobile} />
+      <JazzHud engine={engine} isMobile={isMobile} />
+      <CasinoHud engine={engine} />
       {engine.webbedT > 0 && (
         <div className="pointer-events-none fixed inset-0 z-[30]" style={{ backdropFilter: 'blur(3px) brightness(0.92)', WebkitBackdropFilter: 'blur(3px) brightness(0.92)' }} />
       )}
@@ -1083,7 +1111,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
             style={{ background: 'color-mix(in srgb, var(--panel) 88%, transparent)', ...(engine.player.level === 11 && engine.map?.inf ? { width: 'min(960px, calc(100vw - 32px))', maxHeight: 'calc(100dvh - 24px)', overflowY: 'auto', padding: 8 } : {}) }}
             onClick={(e) => e.stopPropagation()}
           >
-            {engine.player.level === 11 && engine.map?.inf
+            {isL5MapLevel(engine.levelDef.id) ? <L5MapPanel engine={engine} compact /> : engine.player.level === 11 && engine.map?.inf
               ? <L11MapPanel engine={engine} compact />
               : engine.map?.traders
                 ? <TradersMapPanel engine={engine} compact />
@@ -1091,12 +1119,12 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
                   ? <AlphaMapPanel engine={engine} compact />
                 : <Minimap engine={engine} size={bigMapSize} />}
             {/* v13：当前楼层标注（多楼层契约存在时） */}
-            {floorInfo && !(engine.player.level === 11 && engine.map?.inf) && (
+            {floorInfo && !isL5MapLevel(engine.levelDef.id) && !(engine.player.level === 11 && engine.map?.inf) && (
               <div className="font-mono2 text-[12px]" style={{ color: 'var(--amber)' }}>
                 L{dispId} · {def.name} · 当前 {floorInfo.cur + 1}F / 共{floorInfo.total}层
               </div>
             )}
-            {!engine.map?.traders && engine.map?.settlement?.blueprint.id !== 'alpha' && engine.levelDef.id !== 4 && !(engine.player.level === 11 && engine.map?.inf) && <div className="font-mono2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
+            {!engine.map?.traders && !isL5MapLevel(engine.levelDef.id) && engine.map?.settlement?.blueprint.id !== 'alpha' && engine.levelDef.id !== 4 && !(engine.player.level === 11 && engine.map?.inf) && <div className="font-mono2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
               <span><span style={{ color: 'var(--amber)' }}>●</span> 你的位置</span>
               <span><span style={{ color: 'var(--exit)' }}>●</span> 出口</span>
               {mapZData(engine.map).elev && <span><span style={{ color: MINIMAP_COLORS.high }}>■</span> 高台</span>}
@@ -1716,12 +1744,20 @@ const GLYPH_COLOR: Record<string, string> = {
   // ===== v40：此前缺专属色的两件（像素图已补齐，此处仅作 404 兜底配色） =====
   disinfectant: '#9fd0d8', welcomenote: '#f0e6c0',
   sedgland: '#d9c46a', // Nguithr'xurh 掉落的镇静腺
+  habanero: '#e0682a', // [jazz] 哈瓦那辣椒酱（手绘 SVG 图标）
+  chefpot: '#9a9c9a', megcamera: '#c9c9c4', megmic: '#9a9c9d', megform: '#e8dfc8', chefphoto: '#d9c6a0', // [chef] 带把手的锅 / 档案员相机 / 胸麦 / 表单 / 拍立得（手绘 SVG 图标）
+  spokesposter: '#e8a0b8', spokesphoto: '#c9a07a', detbadge: '#d9b45a', windupgear: '#d4a94a', // [spokes] 迎宾海报 / 侦探照片 / 侦探证件 / 发条零件（手绘 SVG 图标）
+  bagTag: '#d4a94a', roomtea: '#e8dcc4', gentletter: '#e8d2c0', // [bellhop] 行李牌 / 客房茶 / 绅士的情书（手绘 SVG 图标）
 }
 // v28：全部 66 件物品的原创像素画图标（128×128 RGBA，32×32 原稿放大，内部原创、无外部版权，
 // 见 public/textures/icons/SOURCES.md；v40 补齐消毒液/欢迎纸条/Tom 餐馆 10 道菜，
 // 由 scripts/gen-item-icons.py 批量生成）。优先于下方 v14/v21 旧贴图；贴图 404/加载失败时
 // 依次回退旧贴图 → 手绘 SVG 兜底。
 const PIXEL_ICON: Record<string, true> = {
+  mahjongtile: true, key437: true, bagTag: true, roomtea: true, gentletter: true,
+  spokesposter: true, spokesphoto: true, detbadge: true, windupgear: true, chefpot: true,
+  megcamera: true, megmic: true, megform: true, habanero: true, chefphoto: true, roomcard: true,
+  fatedie: true, brokendie: true, diereceipt: true, brokenrecord: true, silencejuice: true, mysteryegg: true,
   almond: true, axe: true, bandage: true, battery: true, canned: true, capacitor: true,
   carkey: true, cashew: true, cavingsuit: true, chalkstub: true, citywater: true, coffee: true,
   crowbar: true, divemask: true, driedfruit: true, endnote: true, flashlight: true, fuse: true,
@@ -1835,9 +1871,25 @@ export function ItemGlyph({ type, size = 24, count }: { type: string; size?: num
       case 'phone': return <><rect x="7" y="2.5" width="10" height="19" rx="2" {...s} /><path d="M10.5 5h3" {...s} /><circle cx="12" cy="18.5" r="0.9" {...f} /></>
       case 'card': return <><rect x="3" y="6" width="18" height="12" rx="1.5" {...s} /><rect x="5.5" y="9" width="5" height="3.5" {...s} /><path d="M14 9h5m-5 3h5" {...s} /></>
       case 'skeleton': return <><circle cx="8" cy="7" r="3.5" {...s} /><path d="M10.5 9.5 19 18m-3 0 2-2m-5-1 2-2" {...s} /></>
+      case 'roomcard': return <><rect x="3" y="6" width="18" height="12" rx="2" {...s} /><path d="M6 10h6M6 13h4m6-3v4" {...s} /></> // [l5items]
+      case 'fatedie': return <><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z" {...s} /><path d="M4 7.5 12 12l8-4.5M12 12v9" {...s} /></>
+      case 'receipt': return <><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21z" {...s} /><path d="M9 8h6M9 11h6M9 14h3" {...s} /></>
+      case 'record': return <><path d="M12 3a9 9 0 1 0 9 9h-9z" {...s} /><circle cx="12" cy="12" r="2.5" {...s} /></>
       case 'silver': return <path d="M8 3v7a2 2 0 0 0 4 0V3m-2 0v18m6-15c0 4-1 5-1 5v10" {...s} />
       case 'gland': return <><ellipse cx="12" cy="13.5" rx="6.5" ry="5.5" {...s} /><circle cx="12" cy="13.5" r="2" {...f} /><path d="M16 9l2-4" {...s} /></>
       case 'syringe': return <><path d="M4 20l6-6m0 0L17 7m-9 5 3 3" {...s} /><path d="M15 5l4 4m-7-2 4 4" {...s} /></>
+      case 'bagtag': return <><path d="M9 3h6l3 4v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7z" {...s} /><circle cx="12" cy="7.5" r="1.4" {...s} /><path d="M12 6V2.5m-3 10h6m-6 3h4" {...s} /></> // [bellhop] 行李牌：牌身 + 穿绳孔 + 编号行
+      case 'teacup': return <><path d="M5 9h11v4a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z" {...s} /><path d="M16 10.5h1.5a2 2 0 0 1 0 4H15.5M3 20h16" {...s} /><path d="M9 3.5c-1 1.2 1 2 0 3.5m3-3.5c-1 1.2 1 2 0 3.5" {...s} /></> // [bellhop] 客房茶：瓷杯 + 茶碟 + 热气
+      case 'letter': return <><rect x="3" y="6" width="18" height="12" rx="1" {...s} /><path d="M3.5 6.5 12 13l8.5-6.5" {...s} /><circle cx="12" cy="13" r="1.8" {...s} /></> // [bellhop] 绅士的情书：信封 + 火漆
+      case 'sauce': return <><path d="M9.5 3h5v3l1.5 2v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V8l1.5-2z" {...s} /><path d="M8 11h8M8 16h8" {...s} /><path d="M12 12.5c1.4 0 1.6 2.2 0 2.6-1.6-.4-1.4-2.6 0-2.6z" {...s} /></> // [jazz] 哈瓦那辣椒酱：小瓶 + 标签上一只辣椒
+      case 'pot': return <><path d="M3.5 10h12v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4z" {...s} /><path d="M3 10h13M15.5 11.5l5.5-2.5" {...s} /><path d="M7 6.5c-.8 1 .8 1.6 0 2.6m3.5-2.6c-.8 1 .8 1.6 0 2.6" {...s} /></> // [chef] 带把手的锅：锅身 + 长柄 + 热气
+      case 'camera': return <><rect x="3" y="7" width="18" height="12" rx="1.5" {...s} /><path d="M8 7l1.5-2.5h5L16 7" {...s} /><circle cx="12" cy="13" r="3.5" {...s} /><path d="M17.5 9.5h1.5" {...s} /></> // [chef] 档案员的相机
+      case 'mic': return <><rect x="9.5" y="3" width="5" height="9" rx="2.5" {...s} /><path d="M12 12v3c0 1.5 3 1.5 3 3s-3 1.5-3 3" {...s} /><path d="M8 13l8-8" {...s} /></> // [chef] 坏掉的胸麦：麦头 + 卷线 + 裂痕
+      case 'form': return <><path d="M5 3h11l3 3v15H5z" {...s} /><path d="M8 7.5h6M8 10.5h8M8 13.5h7" {...s} /><path d="M8 16.5c3 0 5 1 10 3.5" {...s} /></> // [chef] 未写完的表单：几行字 + 拖长的一笔
+      case 'poster': return <><path d="M5 3h14v18H5z" {...s} /><path d="M9 7.5c0-2 2-2 2 0v3m2-3c0-2 2-2 2 0v3" {...s} /><circle cx="12" cy="13" r="2.5" {...s} /><path d="M7.5 18.5h9" {...s} /></> // [spokes] 迎宾海报：纸 + 兔耳 + 标语
+      case 'photo': return <><rect x="5" y="3" width="14" height="18" rx="0.5" {...s} /><rect x="7" y="5" width="10" height="11" {...s} /><circle cx="12" cy="9.5" r="2" {...s} /><path d="M8.5 16c.5-2.5 6.5-2.5 7 0" {...s} /></> // [spokes] 侦探照片：白边相纸 + 人像
+      case 'badge': return <><rect x="2.5" y="6" width="19" height="13" rx="1.5" {...s} /><path d="M12 6v13" {...s} /><path d="M7.2 9l2.8 1-.5 3.2-2.3 1.6-2.3-1.6L4.4 10z" {...s} /><path d="M14.5 10h5m-5 3h4m-4 3h3" {...s} /></> // [spokes] 侦探证件：打开的证件夹 + 盾徽 + 证件卡
+      case 'gear': return <><circle cx="10" cy="13" r="5" {...s} /><circle cx="10" cy="13" r="1.6" {...s} /><path d="M10 6.5v1.5m0 10v1.5M3.5 13H5m10 0h1.5M5.4 8.4l1 1m7.2 7.2 1 1m-9.2 0 1-1m7.2-7.2 1-1" {...s} /><path d="M17 3.5 19.5 6M18.25 4.75 15 8" {...s} /></> // [spokes] 发条零件：齿轮 + 发条钥匙
       case 'scrap': return <><path d="M5 4h14v13l-4 3H5z" {...s} /><path d="M15 20v-3h4" {...s} /><path d="M8 8h8M8 12h5" {...s} /></>
       {/* ===== v25：v23/v25 新增物品专属图标（此前全部落到默认 box） ===== */}
       {/* 粉笔头：斜放的短粉笔，带一道环纹 */}

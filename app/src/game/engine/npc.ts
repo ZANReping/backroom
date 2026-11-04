@@ -16,6 +16,7 @@ import { clearFactionTracking, factionState, trackFactionTask } from './factionM
 import { isEnhancedFaction, isNewFaction, questFaction } from '../content/factionTerminals'
 import { l2JerryRoomRectAt } from '../world/infiniteL2' // v45：信众宣传间领地矩形（HUD 声望显示）
 import type { Engine } from '../engine'
+import { rememberOutpostEntry } from './outpostReturn'
 import { ALPHA_PLACEMENT_CLEARANCES } from '../content/alphaBlueprint'
 import { canOccupy } from '../core/player'
 import { HUMANOID_WINDUP, HUMANOID_RECOVERY } from '../core/humanoidMelee'
@@ -322,7 +323,7 @@ export function gotoJerryRoom(eng: Engine, npcId: string): boolean {
     eng.msg(`${n.def.name}摇了摇头：「你还不够虔诚。」（需要杰瑞的信众声望 ≥10，当前 ${rep}）`, 'system')
     return false
   }
-  eng.outpostReturn = eng.player.level
+  rememberOutpostEntry(eng, 274)
   eng.transition = { anim: 'bloom', t: 0, dest: 274 }
   eng.emit({ kind: 'transition', anim: 'bloom', cutIn: 'outpost', dest: 274 })
   eng.msg(`${n.def.name}虔诚地低下头：「随我来——鹉主在穹顶之下等你。」`, 'lore')

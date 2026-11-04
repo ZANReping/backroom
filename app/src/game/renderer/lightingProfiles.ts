@@ -18,6 +18,7 @@ export const LEVEL_LIGHTING:Record<number,LightingProfile>={
  111:profile(.96,.78,.4,[1.025,1,.98]),112:profile(.98,.8,.44,[1.02,1,.98]),
  113:profile(.97,.8,.4,[1.01,1,.99]),114:profile(.98,.8,.46,[1.025,1,.98]),
  115:profile(.96,.78,.44,[1.025,1,.98]),116:profile(.97,.8,.43,[1.015,1,.99]),
+ 117:profile(.95,.8,.4,[1.03,1,.96]),118:profile(.98,.82,.46,[1.025,1,.98]), // L5 1c 口袋房间
  274:profile(.97,.8,.46,[1.035,1,.95],.12,.35),
 }
 export function lightingProfile(eng:Engine):LightingProfile{

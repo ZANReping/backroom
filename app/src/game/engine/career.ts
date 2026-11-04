@@ -1,4 +1,5 @@
 import type { Engine } from '../engine'
+import type { OutpostReturnAnchor } from './outpostReturn'
 import type { CareerId } from '../content/settlementTypes'
 import { CAREERS, CAREER_IDS } from '../content/careers'
 import type { QuestDef } from '../content/factions'
@@ -15,7 +16,7 @@ export interface CareerSave {factions?:Partial<Record<NewFaction,FactionSave>>}
 export interface CareerSave {meg?:MegSave}
 export interface CareerSave {bntg?:BntgSave}
 export interface CareerProgress {joined:boolean;task:number;rank:number;active:boolean;field:number;points:{x:number;y:number;level:number}[];records:string[];work?:number;measurements?:{x:number;y:number;steps:number;at:number}[]}
-export interface CareerSave {version:1;clock:number;routes:Partial<Record<CareerId,CareerProgress>>;settled:string[];pending:{id:string;items:string[]}[];offers:Record<string,{epoch:number;quests:QuestDef[]}>;deprogram:number;case:{stage:'clear'|'warning'|'question'|'pursuit'|'hearing';evidence:string[];resolved:string[]};device?:{level:number;x:number;y:number;until:number};returnAnchor?:{level:number;x:number;y:number;yaw:number};returning?:boolean}
+export interface CareerSave {version:1;clock:number;routes:Partial<Record<CareerId,CareerProgress>>;settled:string[];pending:{id:string;items:string[]}[];offers:Record<string,{epoch:number;quests:QuestDef[]}>;deprogram:number;case:{stage:'clear'|'warning'|'question'|'pursuit'|'hearing';evidence:string[];resolved:string[]};device?:{level:number;x:number;y:number;until:number};returnAnchor?:OutpostReturnAnchor;returning?:boolean}
 export const freshCareer=():CareerSave=>({version:1,clock:0,routes:{},settled:[],pending:[],offers:{},deprogram:0,case:{stage:'clear',evidence:[],resolved:[]},meg:freshMeg()})
 export function restoreCareer(raw?:CareerSave):CareerSave {const s=freshCareer();if(raw?.version!==1)return s;const copy=structuredClone(raw);return {...s,...copy,routes:copy.routes??{},pending:copy.pending??[],settled:copy.settled??[],meg:copy.meg?.version===1?copy.meg:undefined}}
 export function route(eng:Engine,id:CareerId){return eng.career.routes[id]??={joined:false,task:0,rank:0,active:false,field:0,points:[],records:[]}}

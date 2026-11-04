@@ -18,6 +18,7 @@ import { sittingSafePosition } from './seating'
 import { migrateL11Snapshot, needsL11Migration } from './l11Migration'
 import { captureFerren } from './ferrenAI'
 import { captureCreep } from './creeperAI'
+import { flushL5Map } from '../content/l5Map' // [l5map]
 const l11BackupBlockedSeeds=new Set<number>()
 
 // ===== v29a：存档/读档 =====
@@ -70,6 +71,7 @@ export interface SaveSnapshot {
   rep?: Record<string, number> // v35：团体声望
   quests?: { def: QuestDef; progress: number; baseline: number; done: boolean }[] // v35：委托任务
   warehouses?: WarehouseState // v54：据点寄存仓库（阵营互通，每阵营 48 栏）
+  hotel?: import('./l5Hotel').HotelState // L5 恐怖旅馆局内状态
   brcSin?: { hurt: number; killed: number } // v39：BRC 未告发的伤害/杀死计数
   brcMimicCd?: number // v39：BRC 模仿装修冷却剩余秒数
   indoctrination?: number // v45：教化值 0~100（接触杰瑞积累；驯服清零；随存档持久）
@@ -185,6 +187,7 @@ export function snapshot(eng: Engine): SaveSnapshot {
     profile: { ...eng.profile },
     bntgBank: structuredClone(eng.bntgBank),
     warehouses: JSON.parse(JSON.stringify(eng.warehouses)) as WarehouseState, // v54：寄存仓库库存
+    hotel: (flushL5Map(eng), { ...structuredClone(eng.hotel), floor: eng.player.level === 5 ? eng.map?.inf?.l5Floor ?? eng.hotel.floor : eng.hotel.floor }), // [l5map] 先把导览图脏区块写回
     brcSin: eng.brcSin,
     brcMimicCd: eng.brcMimicCd,
     indoctrination: eng.indoctrination,

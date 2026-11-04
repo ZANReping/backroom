@@ -70,3 +70,7 @@ wheatgrain, wrench, xenonmarble
 `pixel/item_brc_permit.png`（后室装修公司「施工许可」）为本项目原创程序化像素画：写字板 + 淡蓝复写单据 + 团体主色抬头 + 金色钢印 + 黄黑施工条纹，配色取自 `src/game/content/factions.ts` 中 brc 的 color/sub。使用 `scripts/gen-item-icons.py` 的 `draw_brc_permit` 绘制，32×32 透明原稿最近邻放大为 128×128；无第三方素材，随项目同许可发布。
 
 `pixel/item_dustmask.png`（Level 0.2「防尘口罩」）为本项目原创程序化像素画：白色折叠杯形口罩 + 橙色松紧带 + 鼻夹 + 呼吸阀。使用 `scripts/gen-item-icons.py` 的 `draw_dustmask` 绘制，32×32 透明原稿最近邻放大为 128×128；无第三方素材，随项目同许可发布。
+
+## 2026-11-04 Level 5 新增物品
+
+22 张 Level 5 新增物品图标由项目原创像素图案绘制，随项目同许可发布，不使用第三方素材。Aseprite 源文件为 `app/art/l5-item-icons/item_<id>.aseprite`（64×64），由 `app/scripts/draw-l5-item-icons.lua` 导出为 `app/public/textures/icons/pixel/item_<id>.png`（128×128，保留透明边缘与像素边界）。在 `app` 或项目根目录运行 `node app/scripts/gen-l5-item-icons.mjs` 可复现；可用 `ASEPRITE_PATH` 覆盖 Aseprite 可执行文件路径，默认使用 `E:/ZAN/Aseprite/aseprite.exe`。生成器会校验 22 个 `.aseprite` 源文件及 128×128 PNG 输出。

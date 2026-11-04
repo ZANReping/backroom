@@ -51,6 +51,7 @@ const capture = (eng: Engine) => {
 {
   const { eng, s } = make()
   s.data = { ...s.data, staff: 0 }
+  eng.player.backpack[0] = null // Check that a staff keycard alone cannot open an ordinary door.
   scanInteract(eng)
   assert.match(eng.interactTarget?.label ?? '', /需要撬棍\/万能钥匙\/斧头/)
   doInteract(eng)

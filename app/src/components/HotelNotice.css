@@ -1,0 +1,21 @@
+.hn-veil { position: fixed; inset: 0; z-index: 60; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: radial-gradient(ellipse at center, rgba(40, 14, 12, 0.72), rgba(0, 0, 0, 0.86)); padding: 16px; }
+.hn-card { position: relative; width: min(340px, 86vw); padding: 34px 30px 26px; text-align: center; color: #231a14; font-family: 'Songti SC', 'SimSun', 'Noto Serif CJK SC', serif;
+  background: #efe4c8 repeating-linear-gradient(0deg, rgba(120, 90, 40, 0.035) 0 2px, transparent 2px 5px);
+  border: 3px solid #7a5a26; outline: 1px solid #7a5a26; outline-offset: -10px; box-shadow: 0 0 0 6px #2a1a10, 0 0 0 8px #c9a24a, 0 18px 50px rgba(0, 0, 0, 0.8); }
+.hn-corner { position: absolute; width: 0; height: 0; border: 12px solid transparent; }
+.hn-corner.tl { top: 9px; left: 9px; border-top-color: #7a5a26; border-left-color: #7a5a26; }
+.hn-corner.tr { top: 9px; right: 9px; border-top-color: #7a5a26; border-right-color: #7a5a26; }
+.hn-corner.bl { bottom: 9px; left: 9px; border-bottom-color: #7a5a26; border-left-color: #7a5a26; }
+.hn-corner.br { bottom: 9px; right: 9px; border-bottom-color: #7a5a26; border-right-color: #7a5a26; }
+.hn-name { font-size: 30px; font-weight: 700; letter-spacing: 6px; color: #5a1e1c; }
+.hn-kicker { margin-top: 4px; font-size: 14px; color: #7a5a26; letter-spacing: 2px; }
+.hn-rule { height: 1px; background: #7a5a26; margin: 12px 18px; }
+.hn-rule.bottom { margin-top: 22px; }
+.hn-no { font-size: 13px; color: #7a5a26; }
+.hn-text { margin-top: 14px; font-size: 22px; font-weight: 700; line-height: 1.45; }
+.hn-sub { margin-top: 12px; font-size: 14px; line-height: 1.6; color: #4a3a2a; }
+.hn-foot { font-size: 13px; color: #7a5a26; letter-spacing: 1px; }
+.hn-status { font-family: 'Songti SC', 'SimSun', serif; font-size: 13px; color: #d9c9a8; letter-spacing: 1px; }
+.hn-status.ok { color: #b8d8a0; }
+.hn-status.bad { color: #e8907a; }
+.hn-close { font-size: 11px; color: #8a7a62; }

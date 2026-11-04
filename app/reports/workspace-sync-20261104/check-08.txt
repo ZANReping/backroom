@@ -1,0 +1,25 @@
+
+> my-app@0.0.0 check:outpost-return
+> esbuild scripts/check-outpost-return.ts --bundle --platform=node --format=esm --outfile=.cache/check-outpost-return.mjs && node .cache/check-outpost-return.mjs
+
+
+  .cache\check-outpost-return.mjs  6.3mb
+
+Done in 505ms
+alpha round trip passed
+bntg round trip passed
+ariane round trip passed
+tom round trip passed
+el3a round trip passed
+gamma round trip passed
+storage round trip passed
+bluesalvation round trip passed
+omega round trip passed
+housekeeping round trip passed
+homely round trip passed
+originals round trip passed
+cornucopia round trip passed
+emptynest round trip passed
+hammoz round trip passed
+jerry round trip passed
+Outpost return checks passed: 424 checks, 16 actual registered outpost round trips.

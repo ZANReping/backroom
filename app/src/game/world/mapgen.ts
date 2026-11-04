@@ -851,6 +851,8 @@ export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
       const swap = deg === 90 || deg === 270
       return [{ x0: cx - (swap ? hd : hw), y0: cy - (swap ? hw : hd), x1: cx + (swap ? hd : hw), y1: cy + (swap ? hw : hd), top: FULL_BLOCK, stand: false }]
     }
+    case 'casinoprop': // [casino] 赌场碰撞代理：精确盒（地图米）
+      return [{ x0: Number(s.data?.x0), y0: Number(s.data?.y0), x1: Number(s.data?.x1), y1: Number(s.data?.y1), top: Number(s.data?.top ?? FULL_BLOCK), stand: false }]
     case 'settlementprop':
       return [{x0:s.x,y0:s.y,x1:s.x+s.w,y1:s.y+s.h,bottom:Number(s.data?.bottom??0),top:Number(s.data?.height??1),stand:!s.data?.partition}]
     case 'seadais': // v58：环形石台——0.42m 低台可踏上（stand），台面嵌木门出口

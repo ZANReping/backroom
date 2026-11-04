@@ -576,12 +576,13 @@ export default function Cutscene(props: {
       elapsed += delta
       const W = Math.max(1, window.innerWidth)
       const H = Math.max(1, window.innerHeight)
-      if (c.width !== W || c.height !== H) {
+      const resized = c.width !== W || c.height !== H
+      if (resized) {
         c.width = W
         c.height = H
       }
       if (ph === 'in' && !readyRef.current) {
-        ph = 'card'; elapsed = cardD; setPhase('card'); stageRef.current?.('loading')
+        ph = 'card'; elapsed = cardD; cardFrames = 0; setPhase('card'); stageRef.current?.('loading')
       }
       if (ph === 'in' && elapsed >= inD) {
         g.clearRect(0, 0, W, H)
@@ -589,6 +590,9 @@ export default function Cutscene(props: {
         return
       }
       raf = requestAnimationFrame(draw)
+      // The opaque loading card is static. Keep phase/readiness checks at display
+      // cadence, but stop repainting two full-screen layers while shaders prepare.
+      const paintFrame = ph !== 'card' || resized || cardFrames < 2
       g.setTransform(1, 0, 0, 1, 0, 0)
       g.globalAlpha = 1
       g.globalCompositeOperation = 'source-over'
@@ -601,8 +605,7 @@ export default function Cutscene(props: {
       } else if (ph === 'card') {
         // Hold the destination card until its world is actually ready. Its CSS
         // entrance gets painted before map generation or GPU warmup may start.
-        g.fillStyle = '#060607'
-        g.fillRect(0, 0, W, H)
+        if (paintFrame) { g.fillStyle = '#060607'; g.fillRect(0, 0, W, H) }
         cardFrames++
         if (!loadingAllowed && elapsed >= 0.32 && cardFrames >= 2) {
           loadingAllowed = true
@@ -621,7 +624,7 @@ export default function Cutscene(props: {
         if ((inKind === 'fall' || inKind === 'collapse') && p > 0.6) once('land', () => audio.hurt())
       }
 
-      if (scanPat) {
+      if (scanPat && paintFrame) {
         g.fillStyle = scanPat
         g.fillRect(0, 0, W, H)
       }

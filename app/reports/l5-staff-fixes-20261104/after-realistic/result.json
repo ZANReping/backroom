@@ -1,0 +1,199 @@
+{
+  "seed": 515151.25,
+  "mode": "realistic",
+  "port": 7649,
+  "cdp": 7650,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:7649/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Wed, 04 Nov 2026 10:02:28 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 286,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 7649,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 90936.806197,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.346,
+        "sendEnd": 0.391,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 84.891,
+        "receiveHeadersEnd": 84.984
+      },
+      "responseTime": 1793786548868.998,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l5-staff-fixes-20261104\\after-realistic\\qa-1793786530532-72016",
+    "--remote-debugging-port=7650",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 69988,
+    "server": 68232
+  },
+  "appBootMs": 18047.3059,
+  "entryMs": 3873.987799999999,
+  "firstPlayableMs": 30435.9758,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 5,
+    "point": {
+      "x": 15.5,
+      "y": 15.5,
+      "z": 0,
+      "seed": 515151.25,
+      "floor": 1
+    },
+    "checks": [],
+    "draws": 1,
+    "triangles": 1
+  },
+  "staff": [
+    {
+      "type": "concierge",
+      "frames": 45,
+      "maxFrameMs": 887.5,
+      "visible": true,
+      "meshes": 93,
+      "finite": true,
+      "pending": false,
+      "draws": 1,
+      "programs": 87,
+      "contextLost": false
+    },
+    {
+      "type": "bellhop",
+      "frames": 45,
+      "maxFrameMs": 991.5999999999985,
+      "visible": false,
+      "meshes": 0,
+      "finite": true,
+      "pending": true,
+      "draws": 1,
+      "programs": 100,
+      "contextLost": false
+    },
+    {
+      "type": "maid",
+      "frames": 45,
+      "maxFrameMs": 158.5,
+      "visible": false,
+      "meshes": 0,
+      "finite": true,
+      "pending": true,
+      "draws": 1,
+      "programs": 97,
+      "contextLost": false
+    },
+    {
+      "type": "greeter",
+      "frames": 45,
+      "maxFrameMs": 1691.7000000000044,
+      "visible": false,
+      "meshes": 0,
+      "finite": true,
+      "pending": true,
+      "draws": 1,
+      "programs": 104,
+      "contextLost": false
+    },
+    {
+      "type": "windup",
+      "frames": 45,
+      "maxFrameMs": 37.39999999999418,
+      "visible": false,
+      "meshes": 0,
+      "finite": true,
+      "pending": true,
+      "draws": 1,
+      "programs": 100,
+      "contextLost": false
+    },
+    {
+      "type": "jazz",
+      "frames": 45,
+      "maxFrameMs": 20.900000000001455,
+      "visible": false,
+      "meshes": 0,
+      "finite": true,
+      "pending": false,
+      "draws": 1,
+      "programs": 102,
+      "contextLost": false
+    },
+    {
+      "type": "chef",
+      "frames": 45,
+      "maxFrameMs": 25,
+      "visible": false,
+      "meshes": 0,
+      "finite": true,
+      "pending": false,
+      "draws": 1,
+      "programs": 102,
+      "contextLost": false
+    },
+    {
+      "type": "beast",
+      "frames": 45,
+      "maxFrameMs": 2758.300000000003,
+      "visible": false,
+      "meshes": 0,
+      "finite": true,
+      "pending": true,
+      "draws": 1,
+      "programs": 105,
+      "contextLost": false
+    }
+  ],
+  "ok": false,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

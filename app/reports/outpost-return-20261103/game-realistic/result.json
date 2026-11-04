@@ -1,0 +1,1419 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 5411,
+  "cdp": 5412,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:5411/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Tue, 03 Nov 2026 14:26:20 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 289,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 5411,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 20357.684952,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.453,
+        "sendEnd": 0.495,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 203.903,
+        "receiveHeadersEnd": 204.173
+      },
+      "responseTime": 1793715980121.53,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\outpost-return-20261103\\game-realistic\\qa-1793715942607-45104",
+    "--remote-debugging-port=5412",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 60876,
+    "server": 44972
+  },
+  "appBootMs": 26013.346700000002,
+  "entryMs": 2718.5610000000015,
+  "firstPlayableMs": 35372.0986,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "position": {
+      "level": 2,
+      "mapSeed": 424242,
+      "x": 14.5,
+      "y": 15.5,
+      "z": 0,
+      "floor": 0,
+      "yaw": 0,
+      "pitch": 0
+    },
+    "checks": [],
+    "rows": []
+  },
+  "setupOmega": {
+    "level": 4,
+    "position": {
+      "level": 4,
+      "mapSeed": 888123.625,
+      "x": 117.5,
+      "y": 33.599999999999994,
+      "z": 0,
+      "floor": 0,
+      "yaw": 0,
+      "pitch": -0.22347660114063414
+    },
+    "checks": [
+      "source is streaming map",
+      "omega real generated entrance exists",
+      "omega exact entrance window loaded",
+      "omega real E aims at landmark"
+    ],
+    "rows": [
+      {
+        "phase": "before",
+        "outpost": "omega",
+        "source": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": 117,
+          "y": 32
+        }
+      }
+    ]
+  },
+  "insideOmega": {
+    "level": 109,
+    "position": {
+      "level": 109,
+      "mapSeed": 438542.6713,
+      "x": 39.5,
+      "y": 4.5,
+      "z": 0,
+      "floor": 0,
+      "yaw": 0,
+      "pitch": -0.22347660114063414
+    },
+    "checks": [
+      "source is streaming map",
+      "omega real generated entrance exists",
+      "omega exact entrance window loaded",
+      "omega real E aims at landmark",
+      "omega landmark button enters base",
+      "omega full source seed retained",
+      "omega absolute approach retained",
+      "actual save resumes inside base",
+      "actual save retains origin seed"
+    ],
+    "rows": [
+      {
+        "phase": "before",
+        "outpost": "omega",
+        "source": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": 117,
+          "y": 32
+        }
+      },
+      {
+        "phase": "inside",
+        "outpost": "omega",
+        "position": {
+          "level": 109,
+          "mapSeed": 438542.6713,
+          "x": 39.5,
+          "y": 4.5,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "anchor": {
+          "level": 4,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414,
+          "mapSeed": 888123.625,
+          "outpost": 109
+        }
+      }
+    ]
+  },
+  "exitOmega": {
+    "level": 109,
+    "position": {
+      "level": 109,
+      "mapSeed": 438542.6713,
+      "x": 39.5,
+      "y": 2.6,
+      "z": 0,
+      "floor": 0,
+      "yaw": 0,
+      "pitch": -0.42662749312687603
+    },
+    "checks": [
+      "source is streaming map",
+      "omega real generated entrance exists",
+      "omega exact entrance window loaded",
+      "omega real E aims at landmark",
+      "omega landmark button enters base",
+      "omega full source seed retained",
+      "omega absolute approach retained",
+      "actual save resumes inside base",
+      "actual save retains origin seed",
+      "omega real back door exists",
+      "omega real E targets back door"
+    ],
+    "rows": [
+      {
+        "phase": "before",
+        "outpost": "omega",
+        "source": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": 117,
+          "y": 32
+        }
+      },
+      {
+        "phase": "inside",
+        "outpost": "omega",
+        "position": {
+          "level": 109,
+          "mapSeed": 438542.6713,
+          "x": 39.5,
+          "y": 4.5,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "anchor": {
+          "level": 4,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414,
+          "mapSeed": 888123.625,
+          "outpost": 109
+        }
+      }
+    ]
+  },
+  "returnedOmega": {
+    "level": 4,
+    "position": {
+      "level": 4,
+      "mapSeed": 888123.625,
+      "x": 117.5,
+      "y": 33.599999999999994,
+      "z": 0,
+      "floor": 0,
+      "yaw": 0,
+      "pitch": -0.22347660114063414
+    },
+    "checks": [
+      "source is streaming map",
+      "omega real generated entrance exists",
+      "omega exact entrance window loaded",
+      "omega real E aims at landmark",
+      "omega landmark button enters base",
+      "omega full source seed retained",
+      "omega absolute approach retained",
+      "actual save resumes inside base",
+      "actual save retains origin seed",
+      "omega real back door exists",
+      "omega real E targets back door",
+      "omega returns to parent",
+      "omega returns to original map",
+      "omega returns to original entrance approach",
+      "omega returns at correct height",
+      "omega restores approach direction",
+      "omega return body clear",
+      "omega same actual entrance still exists",
+      "omega return token consumed"
+    ],
+    "rows": [
+      {
+        "phase": "before",
+        "outpost": "omega",
+        "source": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": 117,
+          "y": 32
+        }
+      },
+      {
+        "phase": "inside",
+        "outpost": "omega",
+        "position": {
+          "level": 109,
+          "mapSeed": 438542.6713,
+          "x": 39.5,
+          "y": 4.5,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "anchor": {
+          "level": 4,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414,
+          "mapSeed": 888123.625,
+          "outpost": 109
+        }
+      },
+      {
+        "phase": "after",
+        "outpost": "omega",
+        "source": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "returned": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": 117,
+          "y": 32
+        }
+      }
+    ]
+  },
+  "setupAlpha": {
+    "level": 1,
+    "position": {
+      "level": 1,
+      "mapSeed": 424242,
+      "x": -18.5,
+      "y": -88.9,
+      "z": 0,
+      "floor": 0,
+      "yaw": 0,
+      "pitch": -0.22347660114063414
+    },
+    "checks": [
+      "source is streaming map",
+      "omega real generated entrance exists",
+      "omega exact entrance window loaded",
+      "omega real E aims at landmark",
+      "omega landmark button enters base",
+      "omega full source seed retained",
+      "omega absolute approach retained",
+      "actual save resumes inside base",
+      "actual save retains origin seed",
+      "omega real back door exists",
+      "omega real E targets back door",
+      "omega returns to parent",
+      "omega returns to original map",
+      "omega returns to original entrance approach",
+      "omega returns at correct height",
+      "omega restores approach direction",
+      "omega return body clear",
+      "omega same actual entrance still exists",
+      "omega return token consumed",
+      "source is streaming map",
+      "alpha real generated entrance exists",
+      "alpha exact entrance window loaded",
+      "alpha real E aims at landmark"
+    ],
+    "rows": [
+      {
+        "phase": "before",
+        "outpost": "omega",
+        "source": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": 117,
+          "y": 32
+        }
+      },
+      {
+        "phase": "inside",
+        "outpost": "omega",
+        "position": {
+          "level": 109,
+          "mapSeed": 438542.6713,
+          "x": 39.5,
+          "y": 4.5,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "anchor": {
+          "level": 4,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414,
+          "mapSeed": 888123.625,
+          "outpost": 109
+        }
+      },
+      {
+        "phase": "after",
+        "outpost": "omega",
+        "source": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "returned": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": 117,
+          "y": 32
+        }
+      },
+      {
+        "phase": "before",
+        "outpost": "alpha",
+        "source": {
+          "level": 1,
+          "mapSeed": 424242,
+          "x": -18.5,
+          "y": -88.9,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": -19,
+          "y": -90.5
+        }
+      }
+    ]
+  },
+  "insideAlpha": {
+    "level": 101,
+    "position": {
+      "level": 101,
+      "mapSeed": 438731.4523,
+      "x": 61,
+      "y": 13.5,
+      "z": 0,
+      "floor": 0,
+      "yaw": 0,
+      "pitch": -0.22347660114063414
+    },
+    "checks": [
+      "source is streaming map",
+      "omega real generated entrance exists",
+      "omega exact entrance window loaded",
+      "omega real E aims at landmark",
+      "omega landmark button enters base",
+      "omega full source seed retained",
+      "omega absolute approach retained",
+      "actual save resumes inside base",
+      "actual save retains origin seed",
+      "omega real back door exists",
+      "omega real E targets back door",
+      "omega returns to parent",
+      "omega returns to original map",
+      "omega returns to original entrance approach",
+      "omega returns at correct height",
+      "omega restores approach direction",
+      "omega return body clear",
+      "omega same actual entrance still exists",
+      "omega return token consumed",
+      "source is streaming map",
+      "alpha real generated entrance exists",
+      "alpha exact entrance window loaded",
+      "alpha real E aims at landmark",
+      "alpha landmark button enters base",
+      "alpha full source seed retained",
+      "alpha absolute approach retained"
+    ],
+    "rows": [
+      {
+        "phase": "before",
+        "outpost": "omega",
+        "source": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": 117,
+          "y": 32
+        }
+      },
+      {
+        "phase": "inside",
+        "outpost": "omega",
+        "position": {
+          "level": 109,
+          "mapSeed": 438542.6713,
+          "x": 39.5,
+          "y": 4.5,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "anchor": {
+          "level": 4,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414,
+          "mapSeed": 888123.625,
+          "outpost": 109
+        }
+      },
+      {
+        "phase": "after",
+        "outpost": "omega",
+        "source": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "returned": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": 117,
+          "y": 32
+        }
+      },
+      {
+        "phase": "before",
+        "outpost": "alpha",
+        "source": {
+          "level": 1,
+          "mapSeed": 424242,
+          "x": -18.5,
+          "y": -88.9,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": -19,
+          "y": -90.5
+        }
+      },
+      {
+        "phase": "inside",
+        "outpost": "alpha",
+        "position": {
+          "level": 101,
+          "mapSeed": 438731.4523,
+          "x": 61,
+          "y": 13.5,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "anchor": {
+          "level": 1,
+          "x": -18.5,
+          "y": -88.9,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414,
+          "mapSeed": 424242,
+          "outpost": 101
+        }
+      }
+    ]
+  },
+  "exitAlpha": {
+    "level": 101,
+    "position": {
+      "level": 101,
+      "mapSeed": 438731.4523,
+      "x": 60.5,
+      "y": 5.6,
+      "z": 0,
+      "floor": 0,
+      "yaw": 0,
+      "pitch": -0.4266274931268762
+    },
+    "checks": [
+      "source is streaming map",
+      "omega real generated entrance exists",
+      "omega exact entrance window loaded",
+      "omega real E aims at landmark",
+      "omega landmark button enters base",
+      "omega full source seed retained",
+      "omega absolute approach retained",
+      "actual save resumes inside base",
+      "actual save retains origin seed",
+      "omega real back door exists",
+      "omega real E targets back door",
+      "omega returns to parent",
+      "omega returns to original map",
+      "omega returns to original entrance approach",
+      "omega returns at correct height",
+      "omega restores approach direction",
+      "omega return body clear",
+      "omega same actual entrance still exists",
+      "omega return token consumed",
+      "source is streaming map",
+      "alpha real generated entrance exists",
+      "alpha exact entrance window loaded",
+      "alpha real E aims at landmark",
+      "alpha landmark button enters base",
+      "alpha full source seed retained",
+      "alpha absolute approach retained",
+      "alpha real back door exists",
+      "alpha real E targets back door"
+    ],
+    "rows": [
+      {
+        "phase": "before",
+        "outpost": "omega",
+        "source": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": 117,
+          "y": 32
+        }
+      },
+      {
+        "phase": "inside",
+        "outpost": "omega",
+        "position": {
+          "level": 109,
+          "mapSeed": 438542.6713,
+          "x": 39.5,
+          "y": 4.5,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "anchor": {
+          "level": 4,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414,
+          "mapSeed": 888123.625,
+          "outpost": 109
+        }
+      },
+      {
+        "phase": "after",
+        "outpost": "omega",
+        "source": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "returned": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": 117,
+          "y": 32
+        }
+      },
+      {
+        "phase": "before",
+        "outpost": "alpha",
+        "source": {
+          "level": 1,
+          "mapSeed": 424242,
+          "x": -18.5,
+          "y": -88.9,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": -19,
+          "y": -90.5
+        }
+      },
+      {
+        "phase": "inside",
+        "outpost": "alpha",
+        "position": {
+          "level": 101,
+          "mapSeed": 438731.4523,
+          "x": 61,
+          "y": 13.5,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "anchor": {
+          "level": 1,
+          "x": -18.5,
+          "y": -88.9,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414,
+          "mapSeed": 424242,
+          "outpost": 101
+        }
+      }
+    ]
+  },
+  "returnedAlpha": {
+    "level": 1,
+    "position": {
+      "level": 1,
+      "mapSeed": 424242,
+      "x": -18.5,
+      "y": -88.9,
+      "z": 0,
+      "floor": 0,
+      "yaw": 0,
+      "pitch": -0.22347660114063414
+    },
+    "checks": [
+      "source is streaming map",
+      "omega real generated entrance exists",
+      "omega exact entrance window loaded",
+      "omega real E aims at landmark",
+      "omega landmark button enters base",
+      "omega full source seed retained",
+      "omega absolute approach retained",
+      "actual save resumes inside base",
+      "actual save retains origin seed",
+      "omega real back door exists",
+      "omega real E targets back door",
+      "omega returns to parent",
+      "omega returns to original map",
+      "omega returns to original entrance approach",
+      "omega returns at correct height",
+      "omega restores approach direction",
+      "omega return body clear",
+      "omega same actual entrance still exists",
+      "omega return token consumed",
+      "source is streaming map",
+      "alpha real generated entrance exists",
+      "alpha exact entrance window loaded",
+      "alpha real E aims at landmark",
+      "alpha landmark button enters base",
+      "alpha full source seed retained",
+      "alpha absolute approach retained",
+      "alpha real back door exists",
+      "alpha real E targets back door",
+      "alpha returns to parent",
+      "alpha returns to original map",
+      "alpha returns to original entrance approach",
+      "alpha returns at correct height",
+      "alpha restores approach direction",
+      "alpha return body clear",
+      "alpha same actual entrance still exists",
+      "alpha return token consumed"
+    ],
+    "rows": [
+      {
+        "phase": "before",
+        "outpost": "omega",
+        "source": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": 117,
+          "y": 32
+        }
+      },
+      {
+        "phase": "inside",
+        "outpost": "omega",
+        "position": {
+          "level": 109,
+          "mapSeed": 438542.6713,
+          "x": 39.5,
+          "y": 4.5,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "anchor": {
+          "level": 4,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414,
+          "mapSeed": 888123.625,
+          "outpost": 109
+        }
+      },
+      {
+        "phase": "after",
+        "outpost": "omega",
+        "source": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "returned": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": 117,
+          "y": 32
+        }
+      },
+      {
+        "phase": "before",
+        "outpost": "alpha",
+        "source": {
+          "level": 1,
+          "mapSeed": 424242,
+          "x": -18.5,
+          "y": -88.9,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": -19,
+          "y": -90.5
+        }
+      },
+      {
+        "phase": "inside",
+        "outpost": "alpha",
+        "position": {
+          "level": 101,
+          "mapSeed": 438731.4523,
+          "x": 61,
+          "y": 13.5,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "anchor": {
+          "level": 1,
+          "x": -18.5,
+          "y": -88.9,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414,
+          "mapSeed": 424242,
+          "outpost": 101
+        }
+      },
+      {
+        "phase": "after",
+        "outpost": "alpha",
+        "source": {
+          "level": 1,
+          "mapSeed": 424242,
+          "x": -18.5,
+          "y": -88.9,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "returned": {
+          "level": 1,
+          "mapSeed": 424242,
+          "x": -18.5,
+          "y": -88.9,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": -19,
+          "y": -90.5
+        }
+      }
+    ]
+  },
+  "cleaned": {
+    "level": 1,
+    "position": {
+      "level": 1,
+      "mapSeed": 424242,
+      "x": -18.5,
+      "y": -88.9,
+      "z": 0,
+      "floor": 0,
+      "yaw": 0,
+      "pitch": -0.22347660114063414
+    },
+    "checks": [
+      "source is streaming map",
+      "omega real generated entrance exists",
+      "omega exact entrance window loaded",
+      "omega real E aims at landmark",
+      "omega landmark button enters base",
+      "omega full source seed retained",
+      "omega absolute approach retained",
+      "actual save resumes inside base",
+      "actual save retains origin seed",
+      "omega real back door exists",
+      "omega real E targets back door",
+      "omega returns to parent",
+      "omega returns to original map",
+      "omega returns to original entrance approach",
+      "omega returns at correct height",
+      "omega restores approach direction",
+      "omega return body clear",
+      "omega same actual entrance still exists",
+      "omega return token consumed",
+      "source is streaming map",
+      "alpha real generated entrance exists",
+      "alpha exact entrance window loaded",
+      "alpha real E aims at landmark",
+      "alpha landmark button enters base",
+      "alpha full source seed retained",
+      "alpha absolute approach retained",
+      "alpha real back door exists",
+      "alpha real E targets back door",
+      "alpha returns to parent",
+      "alpha returns to original map",
+      "alpha returns to original entrance approach",
+      "alpha returns at correct height",
+      "alpha restores approach direction",
+      "alpha return body clear",
+      "alpha same actual entrance still exists",
+      "alpha return token consumed"
+    ],
+    "rows": [
+      {
+        "phase": "before",
+        "outpost": "omega",
+        "source": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": 117,
+          "y": 32
+        }
+      },
+      {
+        "phase": "inside",
+        "outpost": "omega",
+        "position": {
+          "level": 109,
+          "mapSeed": 438542.6713,
+          "x": 39.5,
+          "y": 4.5,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "anchor": {
+          "level": 4,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414,
+          "mapSeed": 888123.625,
+          "outpost": 109
+        }
+      },
+      {
+        "phase": "after",
+        "outpost": "omega",
+        "source": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "returned": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": 117,
+          "y": 32
+        }
+      },
+      {
+        "phase": "before",
+        "outpost": "alpha",
+        "source": {
+          "level": 1,
+          "mapSeed": 424242,
+          "x": -18.5,
+          "y": -88.9,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": -19,
+          "y": -90.5
+        }
+      },
+      {
+        "phase": "inside",
+        "outpost": "alpha",
+        "position": {
+          "level": 101,
+          "mapSeed": 438731.4523,
+          "x": 61,
+          "y": 13.5,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "anchor": {
+          "level": 1,
+          "x": -18.5,
+          "y": -88.9,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414,
+          "mapSeed": 424242,
+          "outpost": 101
+        }
+      },
+      {
+        "phase": "after",
+        "outpost": "alpha",
+        "source": {
+          "level": 1,
+          "mapSeed": 424242,
+          "x": -18.5,
+          "y": -88.9,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "returned": {
+          "level": 1,
+          "mapSeed": 424242,
+          "x": -18.5,
+          "y": -88.9,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": -19,
+          "y": -90.5
+        }
+      }
+    ]
+  },
+  "summary": {
+    "level": 1,
+    "position": {
+      "level": 1,
+      "mapSeed": 424242,
+      "x": -18.5,
+      "y": -88.9,
+      "z": 0,
+      "floor": 0,
+      "yaw": 0,
+      "pitch": -0.22347660114063414
+    },
+    "checks": [
+      "source is streaming map",
+      "omega real generated entrance exists",
+      "omega exact entrance window loaded",
+      "omega real E aims at landmark",
+      "omega landmark button enters base",
+      "omega full source seed retained",
+      "omega absolute approach retained",
+      "actual save resumes inside base",
+      "actual save retains origin seed",
+      "omega real back door exists",
+      "omega real E targets back door",
+      "omega returns to parent",
+      "omega returns to original map",
+      "omega returns to original entrance approach",
+      "omega returns at correct height",
+      "omega restores approach direction",
+      "omega return body clear",
+      "omega same actual entrance still exists",
+      "omega return token consumed",
+      "source is streaming map",
+      "alpha real generated entrance exists",
+      "alpha exact entrance window loaded",
+      "alpha real E aims at landmark",
+      "alpha landmark button enters base",
+      "alpha full source seed retained",
+      "alpha absolute approach retained",
+      "alpha real back door exists",
+      "alpha real E targets back door",
+      "alpha returns to parent",
+      "alpha returns to original map",
+      "alpha returns to original entrance approach",
+      "alpha returns at correct height",
+      "alpha restores approach direction",
+      "alpha return body clear",
+      "alpha same actual entrance still exists",
+      "alpha return token consumed"
+    ],
+    "rows": [
+      {
+        "phase": "before",
+        "outpost": "omega",
+        "source": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": 117,
+          "y": 32
+        }
+      },
+      {
+        "phase": "inside",
+        "outpost": "omega",
+        "position": {
+          "level": 109,
+          "mapSeed": 438542.6713,
+          "x": 39.5,
+          "y": 4.5,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "anchor": {
+          "level": 4,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414,
+          "mapSeed": 888123.625,
+          "outpost": 109
+        }
+      },
+      {
+        "phase": "after",
+        "outpost": "omega",
+        "source": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "returned": {
+          "level": 4,
+          "mapSeed": 888123.625,
+          "x": 117.5,
+          "y": 33.599999999999994,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": 117,
+          "y": 32
+        }
+      },
+      {
+        "phase": "before",
+        "outpost": "alpha",
+        "source": {
+          "level": 1,
+          "mapSeed": 424242,
+          "x": -18.5,
+          "y": -88.9,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": -19,
+          "y": -90.5
+        }
+      },
+      {
+        "phase": "inside",
+        "outpost": "alpha",
+        "position": {
+          "level": 101,
+          "mapSeed": 438731.4523,
+          "x": 61,
+          "y": 13.5,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "anchor": {
+          "level": 1,
+          "x": -18.5,
+          "y": -88.9,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414,
+          "mapSeed": 424242,
+          "outpost": 101
+        }
+      },
+      {
+        "phase": "after",
+        "outpost": "alpha",
+        "source": {
+          "level": 1,
+          "mapSeed": 424242,
+          "x": -18.5,
+          "y": -88.9,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "returned": {
+          "level": 1,
+          "mapSeed": 424242,
+          "x": -18.5,
+          "y": -88.9,
+          "z": 0,
+          "floor": 0,
+          "yaw": 0,
+          "pitch": -0.22347660114063414
+        },
+        "markerWorld": {
+          "x": -19,
+          "y": -90.5
+        }
+      }
+    ]
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

@@ -1,0 +1,19 @@
+/* [beast] 契约界面：复用 HotelNotice 的象牙卡纸 / 双线金框（hn-veil / hn-card / hn-corner），三份契约横排，苛刻契约是暗红卡纸 */
+.bd-row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; max-width: 1100px; }
+.bd-card.hn-card { width: min(300px, 86vw); padding: 26px 22px 18px; cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }
+.bd-card.hn-card:hover, .bd-card.hn-card:focus-visible { transform: translateY(-3px); box-shadow: 0 0 0 6px #2a1a10, 0 0 0 8px #e0bc62, 0 22px 56px rgba(0, 0, 0, 0.85); outline-color: #a07a30; }
+.bd-card.harsh { background: #3a1416 repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.08) 0 2px, transparent 2px 5px); color: #f0dcc8; border-color: #8a2a24; }
+.bd-card.harsh .hn-name, .bd-card.harsh .hn-kicker, .bd-card.harsh .hn-no { color: #e8b48a; }
+.bd-card .hn-name { font-size: 22px; letter-spacing: 3px; }
+.bd-k { margin-top: 10px; font-size: 12px; color: #7a5a26; letter-spacing: 2px; }
+.bd-v { margin-top: 4px; font-size: 16px; line-height: 1.5; }
+.bd-seal { margin: 14px auto 0; width: 34px; height: 34px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #c2443a, #6a1410 70%); box-shadow: 0 2px 4px rgba(0,0,0,.5); color: #f3d2b0; font-size: 15px; line-height: 34px; }
+.bd-line { font-family: 'Songti SC', 'SimSun', 'Noto Serif CJK SC', serif; font-size: 18px; color: #e8dcc0; letter-spacing: 1px; text-shadow: 0 2px 6px #000; text-align: center; }
+.bd-who { font-size: 12px; color: #9a8a6a; letter-spacing: 3px; }
+.bd-actions { display: flex; gap: 12px; }
+.bd-btn { font-family: 'Songti SC', 'SimSun', serif; font-size: 14px; padding: 6px 16px; border: 1px solid #7a5a26; background: rgba(20, 10, 8, 0.7); color: #e8d8b8; letter-spacing: 2px; cursor: pointer; }
+.bd-btn:hover { background: rgba(80, 40, 20, 0.8); }
+.bd-btn.doubt { border-color: #8a2a24; color: #f0a890; }
+.bd-sub { position: fixed; left: 50%; bottom: 17%; transform: translateX(-50%); max-width: min(720px, 90vw); padding: 6px 14px; background: rgba(6, 4, 4, 0.62); color: #efe3c6; font-family: 'Songti SC', 'SimSun', 'Noto Serif CJK SC', serif; font-size: 19px; letter-spacing: 1px; text-align: center; text-shadow: 0 1px 3px #000; pointer-events: none; z-index: 47; border-left: 2px solid #b8924a; border-right: 2px solid #b8924a; }
+.bd-sub .who { color: #b8924a; font-size: 13px; margin-right: 8px; letter-spacing: 2px; }
+.bd-chip { position: fixed; right: 14px; top: 132px; z-index: 33; padding: 4px 10px; font-family: 'Songti SC', 'SimSun', serif; font-size: 12px; color: #e8d8b8; background: rgba(30, 10, 10, 0.55); border: 1px solid rgba(184, 146, 74, 0.55); pointer-events: none; max-width: 300px; line-height: 1.5; }

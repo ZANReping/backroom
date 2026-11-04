@@ -1,0 +1,166 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 13915,
+  "cdp": 13916,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:13915/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Fri, 30 Oct 2026 13:33:37 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 270,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 13915,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 121351.357919,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.352,
+        "sendEnd": 0.414,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 59.906,
+        "receiveHeadersEnd": 60.143
+      },
+      "responseTime": 1793367217584.443,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\toilets-20261030\\traders-before\\qa-1793367202233-67700",
+    "--remote-debugging-port=13916",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 63592,
+    "server": 45260
+  },
+  "appBootMs": 15152.5605,
+  "entryMs": 1732.6515,
+  "firstPlayableMs": 21541.1137,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 643,
+      "textures": 146
+    },
+    "frame": {
+      "cpu": 35.29999999701977,
+      "calls": 944,
+      "triangles": 657483
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null
+  },
+  "gallerytraders": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 652,
+      "textures": 177
+    },
+    "frame": {
+      "cpu": 9.900000005960464,
+      "calls": 808,
+      "triangles": 469151
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null,
+    "id": "traders",
+    "meshes": 5,
+    "triangles": 952,
+    "bounds": {
+      "min": [
+        -0.7749999761581421,
+        -5.9604643443123e-10,
+        -0.925000011920929
+      ],
+      "max": [
+        0.7749999761581421,
+        2.120000123977661,
+        0.925000011920929
+      ]
+    },
+    "fixtureOnly": true
+  }
+}

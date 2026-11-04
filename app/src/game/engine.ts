@@ -1,3 +1,4 @@
+import { useToiletSpecial } from './engine/toilet'
 import { newMoveFeel, resetMoveVelocity, type MoveFeelState } from './engine/moveTuning' // [movefeel]
 import {ensureTradersAt} from './world/tradersWorld'
 import { beginFoyerRun, updateFoyer, enterFoyer } from './engine/foyer'
@@ -59,6 +60,7 @@ import type { SittingState } from './engine/seating'
 import * as npc from './engine/npc'
 import * as inventory from './engine/inventory'
 import * as warehouse from './engine/warehouse'
+import * as hotel from './engine/l5Hotel'
 import * as bntgBank from './engine/bntgBank'
 import * as ambient from './engine/ambient'
 import * as dev from './engine/dev'
@@ -102,7 +104,7 @@ export interface Projectile {
   water?: boolean
 }
 export interface HudEvent {
-  kind: 'vending' | 'bank' | 'faction' | 'facility' | 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'floorchange' | 'dead' | 'victory' | 'levelchange' | 'lootpanel' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'shop' | 'radioheard' | 'mpevent'
+  kind: 'elevator' | 'hotelnotice' | 'beastdeal' | 'greeterinvite' | 'jazzmenu' | 'casinomenu' | 'vending' | 'bank' | 'faction' | 'facility' | 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'floorchange' | 'dead' | 'victory' | 'levelchange' | 'lootpanel' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'shop' | 'radioheard' | 'mpevent'
   cutIn?: string
   dest?: number | 'random' | 'win'
   text?: string
@@ -314,7 +316,7 @@ export class Engine {
   attackCooldownT = 0
   attackCooldownDur = 0
   // 攻击动画种类（渲染层据此切换动作）：punch=空手出拳 swing=武器挥舞 throw=投掷
-  attackAnimKind: 'punch' | 'swing' | 'throw' | 'spray' | 'drink' = 'punch'
+  attackAnimKind: 'punch' | 'swing' | 'throw' | 'spray' | 'drink' | 'dieThrow' = 'punch' // [l5items 收尾] dieThrow：命运之骰第一人称挥臂
   /** 近战重制：普攻左右交替（刀）1/-1；本次挥砍是否重击；蓄力 0..1；弹刀回震 0..1 */
   meleeSide = 1
   meleeHeavy = false
@@ -388,6 +390,15 @@ export class Engine {
   // v54：据点寄存仓库（阵营互通，每阵营 48 栏；随存档持久；新一局由 EFFECTS 注册表重置）
   bntgBank: bntgBank.BntgBankState = bntgBank.freshBntgBank()
   warehouses: warehouse.WarehouseState = warehouse.freshWarehouses()
+  hotel: hotel.HotelState = hotel.freshHotel() // L5 恐怖旅馆局内状态（关注度/失物招领/员工关系；effects 表 resetOnNewRun + saveKey hotel）
+  hotelBook: hotel.HotelBook = hotel.loadBook() // 住客登记簿（跨局永久，localStorage）
+  hotelShift: hotel.ShiftInfo = { phase: 'play', cycle: 0, tLeft: 0, tune: 0, nextShift: 0 } // 当前换班阶段（l5Hotel.updateHotel 每帧写）
+  hotelLightMul = 1 // 换班时灯光整体压暗（renderer 乘进点光强度）
+  hotelVanishT = 0 // 恐怖旅馆 13 楼：失踪倒计时（l5Elevator）
+  hotelVanishFloor = 13
+  hotelFlicker: { x: number; y: number; t: number } | null = null // 1c：灯光同时闪烁（渲染层按方波压灯）
+  hotelEventDoor: { wx: number; wy: number; wall: number; pocket?: 'lobby' } | null = null // 1c：闪烁浮出的木门（世界坐标；渲染层单独画，不重建 chunk）
+  hotelGazeT = 0 // 「先生」注视的全屏暗角剩余秒数（HUD）
   // v54 二轮：BNTG 付费通道——本次对话临时解锁的阵营仓库（不持久；DialogOverlay 卸载即清空）
   warehouseTempUnlock = new Set<warehouse.WarehouseFaction>()
   // v39：BRC（后室装修公司）——未告发的伤害/杀死计数（攻击/杀死员工不立即降声望，
@@ -554,7 +565,7 @@ export class Engine {
     const t = this.transition
     if (!t || t.dest === 'win' || t.preparing || t.prepared) return
     if (t.dest === 'random') t.dest = Math.floor(Math.random() * NORMAL_LEVELS)
-    const def = levelDefOf(t.dest)
+    const def = levelDefOf(t.dest, t.dest === 5 ? level.hotelArrivalFloor(this) : undefined)
     if (!def || !canPrepareChunks(def)) return
     t.preparing = true
     t.mapSeed = level.nextMapSeed(this, t.dest)
@@ -644,6 +655,7 @@ export class Engine {
       this.quests = snap.quests ?? []
       this.profile = snap.profile ? normalizeProfile(snap.profile) : freshProfile()
       this.warehouses = snap.warehouses ?? warehouse.freshWarehouses() // v54：恢复寄存仓库库存
+      this.hotel = hotel.restoreHotel(snap.hotel)
       this.brcSin = snap.brcSin ?? { hurt: 0, killed: 0 } // v39：恢复 BRC 未告发记录
       this.brcMimicCd = snap.brcMimicCd ?? 0
       // v45：恢复教化系统状态
@@ -1152,7 +1164,8 @@ export class Engine {
     if (this.specialPressed) {
       const sa = specialAction(this)
       const n = this.interactTarget?.npc
-      if (sa?.id === 'trade' && n) { this.specialPressed = false; if (!n.def.workLoop) n.facing = Math.atan2(this.player.y - n.y, this.player.x - n.x); audio.uiTick(); this.emit({ kind: 'shop', text: n.id }) }
+      if (sa?.id === 'toiletFart') { this.specialPressed = false; useToiletSpecial(this) }
+      else if (sa?.id === 'trade' && n) { this.specialPressed = false; if (!n.def.workLoop) n.facing = Math.atan2(this.player.y - n.y, this.player.x - n.x); audio.uiTick(); this.emit({ kind: 'shop', text: n.id }) }
       else if (!sa) this.specialPressed = false
     }
     if (this.input.interact) {
@@ -1179,7 +1192,7 @@ export class Engine {
     this.camShake = Math.max(0, this.camShake - dt * 2.2)
   }
 
-  get levelDef() { return levelDefOf(this.player.level)! }
+  get levelDef() { return levelDefOf(this.player.level, this.map?.inf?.l5Floor)! }
 
   // ---------- 开发者模式 API（engine/dev.ts；仅供开发者面板/冒烟测试调用）----------
   devJump(id: number) { dev.devJump(this, id) }

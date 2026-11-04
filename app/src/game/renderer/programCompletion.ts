@@ -13,7 +13,7 @@ export function waitForSubmittedPrograms(renderer: THREE.WebGLRenderer): Promise
   if (!programs?.length) return complete
   const gl = renderer.getContext()
   const extension = gl.getExtension('KHR_parallel_shader_compile')
-  // Keep Three's existing fallback on platforms without non-blocking queries.
+  // Platforms without non-blocking queries complete on the driver's first draw.
   if (!extension || gl.isContextLost()) return complete
   let cached = waits.get(renderer)
   if (!cached) { cached = new WeakMap(); waits.set(renderer, cached) }

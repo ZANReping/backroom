@@ -1,0 +1,85 @@
+[
+  {
+    "label": "l02-props-bundle",
+    "args": [
+      "E:/ZAN/backroom/app/node_modules/esbuild/bin/esbuild",
+      "scripts/check-l02-props.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/check-l02-props.mjs"
+    ],
+    "exit": 0,
+    "ms": 244,
+    "tail": "\n  .cache\\check-l02-props.mjs  985.4kb\n\nDone in 76ms\n"
+  },
+  {
+    "label": "l02-props",
+    "args": [
+      ".cache/check-l02-props.mjs"
+    ],
+    "exit": 0,
+    "ms": 343,
+    "tail": "{\"checks\":1103,\"failures\":0,\"fixtureMeshes\":{\"sink\":8,\"toilet\":5,\"lamp\":4}}\n"
+  },
+  {
+    "label": "l02-round5-bundle",
+    "args": [
+      "E:/ZAN/backroom/app/node_modules/esbuild/bin/esbuild",
+      "scripts/check-l02-round5.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/check-l02-round5.mjs"
+    ],
+    "exit": 0,
+    "ms": 258,
+    "tail": "\n  .cache\\check-l02-round5.mjs  5.4mb\n\nDone in 134ms\n"
+  },
+  {
+    "label": "l02-round5",
+    "args": [
+      ".cache/check-l02-round5.mjs"
+    ],
+    "exit": 0,
+    "ms": 1136,
+    "tail": "{\"checks\":30940,\"failures\":0,\"seeds\":400,\"routers\":400,\"clipboards\":400,\"doorCount\":4939,\"sceneMeshes\":45,\"sceneVertices\":16432,\"disposedGeometry\":45,\"disposedShared\":0}\n"
+  },
+  {
+    "label": "hound-l02-integration-bundle",
+    "args": [
+      "E:/ZAN/backroom/app/node_modules/esbuild/bin/esbuild",
+      "scripts/check-hound-l02-integration.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--external:@napi-rs/canvas",
+      "--outfile=.cache/check-hound-l02-integration.mjs"
+    ],
+    "exit": 0,
+    "ms": 269,
+    "tail": "\n  .cache\\check-hound-l02-integration.mjs  5.5mb\n\nDone in 135ms\n"
+  },
+  {
+    "label": "hound-l02-integration",
+    "args": [
+      ".cache/check-hound-l02-integration.mjs"
+    ],
+    "exit": 0,
+    "ms": 1312,
+    "tail": "{\"checks\":141,\"failures\":0,\"scope\":\"cooperative hounds, L0 quests/key items/save, L02 generation/collapse/facilities\"}\n"
+  },
+  {
+    "label": "build",
+    "args": [
+      "C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js",
+      "run",
+      "build"
+    ],
+    "exit": 0,
+    "ms": 46646,
+    "tail": "ip:     2.93 kB\ndist/assets/index-CluSiZzY.js                   233.55 kB │ gzip:    75.23 kB\ndist/assets/retroAvatar-BYK0XY8m.js             479.58 kB │ gzip:   144.46 kB\ndist/assets/App-RH3Zb_MS.js                   6,317.58 kB │ gzip: 2,252.19 kB\n\n(!) Some chunks are larger than 500 kB after minification. Consider:\n- Using dynamic import() to code-split the application\n- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks\n- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.\n✓ built in 27.56s\n"
+  }
+]

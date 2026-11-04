@@ -15,6 +15,12 @@ export function attachCpuSkin(sk: THREE.SkinnedMesh): THREE.Mesh {
   if (old) return old
   const g = sk.geometry.clone()
   g.deleteAttribute('skinIndex'); g.deleteAttribute('skinWeight')
+  // 带 aDet 的网格（野兽色素皮肤）：着色器按静止姿态坐标铺色素细胞 / 云纹——替身另存一份静止位置 / 法线（aBP.w = 2 作标记），避免图案随姿态滑动
+  if (g.attributes.aDet) {
+    const sp = g.attributes.position, sn = g.attributes.normal, n = sp.count, bp = new Float32Array(n * 4), bn = new Float32Array(n * 3)
+    for (let i = 0; i < n; i++) { bp[i * 4] = sp.getX(i); bp[i * 4 + 1] = sp.getY(i); bp[i * 4 + 2] = sp.getZ(i); bp[i * 4 + 3] = 2; if (sn) { bn[i * 3] = sn.getX(i); bn[i * 3 + 1] = sn.getY(i); bn[i * 3 + 2] = sn.getZ(i) } }
+    g.setAttribute('aBP', new THREE.BufferAttribute(bp, 4)); g.setAttribute('aBN', new THREE.BufferAttribute(bn, 3))
+  }
   g.morphAttributes = {}
   const proxy = new THREE.Mesh(g, sk.material)
   proxy.frustumCulled = false

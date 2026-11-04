@@ -1,3 +1,4 @@
+import { toiletGeometries } from './toiletGeometry'
 // [kazoo] L8「乐器洞」——参照中文维基 Level 8 正文里那段石头乐器洞穴的叙事：
 // 整个洞穴装满天然长成的石头乐器：小提琴、吉他、看起来像长号的东西，以古怪角度嵌在岩壁上；
 // 头顶一组风铃由复杂的石链系着；一个马桶，周围不可理喻地围了一圈邦戈鼓（有几架倒了）；
@@ -113,15 +114,9 @@ function trombone(): THREE.BufferGeometry {
   return finish(L, 0.004, 10, 3)
 }
 function toilet(): THREE.BufferGeometry {
-  const L: THREE.BufferGeometry[] = []
-  const bowl = new THREE.LatheGeometry([[0.0, 0], [0.11, 0], [0.12, 0.05], [0.1, 0.2], [0.17, 0.36], [0.19, 0.4], [0.15, 0.41], [0.08, 0.32], [0.0, 0.3]].map(([x, y]) => new THREE.Vector2(x, y)), 18)
-  bowl.scale(1, 1, 1.25); L.push(bowl)
-  L.push(at(new THREE.TorusGeometry(0.16, 0.025, 6, 20).scale(1, 1.25, 1), 0, 0.42, 0, Math.PI / 2)) // 座圈
-  L.push(at(new THREE.BoxGeometry(0.42, 0.36, 0.17), 0, 0.6, -0.27)) // 水箱
-  L.push(at(new THREE.BoxGeometry(0.45, 0.04, 0.2), 0, 0.8, -0.27)) // 水箱盖
-  L.push(at(new THREE.CylinderGeometry(0.17, 0.17, 0.03, 18).scale(1, 1, 1.25), 0, 0.57, -0.17, -1.35)) // 掀起的马桶盖
-  return finish(L, 0.008, 7, 4)
+  return finish([...toiletGeometries('stone').values()], 0.008, 7, 4)
 }
+
 function bongo(): THREE.BufferGeometry {
   const L: THREE.BufferGeometry[] = []
   for (const [x, r, h] of [[-0.11, 0.1, 0.2], [0.11, 0.082, 0.19]] as const) {

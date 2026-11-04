@@ -63,30 +63,72 @@ export function buildPermitMesh(): THREE.Group {
   return g
 }
 
-/** 防尘口罩：宽 ≈ 0.17 m，杯面朝 +Z。 */
+let maskCanvas: HTMLCanvasElement | null = null, maskTex: THREE.CanvasTexture | null = null
+/** 口罩滤布：无纺布纤维 + 中缝压线 + 鼻夹下方蓝色印字「后室装修公司 · 施工专用」（UV：u 横向、v 自上而下）。 */
+function maskClothCanvas(): HTMLCanvasElement {
+  if (maskCanvas) return maskCanvas
+  const c = document.createElement('canvas'); c.width = 256; c.height = 256
+  const x = c.getContext('2d')!
+  x.fillStyle = '#f1efe9'; x.fillRect(0, 0, 256, 256)
+  let s = 20261101
+  const rnd = () => ((s = (s * 1103515245 + 12345) >>> 0) / 4294967296)
+  for (let i = 0; i < 2600; i++) { // 无纺布：随机短纤维
+    const a = rnd() * Math.PI, l = 3 + rnd() * 9, px = rnd() * 256, py = rnd() * 256
+    x.strokeStyle = `rgba(${rnd() < .5 ? '170,165,150' : '255,255,255'},${.12 + rnd() * .18})`; x.lineWidth = .7
+    x.beginPath(); x.moveTo(px, py); x.lineTo(px + Math.cos(a) * l, py + Math.sin(a) * l); x.stroke()
+  }
+  for (let y = 6; y < 256; y += 9) { x.fillStyle = 'rgba(160,155,140,.08)'; x.fillRect(0, y, 256, 2) } // 热压纹
+  x.fillStyle = 'rgba(150,145,130,.45)'; x.fillRect(126, 0, 4, 256) // 中缝压线
+  x.fillStyle = 'rgba(255,255,255,.5)'; x.fillRect(130, 0, 2, 256)
+  // 印字（在鼻夹下方，u≈.5、v≈.72）；表面横向约为纵向 1.6 倍，先横向压缩
+  x.save(); x.translate(128, 80); x.scale(1 / 1.6, 1)
+  x.fillStyle = '#2f5f9e'; x.textAlign = 'center'; x.textBaseline = 'middle'
+  x.font = 'bold 22px "Noto Sans SC","Microsoft YaHei",sans-serif'; x.fillText('后室装修公司 · 施工专用', 0, 0)
+  x.font = 'bold 15px sans-serif'; x.fillText('BRC  KN95  DUST', 0, 22)
+  x.restore()
+  maskCanvas = c
+  return c
+}
+
+/** 防尘口罩（杯形）：宽 ≈ 0.16 m、高 ≈ 0.11 m，杯面朝 +Z；铝鼻夹贴上沿，两根松紧带在背后收成小圈。 */
 export function buildDustMaskMesh(): THREE.Group {
   const g = new THREE.Group()
-  const cloth = lam('#ecebe6', null, THREE.DoubleSide)
-  // 两片杯形滤布：半球截取左右各一半，压扁成折叠口罩的轮廓，中缝留一道压线
-  for (const side of [0, 1]) {
-    const geo = new THREE.SphereGeometry(0.085, 12, 10, side ? 0 : Math.PI / 2, Math.PI / 2, 0.18, Math.PI - 0.36)
-    const m = new THREE.Mesh(geo, cloth); m.scale.set(1, 0.72, 0.62); g.add(m)
+  if (!maskTex) { maskTex = new THREE.CanvasTexture(maskClothCanvas()); maskTex.colorSpace = THREE.SRGBColorSpace; maskTex.anisotropy = 4 }
+  const tex = maskTex // 共享：renderer 释放物品时只释放材质/几何
+  const cloth = lam('#ffffff', tex), inner = lam('#e9e6de', null, THREE.BackSide) // 外层印字、内层素布（避免从里面看到反字）
+  // 杯体：球面取正前方 ±55°、上下去掉两极；SphereGeometry 的 phi=π/2 方向为 +Z
+  const R = 0.08, P0 = Math.PI / 2 - 0.96, PL = 1.92, T0 = 0.6, TL = Math.PI - 1.2
+  const SX = 1, SY = 0.72, SZ = 0.62
+  const shell = new THREE.Mesh(new THREE.SphereGeometry(R, 16, 10, P0, PL, T0, TL), cloth)
+  shell.scale.set(SX, SY, SZ); g.add(shell)
+  const lining = new THREE.Mesh(shell.geometry, inner); lining.scale.copy(shell.scale); g.add(lining)
+  // 杯沿上的点（与 SphereGeometry 同一参数化：x=-R cosφ sinθ, y=R cosθ, z=R sinφ sinθ）
+  const rim = (phi: number, th: number, inset = 1) => new THREE.Vector3(-R * Math.cos(phi) * Math.sin(th) * SX * inset, R * Math.cos(th) * SY * inset, R * Math.sin(phi) * Math.sin(th) * SZ * inset)
+  // 包边：沿四条边一圈细管
+  const edge: THREE.Vector3[] = []
+  for (let i = 0; i <= 12; i++) edge.push(rim(P0 + PL * i / 12, T0))
+  for (let i = 1; i <= 8; i++) edge.push(rim(P0 + PL, T0 + TL * i / 8))
+  for (let i = 1; i <= 12; i++) edge.push(rim(P0 + PL - PL * i / 12, T0 + TL))
+  for (let i = 1; i < 8; i++) edge.push(rim(P0, T0 + TL - TL * i / 8))
+  g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(edge, true), 48, 0.0028, 4, true), lam('#e2ded3')))
+  // 铝鼻夹：贴着上沿中段，略高出布面
+  const nose: THREE.Vector3[] = []
+  for (let i = 0; i <= 6; i++) nose.push(rim(Math.PI / 2 - 0.42 + 0.84 * i / 6, T0 + 0.08, 1.04))
+  g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(nose), 10, 0.0024, 4), lam('#b9bdc2')))
+  // 松紧带：从左右两侧上下两点出发，在背后收成两个扁圈
+  const band = lam('#d9d2c2')
+  for (const sy of [0.6, -0.45]) {
+    const th = T0 + TL * (sy > 0 ? 0.22 : 0.8)
+    const a = rim(P0 + 0.02, th), b = rim(P0 + PL - 0.02, th)
+    const pts = [a, new THREE.Vector3(a.x * 1.05, a.y + sy * 0.004, -0.02), new THREE.Vector3(a.x * 0.7, a.y, -0.045), new THREE.Vector3(0, a.y - sy * 0.006, -0.055), new THREE.Vector3(b.x * 0.7, b.y, -0.045), new THREE.Vector3(b.x * 1.05, b.y + sy * 0.004, -0.02), b]
+    g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 20, 0.0018, 4), band))
   }
-  const seam = new THREE.Mesh(new THREE.BoxGeometry(0.004, 0.1, 0.006), lam('#cfcdc5')); seam.position.set(0, 0, 0.052); g.add(seam)
-  // 包边（上下沿）
-  for (const sy of [-1, 1]) {
-    const e = new THREE.Mesh(new THREE.TorusGeometry(0.084, 0.0035, 4, 18, Math.PI), lam('#dedcd4'))
-    e.scale.set(1, 0.62, 1); e.rotation.x = Math.PI / 2 * sy; e.position.y = sy * 0.058; g.add(e)
+  // 两侧钉扣（松紧带固定点）
+  for (const p of [rim(P0 + 0.02, T0 + TL * 0.22), rim(P0 + PL - 0.02, T0 + TL * 0.22), rim(P0 + 0.02, T0 + TL * 0.8), rim(P0 + PL - 0.02, T0 + TL * 0.8)]) {
+    const d = new THREE.Mesh(new THREE.SphereGeometry(0.0042, 6, 4), lam('#cfcac0')); d.position.copy(p); g.add(d)
   }
-  // 铝鼻夹 + 印字条（蓝）
-  const nose = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.008, 0.004), lam('#b9bdc2')); nose.position.set(0, 0.05, 0.034); nose.rotation.x = -0.6; g.add(nose)
-  const print = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.006, 0.002), lam('#3f6ea8')); print.position.set(0.03, -0.02, 0.05); print.rotation.y = 0.5; g.add(print)
-  // 两根松紧带（上下各一，绕到后方）
-  const band = lam('#e2dccd')
-  for (const sy of [0.03, -0.03]) {
-    const b = new THREE.Mesh(new THREE.TorusGeometry(0.088, 0.0022, 4, 20), band)
-    b.scale.set(1, 1, 0.75); b.rotation.x = Math.PI / 2; b.position.set(0, sy, -0.035); g.add(b)
-  }
-  g.userData.l02Item = 'dustmask'
-  return g
+  g.position.z = 0.012
+  const root = new THREE.Group(); root.add(g)
+  root.userData.l02Item = 'dustmask'
+  return root
 }

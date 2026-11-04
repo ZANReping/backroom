@@ -10,6 +10,7 @@ export interface SeatAnchor {
   index: number
   label: string
   relaxed: boolean
+  toilet?: boolean
   floor: FloorBand
 }
 interface ModelSeat extends FurnitureSeat { index: number }
@@ -22,11 +23,11 @@ export function seatsFor(s: Structure, m: GameMap, level: number): SeatAnchor[] 
   const cx = s.x + s.w / 2, cy = s.y + s.h / 2
   const floor = s.floor ?? 0, base = floorHeight(m, cx, cy, floor)
   const cached = modeledSeats.get(s)
-  if (cached) return cached.map(p => ({ x: cx + p.x, y: cy + p.z, z: base + p.y, yaw: p.yaw, index: p.index, label: p.label, relaxed: !!p.relaxed, floor }))
+  if (cached) return cached.map(p => ({ x: cx + p.x, y: cy + p.z, z: base + p.y, yaw: p.yaw, index: p.index, label: p.label, relaxed: !!p.relaxed, toilet: p.toilet, floor }))
   const a = Number(s.data?.deg ?? 0) * Math.PI / 180, c = Math.cos(a), sn = Math.sin(a)
   return furnitureSeats(s, level).map((p, index) => ({
     x: cx + c * p.x + sn * p.z, y: cy - sn * p.x + c * p.z,
     z: base + p.y * (s.data?.l0Furniture ? 1.17 : 1) + Number(s.data?.z ?? 0) + Number(s.data?.mount ?? 0),
-    yaw: a + p.yaw, index, label: p.label, relaxed: !!p.relaxed, floor,
+    yaw: a + p.yaw, index, label: p.label, relaxed: !!p.relaxed, toilet: p.toilet, floor,
   }))
 }

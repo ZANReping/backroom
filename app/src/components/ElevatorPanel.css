@@ -1,0 +1,43 @@
+.el-overlay{position:fixed;inset:0;z-index:74;display:flex;justify-content:flex-end;align-items:center;padding:18px 26px;background:linear-gradient(90deg,transparent 0,transparent 42%,rgba(8,4,2,.45));pointer-events:auto;font-family:"Noto Serif SC","Songti SC",serif}
+.el-panel{position:relative;width:min(380px,100%);max-height:calc(100dvh - 36px);overflow:auto;outline:none;display:flex;flex-direction:column;gap:12px;padding:18px 18px 14px;border-radius:10px;color:#2a1a0c;
+  background:radial-gradient(ellipse at 30% 0,#f3d48a 0,transparent 55%),linear-gradient(160deg,#c99a4a 0,#a8792f 38%,#d6ad5c 55%,#8f6224 100%);
+  border:3px solid #5b3a12;box-shadow:0 20px 70px #000d,inset 0 0 0 2px #f6dc9a,inset 0 0 0 7px #7a5018,inset 0 0 40px #4a2c0a88;animation:el-in .2s ease-out}
+.el-panel *{box-sizing:border-box}.el-panel button{font:inherit;cursor:pointer;touch-action:manipulation}
+.el-rivet{position:absolute;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff2c4,#a07228 60%,#4a2e0c);box-shadow:0 1px 1px #0008}
+.el-rivet.tl{top:9px;left:9px}.el-rivet.tr{top:9px;right:9px}.el-rivet.bl{bottom:9px;left:9px}.el-rivet.br{bottom:9px;right:9px}
+.el-head{position:relative;text-align:center;padding:4px 30px 0}
+.el-head small{display:block;font:600 10px/1 Georgia,serif;letter-spacing:4px;color:#5a3810}
+.el-head strong{display:block;margin-top:6px;font:700 24px/1 "Noto Serif SC",Georgia,serif;letter-spacing:6px;color:#3a2208;text-shadow:0 1px 0 #f8e2a8}
+.el-close{position:absolute;right:0;top:0;width:28px;height:28px;border-radius:50%;border:2px solid #5b3a12;background:#e8c47a;color:#5b3a12;font-size:20px!important;line-height:1}
+.el-dial{border-radius:120px 120px 10px 10px;padding:8px 10px 6px;background:radial-gradient(ellipse at 50% 90%,#2a1608,#120904);box-shadow:inset 0 0 0 3px #e2bb6c,inset 0 0 0 6px #6a4414,0 2px 0 #fff3}
+.el-dial svg{display:block;width:100%;height:auto}
+.el-arc{fill:none;stroke:#c99a4a;stroke-width:2}.el-tick{stroke:#d8b064;stroke-width:2}
+.el-num{fill:#b88d44;font:700 13px Georgia,serif;text-anchor:middle}.el-num.on{fill:#ffd88a;filter:drop-shadow(0 0 4px #ffb84a)}
+.el-needle{stroke:#ff5a2a;stroke-width:3;stroke-linecap:round;filter:drop-shadow(0 0 3px #ff5a2a)}.el-hub{fill:#d9ad5a;stroke:#5b3a12;stroke-width:2}
+.el-floorname{text-align:center;font:600 13px/1.2 "Noto Serif SC",serif;letter-spacing:2px;color:#f2d08a;padding-bottom:2px}
+.el-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px;border-radius:8px;background:linear-gradient(180deg,#7b521b,#5e3c11);box-shadow:inset 0 2px 6px #000a}
+.el-btn{display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 2px 5px;border-radius:30px;border:2px solid #3a2208;background:radial-gradient(circle at 40% 30%,#fffdf0,#ece0bf 55%,#c7b38a);box-shadow:0 3px 0 #2a1806,inset 0 -2px 3px #0002;color:#2a1a0c}
+.el-btn span{font:700 18px/1 Georgia,serif}.el-btn i{font-style:normal;font-size:9px;letter-spacing:1px;color:#7a5a2a}
+.el-btn.cur{background:radial-gradient(circle at 40% 30%,#fff7d0,#ffc94a 55%,#d48a1a);box-shadow:0 3px 0 #2a1806,0 0 14px #ffb84aaa}
+.el-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #2a1806}
+.el-13{filter:sepia(.7) contrast(.7) blur(.3px);opacity:.7}.el-13 span{color:#6a5a48;text-decoration:line-through;text-decoration-color:#6a5a4888}
+.el-pad{display:grid;grid-template-columns:96px 1fr;gap:6px 10px;align-items:center;padding:10px;border-radius:8px;background:#3a240c;box-shadow:inset 0 2px 6px #000b}
+.el-screen{grid-row:span 2;height:100%;min-height:56px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:#150a03;box-shadow:inset 0 0 0 2px #000,inset 0 0 12px #ff8a2a22}
+.el-screen span{font:700 26px/1 "Courier New",monospace;letter-spacing:4px;color:#ffb057;text-shadow:0 0 6px #ff8a2a}
+.el-padkeys{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.el-pk{height:26px;border-radius:4px;border:1px solid #1e1206;background:linear-gradient(#e9d7ae,#bfa576);box-shadow:0 2px 0 #1e1206;font:700 12px monospace!important;color:#2a1a0c}
+.el-pk:active{transform:translateY(1px);box-shadow:0 1px 0 #1e1206}
+.el-ok{position:relative;overflow:hidden;color:#fff!important;background:linear-gradient(#a03a1c,#6a1e0c)}.el-ok::after{content:"";position:absolute;left:0;bottom:0;height:100%;width:calc(var(--hold,0)*100%);background:#ffb05788;pointer-events:none}
+.el-padnote{grid-column:2;font-size:9px;letter-spacing:1px;color:#d8b47a}
+.el-lever{display:flex;align-items:center;justify-content:center;gap:10px;padding:9px;border-radius:6px;border:2px solid #3a0a04;background:linear-gradient(#b8301c,#7a160a);color:#ffe2c4;font-weight:700;letter-spacing:3px;box-shadow:0 3px 0 #2a0602}
+.el-lever b{width:12px;height:22px;border-radius:6px;background:linear-gradient(#ffd6a8,#c47a3a);box-shadow:0 0 0 2px #3a0a04;transform:rotate(-20deg)}
+.el-msg{min-height:30px;padding:6px 8px;border-radius:4px;font-size:12px;line-height:1.45;color:#3a2208;background:#f0dcae66;box-shadow:inset 0 0 0 1px #5b3a1244}
+.el-svc{background:linear-gradient(160deg,#6c6f68,#4a4c46 45%,#7c7e76 60%,#3c3d38);border-color:#222;box-shadow:0 20px 70px #000d,inset 0 0 0 2px #a8aaa0,inset 0 0 0 7px #2c2d29}
+.el-svc .el-head small,.el-svc .el-head strong{color:#e6e2d4;text-shadow:none}.el-svc .el-close{background:#9a9c92;border-color:#222;color:#222}
+.el-svc-keys{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px;border-radius:6px;background:#26271f;box-shadow:inset 0 2px 6px #000c}
+.el-iron{height:56px;border-radius:50%;border:3px solid #111;background:radial-gradient(circle at 40% 30%,#c9c8bc,#7a7a70 60%,#4a4a42);box-shadow:0 4px 0 #111;font:800 18px Georgia,serif!important;color:#1a1a16}
+.el-iron.cur{background:radial-gradient(circle at 40% 30%,#ffe9b0,#d8a040 60%,#7a5410)}.el-iron:active{transform:translateY(2px);box-shadow:0 2px 0 #111}
+.el-warn{grid-column:1/-1;margin:0;text-align:center;font-size:10px;letter-spacing:2px;color:#e8b04a}
+.el-svc .el-msg{color:#e6e2d4;background:#0004}
+@keyframes el-in{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+@media (max-width:560px){.el-overlay{justify-content:center;padding:10px}.el-panel{width:100%}}

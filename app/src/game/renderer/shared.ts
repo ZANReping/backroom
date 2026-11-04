@@ -207,7 +207,7 @@ export function textureUrl(name: string): string {
   return `${base}textures/${file}`
 }
 // 层级贴图别名：L5 三处据点沿用酒店材质；L8 两处洞穴前哨沿用岩层颜色/法线/粗糙度材质。
-export const LEVEL_TEX_ALIAS: Partial<Record<number, number>> = { 110: 5, 111: 5, 112: 5, 113: 8, 114: 8 }
+export const LEVEL_TEX_ALIAS: Partial<Record<number, number>> = { 110: 5, 111: 5, 112: 5, 113: 8, 114: 8, 117: 5, 118: 5 } // 117/118：L5 1c 口袋房间沿用酒店贴图
 export const texLevelId = (id: number) => LEVEL_TEX_ALIAS[id] ?? id
 
 export function levelTexture(name: string, fallback: () => THREE.Texture): THREE.Texture {  const cached = texCache.get(name)
@@ -373,4 +373,11 @@ export function glow(w: number, h: number, d: number, color: string | number, x 
   const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshBasicMaterial({ color }))
   m.position.set(x, y, z)
   return m
+}
+
+/** Keep cached rig assets alive when an individual entity is retired. */
+export function shareHotelRigAssets(resources: object) {
+  for (const asset of Object.values(resources)) {
+    if (asset instanceof THREE.BufferGeometry || asset instanceof THREE.Material) asset.userData.entityShared = true
+  }
 }

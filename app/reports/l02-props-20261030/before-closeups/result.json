@@ -1,0 +1,321 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 9519,
+  "cdp": 9520,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:9519/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Fri, 30 Oct 2026 11:12:00 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 261,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 9519,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 112854.381269,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.321,
+        "sendEnd": 0.365,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 12.594,
+        "receiveHeadersEnd": 12.752
+      },
+      "responseTime": 1793358720560.481,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l02-props-20261030\\before-closeups\\qa-1793358705608-63928",
+    "--remote-debugging-port=9520",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 68592,
+    "server": 52636
+  },
+  "appBootMs": 13017.023200000001,
+  "entryMs": 1558.095400000002,
+  "firstPlayableMs": 18582.2396,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 643,
+      "textures": 146
+    },
+    "frame": {
+      "cpu": 441.59999999403954,
+      "calls": 730,
+      "triangles": 381663
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "propChecks": []
+  },
+  "houseSetup": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      80,
+      82,
+      -2.7
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0.8926770190458493,
+      "pitch": 0.03243669877888874,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 224,
+      "textures": 78
+    },
+    "frame": {
+      "cpu": 5.699999988079071,
+      "calls": 81,
+      "triangles": 180817
+    },
+    "pin": null,
+    "l02": {
+      "t": 127.87850000000009,
+      "stage": 3,
+      "dust": 0.6538053260353962,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 4,
+    "hole": {
+      "id": 1,
+      "open": {
+        "x": 13.2,
+        "y": 15.9,
+        "w": 5.6,
+        "h": 4.2
+      },
+      "house": {
+        "x": 11.899999999999999,
+        "y": 14.6,
+        "w": 8.2,
+        "h": 6.800000000000001
+      },
+      "ramp": {
+        "x": 13.2,
+        "y": 15.9,
+        "w": 5.6,
+        "h": 1.25
+      },
+      "rampDir": "nx",
+      "depth": 2.7,
+      "t0": 125.1,
+      "dropped": true
+    }
+  },
+  "coneClose": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      82.19999999999999,
+      81.55,
+      -2.7
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -0.6794138054078547,
+      "pitch": -0.6722320615881193,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 226,
+      "textures": 78
+    },
+    "frame": {
+      "cpu": 1.4000000059604645,
+      "calls": 62,
+      "triangles": 168399
+    },
+    "pin": null,
+    "l02": {
+      "t": 128.85349999999931,
+      "stage": 3,
+      "dust": 0.7241587859690337,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 2
+      }
+    },
+    "round5Checks": 4,
+    "fixed": false,
+    "stripes": [
+      {
+        "height": 0.17,
+        "first": "l02-house-props-coneOrange",
+        "distance": 0.3116662280860254
+      },
+      {
+        "height": 0.2,
+        "first": "l02-house-props-coneOrange",
+        "distance": 0.318218037272203
+      },
+      {
+        "height": 0.29,
+        "first": "l02-house-props-coneOrange",
+        "distance": 0.3378734648307784
+      },
+      {
+        "height": 0.32,
+        "first": "l02-house-props-coneOrange",
+        "distance": 0.344425274016956
+      }
+    ],
+    "camera": [
+      82.19999999999999,
+      -1.1500000000000001,
+      81.55
+    ]
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: close-up camera has real body clearance\",\"lineNumber\":18,\"columnNumber\":23,\"scriptId\":\"792\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"ok\",\"scriptId\":\"792\",\"url\":\"http://127.0.0.1:9519/verifier/l02-props-game.ts\",\"lineNumber\":17,\"columnNumber\":22},{\"functionName\":\"at\",\"scriptId\":\"792\",\"url\":\"http://127.0.0.1:9519/verifier/l02-props-game.ts\",\"lineNumber\":45,\"columnNumber\":4},{\"functionName\":\"coneBack\",\"scriptId\":\"792\",\"url\":\"http://127.0.0.1:9519/verifier/l02-props-game.ts\",\"lineNumber\":83,\"columnNumber\":10},{\"functionName\":\"\",\"scriptId\":\"800\",\"url\":\"\",\"lineNumber\":0,\"columnNumber\":9}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: close-up camera has real body clearance\\n    at ok (http://127.0.0.1:9519/verifier/l02-props-game.ts:18:23)\\n    at at (http://127.0.0.1:9519/verifier/l02-props-game.ts:46:5)\\n    at Object.coneBack (http://127.0.0.1:9519/verifier/l02-props-game.ts:84:11)\\n    at <anonymous>:1:10\",\"objectId\":\"6614132128709920877.2.1\"}}",
+  "partial": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      82.19999999999999,
+      81.55,
+      -2.7
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": -0.6794138054078547,
+      "pitch": -0.6722320615881193,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 226,
+      "textures": 78
+    },
+    "frame": {
+      "cpu": 1.5,
+      "calls": 62,
+      "triangles": 168399
+    },
+    "pin": null,
+    "l02": {
+      "t": 129.4118999999988,
+      "stage": 3,
+      "dust": 0.6757885012944167,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 1,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 1,
+        "dustDmg": 3
+      }
+    },
+    "round5Checks": 4,
+    "propChecks": [
+      "real collapsed house exists",
+      "close-up camera has real body clearance",
+      "actual house cone keeps two surface batches"
+    ]
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 11437.29999999702
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 0.2\n重塑的混乱\nB0.2\n磁带\n0/6\n空置办公层\n100%\n100%\n地毯底下发出木板断裂的声音——地板在往下沉。\n地板在你脚下塌了下去——下面是一栋没装修完的房子。顺着碎料坡能爬上去。\n你摔进塌陷口（无敌：未扣血）\n石膏粉尘呛得你直咳嗽，眼前一片灰白。（防尘口罩能挡住大部分）\n手机\n1\n2\n3\n4\n5\n6\n7\n空格\n跳跃\nC\n蹲伏\nF\n手电\n左Alt\n取出主手\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

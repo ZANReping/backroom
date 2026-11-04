@@ -21,12 +21,38 @@ import { buildCurabiturItemMesh, isCurabiturItem } from './curabiturRender' // [
 import { glowSprite } from './curabiturMesh'
 
 import { buildPermitMesh, buildDustMaskMesh } from './l02ItemModels'
+import { buildL5ItemMesh, isL5ItemType } from './l5ItemModels'
+import { buildCasinoItemMesh, isCasinoItemType } from './casinoItemModels' // L5.1 赌场奖品
+import { buildSpokesItemMesh, isSpokesItemType } from './spokesItemModels' // [spokes]
+import { buildChefItemMesh, isChefItemType } from './chefItemModels' // [chef]
+import { buildJazzItemMesh, isJazzItemType } from './jazzItemModels' // [jazz]
 import { buildFoyerBackpack, buildFoyerPhone, buildFoyerSnack, buildFoyerWater, type ItemMatFactory } from './foyerItemModels'
 
 /** 前厅随身物品（手机/瓶装水/能量棒/背包）在其他层级地面上的版本：Lambert + 像素贴图 + 与其它地面物品一致的弱自发光。 */
 const foyerGroundMats: ItemMatFactory = (_k, p) => p.basic
   ? new THREE.MeshBasicMaterial({ color: p.color, map: p.map ?? null })
   : new THREE.MeshLambertMaterial({ color: p.color, map: p.map ?? null, transparent: !!p.transparent, opacity: p.opacity ?? 1, side: p.side ?? THREE.FrontSide, emissive: p.map ? '#ffffff' : p.color, emissiveMap: p.map ?? null, emissiveIntensity: 0.25 })
+
+let smileyTex: THREE.CanvasTexture | null = null
+/** 丝绒蛋糕纸托外侧的一小段弧面贴花：透明底 + 血红手写「=)」（M.E.G. 档案：纸托上用血红的字写着「=)」）。 */
+function velvetCakeSmiley(): THREE.Mesh {
+  if (!smileyTex) {
+    const c = document.createElement('canvas'); c.width = 160; c.height = 64 // 弧面约 0.071 × 0.028 m，宽高比 2.5
+    const x = c.getContext('2d')!
+    x.clearRect(0, 0, 160, 64)
+    x.save(); x.translate(80, 33); x.rotate(-.05)
+    x.fillStyle = '#9a0c14'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = 'bold 58px "Comic Sans MS","Noto Sans SC",sans-serif'
+    x.fillText('=)', 0, 0)
+    x.fillStyle = 'rgba(120,6,12,.85)'; x.fillRect(-26, 14, 4, 17) // 一道往下淌的血痕
+    x.restore()
+    smileyTex = new THREE.CanvasTexture(c); smileyTex.colorSpace = THREE.SRGBColorSpace
+  }
+  // 纸托：CylinderGeometry(0.118, 0.104, 0.03) 底在 y=0；贴花略大 0.6 mm，正对 +Z，弧长约 1 rad
+  const geo = new THREE.CylinderGeometry(0.1186, 0.1046, 0.028, 6, 1, true, -0.3, 0.6).translate(0, 0.015, 0)
+  const m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: smileyTex, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, emissive: '#ffffff', emissiveMap: smileyTex, emissiveIntensity: 0.25 }))
+  m.name = 'velvetcake-smiley'; m.renderOrder = 1
+  return m
+}
 
 // ---------- 物品低模 ----------
 // v59：halo 选项——联机远端玩家的手持物品不显示脚底稀有度光圈（地面掉落物保留）
@@ -60,6 +86,11 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     grp.add(model)
   }
   else if (isCurabiturItem(type)) grp.add(buildCurabiturItemMesh(type))
+  else if (isJazzItemType(type)) grp.add(buildJazzItemMesh(type)) // [jazz] 哈瓦那辣椒酱（jazzItemModels）
+  else if (isChefItemType(type)) grp.add(buildChefItemMesh(type)) // [chef] 带把手的锅 / 档案员相机 / 胸麦 / 表单 / 拍立得（chefItemModels）
+  else if (isSpokesItemType(type)) grp.add(buildSpokesItemMesh(type)) // [spokes] 迎宾海报 / 侦探照片 / 侦探证件 / 发条零件（spokesItemModels）
+  else if (isCasinoItemType(type)) grp.add(buildCasinoItemMesh(type)) // L5.1 赌场：寂静汁液 / 神秘蛋（casinoItemModels）
+  else if (isL5ItemType(type)) grp.add(buildL5ItemMesh(type)) // L5 旅馆：麻将牌 / 437 钥匙 / 行李牌 / 客房茶 / 情书（l5ItemModels 程序图集）
   else if (levelTapeLook(type)) grp.add(buildLevelTapeMesh(levelTapeLook(type)!.palette))
   else switch (type) {
     // Six detailed models share UV atlases; their factory emits at most three material batches.
@@ -92,6 +123,7 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     case 'velvetcake': { // 派对客的丝绒蛋糕：纸托 + 深红蛋糕胚 + 奶油夹心/奶油顶 + 蜡烛（顶点色单网格，与派对客手里递的那块同一几何）
       const cake = new THREE.Mesh(velvetCakeGeometry(), new THREE.MeshLambertMaterial({ vertexColors: true }))
       cake.scale.setScalar(1.15)
+      cake.add(velvetCakeSmiley()) // 纸托正面血红的「=)」（只加在地面/手持物品上，不动派对客手里那块）
       grp.add(cake); break
     }
     case 'firesalt': // 火盐：带 UV 的六棱主晶、伴生晶、断晶和矿物基质
@@ -173,6 +205,8 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     grilledsteak: '#8fd98f', jambread: '#8fd98f', // 菜肴：补给绿
     memoryjuice: '#e0a050', laughrepellent: '#cfe8e6', babelbalm: '#e86060', // 批发市场 v2：液体 / 润唇膏
     outdoorkit: '#e8e2d2', traumakit: '#e8e2d2', saltbox: '#e8823c', // 医疗：白 / 火盐：橙
+    mahjongtile: '#6ad9a8', key437: '#7fb0c9', bagTag: '#7fb0c9', roomtea: '#8fd98f', gentletter: '#d96a8a', habanero: '#e0682a', chefpot: '#d96a6a', megcamera: '#7fb0c9', megmic: '#7fb0c9', megform: '#e8dfc8', chefphoto: '#d9b45a', // [chef] 锅 = 危险红 / 档案员遗物 = 冰蓝 / 纸物
+    spokesposter: '#e8a0b8', spokesphoto: '#c9a07a', detbadge: '#d9b45a', windupgear: '#d9b45a', // [spokes] 海报粉 / 照片褐 / 证件与发条黄铜 // L5 旅馆：异物玉绿 / 钥匙冰蓝 / 补给绿 / 情书绯红
     brc_permit: '#c9b458', dustmask: '#9a8fd0', // L0.2：施工许可（纸物）/ 防尘口罩（装备）
   }
   const gc = ITEM_GLOW[meleeBase] ?? ITEM_GLOW[type] ?? (levelTapeLook(type) ? ITEM_GLOW.tape : '#e8b93c')

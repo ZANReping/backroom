@@ -12,7 +12,8 @@ let worker: Worker | undefined
 let active: Job | undefined
 let failed = false
 let context = ''
-const keyOf = (level: number, seed: number, cx: number, cy: number) => `${level}:${seed}:${cx}:${cy}`
+const mapKey = (def: LevelDef, seed: number) => [def.id, seed, ...(def.id === 5 ? [def.l5Floor ?? 1] : [])].join(':')
+const keyOf = (def: LevelDef, seed: number, cx: number, cy: number) => [mapKey(def, seed), cx, cy].join(':')
 const supported = (def: LevelDef) => !!def.infinite && def.id !== 11 && infiniteImplRevision(def.id) === 1
 
 function pump() {
@@ -54,13 +55,13 @@ export function watchPreparedChunks(level: number, seed: number, receive: (raw: 
 }
 
 function setContext(def: LevelDef, seed: number) {
-  const next = `${def.id}:${seed}`
+  const next = mapKey(def, seed)
   if (context === next) return
   context = next; ready.clear(); queued.clear()
 }
 
 function enqueue(def: LevelDef, seed: number, cx: number, cy: number) {
-  const key = keyOf(def.id, seed, cx, cy)
+  const key = keyOf(def, seed, cx, cy)
   if (ready.has(key) || queued.has(key) || active?.key === key || queued.size >= 64) return
   queued.set(key, { key, def, seed, cx, cy })
 }
@@ -68,7 +69,7 @@ function enqueue(def: LevelDef, seed: number, cx: number, cy: number) {
 /** The cache is consumed once: mutable tile arrays must never contaminate a revisit. */
 export function takePreparedChunk(def: LevelDef, seed: number, cx: number, cy: number): GenChunk | undefined {
   if (!supported(def)) return undefined
-  const key = keyOf(def.id, seed, cx, cy), raw = ready.get(key)
+  const key = keyOf(def, seed, cx, cy), raw = ready.get(key)
   ready.delete(key)
   queued.delete(key)
   return raw
@@ -77,7 +78,7 @@ export function takePreparedChunk(def: LevelDef, seed: number, cx: number, cy: n
 let lastWindow = ''
 export function prefetchChunks(def: LevelDef, seed: number, cx: number, cy: number, loaded: ReadonlyMap<string, unknown>) {
   if (!supported(def) || !ensureWorker()) return
-  const windowKey = keyOf(def.id, seed, cx, cy)
+  const windowKey = keyOf(def, seed, cx, cy)
   if (lastWindow === windowKey) return
   lastWindow = windowKey
   setContext(def, seed)
@@ -99,7 +100,7 @@ export async function prepareChunkWindow(def: LevelDef, seed: number, cx = 0, cy
   const expected: string[] = []
   for (let radius = 0; radius <= 2; radius++) for (let dy = -radius; dy <= radius; dy++) for (let dx = -radius; dx <= radius; dx++) {
     if (Math.max(Math.abs(dx), Math.abs(dy)) !== radius) continue
-    expected.push(keyOf(def.id, seed, cx + dx, cy + dy))
+    expected.push(keyOf(def, seed, cx + dx, cy + dy))
     enqueue(def, seed, cx + dx, cy + dy)
   }
   pump()

@@ -56,3 +56,7 @@ export function applyL3Variant(e: Entity, rand: () => number = Math.random): voi
     default: break
   }
 }
+
+/** Level 5 rigs own their hit reactions and never use the generic root wobble. */
+const HOTEL_STAFF_TYPES = new Set(['maid', 'greeter', 'windup', 'jazz', 'chef', 'beast', 'bellhop', 'concierge'])
+export const isHotelStaffType = (type: string) => HOTEL_STAFF_TYPES.has(type)

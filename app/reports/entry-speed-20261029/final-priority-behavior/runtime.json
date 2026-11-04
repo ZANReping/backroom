@@ -1,0 +1,381 @@
+{
+  "run": "entry-1793342355909-33796",
+  "label": "final-priority-behavior",
+  "mode": "realistic",
+  "bundled": false,
+  "pacing": "native desktop refresh",
+  "qaCommand": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "E:\\ZAN\\backroom\\app\\scripts\\verify-entry-speed.mjs",
+    "--behavior",
+    "--label=final-priority-behavior"
+  ],
+  "port": 2275,
+  "cdp": 2278,
+  "cases": [],
+  "protocol": "Each entry has a new incognito browser context, empty HTTP / IndexedDB / JS caches. Time starts at destination chunk preparation, ends at real readiness + two real frames. Browser boot/import excluded.",
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\entry-speed-20261029\\final-priority-behavior\\entry-1793342355909-33796",
+    "--remote-debugging-port=2278",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 50648,
+    "browser": 23444
+  },
+  "environment": {
+    "levels": [
+      {
+        "id": 0,
+        "name": "Level 0",
+        "title": "教学关卡",
+        "infinite": true,
+        "gen": "rooms"
+      },
+      {
+        "id": 1,
+        "name": "Level 1",
+        "title": "宜居地带",
+        "infinite": true,
+        "gen": "garage"
+      },
+      {
+        "id": 2,
+        "name": "Level 2",
+        "title": "废弃公共带",
+        "infinite": true,
+        "gen": "pipes"
+      },
+      {
+        "id": 3,
+        "name": "Level 3",
+        "title": "电站",
+        "infinite": true,
+        "gen": "grid"
+      },
+      {
+        "id": 4,
+        "name": "Level 4",
+        "title": "废弃办公室",
+        "infinite": true,
+        "gen": "office"
+      },
+      {
+        "id": 5,
+        "name": "Level 5",
+        "title": "恐怖酒店",
+        "infinite": true,
+        "gen": "hotel"
+      },
+      {
+        "id": 6,
+        "name": "Level 6",
+        "title": "熄灯",
+        "infinite": true,
+        "gen": "darkhall"
+      },
+      {
+        "id": 7,
+        "name": "Level 7",
+        "title": "深海恐惧",
+        "infinite": true,
+        "gen": "ocean"
+      },
+      {
+        "id": 8,
+        "name": "Level 8",
+        "title": "洞穴系统",
+        "infinite": true,
+        "gen": "caves"
+      },
+      {
+        "id": 9,
+        "name": "Level 9",
+        "title": "郊区",
+        "infinite": true,
+        "gen": "suburb"
+      },
+      {
+        "id": 10,
+        "name": "Level 10",
+        "title": "丰裕",
+        "infinite": true,
+        "gen": "field"
+      },
+      {
+        "id": 11,
+        "name": "Level 11",
+        "title": "不夜城",
+        "infinite": true,
+        "gen": "city"
+      },
+      {
+        "id": 12,
+        "name": "Level 601",
+        "title": "终末",
+        "infinite": false,
+        "gen": "library"
+      },
+      {
+        "id": 101,
+        "name": "Alpha 基地",
+        "title": "M.E.G. Alpha 基地",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 102,
+        "name": "商人之家",
+        "title": "商人之家",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 103,
+        "name": "希波克拉底 - 1",
+        "title": "希波克拉底 - 1",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 104,
+        "name": "Tom 的餐馆",
+        "title": "Tom 的餐馆",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 105,
+        "name": "办公区EL3A",
+        "title": "办公区EL3A",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 106,
+        "name": "M.E.G. Gemma 基地",
+        "title": "M.E.G. Gemma 基地",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 107,
+        "name": "存储设施",
+        "title": "B.N.T.G. 存储设施",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 108,
+        "name": "蓝色救赎",
+        "title": "蓝色救赎",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 109,
+        "name": "M.E.G. Omega 基地",
+        "title": "M.E.G. Omega 基地",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 110,
+        "name": "M.E.G. 哨所「家政服务」",
+        "title": "M.E.G. 哨所「家政服务」",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 111,
+        "name": "家常酒店",
+        "title": "家常酒店",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 112,
+        "name": "原住民",
+        "title": "原住民",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 113,
+        "name": "M.E.G.“空巢”前哨站",
+        "title": "M.E.G.“空巢”前哨站",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 114,
+        "name": "哈莫兹洞穴社群",
+        "title": "哈莫兹洞穴社群",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 116,
+        "name": "丰饶角",
+        "title": "丰饶角",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 274,
+        "name": "Level 274 · 杰瑞的房间",
+        "title": "杰瑞的房间",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 900,
+        "name": "前厅",
+        "title": "前厅",
+        "infinite": false,
+        "gen": "outpost"
+      },
+      {
+        "id": 902,
+        "name": "Level 0.2",
+        "title": "重塑的混乱",
+        "infinite": true,
+        "gen": "rooms"
+      }
+    ],
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "cores": 32,
+    "visibility": "visible",
+    "focused": true,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "mode": "realistic",
+    "settings": {
+      "textureQuality": 1,
+      "detailDistance": 100,
+      "sceneLightLimit": 16,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "shadows": true,
+      "lightShadows": 2,
+      "bloom": true,
+      "ao": 1,
+      "dpr": 1
+    }
+  },
+  "behavior": {
+    "passed": 24,
+    "checks": [
+      "unspawned template variants do not block Level 1",
+      "unspawned template variants do not block Level 2",
+      "unspawned template variants do not block Level 3",
+      "unspawned template variants do not block Level 5",
+      "unspawned template variants do not block Level 8",
+      "unspawned template variants do not block Level 9",
+      "unspawned template variants do not block Level 11",
+      "missing actual nearby entity still blocks entry",
+      "hidden entity keeps original exemption",
+      "dead entity keeps original exemption",
+      "far entity keeps original visibility reach",
+      "actual owner waiting for its first GPU upload still blocks entry",
+      "actual owner ready allows entry",
+      "available catch still requires first-person shrimp preparation",
+      "actual near NPC still blocks entry",
+      "actual near dropped item still blocks entry",
+      "paused entry runs required work only",
+      "spare active frame advances optional work",
+      "busy frame leaves optional templates queued",
+      "background round robin advances one applicable family per frame",
+      "10 simulated seconds of real foyer engine updates preserve hunger and thirst",
+      "other survival timers still run in foyer",
+      "foyer developer time skip preserves hunger and thirst",
+      "normal drain resumes after leaving the foyer"
+    ],
+    "foyerBefore": {
+      "hunger": 61,
+      "thirst": 47,
+      "battery": 80
+    },
+    "backroomsAfter": {
+      "hunger": 60.720000000000084,
+      "thirst": 46.720000000000084
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "network": [
+    {
+      "session": "C72D40591EDCD5DA2D0218325722ADCC",
+      "requestId": "65576.664",
+      "loaderId": "2968D74E97C643950A3541E61C954966",
+      "timestamp": 96499.510622,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:2275/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Fri, 30 Oct 2026 06:39:25 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 178,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 2275,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 96499.501914,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.17,
+          "sendEnd": 0.21,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 8.218,
+          "receiveHeadersEnd": 8.262
+        },
+        "responseTime": 1793342365676.953,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "6BF781258BA4C74A528CEA5ACE256B9A"
+    }
+  ]
+}

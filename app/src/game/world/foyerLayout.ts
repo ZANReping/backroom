@@ -1,3 +1,4 @@
+import { toiletSeat } from '../content/toiletParts'
 // 前厅（序章，level id 900）：玩家的家——手工布局数据（地图生成、渲染与交互共用）。
 // 坐标：地图 x=东，y=南（Three.js z），单位米；1 瓦片 = 1m。
 // 外墙沿用瓦片墙（tiles=2），室内隔墙为 0.12m 薄墙结构（foyerprop/wall），门洞位于隔墙缺口。
@@ -195,7 +196,7 @@ const SOLID_KINDS_OVERRIDE: Record<string, boolean> = {}
  * 可坐家具（复用项目座椅系统 engine/seating.ts：靠近出现「坐下」，坐姿眼高/朝向/视角限制/起身检查都由它处理）。
  * 返回相对家具占地中心的座面（地图坐标偏移 x=东、z=南；y=座面高度；yaw=坐下后面朝方向，0=南、π/2=东）。
  */
-export function foyerSeats(pid: string): { x: number; y: number; z: number; yaw: number; label: string; relaxed?: boolean }[] {
+export function foyerSeats(pid: string): { x: number; y: number; z: number; yaw: number; label: string; relaxed?: boolean; toilet?: boolean }[] {
   const p = FOYER_PROPS.find((v) => v.id === pid)
   if (!p) return []
   const yaw = (p.rot * Math.PI) / 180
@@ -206,7 +207,7 @@ export function foyerSeats(pid: string): { x: number; y: number; z: number; yaw:
     case 'chair': return [{ x: 0, z: 0, y: 0.47, yaw, label: '餐椅' }]
     case 'stool': return [{ x: 0, z: 0, y: 0.68, yaw, label: '吧凳' }]
     case 'deskchair': return [{ x: 0, z: 0, y: 0.5, yaw, label: '电脑椅' }]
-    case 'toilet': { const f = fwd(0.04); return [{ ...f, y: 0.42, yaw, label: '马桶' }] }
+    case 'toilet': { const p = toiletSeat('compact'), f = fwd(p.z); return [{ ...p, ...f, yaw }] }
     case 'bed': // 床沿：西侧（面朝房间）与床尾
       return [{ x: -p.w / 2 + 0.28, z: 0.15, y: 0.56, yaw: -Math.PI / 2, label: '床边' }, { x: 0.1, z: p.d / 2 - 0.26, y: 0.56, yaw: 0, label: '床尾' }]
   }

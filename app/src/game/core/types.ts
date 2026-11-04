@@ -42,6 +42,8 @@ export interface SpawnEntry {
 }
 
 export interface LevelDef {
+  /** Actual hotel storey for deterministic generation and worker cache keys. */
+  l5Floor?: number
   id: number
   name: string
   flavor: string
@@ -121,11 +123,19 @@ export interface ExitInstance {
 }
 
 export type StructKind = import('../content/tradeDecor').TradeKind | import('../content/l5Decor').L5DecorKind | import('../content/alphaDecor').AlphaKind | import('../content/l11Decor').L11DecorKind | 'settlementprop' | 'settlementstation' | 'l4stairs' | 'l4prop'
+  | 'chefprop' // [chef] 厨师 Entity 800 餐厅后场 / 餐厅道具（data.prop = stove 燃气灶 / knives 刀墙 / counter / island / sink / shelf / sacks / coldshelf / carcass / pipe 铁管手铐 / swing 弹簧门 / front 正门 / bell 服务铃 / table 餐桌（diners 顾客数、dish 菜）；模型 chefRender，结构 = 碰撞）
+  | 'jazzprop' // [jazz] 爵士脑 Entity 197 餐厅舞台道具（data.prop = stage 舞台 / steps 台阶 / piano 立式钢琴 / rug 观众区地毯 / bar 吧台 / stool 高脚凳 / cctv 监控探头 / poster 演出海报）
+  | 'casinoprop' | 'casinodoor' // [casino] Level 5.1：赌场碰撞代理（模型由 renderer/casinoScene 统一构建；data.x0..y1/top）/ L5 贝弗莉室北墙的 TH 跑马灯大门
+  | 'spokesprop' // [spokes] 迎宾女郎办公室道具（data.prop = office 书桌皮椅铭牌收音机 / holes 投递洞；模型 spokesRender，结构 = 碰撞）
   | 'pillar' | 'car' | 'booth' | 'pipes' | 'valve' | 'gauge' | 'boiler'
   | 'generator' | 'cabinet' | 'trench' | 'cubicle' | 'copier' | 'server' | 'vending' | 'watercooler'
   | 'ferrennest' | 'ferrenbowl' | 'ferrencage' // [ferren] 商人之家雪貂笼：窝（data.cage0..3 = 笼内沿）/ 食盆 / 铁丝围栏（data.axis、height）
   | 'desk' | 'door' | 'ballroom' | 'lightgrid' | 'wet'   | 'graffiti' | 'crate'
   | 'corpse' | 'ladder' | 'vent' | 'mirror' | 'elevator' | 'frontdesk' | 'bed' | 'sconce'
+  | 'l5walldoor' | 'l5floordoor' | 'l5ceildoor' // 恐怖旅馆 1b：贝弗莉门墙 / 活板门 / 倒挂天花门
+  | 'l5puddle' // [l5tails] 锅炉房管道下的滴落水洼（喝一次理智 +5）
+  | 'l5luggage' // [l5tails] 10F 行李层：走廊行李堆（箱子叠放 + 帽盒，装饰）
+  | 'l5rule' | 'l5pocketdoor' // 恐怖旅馆 1c：住客须知卡（贴墙 / 桌上）/ 口袋房间门（野兽办公室木门、大堂门）
   | 'socket' // 墙上插板（L0 装饰：米色插座面板）
   | 'l02fix' // Level 0.2 设施（插座/板夹/路由器/洗手间；data.fix，模型见 renderer/l02Scene.ts）
   | 'rebar' // 突出墙壁的锈蚀钢筋（L1：靠近划伤，wikidot/Fandom 破伤风梗）
@@ -392,6 +402,7 @@ export interface GroundItem {
   ammoSel?: string
   stage?: number
   cyl?: number
+  dropped?: number // 玩家丢下时的 eng.time（L5 自洁据此把物品收进失物招领；生成物品无此字段）
 }
 
 export interface LightSource {

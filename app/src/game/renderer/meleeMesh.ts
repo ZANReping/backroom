@@ -585,6 +585,15 @@ export function buildMeleeMesh(type: MeleeType, o: MeleeBuildOpts = {}): THREE.G
   } finally { matCache = previous }
 }
 
+/** 非索引几何的顶点区间 [start, start+count) 拷成独立几何（只保留同名属性）。 */
+function subGeometry(geo: THREE.BufferGeometry, start: number, count: number) {
+  const out = new THREE.BufferGeometry()
+  for (const name of Object.keys(geo.attributes)) {
+    const at = geo.getAttribute(name) as THREE.BufferAttribute, n = Math.min(count, at.count - start)
+    out.setAttribute(name, new THREE.BufferAttribute((at.array as Float32Array).slice(start * at.itemSize, (start + n) * at.itemSize), at.itemSize, at.normalized))
+  }
+  return out
+}
 /** Rigid weapon parts merge by material; overlays retain their independent runtime controls. */
 function batchMelee(g: THREE.Group, rig: MeleeRig) {
   g.updateMatrixWorld(true)
@@ -593,12 +602,19 @@ function batchMelee(g: THREE.Group, rig: MeleeRig) {
   const batches = new Map<THREE.Material, {geos:THREE.BufferGeometry[]; overlay?:string}>()
   g.traverse(o => {
     const mesh = o as THREE.Mesh
-    if(!mesh.isMesh || Array.isArray(mesh.material)) return
+    if(!mesh.isMesh) return
     original.add(mesh.geometry)
     const geo = mesh.geometry.index ? mesh.geometry.toNonIndexed() : mesh.geometry.clone()
     transform.multiplyMatrices(inverse,mesh.matrixWorld); geo.applyMatrix4(transform)
-    const group = batches.get(mesh.material) ?? {geos:[] as THREE.BufferGeometry[],overlay:mesh.userData.overlay}
-    group.geos.push(geo); batches.set(mesh.material,group)
+    // 多材质部件（木板：侧面木纹 / 端面年轮）按几何组拆成各自材质的子几何再并批（此前整块被跳过后随 g.clear() 丢失，木板只剩钉子和布条）
+    const pieces: [THREE.Material, THREE.BufferGeometry][] = Array.isArray(mesh.material)
+      ? mesh.geometry.groups.map(gr => [(mesh.material as THREE.Material[])[gr.materialIndex ?? 0], subGeometry(geo, gr.start, gr.count)] as [THREE.Material, THREE.BufferGeometry]).filter(([m]) => !!m)
+      : [[mesh.material, geo]]
+    if (Array.isArray(mesh.material)) geo.dispose()
+    for (const [material, piece] of pieces) {
+      const group = batches.get(material) ?? {geos:[] as THREE.BufferGeometry[],overlay:mesh.userData.overlay}
+      group.geos.push(piece); batches.set(material,group)
+    }
   })
   g.clear(); rig.blood.length=0; rig.wear.length=0
   for(const [material,{geos,overlay}] of batches) {

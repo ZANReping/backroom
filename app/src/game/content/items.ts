@@ -41,10 +41,10 @@ export interface ItemDef {
   keyItem?: boolean
 }
 
-const BOTTLED_DRINK_ITEMS = new Set(['almond', 'liquidpain', 'coffee', 'citywater', 'cashew', 'luckymilk', 'bottledwater'])
+const BOTTLED_DRINK_ITEMS = new Set(['roomtea', 'almond', 'liquidpain', 'coffee', 'citywater', 'cashew', 'luckymilk', 'bottledwater'])
 const QUICK_FOOD_ITEMS = new Set(['warpberry', 'wheatgrain', 'driedfruit', 'snackbar'])
 const MEAL_ITEMS = new Set(['tomatosoup', 'gardensalad', 'garlicbread', 'pasta', 'meatstew', 'pizza', 'lasagna', 'tomsspecial', 'grilledsteak', 'jambread'])
-const READ_ITEMS = new Set(['megfolder', 'pamphlet', 'jerryflyer', 'fakelog'])
+const READ_ITEMS = new Set(['megfolder', 'pamphlet', 'jerryflyer', 'fakelog', 'spokesposter'])
 
 /**
  * 消耗品统一使用模板。相同形态复用同一动作，且只有动作完整结束后才结算效果与扣除物品。
@@ -116,6 +116,31 @@ export const ITEMS: Record<string, ItemDef> = {
   stapler: { type: 'stapler', name: '订书机', desc: '沉重的订书机，掷出去足以吸引注意。', stack: 2, unique: 4, use: 'none', throw: 'noise', rarity: 'common', glyph: 'stapler' },
   keycard: { type: 'keycard', name: '门禁卡', desc: '一张员工门禁卡。可以打开员工电梯与服务器机房。', stack: 1, unique: 4, equip: 'pocket', rarity: 'uncommon', glyph: 'card' },
   skeleton: { type: 'skeleton', name: '万能钥匙', desc: '酒店黄铜万能钥匙。可以打开任意一扇上锁的门。', stack: 1, unique: 5, equip: 'pocket', anomalous: true, rarity: 'rare', glyph: 'skeleton' },
+  mahjongtile: { type: 'mahjongtile', name: '贝弗莉的麻将牌', desc: '从贝弗莉室那张推人的麻将桌上硬抠下来的一张牌，象牙白，摸上去是温的。背面画着一只闭着的眼睛。（用途尚不明）', stack: 1, rarity: 'rare', anomalous: true, glyph: 'jade' },
+  key437: { type: 'key437', name: '437 号房钥匙', desc: '黄铜房门钥匙，挂着一块椭圆银牌，蓝字「437」。前台的钥匙墙上正好缺这一格。', stack: 1, unique: 5, equip: 'pocket', rarity: 'rare', glyph: 'key' }, // [concierge] 交给看门人：关系大幅 +、长时间放行
+  // [bellhop] 行李员 Entity 135：行李牌（编号存在格子的 tag 字段，不同编号不堆叠）/ 客房茶（递给他 = 免一次领取代价）/ 绅士的情书（10F 行李房彩蛋）
+  bagTag: { type: 'bagTag', name: '行李牌', desc: '一块黄铜行李牌，红绳系着，一面压着酒店的花押，一面打着编号。凭牌向行李员取回寄存的东西。', stack: 1, unique: 5, use: 'none', rarity: 'uncommon', glyph: 'bagtag' },
+  roomtea: { type: 'roomtea', name: '客房茶', desc: '客房小桌上那套瓷杯里的红茶，还温着，杯沿描着一圈金线。可以自己喝，也可以端给走廊尽头那位摇铃的。', stack: 2, unique: 5, use: 'sanity', value: 8, value3: 12, rarity: 'common', glyph: 'teacup' },
+  gentletter: { type: 'gentletter', name: '绅士的情书', desc: '「致行李员：\n我看过你搬运住客的行李——你提起它们的样子，就像捧着熟睡的孩子。你知道他们每一个人会怎样离开这里，却从不让他们看出来；你只是替他们把箱子擦干净，把牌子系好。\n你的脸总在变，每一张都比上一张更好看，可我认得的是你低头时的样子。你躲在走廊最暗的那一头，我知道。我也在暗处。\n若你愿意，就把这封信收在制服内袋里。不必回信。\n——一位绅士」（信封上没有邮票，火漆印是一只野兽的爪印。）', stack: 1, unique: 5, use: 'none', rarity: 'epic', anomalous: true, glyph: 'letter' },
+  // [spokes] 迎宾女郎 Entity 28：迎宾海报（L1 / L11 捡到，读了指向 L5）/ 侦探照片（照片支线 ①）/ 侦探证件（支线 ③，行李员代管）/ 发条零件（抓住 / 砸开发条兔）
+  spokesposter: { type: 'spokesposter', name: '迎宾海报', desc: '一张手绘的彩色海报，边上撒着闪粉：一只戴领结的兔子站在旋转门前，大字写着「恐怖旅馆 · 有着最好员工的旅馆！」底下一行小字写着怎么去。背面有铅笔字。读一读。', stack: 3, use: 'sanity', value: 2, rarity: 'uncommon', glyph: 'poster' },
+  spokesphoto: { type: 'spokesphoto', name: '侦探照片', desc: '一张褪色的小照片：一个女人，棕色头发，棕色眼睛，穿着侦探的大衣，正对着镜头皱眉。背面有人用钢笔写着：「你不觉得她很面熟吗？」\n（给大堂前台的迎宾女郎看看。）', stack: 1, unique: 5, use: 'none', rarity: 'rare', anomalous: true, glyph: 'photo' },
+  detbadge: { type: 'detbadge', name: '侦探证件', desc: '一只磨旧的黑皮证件夹，一边嵌着一枚黄铜徽章，一边是证件卡。照片和照片里那个女人是同一个人；名字那一栏被水泡花了，只剩一个字母。\n（看门人没收的东西，都交给行李员保管。把它还给它的主人——在没有人看着的地方。）', stack: 1, unique: 5, use: 'none', rarity: 'rare', glyph: 'badge' },
+  windupgear: { type: 'windupgear', name: '发条零件', desc: '从迎宾女郎的发条兔肚子里拧下来的一组黄铜齿轮和一卷发条，蝴蝶形的钥匙还插在上面。拧一下，它会在你手心里咔哒咔哒走一会儿。', stack: 5, rarity: 'uncommon', glyph: 'gear' },
+  // [chef] 厨师 Entity 800：唯一带把手的锅（偷走 = 停供、他没有武器；也能当钝器）/ M.E.G. 档案员遗物（相机可拍照——会惊动他；表单 / 胸麦 / 照片读了 = 食物真相）
+  chefpot: { type: 'chefpot', name: '带把手的锅', desc: '后厨唯一一口带把手的锅：厚铸铁，锅底一圈洗不掉的暗色，把手被一只很胖的手握得发亮。没有它，厨师做不了饭，也没有趁手的东西砸人。很沉，抡起来像一把锤子。', stack: 1, unique: 5, weapon: 22, attackInterval: 1.0, attackStamina: 12, anomalous: true, rarity: 'epic', glyph: 'pot' },
+  megcamera: { type: 'megcamera', name: '档案员的相机', desc: 'M.E.G. 配发的老式胶片相机，闪光灯还能用，取景框上贴着一张写有「800」的胶布。使用 = 拍一张照片：闪光会让附近某个东西的耳朵抽一下。对准他拍，他会僵住——然后记住你。', stack: 1, unique: 5, use: 'none', rarity: 'rare', glyph: 'camera' },
+  megmic: { type: 'megmic', name: '坏掉的胸麦', desc: '一只外壳裂开的领夹式胸麦，M.E.G. 的编号还看得清。按下侧键，还能放出最后一段录音。', stack: 1, unique: 5, use: 'none', rarity: 'uncommon', glyph: 'mic' },
+  megform: { type: 'megform', name: '未写完的表单', desc: 'M.E.G. 实体观察记录表，编号栏写着 800，观察员一栏空着。字迹越往下越乱，最后拖成一道长线。读一读。', stack: 1, unique: 5, use: 'none', rarity: 'uncommon', glyph: 'form' },
+  // [jazz] 爵士脑 Entity 197：低音提琴手送的哈瓦那辣椒酱（使用 = 暖身提神；压住厨师食物上瘾的「再来一份」；冷库里体温掉得慢）
+  habanero: { type: 'habanero', name: '哈瓦那辣椒酱', desc: '一小瓶自家调的哈瓦那辣椒酱，橙红色，瓶口缠着一圈乐谱纸，上面用铅笔写着「减肥用」。低音提琴手什么都抹它——啤酒也是。\n使用：辣得冒汗——耐力 +30、理智 +3、口渴 −8；之后 4 分钟浑身发热：厨师那份「再来一份」的念头被压住，饿得不再加快；冷库里冻得慢一些。', stack: 3, use: 'none', rarity: 'uncommon', glyph: 'sauce' },
+  chefphoto: { type: 'chefphoto', name: '拍到他的照片', desc: '一张褪色的拍立得：后厨、大锅、一个戴高帽的背影。背面有圆珠笔字。', stack: 1, unique: 5, use: 'none', anomalous: true, rarity: 'rare', glyph: 'photo' },
+  // [l5items] L5 第三期：房卡（118 大堂前台登记）/ 命运之骰 Object 666（赌场纪念品）/ 破唱片（砸烂 Object 18 留声机）/ 购买凭证 / 碎骰子
+  roomcard: { type: 'roomcard', name: '房卡', desc: '一张烫金的塑料房卡，背面印着「恐怖旅馆 · 有着最好员工的旅馆」，正面手写着楼层和房号。只开你自己的那扇门。\n在你的房间里：睡觉安全、员工不来打扰、门口的「请勿打扰」真的有用；床边有一只 8 格储物柜（离开这一局就清空）。丢了可以回 118 大堂前台补办（关注度 +5）。', stack: 1, unique: 5, equip: 'pocket', rarity: 'uncommon', glyph: 'roomcard' },
+  fatedie: { type: 'fatedie', name: '命运之骰', desc: '一颗光滑的白色立方体，没有点数。握在手里时，你会觉得自己的运气正在变好。\n使用：投出去。它滚停之后，朝上的那一面才会出现图案——宝箱、心、门、枪……也可能是乌贼、旅馆、赌徒，或者什么都没有。每颗投一次要「睡」10 分钟。\n（Object 666：许多人投过它。没有人投过第二次之后还说它是好东西。）', stack: 1, unique: 5, use: 'none', anomalous: true, rarity: 'epic', glyph: 'fatedie' },
+  brokendie: { type: 'brokendie', name: '裂开的骰子', desc: '命运之骰从一条棱上裂开了，里面是实心的白色。凭「购买凭证」可以回赌场兑换台免费换一颗。', stack: 1, unique: 5, anomalous: true, rarity: 'rare', glyph: 'fatedie' },
+  diereceipt: { type: 'diereceipt', name: '购买凭证', desc: '赌场兑换台开的小票，印着一颗骰子的图案和一行小字：「商品损坏，凭此免费更换。」', stack: 3, unique: 5, rarity: 'uncommon', glyph: 'receipt' },
+  brokenrecord: { type: 'brokenrecord', name: '破唱片', desc: '半张黑胶唱片，标签上的曲名被刮掉了。你记得那段旋律——你好像一直都记得。（Object 18 纪念物）', stack: 1, unique: 5, anomalous: true, rarity: 'rare', glyph: 'record' },
   silverware: { type: 'silverware', name: '银餐具', desc: '擦得发亮的银质餐具。侍者也许会感兴趣。', stack: 3, unique: 5, rarity: 'uncommon', glyph: 'silver' },
   sedative: { type: 'sedative', name: '镇定剂', desc: '一针强效镇定剂。', stack: 2, unique: 5, use: 'bigsanity', value: 60, rarity: 'uncommon', glyph: 'syringe' },
   // Nguithr'xurh（Entity 16）击杀掉落：维基——其分泌物即使大剂量也相对无害，M.E.G. 正以此研制止痛药与抗抑郁药
@@ -192,6 +217,9 @@ export const ITEMS: Record<string, ItemDef> = {
   shell_bird: { type: 'shell_bird', name: '12 号鸟弹', desc: '绿色纸壳的 12 号细砂弹，二十多颗小铅丸。伤不了大家伙，但对付尸鼠、死亡飞蛾这类小东西特别好用。', stack: 30, use: 'none', rarity: 'common', glyph: 'shell' },
   shell_clump: { type: 'shell_clump', name: '爆团弹', desc: '鎏金兵械库的招牌弹药（Object 23）。金色弹壳里是一枚专利独头弹——穿入目标后在体内起爆，专治肢团，对悲尸也同样有效。打在墙上不会炸。', stack: 30, use: 'none', anomalous: true, rarity: 'rare', glyph: 'shell' },
   warpberry: { type: 'warpberry', name: '迁跃浆果', desc: '表皮泛着空间涟漪的浆果——据说它认得「家」的方向。每颗都记得自己被发现的地方。', stack: 2, use: 'eat', value: 15, anomalous: true, rarity: 'epic', glyph: 'berry' },
+  // [casino] Level 5.1 赌场奖品稀有池（只能在兑换台用筹码换到）
+  silencejuice: { type: 'silencejuice', name: '寂静汁液', desc: '一整瓶无色无味的液体，瓶身贴着赌场的金色封条「头奖」。喝下以后，脑子里所有的声音都会安静很久。（Object 17）', stack: 1, use: 'bigsanity', value: 100, anomalous: true, rarity: 'epic', glyph: 'bottle' },
+  mysteryegg: { type: 'mysteryegg', name: '神秘蛋', desc: '赌场员工口中的「神秘蛋」。蛋壳是温的，偶尔会从里面敲一下。看上去就像是会有什么东西要破壳而出。', stack: 1, use: 'none', anomalous: true, rarity: 'epic', glyph: 'ration' },
   royalration: { type: 'royalration', name: '皇家口粮', desc: '传说中的甘美之物，一口便足以忘记饥饿与恐惧。只是从没有人能只吃一口。以物易物时，它能换来真正的高级物资。', stack: 1, use: 'eat', value: 100, anomalous: true, rarity: 'epic', glyph: 'ration' },
   // ===== 批发市场 v2（2026-10-23）：主力店 A 四个新档口的新物品 =====
   // Object 11「记忆汁」（旧）：蠕灵熬煮的琥珀色药液——游戏内不可饮用，只作交易品；装进滋水枪等效于清水

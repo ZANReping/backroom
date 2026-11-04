@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:entry-resources
+> esbuild scripts/check-entry-resources.ts --bundle --platform=node --format=esm --outfile=.cache/check-entry-resources.mjs && node .cache/check-entry-resources.mjs
+
+
+  .cache\check-entry-resources.mjs  2.3kb
+
+Done in 26ms
+{"passed":52}

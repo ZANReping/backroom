@@ -1,0 +1,274 @@
+{
+  "seed": 515151.25,
+  "mode": "realistic",
+  "port": 10524,
+  "cdp": 10525,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:10524/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Wed, 04 Nov 2026 10:19:21 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 136,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 10524,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 91949.876724,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.409,
+        "sendEnd": 0.432,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 81.9,
+        "receiveHeadersEnd": 82.037
+      },
+      "responseTime": 1793787561936.532,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l5-staff-fixes-20261104\\accept-realistic\\qa-1793787544608-67224",
+    "--remote-debugging-port=10525",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 51324,
+    "server": 69828
+  },
+  "appBootMs": 16947.8638,
+  "entryMs": 3552.1898,
+  "firstPlayableMs": 28556.0576,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 5,
+    "point": {
+      "x": 15.5,
+      "y": 15.5,
+      "z": 0,
+      "seed": 515151.25,
+      "floor": 1
+    },
+    "checks": [],
+    "draws": 1,
+    "triangles": 1
+  },
+  "staff": [
+    {
+      "type": "concierge",
+      "frames": 45,
+      "maxFrameMs": 962.5,
+      "visible": true,
+      "meshes": 93,
+      "finite": true,
+      "present": true,
+      "pending": false,
+      "draws": 1,
+      "programs": 87,
+      "contextLost": false
+    },
+    {
+      "type": "bellhop",
+      "frames": 55,
+      "maxFrameMs": 1137.4000000000015,
+      "visible": true,
+      "meshes": 7,
+      "finite": true,
+      "present": true,
+      "pending": false,
+      "draws": 1,
+      "programs": 100,
+      "contextLost": false
+    },
+    {
+      "type": "maid",
+      "frames": 71,
+      "maxFrameMs": 191.70000000000437,
+      "visible": true,
+      "meshes": 74,
+      "finite": true,
+      "present": true,
+      "pending": false,
+      "draws": 1,
+      "programs": 99,
+      "contextLost": false
+    },
+    {
+      "type": "greeter",
+      "frames": 135,
+      "maxFrameMs": 1945.800000000003,
+      "visible": true,
+      "meshes": 14,
+      "finite": true,
+      "present": true,
+      "pending": false,
+      "draws": 1,
+      "programs": 106,
+      "contextLost": false
+    },
+    {
+      "type": "windup",
+      "frames": 83,
+      "maxFrameMs": 37.69999999999709,
+      "visible": true,
+      "meshes": 76,
+      "finite": true,
+      "present": true,
+      "pending": false,
+      "draws": 1,
+      "programs": 106,
+      "contextLost": false
+    },
+    {
+      "type": "beast",
+      "frames": 75,
+      "maxFrameMs": 2954.2000000000044,
+      "visible": true,
+      "meshes": 5,
+      "finite": true,
+      "present": true,
+      "pending": false,
+      "draws": 1,
+      "programs": 107,
+      "contextLost": false
+    },
+    {
+      "type": "jazz",
+      "frames": 123,
+      "maxFrameMs": 850,
+      "visible": true,
+      "meshes": 1,
+      "finite": true,
+      "present": true,
+      "pending": false,
+      "draws": 1,
+      "programs": 111,
+      "contextLost": false
+    },
+    {
+      "type": "chef",
+      "frames": 45,
+      "maxFrameMs": 5012.4000000000015,
+      "visible": true,
+      "meshes": 8,
+      "finite": true,
+      "present": true,
+      "pending": false,
+      "draws": 1,
+      "programs": 114,
+      "contextLost": false
+    }
+  ],
+  "dining": {
+    "worldX": -5,
+    "worldY": -30.5
+  },
+  "icons": {
+    "decoded": 22,
+    "hotbar": true
+  },
+  "mapReveal": {
+    "largeAndMini": true,
+    "fogRestored": true,
+    "previewChunks": 4,
+    "noExplorationWrites": true
+  },
+  "office": {
+    "level": 117,
+    "point": {
+      "x": 20.5,
+      "y": 20.5,
+      "z": 0,
+      "seed": 530610.1391,
+      "floor": 1
+    },
+    "checks": [
+      "Safe office approach away from casino door",
+      "Enter hotel pocket office",
+      "Pocket office and Beast loaded"
+    ],
+    "draws": 1,
+    "triangles": 1
+  },
+  "deal": {
+    "declineBefore": {
+      "sanity": 90.7181924999998,
+      "attn": 10,
+      "strikes": 0,
+      "cut": 0,
+      "phase": "seat",
+      "forced": false,
+      "deal": false
+    },
+    "declined": {
+      "sanity": 82.7124949999998,
+      "attn": 20,
+      "strikes": 0,
+      "cut": 0,
+      "phase": "greet",
+      "forced": false
+    },
+    "forced": {
+      "sanity": 64.1408974999999,
+      "attn": 20,
+      "strikes": 1,
+      "cut": 0,
+      "phase": "seat",
+      "forced": true,
+      "deal": true
+    },
+    "settled": {
+      "sanity": 53.86671500000063,
+      "attn": 20,
+      "strikes": 1,
+      "cut": 20,
+      "phase": "shake",
+      "forced": false
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

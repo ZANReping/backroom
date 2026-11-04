@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:toilets
+> esbuild scripts/check-toilets.ts --bundle --platform=node --format=esm --outfile=.cache/check-toilets.mjs && node .cache/check-toilets.mjs
+
+
+  .cache\check-toilets.mjs  809.7kb
+
+Done in 101ms
+{"checks":155,"failures":0,"triangleCounts":{"standard":1068,"compact":1068,"worn":1068,"stone":1068},"audio":[{"rate":22050,"seed":0,"samples":15435,"rms":0.08265447111256498,"peak":0.31716102361679077},{"rate":22050,"seed":42,"samples":15435,"rms":0.0829007519714373,"peak":0.3287004232406616},{"rate":22050,"seed":-7,"samples":15435,"rms":0.08287335166749438,"peak":0.30990710854530334},{"rate":44100,"seed":0,"samples":30870,"rms":0.08346837337745273,"peak":0.3388139009475708},{"rate":44100,"seed":42,"samples":30870,"rms":0.08345366372444357,"peak":0.32850584387779236},{"rate":44100,"seed":-7,"samples":30870,"rms":0.08313763693805534,"peak":0.32994627952575684},{"rate":48000,"seed":0,"samples":33600,"rms":0.08282017087547018,"peak":0.3304590880870819},{"rate":48000,"seed":42,"samples":33600,"rms":0.08296936289293903,"peak":0.3164128065109253},{"rate":48000,"seed":-7,"samples":33600,"rms":0.08292979425099563,"peak":0.32522282004356384}],"profiles":9}

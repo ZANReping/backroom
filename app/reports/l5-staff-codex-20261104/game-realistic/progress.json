@@ -1,0 +1,95 @@
+{
+  "seed": 515151.25,
+  "mode": "realistic",
+  "port": 11257,
+  "cdp": 11258,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:11257/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Wed, 04 Nov 2026 13:20:10 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 266,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 11257,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 102795.595235,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.376,
+        "sendEnd": 0.434,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 7.925,
+        "receiveHeadersEnd": 8.036
+      },
+      "responseTime": 1793798410277.345,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l5-staff-codex-20261104\\game-realistic\\qa-1793798389666-55440",
+    "--remote-debugging-port=11258",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 47476,
+    "server": 48532
+  },
+  "appBootMs": 18689.4011,
+  "entryMs": 5033.7961,
+  "firstPlayableMs": 32666.2654,
+  "locked-ledger": true,
+  "ledger": {
+    "stats": {
+      "builds": 7,
+      "renders": 7,
+      "hits": 0,
+      "cached": 7,
+      "bytes": 717532,
+      "queued": 0,
+      "active": null,
+      "studio": true,
+      "memory": {
+        "geometries": 10,
+        "textures": 42
+      }
+    }
+  }
+}

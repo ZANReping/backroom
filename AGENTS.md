@@ -38,6 +38,7 @@
   - the relevant subsystem and expected result are already known;
   - the work is simple, repetitive, local, and mechanically verifiable;
   - the subtask can be bounded to a non-overlapping set of files or symbols.
+- Use `gpt-6-luna` with `low` reasoning for these tasks. If `luna_repetitive_worker` is unavailable or bound to a different model in the current session, use a `worker` with explicit `model: gpt-6-luna` and `reasoning_effort: low`. Include the same scope and escalation rules in its assignment. If GPT-6 Luna is unavailable, keep the task on the primary agent.
 - Good Luna tasks include repeated data-entry changes, mechanical renames, applying an established pattern to more files, small isolated model/material variants, straightforward UI text changes, and focused fixes whose cause and solution are already established.
 - Keep ambiguous requirements, architecture and data-model decisions, cross-system debugging, performance root-cause analysis, save/network compatibility, security-sensitive work, and subjective visual design on the primary model.
 - Multiple independent Luna subtasks may run in parallel, but never assign two agents overlapping files or ownership.

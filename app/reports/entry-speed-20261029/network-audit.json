@@ -1,0 +1,128 @@
+[
+  {
+    "label": "final-priority-app-realistic",
+    "errors": 0,
+    "baseURI": null,
+    "requests": [],
+    "cleanup": {
+      "browserExit": "SIGTERM",
+      "serverExit": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  {
+    "label": "validated-cold-realistic",
+    "errors": 0,
+    "baseURI": "http://127.0.0.1:11924/",
+    "requests": [
+      {
+        "url": "http://127.0.0.1:11924/favicon.ico",
+        "status": 404
+      },
+      {
+        "url": "http://127.0.0.1:11924/textures/l12_floor.jpg",
+        "status": 404
+      },
+      {
+        "url": "http://127.0.0.1:11924/textures/l12_ceil.jpg",
+        "status": 404
+      },
+      {
+        "url": "http://127.0.0.1:11924/textures/l12_wall.jpg",
+        "status": 404
+      },
+      {
+        "url": "http://127.0.0.1:11924/textures/l116_floor.jpg",
+        "status": 404
+      }
+    ],
+    "cleanup": {
+      "browserExit": "SIGTERM",
+      "serverExit": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  {
+    "label": "validated-cold-classic",
+    "errors": 0,
+    "baseURI": "http://127.0.0.1:11139/",
+    "requests": [
+      {
+        "url": "http://127.0.0.1:11139/favicon.ico",
+        "status": 404
+      },
+      {
+        "error": "net::ERR_ABORTED"
+      },
+      {
+        "url": "http://127.0.0.1:11139/textures/l12_floor.jpg",
+        "status": 404
+      },
+      {
+        "url": "http://127.0.0.1:11139/textures/l12_ceil.jpg",
+        "status": 404
+      },
+      {
+        "url": "http://127.0.0.1:11139/textures/l12_wall.jpg",
+        "status": 404
+      },
+      {
+        "url": "http://127.0.0.1:11139/textures/l116_floor.jpg",
+        "status": 404
+      }
+    ],
+    "cleanup": {
+      "browserExit": "SIGTERM",
+      "serverExit": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  {
+    "label": "validated-cold-retest",
+    "errors": 0,
+    "baseURI": "http://127.0.0.1:1628/",
+    "requests": [
+      {
+        "url": "http://127.0.0.1:1628/favicon.ico",
+        "status": 404
+      }
+    ],
+    "cleanup": {
+      "browserExit": "SIGTERM",
+      "serverExit": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  {
+    "label": "final-priority-resources",
+    "errors": 0,
+    "baseURI": null,
+    "requests": [
+      {
+        "url": "http://127.0.0.1:13521/favicon.ico",
+        "status": 404
+      }
+    ],
+    "cleanup": {
+      "browserExit": "SIGTERM",
+      "serverExit": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  {
+    "label": "final-priority-behavior",
+    "errors": 0,
+    "baseURI": null,
+    "requests": [
+      {
+        "url": "http://127.0.0.1:2275/favicon.ico",
+        "status": 404
+      }
+    ],
+    "cleanup": {
+      "browserExit": "SIGTERM",
+      "serverExit": "SIGTERM",
+      "profileRemoved": true
+    }
+  }
+]

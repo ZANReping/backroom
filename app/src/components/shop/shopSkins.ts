@@ -4,7 +4,7 @@ import { TRADERS_SHOPS } from '@/game/content/tradersShops'
 import { MARKET_DEPTS } from '@/game/content/tradersMarket'
 import type { NpcDef } from '@/game/content/npcs'
 
-export type ShopSkinId = 'bntg' | 'meg' | 'capital' | 'ariane' | 'tom' | 'homely' | 'originals' | 'generic'
+export type ShopSkinId = 'bntg' | 'meg' | 'ariane' | 'tom' | 'homely' | 'originals' | 'generic'
 export interface ShopSkin {
   id: ShopSkinId
   /** 页眉小字 */
@@ -23,7 +23,6 @@ export interface ShopSkin {
 export const SHOP_SKINS: Record<ShopSkinId, ShopSkin> = {
   bntg: { id: 'bntg', kicker: 'B.N.T.G. · 商户柜台', title: 'B.N.T.G. 商户柜台', emblem: 'BNTG', buyTab: '货架', sellTab: '回收', buyVerb: '结账', sellVerb: '回收入账', barterVerb: '换取', priceMark: '¤', motto: '繁荣缔造和平 · 每一笔交付，都有回执', refuse: '「信用受限。本柜台暂停为你办理业务。」', emptySell: '你身上没有本柜台回收的货品。' },
   meg: { id: 'meg', kicker: 'M.E.G. 军需处 · 物资领用单', title: '军需领用处', emblem: 'M.E.G.', buyTab: '领用', sellTab: '上缴', buyVerb: '核发', sellVerb: '上缴入库', barterVerb: '核发', priceMark: '', motto: '表格一式三份 · 盖章生效', refuse: '「你的领用资格已被冻结。去找主管说明情况。」', emptySell: '没有可以上缴入库的物资。' },
-  capital: { id: 'capital', kicker: '首都共同体 · 天鹰币通用', title: '首都百货', emblem: '✶', buyTab: '橱窗', sellTab: '寄卖', buyVerb: '买下', sellVerb: '寄卖成交', barterVerb: '换取', priceMark: '', motto: '城市不眠 · 橱窗常亮', refuse: '「抱歉，本店不接待您。」', emptySell: '没有可以寄卖的东西。' },
   ariane: { id: 'ariane', kicker: '阿丽亚娜集团 · 医疗物资处', title: '处方药房', emblem: '✚', buyTab: '处方', sellTab: '捐赠回收', buyVerb: '取药', sellVerb: '回收', barterVerb: '凭处方取药', priceMark: '', motto: '以物易物 · 只收实物', refuse: '「诊室今日不对你开放。」', emptySell: '没有药房能回收的物品。' },
   tom: { id: 'tom', kicker: "Tom's Diner · 今日供应", title: '今日菜单', emblem: 'TOM', buyTab: '菜单', sellTab: '收食材', buyVerb: '点单', sellVerb: '卖给后厨', barterVerb: '换一份', priceMark: '', motto: '拿食材来，热菜马上出锅', refuse: '「厨房打烊了——至少对你是。」', emptySell: '后厨暂时不需要你身上的东西。' },
   homely: { id: 'homely', kicker: 'The Homely Hotel · 客房服务', title: '客房服务菜单', emblem: 'H', buyTab: '客房服务', sellTab: '礼宾回收', buyVerb: '送到房间', sellVerb: '交给礼宾', barterVerb: '兑换', priceMark: '', motto: '宾至如归 · 请勿打扰', refuse: '「很抱歉，前台无法为您服务。」', emptySell: '礼宾处不收你身上的东西。' },

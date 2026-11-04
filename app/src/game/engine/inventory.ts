@@ -1,4 +1,8 @@
 import { creepBandage, creepEat } from './creeperAI' // [creeper]
+import { spokesPosterRead } from './spokesAI' // [spokes]
+import { chefUseItem } from './chefAI' // [chef]
+import { hotelUseFateDie } from './l5Hotel' // [l5items]
+import { jazzUseItem } from './jazzAI' // [jazz]
 import { isGun } from '../content/firearms'
 import {acidDrink,bursterWash} from './bursterAI'
 import { vendingAte, vendingRefuseFood } from './vendingAI'
@@ -137,6 +141,9 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
   if (!s) return
   const def = ITEMS[s.type]
   if (curabiturUseItem(eng, where, i)) return
+  if (jazzUseItem(eng, s.type)) return // [jazz] 哈瓦那辣椒酱：暖身提神、压住厨师食物的「再来一份」
+  if (s.type === 'fatedie' && hotelUseFateDie(eng)) return // [l5items] 命运之骰：X 投出
+  if (chefUseItem(eng, s.type)) return // [chef] 档案员的相机（闪光 = 惊动他）/ 遗物（表单 / 胸麦 / 照片：读了 = 食物真相）
   if (bursterWash(eng, s.type)) return // 爆酸者：被酸糊眼时，喝水类物品改为洗眼
   // v57t：来源不明的书——翻开记录「七层之物」的旧书页（不消耗，读过的内容已存进图鉴文档）
   if (s.type === 'oddbook') {
@@ -320,7 +327,8 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
       else eng.msg('你仔细地做了一遍预防性消毒。目前没有感染疫疾。', 'loot')
       break
     }
-    case 'sanity': p.sanity = Math.min(100, p.sanity + (def.value ?? 30)); applyThirst(def.value3); if (s.type === 'jerryflyer' || s.type === 'fakelog') jerryLureRead(eng, s.type); // 重制杰瑞：信众诱导材料——读完在地图上标出「据点」
+    case 'sanity': p.sanity = Math.min(100, p.sanity + (def.value ?? 30)); applyThirst(def.value3); if (s.type === 'jerryflyer' || s.type === 'fakelog') jerryLureRead(eng, s.type); if (s.type === 'spokesposter') spokesPosterRead(eng); // [spokes] 迎宾海报：指向 L5，之后大堂门会自己找到你
+    // 重制杰瑞：信众诱导材料——读完在地图上标出「据点」
     if (s.type === 'almond' && p.infection < 100) eng.infectionRecoverT = 60; if (s.type === 'almond') dullerAlmondScent(eng); break // v54：杏仁水/市政自来水解渴，腰果水加剧口渴；v55：杏仁水（未满一阶）给 60s「恢复」buff
     case 'sanityeat': { // v54：幸运豆奶——理智 +value、饥饿 +value2、口渴 +value3
       p.sanity = Math.min(100, p.sanity + (def.value ?? 40))
@@ -463,7 +471,7 @@ export function dropSlot(eng: Engine, where: SlotWhere, i: number) {
     eng.msg(n > 1 ? `放下了 ${n} 只活旱虾，它们慢慢爬开了。（诱饵 ${SHRIMP_BAIT_TIME} 秒）` : `放下了活旱虾，它慢慢爬开了。（诱饵 ${SHRIMP_BAIT_TIME} 秒）`, 'system')
     return
   }
-  eng.map.items.push({ id: Math.random(), type: s.type, count: s.count, x: p.x + 0.3, y: p.y + 0.3, ...(s.dur !== undefined ? { dur: s.dur } : {}), ...(s.blood ? { blood: s.blood } : {}), ...(s.mag ? { mag: [...s.mag] } : {}), ...(s.ammoSel ? { ammoSel: s.ammoSel } : {}), ...(s.stage ? { stage: s.stage } : {}), ...(s.cyl ? { cyl: s.cyl } : {}) })
+  eng.map.items.push({ id: Math.random(), type: s.type, count: s.count, x: p.x + 0.3, y: p.y + 0.3, ...(s.dur !== undefined ? { dur: s.dur } : {}), ...(s.blood ? { blood: s.blood } : {}), ...(s.mag ? { mag: [...s.mag] } : {}), ...(s.ammoSel ? { ammoSel: s.ammoSel } : {}), ...(s.stage ? { stage: s.stage } : {}), ...(s.cyl ? { cyl: s.cyl } : {}), dropped: eng.time })
   eng.slotSet(r, null)
   eng.syncPassives()
   eng.msg(s.count > 1 ? `丢下了 ${itemName(s.type)} ×${s.count}` : `丢下了 ${slotName(s)}`, 'system')

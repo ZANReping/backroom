@@ -1,0 +1,39 @@
+[
+  {
+    "label": "foyer-survival-bundle",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "E:\\ZAN\\backroom\\app\\node_modules\\esbuild\\bin\\esbuild",
+      "scripts/check-foyer-survival.ts",
+      "--bundle",
+      "--platform=node",
+      "--format=esm",
+      "--outfile=.cache/check-foyer-survival.mjs"
+    ],
+    "exit": 0,
+    "ms": 239,
+    "tail": "\n  .cache\\check-foyer-survival.mjs  5.3mb\n\nDone in 115ms\n"
+  },
+  {
+    "label": "foyer-survival",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      ".cache/check-foyer-survival.mjs"
+    ],
+    "exit": 0,
+    "ms": 620,
+    "tail": "{\"ok\":true,\"checks\":13}\n"
+  },
+  {
+    "label": "final-build",
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js",
+      "run",
+      "build"
+    ],
+    "exit": 0,
+    "ms": 45663,
+    "tail": " 23.13 kB\ndist/assets/index-CclwhQcu.css                  149.07 kB │ gzip:    27.55 kB\ndist/assets/entityPortrait-BcZH2Xy7.js            6.43 kB │ gzip:     2.92 kB\ndist/assets/index-CjxaGAu7.js                   233.55 kB │ gzip:    75.23 kB\ndist/assets/retroAvatar-BYK0XY8m.js             479.58 kB │ gzip:   144.46 kB\ndist/assets/App-Dmc9RHLS.js                   6,314.99 kB │ gzip: 2,250.96 kB\n\n(!) Some chunks are larger than 500 kB after minification. Consider:\n- Using dynamic import() to code-split the application\n- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks\n- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.\n✓ built in 28.00s\n"
+  }
+]

@@ -39,6 +39,27 @@ interface RockLayer {
   dead: boolean
 }
 
+// [jazz] 爵士脑现场：声部总线与 5 首原创曲的合成数据（MIDI 音高；chords[i] = [根音, 和弦音…]，head = 主题（八分音符步，0 = 休止））
+type JazzPartK = 'leader' | 'sax' | 'bass' | 'drum' | 'piano'
+interface JazzBus { bus: GainNode; part: Record<JazzPartK, { g: GainNode; p: StereoPannerNode }>; next: number; step: number; key: string; mel: number; live: boolean; sax: number }
+interface JazzSongSyn { bpm: number; beats: number; swing: number; latin?: boolean; chords: number[][]; scale: number[]; head: number[] }
+export const JAZZ_SONGS_SYN: JazzSongSyn[] = [
+  // 0 黄铜走廊：F 大调 ii–V–I–VI 中速摇摆
+  { bpm: 132, beats: 4, swing: 0.64, chords: [[43, 58, 62, 65], [36, 52, 55, 58], [41, 57, 60, 64], [38, 54, 57, 60]], scale: [65, 67, 69, 70, 72, 74, 76],
+    head: [77, 0, 74, 72, 74, 0, 70, 0, 72, 0, 69, 67, 69, 0, 0, 0, 74, 0, 72, 69, 72, 0, 77, 0, 76, 0, 0, 74, 72, 0, 0, 0] },
+  // 1 十三楼的月光：降 E 大调慢板抒情
+  { bpm: 72, beats: 4, swing: 0.58, chords: [[39, 55, 58, 62], [36, 51, 55, 58], [41, 56, 60, 63], [34, 50, 53, 56]], scale: [63, 65, 67, 68, 70, 72, 74],
+    head: [70, 0, 0, 72, 70, 0, 67, 0, 68, 0, 0, 0, 0, 0, 65, 67, 68, 0, 0, 70, 72, 0, 74, 0, 70, 0, 0, 0, 0, 0, 0, 0] },
+  // 2 哈瓦那辣椒：D 小调拉丁（直八分、montuno、tumbao）
+  { bpm: 112, beats: 4, swing: 0.5, latin: true, chords: [[38, 53, 57, 60], [43, 59, 62, 65], [38, 53, 57, 60], [45, 61, 64, 67]], scale: [62, 64, 65, 67, 69, 70, 72],
+    head: [74, 0, 72, 74, 0, 69, 0, 0, 70, 69, 67, 0, 69, 0, 0, 0, 74, 0, 72, 74, 0, 77, 0, 76, 73, 0, 0, 0, 0, 0, 0, 0] },
+  // 3 无声换班：A 小调华尔兹（3/4）
+  { bpm: 96, beats: 3, swing: 0.6, chords: [[45, 57, 60, 64], [38, 57, 62, 65], [40, 56, 59, 62], [45, 57, 60, 64]], scale: [69, 71, 72, 74, 76, 77, 80],
+    head: [76, 0, 0, 77, 76, 0, 74, 0, 72, 0, 0, 0, 71, 0, 72, 74, 76, 0, 80, 0, 0, 0, 0, 0] },
+  // 4 欠老四的钱：降 B 快板比波普（rhythm changes 前四小节）
+  { bpm: 176, beats: 4, swing: 0.6, chords: [[46, 58, 62, 65, 67], [43, 59, 62, 65], [36, 58, 63, 67], [41, 57, 63, 65]], scale: [70, 72, 74, 75, 77, 79, 81],
+    head: [77, 79, 77, 74, 70, 0, 72, 74, 75, 74, 72, 70, 67, 0, 0, 69, 70, 74, 77, 0, 79, 77, 75, 72, 74, 0, 0, 0, 0, 0, 70, 0] },
+]
 export class GameAudio {
   private ctx: AudioContext | null = null
   private master: GainNode | null = null
@@ -56,7 +77,18 @@ export class GameAudio {
   private whisperTimer = 0
   private heartTimer: ReturnType<typeof setInterval> | null = null
   private bgmBus: GainNode | null = null
+  private hotelLocalBus: GainNode | null = null
+  private bgmRequest = 0
   private bgmFilter: BiquadFilterNode | null = null
+  private hotelGain: GainNode | null = null // L5 恐怖旅馆：换班停唱 / 跳针（bgmBus 与 bgmFilter 之间）
+  private hotelMode: 'play' | 'warn' | 'shift' = 'play'
+  private hotelTune = 0 // L5 程序化曲库 0..4（摇摆/慢狐步/查尔斯顿/华尔兹/布鲁斯）
+  private hotelWobble = 0 // 关注度走音量 0..1
+  private hotelSkipT = 0
+  private hotelWant = 1
+  private hotelFocus: 'room' | 'jazz' | 'phono' = 'room'
+  private jazzDuck = 0 // [jazz] 乐队现场盖过唱机（0..0.85）
+  private jz: JazzBus | null = null // [jazz] 爵士脑现场：声部总线 + 调度
   private bgmLayer: BgmLayer | null = null
   private bgmTimer: ReturnType<typeof setInterval> | null = null
   private melIdx = 2 // 据点曲旋律随机漫步位置（五声音阶音级 0..4）
@@ -135,7 +167,11 @@ export class GameAudio {
       this.bgmFilter.frequency.value = 16000
       this.bgmBus = this.ctx.createGain()
       this.bgmBus.gain.value = 0.55 * this.bgmVol
-      this.bgmBus.connect(this.bgmFilter).connect(this.master)
+      this.hotelGain = this.ctx.createGain()
+      this.bgmBus.connect(this.hotelGain).connect(this.bgmFilter).connect(this.master)
+      this.hotelLocalBus = this.ctx.createGain()
+      this.hotelLocalBus.gain.value = .55 * this.bgmVol
+      this.hotelLocalBus.connect(this.bgmFilter)
     } catch {
       /* 无音频环境 */
     }
@@ -163,7 +199,11 @@ export class GameAudio {
   // v54：分项音量（v=0..1；总线基础增益 × 系数——100 = 既有默认响度）
   setAmbVolume(v: number) { this.ambVol = v; if (this.ambient) this.ambient.gain.value = 0.5 * v }
   setSfxVolume(v: number) { this.sfxVol = v; if (this.sfx) this.sfx.gain.value = 0.9 * v }
-  setBgmVolume(v: number) { this.bgmVol = v; if (this.bgmBus) this.bgmBus.gain.value = 0.55 * v }
+  setBgmVolume(v: number) {
+    this.bgmVol = v
+    if (this.bgmBus) this.bgmBus.gain.value = .55 * v
+    if (this.hotelLocalBus) this.hotelLocalBus.gain.value = .55 * v
+  }
 
   // v56：BGM 曲风切换（procedural=随机程序化 / midi=音符序列）——切换即重开当前层级 BGM
   setBgmStyle(style: 'procedural' | 'midi') {
@@ -178,6 +218,7 @@ export class GameAudio {
     if (!this.ctx || !this.ambient) return
     this.stopHum()
     if(this.bgmBus)this.bgmBus.gain.value=.55*this.bgmVol
+    if(this.hotelLocalBus)this.hotelLocalBus.gain.value=.55*this.bgmVol
     this.humBus=this.ctx.createGain();this.humBus.connect(this.ambient)
     const base = levelId >= 100 ? 56 : 50 + levelId * 6 // v36：据点 id≥100——别让 id 直接乘出刺耳高频哼声
     for (const [mult, gain] of [[1, 0.035], [2, 0.018], [3, 0.008]] as const) {
@@ -369,82 +410,108 @@ export class GameAudio {
     this.elecHumGain.gain.setTargetAtTime(Math.min(1, vol) * 0.13, this.ctx.currentTime, 0.1)
   }
 
-  // v55：留声机诡异古典乐（L5 休息室——八音盒音色小调圆舞曲，略失谐 = 老旧唱机走调；
-  // 惯例同 setElecHum：无定位音频系统，引擎按最近播放中留声机距离逐帧 setPhono(vol)；
-  // 近场淡入留声机并压低 BGM（闪避），远场/离层恢复——节点链懒创建后常驻，只调增益与调度）
+  // One foreground music source at a time, with hysteresis at room boundaries.
   private phonoGain: GainNode | null = null
+  private phonoNoise: AudioBufferSourceNode | null = null
   private phonoTimer: ReturnType<typeof setInterval> | null = null
   private phonoNext = 0
   private phonoStep = 0
-  // v56 六轮：MIDI 曲风下留声机播放渲染版圆舞曲（phono.mp3 循环，距离衰减）
   private phonoBuf: { src: AudioBufferSourceNode; gain: GainNode } | null = null
+  private phonoStrength = 0
+  private phonoLoading = false
+  private phonoDecodeFailed = false
+  phonoO18 = false
+
+  private chooseHotelMusic() {
+    const a = this.jazzDuck, b = this.phonoStrength
+    if (this.hotelFocus === 'jazz' && a > .08 && b < a + .12) return
+    if (this.hotelFocus === 'phono' && b > .08 && a < b + .12) return
+    this.hotelFocus = Math.max(a, b) < .13 ? 'room' : a >= b ? 'jazz' : 'phono'
+  }
+
   setPhono(vol: number) {
-    if (!this.ctx || !this.bgmBus) return
-    if (this.midiEnabled) {
-      this.setPhonoBuf(vol)
+    if (this.bgmLevel !== 5) return
+    this.phonoStrength = Math.min(1, Math.max(0, vol))
+    this.chooseHotelMusic()
+    this.updatePhono()
+  }
+
+  private updatePhono() {
+    const ctx = this.ctx, bus = this.hotelLocalBus
+    if (!ctx || !bus) return
+    const vol = this.hotelFocus === 'phono' ? this.phonoStrength : 0
+    const useBuffer = this.midiEnabled && !this.phonoO18 && !this.phonoDecodeFailed
+    if (!vol || !useBuffer) this.stopPhonoBuffer()
+    if (!vol || useBuffer) this.stopPhonoSynth()
+    if (!vol) return
+    if (useBuffer) {
+      if (this.phonoBuf) this.phonoBuf.gain.gain.setTargetAtTime(vol * .42, ctx.currentTime, .12)
+      else if (!this.phonoLoading) {
+        this.phonoLoading = true
+        void this.loadSongBuf('phono').then(buf => {
+          if (this.ctx !== ctx || this.bgmLevel !== 5 || this.hotelFocus !== 'phono' ||
+              !this.midiEnabled || this.phonoO18 || this.phonoBuf) return
+          const src = ctx.createBufferSource(), gain = ctx.createGain()
+          src.buffer = buf; src.loop = true
+          gain.gain.setValueAtTime(0, ctx.currentTime)
+          gain.gain.setTargetAtTime(this.phonoStrength * .42, ctx.currentTime, .12)
+          src.connect(gain).connect(bus)
+          src.onended = () => { src.disconnect(); gain.disconnect() }
+          this.phonoBuf = { src, gain }
+          src.start()
+          this.onSongPlayed?.('phono')
+        }).catch(() => { this.phonoDecodeFailed = true }).finally(() => { this.phonoLoading = false })
+      }
       return
     }
     if (!this.phonoGain) {
-      const g = this.ctx.createGain()
-      g.gain.value = 0
-      g.connect(this.bgmBus)
-      // 老旧唱片底噪（带通噪声细沙声，常驻）
-      const n = this.noiseSrc()
-      const bp = this.ctx.createBiquadFilter()
-      bp.type = 'bandpass'; bp.frequency.value = 4200; bp.Q.value = 0.8
-      const gn = this.ctx.createGain(); gn.gain.value = 0.05
-      n.connect(bp).connect(gn).connect(g); n.start()
-      this.phonoGain = g
-      this.phonoNext = this.ctx.currentTime + 0.1
-      if (!this.phonoTimer) this.phonoTimer = setInterval(() => this.schedulePhono(), 110)
+      const gain = ctx.createGain(); gain.gain.value = 0; gain.connect(bus)
+      const noise = this.noiseSrc(), filter = ctx.createBiquadFilter(), dust = ctx.createGain()
+      filter.type = 'bandpass'; filter.frequency.value = 4200; filter.Q.value = .8
+      dust.gain.value = .05
+      noise.connect(filter).connect(dust).connect(gain); noise.start()
+      this.phonoGain = gain; this.phonoNoise = noise
+      this.phonoNext = ctx.currentTime + .1
+      this.phonoTimer = setInterval(() => this.schedulePhono(), 110)
     }
-    this.phonoGain.gain.setTargetAtTime(Math.min(1, vol) * 0.42, this.ctx.currentTime, 0.12)
-    this.duckBgm(vol)
+    this.phonoGain.gain.setTargetAtTime(vol * .42, ctx.currentTime, .12)
   }
 
-  /** v56 六轮：渲染版留声机圆舞曲（MIDI 曲风）——近场开始播放即记收听（存入电台） */
-  private setPhonoBuf(vol: number) {
-    if (!this.ctx || !this.bgmBus) return
-    if (vol > 0.02 && !this.phonoBuf) {
-      void this.loadSongBuf('phono').then((buf) => {
-        if (!this.ctx || !this.bgmBus) return
-        const src = this.ctx.createBufferSource()
-        src.buffer = buf
-        src.loop = true
-        const g = this.ctx.createGain()
-        g.gain.setValueAtTime(0, this.ctx.currentTime)
-        g.gain.setTargetAtTime(0.42, this.ctx.currentTime, 0.5)
-        src.connect(g)
-        g.connect(this.bgmBus)
-        src.start()
-        this.phonoBuf = { src, gain: g }
-        this.onSongPlayed?.('phono') // v56 六轮：收听留声机 MIDI 版 → 电台解锁
-      })
-      return
-    }
-    if (this.phonoBuf) {
-      if (vol <= 0.02) {
-        const pb = this.phonoBuf
-        this.phonoBuf = null
-        pb.gain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.4)
-        try { pb.src.stop(this.ctx.currentTime + 1.6) } catch { /* */ }
-      } else {
-        this.phonoBuf.gain.gain.setTargetAtTime(Math.min(1, vol) * 0.42, this.ctx.currentTime, 0.12)
-      }
-    }
-    this.duckBgm(vol)
+  private stopPhonoSynth() {
+    if (!this.phonoGain || !this.ctx) return
+    if (this.phonoTimer) clearInterval(this.phonoTimer)
+    this.phonoTimer = null
+    const gain = this.phonoGain, noise = this.phonoNoise, t = this.ctx.currentTime
+    this.phonoGain = this.phonoNoise = null
+    gain.gain.setTargetAtTime(0, t, .045)
+    if (noise) {
+      noise.onended = () => { noise.disconnect(); gain.disconnect() }
+      noise.stop(t + .22)
+    } else gain.disconnect()
   }
 
-  // v56 六轮：留声机近场闪避 BGM（vol=0 即恢复；两种留声机共用）
-  private duckBgm(vol: number) {
-    if (!this.ctx) return
-    const ctk = this.ctx.currentTime
-    const duck = (g: GainNode | null) => { if (g) g.gain.setTargetAtTime(0.9 * (1 - Math.min(1, vol) * 0.75), ctk, 0.3) }
-    if (this.bgmLayer && !this.bgmLayer.dead) duck(this.bgmLayer.gain)
-    if (this.midiLayer && !this.midiLayer.dead) duck(this.midiLayer.gain)
-    if (this.bufLayer && !this.bufLayer.dead) duck(this.bufLayer.gain)
+  private stopPhonoBuffer() {
+    if (!this.phonoBuf || !this.ctx) return
+    const { src, gain } = this.phonoBuf, t = this.ctx.currentTime
+    this.phonoBuf = null
+    gain.gain.setTargetAtTime(0, t, .045)
+    src.stop(t + .22)
   }
-  // 小调圆舞曲旋律（A 小调 3/4；每步一个八分音符，lookahead 调度；失谐量按步微漂=走调唱机）
+
+  stopHotelAudio() {
+    this.phonoStrength = this.jazzDuck = 0
+    this.hotelFocus = 'room'
+    this.phonoO18 = false; this.phonoStep = 0
+    this.stopPhonoSynth(); this.stopPhonoBuffer()
+    if (this.jz && this.ctx) {
+      const { bus } = this.jz
+      bus.gain.setTargetAtTime(0, this.ctx.currentTime, .045)
+      this.jz = null
+      setTimeout(() => bus.disconnect(), 260)
+    }
+    this.hotelMusic('play', -1, 0)
+  }
+
   private schedulePhono() {
     const ctx = this.ctx
     if (!ctx || !this.phonoGain) return
@@ -453,7 +520,8 @@ export class GameAudio {
     const MEL = [440, 523.25, 493.88, 440, 415.3, 440, 659.25, 523.25, 493.88, 466.16, 440, 392] // A4 C5 B4 A4 G#4 A4 E5 C5 B4 A#4(!) A4 G4
     while (this.phonoNext < ctx.currentTime + 0.35) {
       const i = this.phonoStep % 12, bar = Math.floor(this.phonoStep / 12) % 6
-      const detune = (Math.sin(this.phonoStep * 0.7) * 14) + 9 // 持续偏快 ~9 音分 + 摆动（老旧唱机）
+      const cyc = Math.floor(this.phonoStep / 72) // [l5items] O18：每轮变奏——转调 + 失谐越漂越远（"陌生又熟悉"）
+      const detune = (Math.sin(this.phonoStep * 0.7) * 14) + 9 + (this.phonoO18 ? [0, 300, -200, 500, 100, -500][cyc % 6] + Math.sin(this.phonoStep * 0.13) * 40 : 0)
       const t = this.phonoNext
       const note = (f: number, d: number, g: number, type: OscillatorType) => {
         const o = ctx.createOscillator()
@@ -1288,6 +1356,389 @@ export class GameAudio {
     o.connect(d).connect(this.sfx);o.start();o.stop(t+.75)
   }
 
+  // ---- L5 恐怖旅馆（l5Hotel.updateHotel 每帧调用）----
+  /** 唱机状态：play 正常 / warn 跳针（周期性掉音 + 刮擦）/ shift 停唱（BGM 总线淡出）。tune=-1 保持原曲 */
+  hotelMusic(mode: 'play' | 'warn' | 'shift', tune: number, wobble: number) {
+    if (tune >= 0) this.hotelTune = tune
+    this.hotelWobble = wobble
+    if (!this.ctx || !this.hotelGain) { this.hotelMode = mode; return }
+    const c = this.ctx, g = this.hotelGain.gain
+    const want = mode === 'shift' || this.hotelFocus !== 'room' ? 0 : 1
+    if (mode !== this.hotelMode || Math.abs(want - this.hotelWant) > 0.04) {
+      this.hotelMode = mode; this.hotelWant = want
+      g.cancelScheduledValues(c.currentTime)
+      g.setTargetAtTime(want, c.currentTime, mode === 'shift' ? .3 : .14)
+    }
+    if (mode === 'warn' && this.hotelFocus === 'room' && c.currentTime > this.hotelSkipT) {
+      // 跳针：瞬间掉音 0.12 s 再回来，伴随一声针擦
+      const t = c.currentTime
+      g.cancelScheduledValues(t); g.setValueAtTime(this.hotelWant, t); g.linearRampToValueAtTime(0.08 * this.hotelWant, t + 0.02); g.setValueAtTime(0.08 * this.hotelWant, t + 0.12); g.linearRampToValueAtTime(this.hotelWant, t + 0.16)
+      this.hotelScratch(0.18)
+      this.hotelSkipT = t + 2.2 + Math.random() * 3.5
+    }
+  }
+  // ---- [jazz] 爵士脑现场（jazzAI.stepAudio 每帧调用；null = 收声）----
+  // 5 首原创曲（程序合成，沿用 hotelTune 的和弦进行 + 随机即兴写法），按乐器拆成 5 个声部：小号 / 萨克斯 / 低音 / 鼓 / 钢琴，
+  // 每个声部一条 增益 → 声像 → 现场总线（→ BGM 低通 → 总输出；吃「音乐音量」）。增益 / 声像由 AI 按乐手位置给（离舞台越远越小、方位）。
+  //   演出：鼓（叮叮镲 + 2、4 拍踩镲 + 轻底鼓 + 刷子）、低音行走、钢琴切分和弦、主题由小号吹（萨克斯和三度）；独奏那首换成头儿 / 萨克斯即兴。
+  //   调音：各自零散的长音 / 空弦；终曲（假吸魂）：小调长和弦颤音 + 低音持续 + 滚奏渐强 + 「吸气」噪声；谢幕：最后一个和弦。
+  //   场间：只有钢琴（鼓手在弹）——慢板分解和弦 + 右手零散旋律。告发之后（real）：全体走音、更暗。
+  jazzBand(v: import('../engine/jazzAI').JazzAudioView | null) {
+    if (this.bgmLevel !== 5) return
+    this.jazzDuck = v && v.mode !== 'walkOn' ? v.duck : 0
+    this.chooseHotelMusic()
+    this.updatePhono()
+    if (!v || this.hotelFocus !== 'jazz') {
+      if (this.jz?.live && this.ctx) {
+        this.jz.bus.gain.setTargetAtTime(0, this.ctx.currentTime, .045)
+        this.jz.live = false
+      }
+      return
+    }
+    this.ensure()
+    const c = this.ctx
+    if (!c || !this.hotelLocalBus) return
+    if (!this.jz) {
+      const bus = c.createGain(); bus.gain.value = 0; bus.connect(this.hotelLocalBus)
+      const part = {} as JazzBus['part']
+      for (const k of ['leader', 'sax', 'bass', 'drum', 'piano'] as const) { const g = c.createGain(); g.gain.value = 0; const p = c.createStereoPanner(); g.connect(p).connect(bus); part[k] = { g, p } }
+      this.jz = { bus, part, next: c.currentTime + 0.05, step: 0, key: '', mel: 0, live: false, sax: 0 }
+    }
+    const J = this.jz, t = c.currentTime
+    if (!J.live) {
+      J.live = true; J.next = t + 0.05
+      J.bus.gain.setTargetAtTime(.68, t, .13)
+    }
+    for (const k of ['leader', 'sax', 'bass', 'drum', 'piano'] as const) { J.part[k].g.gain.setTargetAtTime(v.parts[k].g, t, 0.08); J.part[k].p.pan.setTargetAtTime(v.parts[k].pan, t, 0.08) }
+    const key = `${v.mode}:${v.mode === 'break' ? 'p' : v.song}`
+    if (key !== J.key) { J.key = key; J.step = 0; J.next = Math.max(J.next, t + 0.03) }
+    if (J.next < t - 0.25) J.next = t + 0.05 // 后台挂起回来：别补一大堆音
+    const S = JAZZ_SONGS_SYN[v.mode === 'break' ? 1 : v.song] ?? JAZZ_SONGS_SYN[0]
+    const bpm = v.mode === 'break' ? 76 : v.mode === 'finale' ? 60 : S.bpm
+    const e8 = 60 / bpm / 2
+    while (J.next < t + 0.16) {
+      const st = J.step, on = st % 2 === 0
+      const dur = S.swing > 0.5 && v.mode === 'set' ? e8 * 2 * (on ? S.swing : 1 - S.swing) : e8
+      this.jazzStep(v, S, J.next, st, e8)
+      J.next += dur; J.step++
+    }
+  }
+  private jazzStep(v: import('../engine/jazzAI').JazzAudioView, S: JazzSongSyn, t: number, st: number, e8: number) {
+    const c = this.ctx!, J = this.jz!, P = J.part, rnd = Math.random
+    const det = v.real ? 30 : 0
+    const mf = (m: number) => 440 * Math.pow(2, (m - 69) / 12)
+    const per = S.beats * 2, bar = Math.floor(st / per), pos = st % per, beat = pos / 2
+    const ch = S.chords[bar % S.chords.length]
+    // —— 音色 ——
+    const env = (g: GainNode, a: number, peak: number, d: number, sus: number, rel: number) => { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(Math.max(0.0001, peak * sus), t + a + d); g.gain.setValueAtTime(Math.max(0.0001, peak * sus), t + Math.max(a + d, rel - 0.06)); g.gain.exponentialRampToValueAtTime(0.0001, t + rel) }
+    const horn = (dest: GainNode, m: number, len: number, vol: number, kind: 'tp' | 'sx') => {
+      const f = mf(m), o1 = c.createOscillator(), o2 = c.createOscillator(), lp = c.createBiquadFilter(), g = c.createGain()
+      o1.type = 'sawtooth'; o2.type = kind === 'tp' ? 'sawtooth' : 'square'
+      o1.frequency.value = f; o2.frequency.value = f; o1.detune.value = det + (rnd() - 0.5) * 6; o2.detune.value = det + 7
+      const vib = c.createOscillator(), vg = c.createGain(); vib.frequency.value = kind === 'tp' ? 5.6 : 4.8; vg.gain.value = 0; vg.gain.setValueAtTime(0, t + 0.16); vg.gain.linearRampToValueAtTime(f * 0.006, t + 0.4)
+      vib.connect(vg); vg.connect(o1.frequency); vg.connect(o2.frequency)
+      lp.type = 'lowpass'; lp.Q.value = kind === 'tp' ? 2 : 1.2
+      const hi = kind === 'tp' ? 2800 : 1700
+      lp.frequency.setValueAtTime(hi * 0.35, t); lp.frequency.exponentialRampToValueAtTime(hi, t + 0.05); lp.frequency.exponentialRampToValueAtTime(hi * 0.7, t + len)
+      const og = c.createGain(); og.gain.value = kind === 'tp' ? 0.5 : 0.35
+      o1.connect(lp); o2.connect(og).connect(lp); lp.connect(g).connect(dest)
+      env(g, kind === 'tp' ? 0.025 : 0.04, vol, 0.12, 0.75, len)
+      for (const o of [o1, o2, vib]) { o.start(t); o.stop(t + len + 0.05) }
+      if (kind === 'sx') { const n = this.noiseSrc(), bp = c.createBiquadFilter(), ng = c.createGain(); bp.type = 'bandpass'; bp.frequency.value = 1800; bp.Q.value = 1.5; n.connect(bp).connect(ng).connect(dest); env(ng, 0.03, vol * 0.25, 0.08, 0.3, len * 0.8); n.start(t); n.stop(t + len) }
+    }
+    const pluck = (m: number, len: number, vol: number) => {
+      const o = c.createOscillator(), o2 = c.createOscillator(), lp = c.createBiquadFilter(), g = c.createGain()
+      o.type = 'triangle'; o2.type = 'sine'; o.frequency.value = mf(m); o2.frequency.value = mf(m) * 2; o.detune.value = det; o2.detune.value = det
+      lp.type = 'lowpass'; lp.frequency.value = 720
+      const g2 = c.createGain(); g2.gain.value = 0.25
+      o.connect(lp); o2.connect(g2).connect(lp); lp.connect(g).connect(P.bass.g)
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + len)
+      o.start(t); o2.start(t); o.stop(t + len + 0.02); o2.stop(t + len + 0.02)
+    }
+    const key = (m: number, len: number, vol: number, at = t) => {
+      const o = c.createOscillator(), o2 = c.createOscillator(), g = c.createGain()
+      o.type = 'triangle'; o2.type = 'sine'; o.frequency.value = mf(m); o2.frequency.value = mf(m) * 2; o.detune.value = det + (rnd() - 0.5) * 5; o2.detune.value = det
+      const g2 = c.createGain(); g2.gain.value = 0.22
+      o.connect(g); o2.connect(g2).connect(g); g.connect(P.piano.g)
+      g.gain.setValueAtTime(0.0001, at); g.gain.exponentialRampToValueAtTime(vol, at + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, at + len)
+      o.start(at); o2.start(at); o.stop(at + len + 0.02); o2.stop(at + len + 0.02)
+    }
+    const noise = (len: number, vol: number, type: BiquadFilterType, f: number, q = 1, at = t) => {
+      const n = this.noiseSrc(), fl = c.createBiquadFilter(), g = c.createGain()
+      fl.type = type; fl.frequency.value = f; fl.Q.value = q
+      n.connect(fl).connect(g).connect(P.drum.g)
+      g.gain.setValueAtTime(0.0001, at); g.gain.exponentialRampToValueAtTime(vol, at + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, at + len)
+      n.start(at); n.stop(at + len + 0.02)
+    }
+    const kick = (vol: number) => { const o = c.createOscillator(), g = c.createGain(); o.frequency.setValueAtTime(110, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.14); o.connect(g).connect(P.drum.g); g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22); o.start(t); o.stop(t + 0.25) }
+    const tones = ch.slice(1)
+    const ctone = (lo: number, hi: number) => { const pool: number[] = []; for (const m0 of [...tones, ch[0] + 12]) for (let o = -24; o <= 36; o += 12) { const m = m0 + o; if (m >= lo && m <= hi) pool.push(m) } return pool.length ? pool : [lo] }
+    switch (v.mode) {
+      case 'walkOn': return
+      case 'break': { // 鼓手弹钢琴：慢板分解和弦 + 右手零散旋律
+        const B = JAZZ_SONGS_SYN[1], bb = Math.floor(st / 8), pp = st % 8, cc = B.chords[bb % B.chords.length]
+        if (pp === 0) key(cc[0] - 12, 2.6, 0.06)
+        if (pp % 2 === 0) key(cc[1 + ((pp / 2) % (cc.length - 1))], 1.6, 0.045)
+        if (pp % 2 === 1 && rnd() < 0.45) { J.mel = Math.max(0, Math.min(6, J.mel + (rnd() < 0.5 ? -1 : 1))); key(B.scale[J.mel] + 12, 1.1, 0.04) }
+        return
+      }
+      case 'tune': {
+        if (st % 6 === 0 && rnd() < 0.8) horn(P.leader.g, 69 + (rnd() < 0.3 ? 12 : 0), 1.4, 0.05, 'tp')
+        if (st % 6 === 3 && rnd() < 0.8) horn(P.sax.g, 57 + Math.floor(rnd() * 3) * 2, 1.2, 0.045, 'sx')
+        if (st % 4 === 1) pluck([28, 33, 38, 43][Math.floor(rnd() * 4)], 1.2, 0.12)
+        if (st % 3 === 2 && rnd() < 0.6) noise(0.08, 0.05, 'bandpass', 1900, 1.2)
+        if (st % 8 === 5 && rnd() < 0.5) key(69, 1.4, 0.04)
+        return
+      }
+      case 'finale': { // 假吸魂：小调长和弦颤音 + 低音持续 + 滚奏渐强 + 吸气
+        const FM = [57, 60, 64, 67]
+        if (pos === 0) { horn(P.leader.g, FM[2] + 12, e8 * per * 0.98, 0.045, 'tp'); horn(P.sax.g, FM[1] + 12, e8 * per * 0.98, 0.04, 'sx'); pluck(33, e8 * per, 0.14); for (const m of FM) key(m, e8 * per, 0.035) }
+        noise(0.09, 0.012 + 0.02 * (pos / per), 'bandpass', 1600, 0.8)
+        if (pos === per - 2) { const n = this.noiseSrc(), fl = c.createBiquadFilter(), g = c.createGain(); fl.type = 'bandpass'; fl.Q.value = 2; fl.frequency.setValueAtTime(400, t); fl.frequency.exponentialRampToValueAtTime(3200, t + 1.2); n.connect(fl).connect(g).connect(P.leader.g); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.05, t + 0.9); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.3); n.start(t); n.stop(t + 1.35) }
+        return
+      }
+      case 'bow': {
+        if (st === 0) { const C0 = S.chords[0]; horn(P.leader.g, C0[1] + 12, 2.4, 0.05, 'tp'); horn(P.sax.g, C0[2], 2.4, 0.045, 'sx'); pluck(C0[0] - 12, 2.2, 0.16); for (const m of C0) key(m, 2.6, 0.04); noise(1.8, 0.04, 'highpass', 6000, 0.7) }
+        return
+      }
+    }
+    // —— 演奏（set）——
+    // 鼓：叮叮镲（每拍 + 摇摆后半拍）、踩镲 2 / 4 拍、底鼓 1 拍轻、刷子随机切分
+    if (S.latin) {
+      if (on(st)) noise(0.06, 0.035, 'highpass', 7500, 0.7)
+      if (pos === 3 || pos === 7) noise(0.12, 0.05, 'bandpass', 900, 3) // 康加
+      if (pos === 0 || pos === 5) kick(0.12)
+      if (pos === 2 || pos === 6 || (pos === 4 && bar % 2)) noise(0.05, 0.05, 'bandpass', 2600, 4) // 响棒
+    } else {
+      if (on(st) || pos % 4 === 3) noise(0.28, 0.03, 'bandpass', 8200, 0.8)
+      if (pos % 4 === 2 && S.beats === 4) noise(0.05, 0.035, 'highpass', 7000, 0.8)
+      if (pos === 0) kick(0.09)
+      if (!on(st) && rnd() < 0.18) noise(0.1, 0.03, 'bandpass', 1800, 1.1)
+    }
+    // 低音：行走四分音符（拉丁：tumbao 2&、4）
+    if (S.latin) { if (pos === 3) pluck(ch[0] - 12, 0.5, 0.17); if (pos === 6) pluck(ch[0] - 12 + 7, 0.5, 0.15) }
+    else if (on(st)) {
+      const nx = S.chords[(bar + 1) % S.chords.length][0]
+      const m = beat === 0 ? ch[0] : beat === S.beats - 1 ? nx + (rnd() < 0.5 ? 1 : -1) : ch[1 + Math.floor(rnd() * (ch.length - 1))] - 12
+      pluck(m - 12, e8 * 2 * 0.95, 0.16)
+    }
+    // 钢琴：切分和弦（拉丁：montuno）
+    if (S.latin) { if ([0, 2, 3, 5, 7].includes(pos)) for (const m of tones) key(m + 12, 0.28, 0.022) }
+    else if ((pos === 3 || pos === 7 || (pos === 0 && rnd() < 0.3)) && rnd() < 0.8) for (const m of tones) key(m, 0.5, 0.024)
+    // 旋律：主题（小号，萨克斯三度和声）/ 独奏即兴
+    const solo = v.solo
+    if (!solo) {
+      const m = S.head[st % S.head.length]
+      if (m > 0) { const len = e8 * (S.head[(st + 1) % S.head.length] === 0 ? 3.6 : 1.8); horn(P.leader.g, m, len, 0.055, 'tp'); if (bar % 2 === 1 || S.latin) horn(P.sax.g, m - (rnd() < 0.5 ? 3 : 4), len, 0.04, 'sx') }
+    } else {
+      const lo = solo === 'leader' ? 65 : 55, hi = solo === 'leader' ? 84 : 76
+      if (rnd() < (on(st) ? 0.8 : 0.55)) {
+        const pool = rnd() < 0.6 ? ctone(lo, hi) : S.scale.flatMap((m0) => [m0, m0 + 12, m0 + 24]).filter((m) => m >= lo && m <= hi)
+        J.sax = Math.max(0, Math.min(pool.length - 1, (J.sax ?? 0) + Math.floor((rnd() - 0.5) * 4)))
+        const m = pool[Math.min(pool.length - 1, J.sax)]
+        horn(solo === 'leader' ? P.leader.g : P.sax.g, m, e8 * (rnd() < 0.2 ? 3 : 1.5), solo === 'leader' ? 0.055 : 0.05, solo === 'leader' ? 'tp' : 'sx')
+      }
+    }
+    function on(s0: number) { return s0 % 2 === 0 }
+  }
+  /** 唱针刮过唱片 */
+  hotelScratch(vol = 0.5) {
+    if (!this.ctx || !this.sfx) return
+    const c = this.ctx, t = c.currentTime, n = this.noiseSrc(), f = c.createBiquadFilter(), g = c.createGain()
+    f.type = 'bandpass'; f.Q.value = 2.5; f.frequency.setValueAtTime(2600, t); f.frequency.exponentialRampToValueAtTime(700, t + 0.35)
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.09 * vol, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.4)
+    n.connect(f).connect(g).connect(this.sfx); n.start(t); n.stop(t + 0.45)
+  }
+  /** 迎宾铃（换班结束） */
+  hotelChime(vol = 0.6) {
+    if (!this.ctx || !this.sfx) return
+    const c = this.ctx, t = c.currentTime
+    for (const [i, f] of [1568, 2093].entries()) {
+      const o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.value = f
+      g.gain.setValueAtTime(0.0001, t + i * 0.18); g.gain.exponentialRampToValueAtTime(0.05 * vol, t + i * 0.18 + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + i * 0.18 + 1.6)
+      o.connect(g).connect(this.sfx); o.start(t + i * 0.18); o.stop(t + i * 0.18 + 1.7)
+    }
+  }
+  /** 远处行李员的手铃（随机声像） */
+  hotelBell(vol = 0.4) {
+    if (!this.ctx || !this.sfx) return
+    const c = this.ctx, t = c.currentTime, pan = c.createStereoPanner(), lp = c.createBiquadFilter()
+    pan.pan.value = Math.random() * 1.6 - 0.8; lp.type = 'lowpass'; lp.frequency.value = 2400
+    lp.connect(pan).connect(this.sfx)
+    const rings = 2 + Math.floor(Math.random() * 2)
+    for (let k = 0; k < rings; k++) for (const h of [1, 2.76, 5.4]) {
+      const o = c.createOscillator(), g = c.createGain(), t0 = t + k * 0.32
+      o.type = 'sine'; o.frequency.value = 1880 * h
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime((0.03 / h) * vol, t0 + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.9 / h)
+      o.connect(g).connect(lp); o.start(t0); o.stop(t0 + 1)
+    }
+  }
+  /** [bellhop] 行李员的手摇铃：friendly = 清脆两下（高音、短衰减、两次敲击）；annoyed = 沉闷一长声（低音、带拍频的长衰减 + 低通）。
+   *  vol 按距离衰减（调用方算好），pan = −1 左 … 1 右 */
+  bellhopBell(kind: 'friendly' | 'annoyed', vol = 0.6, pan = 0) {
+    if (!this.ctx || !this.sfx || vol <= 0.01) return
+    const c = this.ctx, t = c.currentTime, pn = c.createStereoPanner(), lp = c.createBiquadFilter()
+    pn.pan.value = Math.max(-1, Math.min(1, pan)); lp.type = 'lowpass'; lp.frequency.value = kind === 'friendly' ? 6200 : 1300
+    lp.connect(pn).connect(this.sfx)
+    if (kind === 'friendly') {
+      for (const t0 of [t, t + 0.21]) for (const [h, a, dec] of [[1, 1, 0.55], [2.76, 0.45, 0.3], [5.4, 0.22, 0.16], [8.93, 0.1, 0.09]] as const) {
+        const o = c.createOscillator(), g = c.createGain()
+        o.type = 'sine'; o.frequency.value = 2350 * h
+        g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.05 * a * vol, t0 + 0.003); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dec)
+        o.connect(g).connect(lp); o.start(t0); o.stop(t0 + dec + 0.02)
+      }
+    } else {
+      // 一下重击 + 很长的余音，两个略微失谐的低音互相拍出「嗡——」的起伏
+      for (const [f, a] of [[392, 1], [395.5, 0.8], [1082, 0.25], [2117, 0.08]] as const) {
+        const o = c.createOscillator(), g = c.createGain()
+        o.type = 'sine'; o.frequency.value = f
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.07 * a * vol, t + 0.012); g.gain.exponentialRampToValueAtTime(0.03 * a * vol, t + 0.5); g.gain.exponentialRampToValueAtTime(0.0001, t + 3.2)
+        o.connect(g).connect(lp); o.start(t); o.stop(t + 3.3)
+      }
+      const n = this.noiseSrc(), nf = c.createBiquadFilter(), ng = c.createGain() // 敲击的金属沙声
+      nf.type = 'bandpass'; nf.frequency.value = 900; nf.Q.value = 3
+      ng.gain.setValueAtTime(0.0001, t); ng.gain.exponentialRampToValueAtTime(0.05 * vol, t + 0.005); ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.12)
+      n.connect(nf).connect(ng).connect(lp); n.start(t); n.stop(t + 0.14)
+    }
+  }
+  /** 换班：走廊里的脚步与推车轮（低通、远处） */
+  hotelSteps(vol = 0.5) {
+    if (!this.ctx || !this.sfx) return
+    const c = this.ctx, t = c.currentTime, pan = c.createStereoPanner(), lp = c.createBiquadFilter()
+    pan.pan.value = Math.random() * 1.6 - 0.8; lp.type = 'lowpass'; lp.frequency.value = 900
+    lp.connect(pan).connect(this.sfx)
+    const n0 = 3 + Math.floor(Math.random() * 3)
+    for (let k = 0; k < n0; k++) {
+      const n = this.noiseSrc(), g = c.createGain(), t0 = t + k * (0.48 + Math.random() * 0.06)
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.07 * vol, t0 + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.12)
+      n.connect(g).connect(lp); n.start(t0); n.stop(t0 + 0.14)
+    }
+    if (Math.random() < 0.5) { // 推车轮子的吱嘎
+      const o = c.createOscillator(), g = c.createGain(); o.type = 'sawtooth'; o.frequency.setValueAtTime(420, t); o.frequency.linearRampToValueAtTime(380, t + 1.4)
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.006 * vol, t + 0.3); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.5)
+      o.connect(g).connect(lp); o.start(t); o.stop(t + 1.6)
+    }
+  }
+  /** 墙后的派对：闷住的人声与笑声 */
+  hotelParty(vol = 0.5) {
+    if (!this.ctx || !this.sfx) return
+    const c = this.ctx, t = c.currentTime, pan = c.createStereoPanner(); pan.pan.value = Math.random() < 0.5 ? -0.7 : 0.7
+    pan.connect(this.sfx)
+    const n = this.noiseSrc(), f = c.createBiquadFilter(), g = c.createGain(), lfo = c.createOscillator(), lg = c.createGain()
+    f.type = 'bandpass'; f.frequency.value = 520; f.Q.value = 1.4
+    lfo.frequency.value = 3.1; lg.gain.value = 0.012 * vol; lfo.connect(lg).connect(g.gain)
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.03 * vol, t + 0.8); g.gain.setValueAtTime(0.03 * vol, t + 3); g.gain.exponentialRampToValueAtTime(0.0001, t + 4.5)
+    n.connect(f).connect(g).connect(pan); lfo.start(t); lfo.stop(t + 4.6); n.start(t); n.stop(t + 4.6)
+    for (let k = 0; k < 3; k++) { // 几声被墙闷住的笑
+      const o = c.createOscillator(), og = c.createGain(), t0 = t + 1 + Math.random() * 2.5
+      o.type = 'triangle'; o.frequency.setValueAtTime(330 + Math.random() * 120, t0); o.frequency.exponentialRampToValueAtTime(250, t0 + 0.25)
+      og.gain.setValueAtTime(0.0001, t0); og.gain.exponentialRampToValueAtTime(0.006 * vol, t0 + 0.03); og.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.3)
+      o.connect(og).connect(pan); o.start(t0); o.stop(t0 + 0.32)
+    }
+  }
+  /** 拍肩：布料摩擦 */
+  hotelTap(vol = 0.6) {
+    if (!this.ctx || !this.sfx) return
+    const c = this.ctx, t = c.currentTime
+    for (let k = 0; k < 2; k++) {
+      const n = this.noiseSrc(), f = c.createBiquadFilter(), g = c.createGain(), t0 = t + k * 0.16
+      f.type = 'bandpass'; f.frequency.value = 1500; f.Q.value = 0.9
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.05 * vol, t0 + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.09)
+      n.connect(f).connect(g).connect(this.sfx); n.start(t0); n.stop(t0 + 0.1)
+    }
+  }
+  /** 蒸汽阀嘶声 / 喷射（白噪高通） */
+  hotelSteam(vol = 0.4, dur = 1) {
+    if (!this.ctx || !this.sfx || vol <= 0.01) return
+    const c = this.ctx, t = c.currentTime, n = this.noiseSrc(), f = c.createBiquadFilter(), g = c.createGain()
+    f.type = 'highpass'; f.frequency.value = 2600
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.07 * vol, t + 0.08); g.gain.setValueAtTime(0.07 * vol, t + dur * 0.8); g.gain.exponentialRampToValueAtTime(0.0001, t + dur)
+    n.connect(f).connect(g).connect(this.sfx); n.start(t); n.stop(t + dur + 0.05)
+  }
+  /** 门锁自己弹开的轻响 */
+  hotelClick(vol = 0.5) {
+    if (!this.ctx || !this.sfx || vol <= 0.01) return
+    const c = this.ctx, t = c.currentTime
+    for (const [i, f] of [2400, 1700].entries()) {
+      const o = c.createOscillator(), g = c.createGain(), t0 = t + i * 0.07
+      o.type = 'square'; o.frequency.value = f
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.025 * vol, t0 + 0.002); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.03)
+      o.connect(g).connect(this.sfx); o.start(t0); o.stop(t0 + 0.04)
+    }
+  }
+  /** 活门的合页吱呀 */
+  hotelCreak(vol = 0.5) {
+    if (!this.ctx || !this.sfx || vol <= 0.01) return
+    const c = this.ctx, t = c.currentTime, o = c.createOscillator(), f = c.createBiquadFilter(), g = c.createGain(), lfo = c.createOscillator(), lg = c.createGain()
+    o.type = 'sawtooth'; o.frequency.setValueAtTime(190, t); o.frequency.linearRampToValueAtTime(140 + Math.random() * 60, t + 0.9)
+    lfo.frequency.value = 23; lg.gain.value = 30; lfo.connect(lg).connect(o.frequency)
+    f.type = 'bandpass'; f.frequency.value = 900; f.Q.value = 4
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.03 * vol, t + 0.1); g.gain.exponentialRampToValueAtTime(0.0001, t + 1)
+    o.connect(f).connect(g).connect(this.sfx); lfo.start(t); lfo.stop(t + 1.05); o.start(t); o.stop(t + 1.05)
+  }
+
+  // [concierge] 看门人：前台老式电话铃（两段机械铃）
+  conciergePhone(vol = 0.6) {
+    if (!this.ctx || !this.sfx || vol <= .01) return
+    const c = this.ctx, t = c.currentTime
+    // Two soft mechanical rings made from struck bell partials.
+    for (let k = 0; k < 2; k++) for (let strike = 0; strike < 3; strike++) {
+      const at = t + k * .52 + strike * .076
+      for (const [frequency, level] of [[540, .023], [714, .013], [1080, .003]]) {
+        const osc = c.createOscillator(), env = c.createGain()
+        osc.frequency.value = frequency
+        env.gain.setValueAtTime(.0001, at)
+        env.gain.exponentialRampToValueAtTime(level * vol, at + .012)
+        env.gain.exponentialRampToValueAtTime(.0001, at + .155)
+        osc.connect(env).connect(this.sfx)
+        osc.start(at); osc.stop(at + .16)
+        osc.onended = () => { osc.disconnect(); env.disconnect() }
+      }
+    }
+  }
+  /** [concierge] 送菜升降梯拉绳：麻绳摩擦 + 滑轮吱呀 + 轿厢碰壁（黑屏里一下一下地响） */
+  conciergeRope(vol = 0.7) {
+    if (!this.ctx || !this.sfx || vol <= 0.01) return
+    const c = this.ctx, t = c.currentTime
+    const n = this.noiseSrc(), f = c.createBiquadFilter(), g = c.createGain()
+    f.type = 'bandpass'; f.frequency.value = 650; f.Q.value = 1.2
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.06 * vol, t + 0.12); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.55)
+    n.connect(f).connect(g).connect(this.sfx); n.start(t); n.stop(t + 0.6)
+    const o = c.createOscillator(), og = c.createGain(), of = c.createBiquadFilter()
+    o.type = 'sawtooth'; o.frequency.setValueAtTime(520 + Math.random() * 80, t + 0.05); o.frequency.linearRampToValueAtTime(380, t + 0.45)
+    of.type = 'bandpass'; of.frequency.value = 1300; of.Q.value = 6
+    og.gain.setValueAtTime(0.0001, t + 0.05); og.gain.exponentialRampToValueAtTime(0.012 * vol, t + 0.12); og.gain.exponentialRampToValueAtTime(0.0001, t + 0.5)
+    o.connect(of).connect(og).connect(this.sfx); o.start(t + 0.05); o.stop(t + 0.52)
+    if (Math.random() < 0.35) { // 轿厢碰到井壁
+      const b = c.createOscillator(), bg = c.createGain(); b.type = 'sine'; b.frequency.setValueAtTime(90, t + 0.3); b.frequency.exponentialRampToValueAtTime(45, t + 0.5)
+      bg.gain.setValueAtTime(0.0001, t + 0.3); bg.gain.exponentialRampToValueAtTime(0.08 * vol, t + 0.31); bg.gain.exponentialRampToValueAtTime(0.0001, t + 0.55)
+      b.connect(bg).connect(this.sfx); b.start(t + 0.3); b.stop(t + 0.56)
+    }
+  }
+  /** [concierge] 蹄声（眨眼落地 / 追逐）：硬蹄踏地毯的闷响 + 一点木质咔哒 */
+  conciergeHoof(vol = 0.5) {
+    if (!this.ctx || !this.sfx || vol <= 0.01) return
+    const c = this.ctx, t = c.currentTime
+    for (let k = 0; k < 2; k++) {
+      const t0 = t + k * 0.11, n = this.noiseSrc(), f = c.createBiquadFilter(), g = c.createGain()
+      f.type = 'bandpass'; f.frequency.value = 1900 - k * 500; f.Q.value = 2.5
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.09 * vol, t0 + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.06)
+      n.connect(f).connect(g).connect(this.sfx); n.start(t0); n.stop(t0 + 0.07)
+    }
+  }
+  /** [concierge] 啃金属：门牙刮银器 */
+  conciergeGnaw(vol = 0.4) {
+    if (!this.ctx || !this.sfx || vol <= 0.01) return
+    const c = this.ctx, t = c.currentTime
+    for (let k = 0; k < 3; k++) {
+      const t0 = t + k * 0.09 + Math.random() * 0.03, o = c.createOscillator(), g = c.createGain(), f = c.createBiquadFilter()
+      o.type = 'square'; o.frequency.value = 2600 + Math.random() * 1400
+      f.type = 'highpass'; f.frequency.value = 2000
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.012 * vol, t0 + 0.003); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.05)
+      o.connect(f).connect(g).connect(this.sfx); o.start(t0); o.stop(t0 + 0.06)
+    }
+  }
+
   // 心跳（HP<30）
   setHeartbeat(on: boolean, rate: number) {
     if (on && !this.heartTimer) {
@@ -1328,54 +1779,58 @@ export class GameAudio {
   startBGM(level: number) {
     this.ensure()
     if (!this.ctx || !this.bgmBus) return
+    if (this.bgmLevel !== level && (this.bgmLevel === 5 || level === 5)) {
+      if (this.bgmLevel === 5) this.stopHotelAudio()
+      this.fadeBgmLayers(this.ctx.currentTime, .09)
+    }
     this.bgmLevel = level
+    this.bgmRequest++
     this.killOneshot() // v56：切层/换曲时终止乐手演奏（引擎清除演奏标记）
     // v56：MIDI 曲风——直接加载播放 .mid 文件（与程序化层互斥，切换时先淡出对方）
-    if (this.bgmStyle === 'midi') {
+    if (this.bgmStyle === 'midi' && level !== 119) { // [casino] Level 5.1 只有程序化的嘈杂背景乐
       this.startMidiBGM(level)
       return
     }
     // 程序化曲风：淡出 MIDI 层后走 drone 随机层
     this.fadeMidiLayer(this.ctx.currentTime, 0.8, 3200)
+    if (this.bufLayer) {
+      const old = this.bufLayer
+      this.bufLayer = null; old.dead = true
+      old.gain.gain.setTargetAtTime(0, this.ctx.currentTime, .16)
+      try { old.src.stop(this.ctx.currentTime + .8) } catch { /* already stopped */ }
+    }
     this.startProcedural(level)
   }
 
   stopBGM() {
     const t = this.ctx ? this.ctx.currentTime : 0
     this.bgmLevel = -1
+    this.bgmRequest++
+    this.stopHotelAudio()
+    this.fadeBgmLayers(t, .5)
+    this.stopPreview(false)
+    this.radioPausedSynth = []
+    this.killOneshot()
+  }
+
+  private fadeBgmLayers(t: number, tau: number) {
     if (this.bgmLayer && this.ctx) {
       const old = this.bgmLayer
       old.dead = true
-      old.gain.gain.setTargetAtTime(0, t, 0.5)
-      setTimeout(() => { for (const n of old.drones) { try { (n as OscillatorNode).stop() } catch { /* */ } } }, 2200)
+      old.gain.gain.setTargetAtTime(0, t, tau)
+      setTimeout(() => { for (const n of old.drones) { try { (n as OscillatorNode).stop() } catch { /* */ } } }, tau * 4400)
       this.bgmLayer = null
     }
     // v56：同时停止 MIDI 层
-    this.fadeMidiLayer(t, 0.5, 2200)
+    this.fadeMidiLayer(t, tau, tau * 4400)
     this.midiLayer = null
     // v56 八轮：停掉渲染音频 BGM 层与乐手演奏/电台试听（退回标题不再有残留音乐）
     if (this.bufLayer) {
       const bl = this.bufLayer
       bl.dead = true
-      bl.gain.gain.setTargetAtTime(0, t, 0.5)
-      try { bl.src.stop(t + 2.0) } catch { /* */ }
+      bl.gain.gain.setTargetAtTime(0, t, tau)
+      try { bl.src.stop(t + tau * 4) } catch { /* */ }
       this.bufLayer = null
-    }
-    this.stopPreview(false)
-    this.radioPausedSynth = []
-    if (this.oneshotBuf) {
-      const ob = this.oneshotBuf
-      ob.dead = true
-      ob.gain.gain.setTargetAtTime(0, t, 0.4)
-      try { ob.src.stop(t + 1.2) } catch { /* */ }
-      this.oneshotBuf = null
-    }
-    if (this.oneshot) {
-      const o = this.oneshot
-      o.dead = true
-      o.gain.gain.setTargetAtTime(0, t, 0.4)
-      setTimeout(() => { o.gain.disconnect() }, 1200)
-      this.oneshot = null
     }
   }
 
@@ -1409,8 +1864,9 @@ export class GameAudio {
   private startBufferBGM(songId: string, level: number) {
     if (!this.ctx || !this.bgmBus) return
     if (this.bufLayer && this.bufLayer.songId === songId && !this.bufLayer.dead) return
+    const request = this.bgmRequest
     void this.loadSongBuf(songId).then((buf) => {
-      if (!this.ctx || !this.bgmBus || this.bgmStyle !== 'midi') return
+      if (!this.ctx || !this.bgmBus || this.bgmStyle !== 'midi' || this.bgmRequest !== request) return
       if (this.bufLayer && this.bufLayer.songId === songId && !this.bufLayer.dead) return
       const t = this.ctx.currentTime
       // 淡出其他层（程序化 / MIDI 合成 / 旧音频层）
@@ -1441,7 +1897,7 @@ export class GameAudio {
       this.onSongPlayed?.(songId)
     }).catch((e) => {
       console.warn(`[audio] 加载渲染音频失败: ${songId}，回退 WebAudio 合成`, e)
-      if (this.bgmStyle === 'midi') this.startMidiSynth(songId, level)
+      if (this.bgmStyle === 'midi' && this.bgmRequest === request) this.startMidiSynth(songId, level)
     })
   }
 
@@ -1449,13 +1905,13 @@ export class GameAudio {
   private startMidiSynth(songId: string, level: number) {
     if (!this.ctx || !this.bgmBus) return
     if (this.midiLayer && this.midiLayer.level === level && !this.midiLayer.dead && this.midiSongId === songId) return
-    const url = musicUrl(songId)
+    const url = musicUrl(songId), request = this.bgmRequest
     void loadMidi(url).then((song) => {
-      if (this.bgmStyle !== 'midi' || this.bgmLevel !== level) return // 曲风/层级已切换，丢弃
+      if (this.bgmStyle !== 'midi' || this.bgmRequest !== request) return // 曲风/层级已切换，丢弃
       this.playMidiLayer(song, level, songId)
     }).catch(() => {
       // .mid 加载失败回退程序化 BGM（保持可玩）
-      if (this.bgmStyle === 'midi' && this.bgmLevel === level) {
+      if (this.bgmStyle === 'midi' && this.bgmRequest === request) {
         console.warn(`[audio] 加载 ${url} 失败，回退程序化 BGM`)
         this.startProcedural(level)
       }
@@ -1466,8 +1922,9 @@ export class GameAudio {
   private playBufferOnce(songId: string) {
     if (!this.ctx || !this.bgmBus) return
     this.stopBgmLayersForOneshot()
+    const request = this.bgmRequest
     void this.loadSongBuf(songId).then((buf) => {
-      if (!this.ctx || !this.bgmBus) return
+      if (!this.ctx || !this.bgmBus || this.bgmRequest !== request) return
       const t = this.ctx.currentTime
       if (this.oneshotBuf && !this.oneshotBuf.dead) {
         const old = this.oneshotBuf
@@ -1490,13 +1947,15 @@ export class GameAudio {
       src.connect(gain)
       gain.connect(this.bgmBus)
       src.onended = () => {
-        if (this.oneshotBuf?.src === src) this.oneshotBuf = null
+        if (this.oneshotBuf?.src !== src || this.bgmRequest !== request) return
+        this.oneshotBuf = null
         this.finishMusician()
       }
       src.start()
       this.oneshotBuf = { gain, src, dead: false }
       this.onSongPlayed?.(songId) // v56：收听记录 → 电台解锁
     }).catch(() => {
+      if (this.bgmRequest !== request) return
       console.warn(`[audio] 乐手曲目加载失败: ${songId}`)
       this.finishMusician()
     })
@@ -2293,6 +2752,7 @@ export class GameAudio {
       case 101: drone(130.8, 'sine', 0.02, 0.06, 7); drone(196, 'sine', 0.013, 0.09, 9); drone(65.4, 'sine', 0.018, 0.04, 5); break // Alpha 基地：C 大三和弦软垫
       case 102: drone(146.8, 'sine', 0.018, 0.07, 8); drone(220, 'sine', 0.011, 0.1, 10); drone(73.4, 'triangle', 0.014, 0.05, 6); break // 商人之家：D 暖商场软垫
       case 103: drone(164.8, 'sine', 0.016, 0.06, 8); drone(246.9, 'sine', 0.01, 0.09, 11); drone(82.4, 'sine', 0.013, 0.04, 6); break // 希波克拉底 - 1：E 安静病房软垫
+      case 119: drone(98, 'sawtooth', 0.012, 0.21, 18); drone(146.8, 'sine', 0.018, 0.13, 11); drone(61.7, 'triangle', 0.02, 0.07, 9); break // [casino] 赌场：空调与人声混成的暖嗡
       case 104: drone(174.6, 'sine', 0.018, 0.07, 8); drone(261.6, 'sine', 0.011, 0.1, 10); drone(87.3, 'triangle', 0.015, 0.05, 6); break // Tom 的餐馆：F 大三和弦暖垫
     }
   }
@@ -2393,25 +2853,74 @@ export class GameAudio {
         break
       }
       case 5: {
-        // L5 老式唱机爵士：3/4 摇摆行走低音 + 七和弦 + 唱机刷片声（远处舞厅）
-        // Cm7 → B♭maj7 → F7 → C7 的酒店舞厅和声
-        const chords = [
-          [130.8, 196.0, 233.1, 311.1],
-          [123.5, 185.0, 220.0, 293.7],
-          [146.8, 220.0, 261.6, 349.2],
-          [130.8, 196.0, 246.9, 329.6],
-        ]
-        const bar = Math.floor(step / 3), beat = step % 3
-        const ch = chords[bar % 4]
-        // 行走低音（带摇摆错拍）
-        if (beat === 0) note(ch[0], 1.7, 0.055, 'triangle', true, (rnd() - 0.5) * 20)
-        else note(ch[0] * (beat === 1 ? 1.5 : 2), 0.85, 0.038, 'triangle', true, (rnd() - 0.5) * 25)
-        // 七和弦长音（高八度、失谐，像旧唱机喇叭）
-        if (beat !== 0 && rnd() < 0.8)
-          for (let i = 1; i < 4; i++) note(ch[i] * 2, 1.0, 0.015, 'sine', true, (rnd() - 0.5) * 45)
+        // L5 老式唱机爵士（恐怖旅馆曲库 5 首，l5Hotel 按种子与时间切歌；hotelWobble=关注度走音）
+        const wob = () => (rnd() - 0.5) * this.hotelWobble * 90
+        const tune = this.hotelTune
+        if (tune === 1) {
+          // 慢狐步：Fmaj7 → Dm7 → Gm7 → C7，4/4，低音在 1、3 拍，和弦切分在 2、4 拍
+          const chords = [[87.3, 220, 261.6, 329.6], [73.4, 220, 261.6, 349.2], [98, 233.1, 293.7, 349.2], [65.4, 233.1, 261.6, 329.6]]
+          const bar = Math.floor(step / 4), beat = step % 4, ch = chords[bar % 4]
+          if (beat === 0 || beat === 2) note(beat ? ch[0] * 1.5 : ch[0], 1.4, 0.05, 'triangle', true, wob())
+          else if (rnd() < 0.85) for (let i = 1; i < 4; i++) note(ch[i] * 2, 0.7, 0.013, 'sine', true, (rnd() - 0.5) * 40 + wob())
+          if (beat === 1 && rnd() < 0.35) note(ch[1 + Math.floor(rnd() * 3)] * 4, 0.9, 0.012, 'sine', true, wob()) // 单簧管式长音
+        } else if (tune === 2) {
+          // 查尔斯顿：B♭6 → G7 → C7 → F7，「哒——哒」节奏（第 1 与 2.5 拍）
+          const chords = [[116.5, 293.7, 349.2, 392], [98, 246.9, 293.7, 349.2], [130.8, 329.6, 392, 466.2], [87.3, 220, 311.1, 349.2]]
+          const bar = Math.floor(step / 4), beat = step % 4, ch = chords[bar % 4]
+          note(ch[0] * (beat % 2 ? 1.5 : 1), 0.45, 0.05, 'triangle', true, wob())
+          if (beat === 0 || (beat === 2 && rnd() < 0.9)) for (let i = 1; i < 4; i++) note(ch[i] * 2, 0.32, 0.016, 'square', true, (rnd() - 0.5) * 30 + wob())
+        } else if (tune === 3) {
+          // 华尔兹：E♭ → A♭ → B♭7 → E♭，嘭-嚓-嚓
+          const chords = [[77.8, 196, 233.1, 311.1], [103.8, 207.7, 261.6, 311.1], [116.5, 233.1, 293.7, 415.3], [77.8, 196, 233.1, 311.1]]
+          const bar = Math.floor(step / 3), beat = step % 3, ch = chords[bar % 4]
+          if (beat === 0) note(ch[0], 1.6, 0.055, 'triangle', true, wob())
+          else for (let i = 1; i < 4; i++) note(ch[i] * 2, 0.55, 0.012, 'sine', true, (rnd() - 0.5) * 35 + wob())
+          if (beat === 0 && rnd() < 0.5) note(ch[3] * 4, 1.4, 0.011, 'sine', true, wob())
+        } else if (tune === 4) {
+          // 布鲁斯：B♭7 / E♭7 / F7 十二小节简版，三连摇摆 + 小调五声即兴
+          const prog = [0, 0, 0, 0, 1, 1, 0, 0, 2, 1, 0, 2], roots = [116.5, 155.6, 174.6]
+          const bar = Math.floor(step / 3), beat = step % 3, r = roots[prog[bar % 12]]
+          note(beat === 0 ? r : r * (beat === 1 ? 1.25 : 1.5), 0.9, 0.05, 'triangle', true, wob())
+          if (beat === 2 && rnd() < 0.8) for (const k of [1.25, 1.5, 1.78]) note(r * k * 2, 0.5, 0.012, 'sine', true, wob())
+          if (rnd() < 0.3) { const pent = [1, 1.19, 1.33, 1.5, 1.78]; note(233.1 * pent[Math.floor(rnd() * 5)] * 2, 0.6, 0.014, 'sine', true, (rnd() - 0.5) * 60 + wob()) }
+        } else {
+          // 摇摆（原曲）：Cm7 → B♭maj7 → F7 → C7 的酒店舞厅和声，3/4 行走低音
+          const chords = [
+            [130.8, 196.0, 233.1, 311.1],
+            [123.5, 185.0, 220.0, 293.7],
+            [146.8, 220.0, 261.6, 349.2],
+            [130.8, 196.0, 246.9, 329.6],
+          ]
+          const bar = Math.floor(step / 3), beat = step % 3
+          const ch = chords[bar % 4]
+          if (beat === 0) note(ch[0], 1.7, 0.055, 'triangle', true, (rnd() - 0.5) * 20 + wob())
+          else note(ch[0] * (beat === 1 ? 1.5 : 2), 0.85, 0.038, 'triangle', true, (rnd() - 0.5) * 25 + wob())
+          if (beat !== 0 && rnd() < 0.8)
+            for (let i = 1; i < 4; i++) note(ch[i] * 2, 1.0, 0.015, 'sine', true, (rnd() - 0.5) * 45 + wob())
+        }
         // 唱机底噪/刷片
         if (rnd() < 0.5) hiss(0.22, 0.012, 'highpass', 6000, 1, false)
         if (step === 0 && rnd() < 0.4) hiss(1.8, 0.02, 'bandpass', 3200, 2) // 远处派对喧闹残响
+        break
+      }
+      case 119: {
+        // [casino] Level 5.1 嘈杂背景乐：未知语言的哼唱（锯齿波过元音共振峰带通）+ 人群低语（带通噪声）+ 筹码叮当 + 偶发中奖嗡鸣
+        const SC = [196, 220, 233.1, 261.6, 293.7, 311.1, 349.2] // G 弗里几亚 / 小调色彩
+        const hum = (f: number, dur: number, g: number) => {
+          const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = (rnd() - 0.5) * 30 + det()
+          const vib = ctx.createOscillator(), vg = ctx.createGain(); vib.frequency.value = 5.2; vg.gain.value = 9; vib.connect(vg).connect(o.detune)
+          const F = [[730, 1090], [270, 2290], [570, 840], [300, 870], [440, 1020]][Math.floor(rnd() * 5)] // 元音 a / i / o / u / ə：每个音换一个「音节」
+          const out = ctx.createGain(); out.gain.setValueAtTime(0.0001, t); out.gain.exponentialRampToValueAtTime(g, t + 0.08); out.gain.exponentialRampToValueAtTime(0.0001, t + dur)
+          for (const fq of F) { const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = fq; bp.Q.value = 7; o.connect(bp).connect(out) }
+          out.connect(L.gain); if (L.echo) out.connect(L.echo)
+          o.start(t); vib.start(t); o.stop(t + dur + 0.05); vib.stop(t + dur + 0.05)
+        }
+        if (step % 2 === 0 && rnd() < 0.7) { this.melIdx = Math.max(0, Math.min(6, this.melIdx + Math.floor(rnd() * 3) - 1)); hum(SC[this.melIdx], 0.9 + rnd() * 0.6, 0.09) }
+        if (step % 4 === 0) note(SC[0] / 2, 1.2, 0.035, 'triangle', true) // 低音
+        if (step % 4 === 2 && rnd() < 0.8) for (const k of [1, 1.19, 1.5]) note(SC[0] * k, 0.4, 0.008, 'square', false) // 反拍和弦（老虎机音色）
+        if (rnd() < 0.55) hiss(0.5 + rnd() * 0.6, 0.02 + rnd() * 0.02, 'bandpass', 380 + rnd() * 700, 1.4) // 人群低语
+        if (rnd() < 0.22) { const n = 2 + Math.floor(rnd() * 4); for (let i = 0; i < n; i++) note(2600 + rnd() * 1800, 0.07, 0.012, 'sine', false) } // 筹码叮当
+        if (rnd() < 0.035) { for (let i = 0; i < 6; i++) note(523.3 * [1, 1.25, 1.5, 2, 1.5, 2.5][i], 0.18, 0.02, 'square', true) ; note(110, 1.6, 0.03, 'sawtooth', true) } // 远处中奖嗡鸣
         break
       }
       case 101: case 102: case 103: case 104: {

@@ -17,6 +17,7 @@ import { megQuestProgress } from '@/game/content/megTerminal'
 import { tinyScorn } from '@/game/engine/tinyAI'
 import './DialogOverlay.css'
 import { isMerchant } from '@/game/engine/merchantTrade'
+import { hotelReclaim } from '@/game/engine/l5Hotel'
 import { getKeybinds, bindLabelFor } from '@/game/core/keybinds'
 
 
@@ -25,6 +26,7 @@ export default function DialogOverlay({ npcId, onClose, onShop }: { npcId: strin
   const def = NPCS[npcId] ?? engine.npcs.find((n) => n.id === npcId)?.def ?? engine.knownNpcs.find((n) => n.id === npcId)
   const [node, setNode] = useState(0)
   const [mode, setMode] = useState<'chat' | 'chatpage' | 'quest' | 'warehouse'>('chat')
+  const [lostOpen, setLostOpen] = useState(false), [lostMsg, setLostMsg] = useState('') // L5：奥蒂斯的失物招领架
   // v56：乐手演奏反馈（演奏中的曲名提示）
   const [playNote, setPlayNote] = useState('')
   const [smallTalk, setSmallTalk] = useState<string>(() => def?.idle[Math.floor(Math.random() * def.idle.length)] ?? '')
@@ -395,6 +397,23 @@ export default function DialogOverlay({ npcId, onClose, onShop }: { npcId: strin
                     style={{ borderColor: 'var(--amber)', color: 'var(--amber)', opacity: engine.countItem('presses') + engine.bntgBank.balance >= 5 ? 1 : 0.55 }}
                     onClick={() => { engine.payWarehouseAccess('bntg'); setBrcTick((x) => x + 1) }}
                   >花 5 信用点／压印币临时使用仓库（合计 {engine.countItem('presses')+engine.bntgBank.balance} · 仅本次对话有效）</button>
+                )}
+                {/* L5 恐怖旅馆：自洁收走的失物都挂在奥蒂斯的架子上——每件 1 瓶杏仁水 */}
+                {def.id === 'otis' && (
+                  <button className="dlg-opt" style={{ borderColor: 'var(--amber)', color: 'var(--amber)' }}
+                    onClick={() => { setLostOpen((v) => !v); setLostMsg(''); audio.uiTick() }}
+                  >{lostOpen ? '收起失物架' : `有没有捡到我丢的东西？（失物招领 ${engine.hotel.lost.length} 件）`}</button>
+                )}
+                {def.id === 'otis' && lostOpen && (
+                  <div className="dlg-opt" style={{ cursor: 'default', display: 'grid', gap: 4 }}>
+                    {engine.hotel.lost.length === 0 && <span style={{ color: 'var(--text-dim)' }}>架子上空空的。「走廊今天很干净。」</span>}
+                    {engine.hotel.lost.map((it, i) => (
+                      <button key={`${it.t}-${i}`} className="menu-btn px-2 py-1 text-left"
+                        onClick={() => { setLostMsg(hotelReclaim(engine, i)); setBrcTick((x) => x + 1); audio.uiTick() }}
+                      >{ITEMS[it.type]?.name ?? it.type}{it.count > 1 ? ` ×${it.count}` : ''} · 取回（1 瓶杏仁水）</button>
+                    ))}
+                    {lostMsg && <span style={{ color: 'var(--text-dim)' }}>{lostMsg}</span>}
+                  </div>
                 )}
                 <button className="dlg-opt" onClick={() => { audio.uiTick(); onClose() }}>告辞。</button>
               </div>

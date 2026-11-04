@@ -15,6 +15,7 @@ import { freshWinRun, stepWindowWorld } from './windowAI'
 import { freshVendRun } from './vendingAI'
 import { freshFerrenRun } from './ferrenAI'
 import { freshCreepRun } from './creeperAI'
+import { freshHotel } from './l5Hotel'
 import {audio} from '../core/audio'
 
 export interface EffectDef {
@@ -105,6 +106,11 @@ export const EFFECTS: EffectDef[] = [
   { id: 'el3a-relief', field: 'el3aReliefClaimed', def: false, cat: 'misc', mount: 'level.loadLevel（id===105 条件重置，保持原逻辑）/ npc.claimEl3aRelief' },
   { id: 'provoked', field: 'provoked', def: false, cat: 'misc', resetOnLevel: true, mount: 'combat.attack/squirt（解除 Level 11 Effect 被动状态）' },
   // ===== v54：据点寄存仓库（阵营互通库存；新一局清空，读档由快照覆盖）=====
+  // ===== L5 恐怖旅馆（局内：关注度/失物/员工关系；登记簿 hotelBook 跨局另存 localStorage）=====
+  { id: 'hotel', field: 'hotel', def: () => freshHotel(), cat: 'misc', resetOnNewRun: true, saveKey: 'hotel', mount: 'l5Hotel.updateHotel（ambient.updateAmbient）/ hotelHear（entityAI.noiseEvent）/ DialogOverlay 奥蒂斯失物招领' },
+  { id: 'hotel-vanish', field: 'hotelVanishT', def: 0, cat: 'misc', resetOnNewRun: true, resetOnLevel: true, mount: 'l5Elevator.startVanish / updateVanish（l5Hotel.updateHotel）→ HUD 黑幕' },
+  { id: 'hotel-light', field: 'hotelLightMul', def: 1, cat: 'misc', resetOnLevel: true, mount: 'l5Hotel.updateHotel（换班压暗）→ renderer 点光强度' },
+  { id: 'hotel-gaze', field: 'hotelGazeT', def: 0, cat: 'misc', resetOnLevel: true, tickPhase: 'post', tick: (eng, dt) => { if (eng.hotelGazeT > 0) eng.hotelGazeT = Math.max(0, eng.hotelGazeT - dt) }, mount: 'l5Hotel.hotelGaze → HUD 注视暗角' },
   { id: 'warehouses', field: 'warehouses', def: () => freshWarehouses(), cat: 'misc', resetOnNewRun: true, saveKey: 'warehouses', mount: 'warehouse.warehouseDeposit/warehouseWithdraw（DialogOverlay 仓库模式）' },
   // ===== v55：疫疾（Entity 19）——infection 本体是 PlayerState 字段（freshPlayer 清零、随快照持久，
   // 不参与本表重置——field 带点号即跳过）；infectionStage/coughT 为引擎侧派生/计时 =====

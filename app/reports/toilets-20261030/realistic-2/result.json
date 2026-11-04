@@ -1,0 +1,2104 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 7765,
+  "cdp": 7766,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:7765/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Fri, 30 Oct 2026 13:19:00 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 249,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 7765,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 120474.060562,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.375,
+        "sendEnd": 0.409,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 77.62,
+        "receiveHeadersEnd": 77.784
+      },
+      "responseTime": 1793366340304.8,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\toilets-20261030\\realistic-2\\qa-1793366325654-53548",
+    "--remote-debugging-port=7766",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 65272,
+    "server": 7160
+  },
+  "appBootMs": 12834.5357,
+  "entryMs": 1510.5728999999992,
+  "firstPlayableMs": 19120.232500000002,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 643,
+      "textures": 145
+    },
+    "frame": {
+      "cpu": 374.09999999403954,
+      "calls": 800,
+      "triangles": 442783
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null
+  },
+  "galleryl02": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 651,
+      "textures": 173
+    },
+    "frame": {
+      "cpu": 12.5,
+      "calls": 734,
+      "triangles": 384807
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null,
+    "id": "l02",
+    "meshes": 4,
+    "triangles": 1652,
+    "bounds": {
+      "min": [
+        -0.2029999941587448,
+        0,
+        -0.3499999940395355
+      ],
+      "max": [
+        0.2029999941587448,
+        0.8421595096588135,
+        0.3100000023841858
+      ]
+    },
+    "fixtureOnly": true
+  },
+  "galleryfoyer": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 662,
+      "textures": 177
+    },
+    "frame": {
+      "cpu": 14.900000005960464,
+      "calls": 808,
+      "triangles": 469151
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null,
+    "id": "foyer",
+    "meshes": 4,
+    "triangles": 1168,
+    "bounds": {
+      "min": [
+        -0.19081999361515045,
+        0,
+        -0.28999999165534973
+      ],
+      "max": [
+        0.38999998569488525,
+        0.8419836759567261,
+        0.241799995303154
+      ]
+    },
+    "fixtureOnly": true
+  },
+  "galleryl4": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 678,
+      "textures": 186
+    },
+    "frame": {
+      "cpu": 3.4000000059604645,
+      "calls": 586,
+      "triangles": 166963
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null,
+    "id": "l4",
+    "meshes": 12,
+    "triangles": 1272,
+    "bounds": {
+      "min": [
+        -0.4900000002980232,
+        0,
+        -0.46750000018626453
+      ],
+      "max": [
+        0.92,
+        1.714999986886978,
+        0.3100000023841858
+      ]
+    },
+    "fixtureOnly": true
+  },
+  "gallerystone": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 678,
+      "textures": 186
+    },
+    "frame": {
+      "cpu": 2.8999999910593033,
+      "calls": 586,
+      "triangles": 166963
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null,
+    "id": "stone",
+    "meshes": 1,
+    "triangles": 1068,
+    "bounds": {
+      "min": [
+        -0.2009992003440857,
+        -0.006152838468551636,
+        -0.3495194613933563
+      ],
+      "max": [
+        0.20248892903327942,
+        0.8421033024787903,
+        0.3094863295555115
+      ]
+    },
+    "fixtureOnly": true
+  },
+  "galleryl9": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 678,
+      "textures": 186
+    },
+    "frame": {
+      "cpu": 6.300000011920929,
+      "calls": 586,
+      "triangles": 166963
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null,
+    "id": "l9",
+    "meshes": 4,
+    "triangles": 1068,
+    "bounds": {
+      "min": [
+        -0.22735999524593353,
+        0,
+        -0.3675000071525574
+      ],
+      "max": [
+        0.22735999524593353,
+        0.8590266704559326,
+        0.3255000114440918
+      ]
+    },
+    "fixtureOnly": true
+  },
+  "galleryl11": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 678,
+      "textures": 189
+    },
+    "frame": {
+      "cpu": 6.399999991059303,
+      "calls": 586,
+      "triangles": 166963
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null,
+    "id": "l11",
+    "meshes": 4,
+    "triangles": 1068,
+    "bounds": {
+      "min": [
+        -0.2029999941587448,
+        0,
+        -0.3100000023841858
+      ],
+      "max": [
+        0.2029999941587448,
+        0.8421595096588135,
+        0.3499999940395355
+      ]
+    },
+    "fixtureOnly": true
+  },
+  "gallerytraders": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 678,
+      "textures": 192
+    },
+    "frame": {
+      "cpu": 6.4000000059604645,
+      "calls": 586,
+      "triangles": 166963
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null,
+    "id": "traders",
+    "meshes": 7,
+    "triangles": 1492,
+    "bounds": {
+      "min": [
+        -0.7749999761581421,
+        -5.9604643443123e-10,
+        -0.925000011920929
+      ],
+      "max": [
+        0.7749999761581421,
+        2.120000123977661,
+        0.925000011920929
+      ]
+    },
+    "fixtureOnly": true
+  },
+  "gallerylatrine": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 678,
+      "textures": 198
+    },
+    "frame": {
+      "cpu": 12.700000002980232,
+      "calls": 734,
+      "triangles": 384807
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 0,
+    "soundEvents": [],
+    "action": null,
+    "id": "latrine",
+    "meshes": 19,
+    "triangles": 376,
+    "bounds": {
+      "min": [
+        -1.149999976158142,
+        -0.0799999986588955,
+        -1.1513606455286713
+      ],
+      "max": [
+        1.149999976158142,
+        2.4417046547289507,
+        1.5855539001421866
+      ]
+    },
+    "fixtureOnly": true
+  },
+  "controlled": {
+    "level": 2,
+    "seed": 424242,
+    "checks": 0,
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "origin": [
+      -64,
+      -64
+    ],
+    "look": {
+      "yaw": 1.5707963267948961,
+      "pitch": 0,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 678,
+      "textures": 198
+    },
+    "frame": {
+      "cpu": 4.899999991059303,
+      "calls": 586,
+      "triangles": 166963
+    },
+    "pin": null,
+    "l02": null,
+    "round5Checks": 0,
+    "toiletChecks": 224,
+    "soundEvents": [],
+    "action": null,
+    "cases": [
+      {
+        "id": "l02",
+        "deg": 0,
+        "seat": {
+          "x": 11,
+          "y": 11.065,
+          "z": 0.447,
+          "yaw": 0,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "l02",
+        "deg": 90,
+        "seat": {
+          "x": 11,
+          "y": 10.935,
+          "z": 0.447,
+          "yaw": 3.141592653589793,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "l02",
+        "deg": 180,
+        "seat": {
+          "x": 11,
+          "y": 11.065,
+          "z": 0.447,
+          "yaw": 6.283185307179586,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "l02",
+        "deg": 270,
+        "seat": {
+          "x": 11,
+          "y": 10.935,
+          "z": 0.447,
+          "yaw": 9.42477796076938,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "l4",
+        "deg": 0,
+        "seat": {
+          "x": 11,
+          "y": 11.065,
+          "z": 0.447,
+          "yaw": 0,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "l4",
+        "deg": 90,
+        "seat": {
+          "x": 11.065,
+          "y": 11,
+          "z": 0.447,
+          "yaw": 1.5707963267948963,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "l4",
+        "deg": 180,
+        "seat": {
+          "x": 11,
+          "y": 10.935,
+          "z": 0.447,
+          "yaw": 3.141592653589793,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "l4",
+        "deg": 270,
+        "seat": {
+          "x": 10.935,
+          "y": 11,
+          "z": 0.447,
+          "yaw": -1.5707963267948968,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "stone",
+        "deg": 0,
+        "seat": {
+          "x": 9.778867718748987,
+          "y": 10.815443906395105,
+          "z": 0.447,
+          "yaw": 1.4207963267948969,
+          "index": 0,
+          "label": "石马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "stone",
+        "deg": 90,
+        "seat": {
+          "x": 9.778867718748987,
+          "y": 10.815443906395105,
+          "z": 0.447,
+          "yaw": 1.4207963267948969,
+          "index": 0,
+          "label": "石马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "stone",
+        "deg": 180,
+        "seat": {
+          "x": 9.778867718748987,
+          "y": 10.815443906395105,
+          "z": 0.447,
+          "yaw": 1.4207963267948969,
+          "index": 0,
+          "label": "石马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "stone",
+        "deg": 270,
+        "seat": {
+          "x": 9.778867718748987,
+          "y": 10.815443906395105,
+          "z": 0.447,
+          "yaw": 1.4207963267948969,
+          "index": 0,
+          "label": "石马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "l9",
+        "deg": 0,
+        "seat": {
+          "x": 11,
+          "y": 11.06825,
+          "z": 0.45594,
+          "yaw": 0,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "l9",
+        "deg": 90,
+        "seat": {
+          "x": 11.06825,
+          "y": 11,
+          "z": 0.45594,
+          "yaw": 1.5707963267948963,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "l9",
+        "deg": 180,
+        "seat": {
+          "x": 11,
+          "y": 10.93175,
+          "z": 0.45594,
+          "yaw": 3.141592653589793,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "l9",
+        "deg": 270,
+        "seat": {
+          "x": 10.93175,
+          "y": 11,
+          "z": 0.45594,
+          "yaw": -1.5707963267948968,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "l11",
+        "deg": 0,
+        "seat": {
+          "x": 11,
+          "y": 10.935,
+          "z": 0.447,
+          "yaw": 3.141592653589793,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "l11",
+        "deg": 90,
+        "seat": {
+          "x": 10.935,
+          "y": 11,
+          "z": 0.447,
+          "yaw": -1.570796326794897,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "l11",
+        "deg": 180,
+        "seat": {
+          "x": 11,
+          "y": 11.065,
+          "z": 0.447,
+          "yaw": -2.4492935982947064e-16,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "l11",
+        "deg": 270,
+        "seat": {
+          "x": 11.065,
+          "y": 11,
+          "z": 0.447,
+          "yaw": 1.5707963267948963,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "traders",
+        "deg": 0,
+        "seat": {
+          "x": 11,
+          "y": 10.645,
+          "z": 0.447,
+          "yaw": 0,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "traders",
+        "deg": 90,
+        "seat": {
+          "x": 10.645,
+          "y": 11,
+          "z": 0.447,
+          "yaw": 1.5707963267948963,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "traders",
+        "deg": 180,
+        "seat": {
+          "x": 11,
+          "y": 11.355,
+          "z": 0.447,
+          "yaw": 3.141592653589793,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "traders",
+        "deg": 270,
+        "seat": {
+          "x": 11.355,
+          "y": 11,
+          "z": 0.447,
+          "yaw": -1.5707963267948968,
+          "index": 0,
+          "label": "马桶",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "latrine",
+        "deg": 0,
+        "seat": {
+          "x": 11,
+          "y": 10.43,
+          "z": 0.46,
+          "yaw": 0,
+          "index": 0,
+          "label": "旱厕坐凳",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "latrine",
+        "deg": 90,
+        "seat": {
+          "x": 10.43,
+          "y": 11,
+          "z": 0.46,
+          "yaw": 1.5707963267948963,
+          "index": 0,
+          "label": "旱厕坐凳",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "latrine",
+        "deg": 180,
+        "seat": {
+          "x": 11,
+          "y": 11.57,
+          "z": 0.46,
+          "yaw": 3.141592653589793,
+          "index": 0,
+          "label": "旱厕坐凳",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      },
+      {
+        "id": "latrine",
+        "deg": 270,
+        "seat": {
+          "x": 11.57,
+          "y": 11,
+          "z": 0.46,
+          "yaw": -1.5707963267948968,
+          "index": 0,
+          "label": "旱厕坐凳",
+          "relaxed": false,
+          "toilet": true,
+          "floor": 0
+        }
+      }
+    ]
+  },
+  "l02Setup": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      87.2,
+      69.215,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -0.975236632170396,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 167,
+      "textures": 95
+    },
+    "frame": {
+      "cpu": 5.100000008940697,
+      "calls": 80,
+      "triangles": 225937
+    },
+    "pin": null,
+    "l02": {
+      "t": 1.0918999999999999,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 4,
+    "toiletChecks": 245,
+    "soundEvents": [
+      {
+        "at": 8.945600000000024,
+        "duration": 0.7,
+        "peak": 0.3223588466644287,
+        "rms": 0.08335631058923815
+      },
+      {
+        "at": 10.595600000000053,
+        "duration": 0.7,
+        "peak": 0.3153330385684967,
+        "rms": 0.08290152299288535
+      }
+    ],
+    "action": null
+  },
+  "seated": {
+    "level": 900,
+    "seed": 542248.4301,
+    "checks": 0,
+    "player": [
+      11.599299999999998,
+      6.1,
+      0
+    ],
+    "origin": [
+      0,
+      0
+    ],
+    "look": {
+      "yaw": 7.853981633974483,
+      "pitch": -0.9752366321703985,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 707,
+      "textures": 257
+    },
+    "frame": {
+      "cpu": 1.199999988079071,
+      "calls": 70,
+      "triangles": 42387
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.1753999999999936,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 4,
+    "toiletChecks": 253,
+    "soundEvents": [
+      {
+        "at": 8.945600000000024,
+        "duration": 0.7,
+        "peak": 0.3223588466644287,
+        "rms": 0.08335631058923815
+      },
+      {
+        "at": 10.595600000000053,
+        "duration": 0.7,
+        "peak": 0.3153330385684967,
+        "rms": 0.08290152299288535
+      },
+      {
+        "at": 14.262600000000214,
+        "duration": 0.7,
+        "peak": 0.3410976529121399,
+        "rms": 0.08314664547314916
+      }
+    ],
+    "sitting": "seated",
+    "action": {
+      "id": "toiletFart",
+      "label": "放屁",
+      "hint": "坐在马桶上时点按发出放屁声",
+      "hold": false
+    },
+    "anchor": {
+      "x": 11.599299999999998,
+      "y": 6.1,
+      "z": 0.447,
+      "yaw": 4.71238898038469,
+      "index": 0,
+      "label": "马桶",
+      "relaxed": false,
+      "toilet": true,
+      "floor": 0
+    }
+  },
+  "firstPerson": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      87.2,
+      68.51499999999999,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 3.141592653589793,
+      "pitch": -1.1,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 235,
+      "textures": 95
+    },
+    "frame": {
+      "cpu": 4.700000002980232,
+      "calls": 58,
+      "triangles": 144307
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.1292999999999935,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 2,
+    "toiletChecks": 231,
+    "soundEvents": [],
+    "sitting": "seated",
+    "action": {
+      "id": "toiletFart",
+      "label": "放屁",
+      "hint": "坐在马桶上时点按发出放屁声",
+      "hold": false
+    }
+  },
+  "audioSetup": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      87.2,
+      68.51499999999999,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 3.141592653589793,
+      "pitch": -1.1,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 235,
+      "textures": 95
+    },
+    "frame": {
+      "cpu": 5.0999999940395355,
+      "calls": 58,
+      "triangles": 144307
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.3875999999999875,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 2,
+    "toiletChecks": 233,
+    "soundEvents": [],
+    "sitting": "seated",
+    "action": {
+      "id": "toiletFart",
+      "label": "放屁",
+      "hint": "坐在马桶上时点按发出放屁声",
+      "hold": false
+    }
+  },
+  "soundOne": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      87.2,
+      68.51499999999999,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 3.141592653589793,
+      "pitch": -1.1,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 238,
+      "textures": 95
+    },
+    "frame": {
+      "cpu": 5.700000002980232,
+      "calls": 61,
+      "triangles": 160703
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.7751999999999826,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 2,
+    "toiletChecks": 235,
+    "soundEvents": [
+      {
+        "at": 8.945600000000024,
+        "duration": 0.7,
+        "peak": 0.3223588466644287,
+        "rms": 0.08335631058923815
+      }
+    ],
+    "sitting": "seated",
+    "action": {
+      "id": "toiletFart",
+      "label": "放屁",
+      "hint": "坐在马桶上时点按发出放屁声",
+      "hold": false
+    }
+  },
+  "soundTwo": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      87.2,
+      69.16499999999999,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 3.141592653589793,
+      "pitch": -1.1,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 240,
+      "textures": 95
+    },
+    "frame": {
+      "cpu": 1.5999999940395355,
+      "calls": 68,
+      "triangles": 264071
+    },
+    "pin": null,
+    "l02": {
+      "t": 6.466699999999996,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 2,
+    "toiletChecks": 242,
+    "soundEvents": [
+      {
+        "at": 8.945600000000024,
+        "duration": 0.7,
+        "peak": 0.3223588466644287,
+        "rms": 0.08335631058923815
+      },
+      {
+        "at": 10.595600000000053,
+        "duration": 0.7,
+        "peak": 0.3153330385684967,
+        "rms": 0.08290152299288535
+      }
+    ],
+    "action": null
+  },
+  "stood": {
+    "level": 900,
+    "seed": 542248.4301,
+    "checks": 0,
+    "player": [
+      10.949299999999997,
+      6.1,
+      0
+    ],
+    "origin": [
+      0,
+      0
+    ],
+    "look": {
+      "yaw": 7.853981633974483,
+      "pitch": -0.9752366321703985,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 707,
+      "textures": 257
+    },
+    "frame": {
+      "cpu": 1.0999999940395355,
+      "calls": 99,
+      "triangles": 43857
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.1753999999999936,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 4,
+    "toiletChecks": 258,
+    "soundEvents": [
+      {
+        "at": 8.945600000000024,
+        "duration": 0.7,
+        "peak": 0.3223588466644287,
+        "rms": 0.08335631058923815
+      },
+      {
+        "at": 10.595600000000053,
+        "duration": 0.7,
+        "peak": 0.3153330385684967,
+        "rms": 0.08290152299288535
+      },
+      {
+        "at": 14.262600000000214,
+        "duration": 0.7,
+        "peak": 0.3410976529121399,
+        "rms": 0.08314664547314916
+      },
+      {
+        "at": 17.270800000000254,
+        "duration": 0.7,
+        "peak": 0.33505958318710327,
+        "rms": 0.0829441740115993
+      }
+    ],
+    "action": null
+  },
+  "touch": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      87.2,
+      68.51499999999999,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 3.141592653589793,
+      "pitch": -0.975236632170396,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 203,
+      "textures": 95
+    },
+    "frame": {
+      "cpu": 3477.7000000029802,
+      "calls": 72,
+      "triangles": 259493
+    },
+    "pin": null,
+    "l02": {
+      "t": 2.0919999999999948,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 4,
+    "toiletChecks": 246,
+    "soundEvents": [
+      {
+        "at": 8.945600000000024,
+        "duration": 0.7,
+        "peak": 0.3223588466644287,
+        "rms": 0.08335631058923815
+      },
+      {
+        "at": 10.595600000000053,
+        "duration": 0.7,
+        "peak": 0.3153330385684967,
+        "rms": 0.08290152299288535
+      }
+    ],
+    "sitting": "seated",
+    "action": {
+      "id": "toiletFart",
+      "label": "放屁",
+      "hint": "坐在马桶上时点按发出放屁声",
+      "hold": false
+    },
+    "point": {
+      "x": 790,
+      "y": 148
+    },
+    "desktopTouchSimulation": true
+  },
+  "soundThree": {
+    "level": 902,
+    "seed": 20261025,
+    "checks": 0,
+    "player": [
+      87.2,
+      68.51499999999999,
+      0
+    ],
+    "origin": [
+      -64,
+      -96
+    ],
+    "look": {
+      "yaw": 3.141592653589793,
+      "pitch": -0.975236632170396,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 203,
+      "textures": 95
+    },
+    "frame": {
+      "cpu": 6.899999991059303,
+      "calls": 72,
+      "triangles": 259493
+    },
+    "pin": null,
+    "l02": {
+      "t": 2.479499999999994,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 4,
+    "toiletChecks": 248,
+    "soundEvents": [
+      {
+        "at": 8.945600000000024,
+        "duration": 0.7,
+        "peak": 0.3223588466644287,
+        "rms": 0.08335631058923815
+      },
+      {
+        "at": 10.595600000000053,
+        "duration": 0.7,
+        "peak": 0.3153330385684967,
+        "rms": 0.08290152299288535
+      },
+      {
+        "at": 14.262600000000214,
+        "duration": 0.7,
+        "peak": 0.3410976529121399,
+        "rms": 0.08314664547314916
+      }
+    ],
+    "sitting": "seated",
+    "action": {
+      "id": "toiletFart",
+      "label": "放屁",
+      "hint": "坐在马桶上时点按发出放屁声",
+      "hold": false
+    }
+  },
+  "foyerSetup": {
+    "level": 900,
+    "seed": 542248.4301,
+    "checks": 0,
+    "player": [
+      10.899299999999998,
+      6.1,
+      0
+    ],
+    "origin": [
+      0,
+      0
+    ],
+    "look": {
+      "yaw": -1.5707963267948966,
+      "pitch": -0.9752366321703985,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 706,
+      "textures": 255
+    },
+    "frame": {
+      "cpu": 3.0999999940395355,
+      "calls": 73,
+      "triangles": 45123
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.1753999999999936,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 4,
+    "toiletChecks": 251,
+    "soundEvents": [
+      {
+        "at": 8.945600000000024,
+        "duration": 0.7,
+        "peak": 0.3223588466644287,
+        "rms": 0.08335631058923815
+      },
+      {
+        "at": 10.595600000000053,
+        "duration": 0.7,
+        "peak": 0.3153330385684967,
+        "rms": 0.08290152299288535
+      },
+      {
+        "at": 14.262600000000214,
+        "duration": 0.7,
+        "peak": 0.3410976529121399,
+        "rms": 0.08314664547314916
+      }
+    ],
+    "action": null
+  },
+  "soundFour": {
+    "level": 900,
+    "seed": 542248.4301,
+    "checks": 0,
+    "player": [
+      11.599299999999998,
+      6.1,
+      0
+    ],
+    "origin": [
+      0,
+      0
+    ],
+    "look": {
+      "yaw": 7.853981633974483,
+      "pitch": -0.9752366321703985,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 707,
+      "textures": 256
+    },
+    "frame": {
+      "cpu": 1.2000000029802322,
+      "calls": 70,
+      "triangles": 42387
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.1753999999999936,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 4,
+    "toiletChecks": 255,
+    "soundEvents": [
+      {
+        "at": 8.945600000000024,
+        "duration": 0.7,
+        "peak": 0.3223588466644287,
+        "rms": 0.08335631058923815
+      },
+      {
+        "at": 10.595600000000053,
+        "duration": 0.7,
+        "peak": 0.3153330385684967,
+        "rms": 0.08290152299288535
+      },
+      {
+        "at": 14.262600000000214,
+        "duration": 0.7,
+        "peak": 0.3410976529121399,
+        "rms": 0.08314664547314916
+      },
+      {
+        "at": 17.270800000000254,
+        "duration": 0.7,
+        "peak": 0.33505958318710327,
+        "rms": 0.0829441740115993
+      }
+    ],
+    "sitting": "seated",
+    "action": {
+      "id": "toiletFart",
+      "label": "放屁",
+      "hint": "坐在马桶上时点按发出放屁声",
+      "hold": false
+    }
+  },
+  "cleaned": {
+    "level": 900,
+    "seed": 542248.4301,
+    "checks": 1,
+    "player": [
+      10.949299999999997,
+      6.1,
+      0
+    ],
+    "origin": [
+      0,
+      0
+    ],
+    "look": {
+      "yaw": 7.853981633974483,
+      "pitch": -0.9752366321703985,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 707,
+      "textures": 257
+    },
+    "frame": {
+      "cpu": 1.5,
+      "calls": 99,
+      "triangles": 43857
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.1753999999999936,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "allChecks": [
+      "GL remains healthy after hound/L0/L02 round trip"
+    ],
+    "round5Checks": 4,
+    "allRound5Checks": [
+      "Guaranteed spawn router provides actual Wi-Fi",
+      "Interior L02 has no visible sky",
+      "Guaranteed spawn router provides actual Wi-Fi",
+      "Interior L02 has no visible sky"
+    ],
+    "toiletChecks": [
+      "l02/0 safe front approach",
+      "l02/0 begins sitting",
+      "l02/0 stable toilet pose",
+      "l02/0 contextual action",
+      "l02/0 save uses safe standing position",
+      "l02/0 can stand",
+      "l02/0 exits seat",
+      "l02/0 action removed on stand",
+      "l02/90 safe front approach",
+      "l02/90 begins sitting",
+      "l02/90 stable toilet pose",
+      "l02/90 contextual action",
+      "l02/90 save uses safe standing position",
+      "l02/90 can stand",
+      "l02/90 exits seat",
+      "l02/90 action removed on stand",
+      "l02/180 safe front approach",
+      "l02/180 begins sitting",
+      "l02/180 stable toilet pose",
+      "l02/180 contextual action",
+      "l02/180 save uses safe standing position",
+      "l02/180 can stand",
+      "l02/180 exits seat",
+      "l02/180 action removed on stand",
+      "l02/270 safe front approach",
+      "l02/270 begins sitting",
+      "l02/270 stable toilet pose",
+      "l02/270 contextual action",
+      "l02/270 save uses safe standing position",
+      "l02/270 can stand",
+      "l02/270 exits seat",
+      "l02/270 action removed on stand",
+      "l4/0 safe front approach",
+      "l4/0 begins sitting",
+      "l4/0 stable toilet pose",
+      "l4/0 contextual action",
+      "l4/0 save uses safe standing position",
+      "l4/0 can stand",
+      "l4/0 exits seat",
+      "l4/0 action removed on stand",
+      "l4/90 safe front approach",
+      "l4/90 begins sitting",
+      "l4/90 stable toilet pose",
+      "l4/90 contextual action",
+      "l4/90 save uses safe standing position",
+      "l4/90 can stand",
+      "l4/90 exits seat",
+      "l4/90 action removed on stand",
+      "l4/180 safe front approach",
+      "l4/180 begins sitting",
+      "l4/180 stable toilet pose",
+      "l4/180 contextual action",
+      "l4/180 save uses safe standing position",
+      "l4/180 can stand",
+      "l4/180 exits seat",
+      "l4/180 action removed on stand",
+      "l4/270 safe front approach",
+      "l4/270 begins sitting",
+      "l4/270 stable toilet pose",
+      "l4/270 contextual action",
+      "l4/270 save uses safe standing position",
+      "l4/270 can stand",
+      "l4/270 exits seat",
+      "l4/270 action removed on stand",
+      "stone/0 safe front approach",
+      "stone/0 begins sitting",
+      "stone/0 stable toilet pose",
+      "stone/0 contextual action",
+      "stone/0 save uses safe standing position",
+      "stone/0 can stand",
+      "stone/0 exits seat",
+      "stone/0 action removed on stand",
+      "stone/90 safe front approach",
+      "stone/90 begins sitting",
+      "stone/90 stable toilet pose",
+      "stone/90 contextual action",
+      "stone/90 save uses safe standing position",
+      "stone/90 can stand",
+      "stone/90 exits seat",
+      "stone/90 action removed on stand",
+      "stone/180 safe front approach",
+      "stone/180 begins sitting",
+      "stone/180 stable toilet pose",
+      "stone/180 contextual action",
+      "stone/180 save uses safe standing position",
+      "stone/180 can stand",
+      "stone/180 exits seat",
+      "stone/180 action removed on stand",
+      "stone/270 safe front approach",
+      "stone/270 begins sitting",
+      "stone/270 stable toilet pose",
+      "stone/270 contextual action",
+      "stone/270 save uses safe standing position",
+      "stone/270 can stand",
+      "stone/270 exits seat",
+      "stone/270 action removed on stand",
+      "l9/0 safe front approach",
+      "l9/0 begins sitting",
+      "l9/0 stable toilet pose",
+      "l9/0 contextual action",
+      "l9/0 save uses safe standing position",
+      "l9/0 can stand",
+      "l9/0 exits seat",
+      "l9/0 action removed on stand",
+      "l9/90 safe front approach",
+      "l9/90 begins sitting",
+      "l9/90 stable toilet pose",
+      "l9/90 contextual action",
+      "l9/90 save uses safe standing position",
+      "l9/90 can stand",
+      "l9/90 exits seat",
+      "l9/90 action removed on stand",
+      "l9/180 safe front approach",
+      "l9/180 begins sitting",
+      "l9/180 stable toilet pose",
+      "l9/180 contextual action",
+      "l9/180 save uses safe standing position",
+      "l9/180 can stand",
+      "l9/180 exits seat",
+      "l9/180 action removed on stand",
+      "l9/270 safe front approach",
+      "l9/270 begins sitting",
+      "l9/270 stable toilet pose",
+      "l9/270 contextual action",
+      "l9/270 save uses safe standing position",
+      "l9/270 can stand",
+      "l9/270 exits seat",
+      "l9/270 action removed on stand",
+      "l11/0 safe front approach",
+      "l11/0 begins sitting",
+      "l11/0 stable toilet pose",
+      "l11/0 contextual action",
+      "l11/0 save uses safe standing position",
+      "l11/0 can stand",
+      "l11/0 exits seat",
+      "l11/0 action removed on stand",
+      "l11/90 safe front approach",
+      "l11/90 begins sitting",
+      "l11/90 stable toilet pose",
+      "l11/90 contextual action",
+      "l11/90 save uses safe standing position",
+      "l11/90 can stand",
+      "l11/90 exits seat",
+      "l11/90 action removed on stand",
+      "l11/180 safe front approach",
+      "l11/180 begins sitting",
+      "l11/180 stable toilet pose",
+      "l11/180 contextual action",
+      "l11/180 save uses safe standing position",
+      "l11/180 can stand",
+      "l11/180 exits seat",
+      "l11/180 action removed on stand",
+      "l11/270 safe front approach",
+      "l11/270 begins sitting",
+      "l11/270 stable toilet pose",
+      "l11/270 contextual action",
+      "l11/270 save uses safe standing position",
+      "l11/270 can stand",
+      "l11/270 exits seat",
+      "l11/270 action removed on stand",
+      "traders/0 safe front approach",
+      "traders/0 begins sitting",
+      "traders/0 stable toilet pose",
+      "traders/0 contextual action",
+      "traders/0 save uses safe standing position",
+      "traders/0 can stand",
+      "traders/0 exits seat",
+      "traders/0 action removed on stand",
+      "traders/90 safe front approach",
+      "traders/90 begins sitting",
+      "traders/90 stable toilet pose",
+      "traders/90 contextual action",
+      "traders/90 save uses safe standing position",
+      "traders/90 can stand",
+      "traders/90 exits seat",
+      "traders/90 action removed on stand",
+      "traders/180 safe front approach",
+      "traders/180 begins sitting",
+      "traders/180 stable toilet pose",
+      "traders/180 contextual action",
+      "traders/180 save uses safe standing position",
+      "traders/180 can stand",
+      "traders/180 exits seat",
+      "traders/180 action removed on stand",
+      "traders/270 safe front approach",
+      "traders/270 begins sitting",
+      "traders/270 stable toilet pose",
+      "traders/270 contextual action",
+      "traders/270 save uses safe standing position",
+      "traders/270 can stand",
+      "traders/270 exits seat",
+      "traders/270 action removed on stand",
+      "latrine/0 safe front approach",
+      "latrine/0 begins sitting",
+      "latrine/0 stable toilet pose",
+      "latrine/0 contextual action",
+      "latrine/0 save uses safe standing position",
+      "latrine/0 can stand",
+      "latrine/0 exits seat",
+      "latrine/0 action removed on stand",
+      "latrine/90 safe front approach",
+      "latrine/90 begins sitting",
+      "latrine/90 stable toilet pose",
+      "latrine/90 contextual action",
+      "latrine/90 save uses safe standing position",
+      "latrine/90 can stand",
+      "latrine/90 exits seat",
+      "latrine/90 action removed on stand",
+      "latrine/180 safe front approach",
+      "latrine/180 begins sitting",
+      "latrine/180 stable toilet pose",
+      "latrine/180 contextual action",
+      "latrine/180 save uses safe standing position",
+      "latrine/180 can stand",
+      "latrine/180 exits seat",
+      "latrine/180 action removed on stand",
+      "latrine/270 safe front approach",
+      "latrine/270 begins sitting",
+      "latrine/270 stable toilet pose",
+      "latrine/270 contextual action",
+      "latrine/270 save uses safe standing position",
+      "latrine/270 can stand",
+      "latrine/270 exits seat",
+      "latrine/270 action removed on stand",
+      "actual L02 has a generated toilet",
+      "actual L02 safe approach",
+      "actual E targets toilet",
+      "actual key E reaches seated phase",
+      "actual HUD has toilet action",
+      "actual key E reaches seated phase",
+      "actual HUD has toilet action",
+      "game sound bus exists",
+      "native audio context unlocked",
+      "actual discrete sound count 1",
+      "special press consumed",
+      "actual discrete sound count 2",
+      "special press consumed",
+      "actual E stands from toilet",
+      "standing position has real clearance",
+      "toilet action hidden after standing",
+      "actual discrete sound count 2",
+      "special press consumed",
+      "actual L02 has a generated toilet",
+      "actual L02 safe approach",
+      "actual E targets toilet",
+      "actual mobile contextual button reads fart",
+      "actual discrete sound count 3",
+      "special press consumed",
+      "foyer actual fixture exists",
+      "foyer toilet safe approach",
+      "actual foyer E targets toilet",
+      "actual key E reaches seated phase",
+      "actual HUD has toilet action",
+      "actual discrete sound count 4",
+      "special press consumed",
+      "actual E stands from toilet",
+      "standing position has real clearance",
+      "toilet action hidden after standing"
+    ]
+  },
+  "summary": {
+    "level": 900,
+    "seed": 542248.4301,
+    "checks": 1,
+    "player": [
+      10.949299999999997,
+      6.1,
+      0
+    ],
+    "origin": [
+      0,
+      0
+    ],
+    "look": {
+      "yaw": 7.853981633974483,
+      "pitch": -0.9752366321703985,
+      "fov": 72
+    },
+    "memory": {
+      "geometries": 707,
+      "textures": 257
+    },
+    "frame": {
+      "cpu": 1.5,
+      "calls": 99,
+      "triangles": 43857
+    },
+    "pin": null,
+    "l02": {
+      "t": 3.1753999999999936,
+      "stage": 0,
+      "dust": 0,
+      "stopped": true,
+      "stats": {
+        "tiles": 0,
+        "walls": 0,
+        "floors": 0,
+        "tileHits": 0,
+        "wallHits": 0,
+        "falls": 0,
+        "dustDmg": 0
+      }
+    },
+    "round5Checks": 4,
+    "toiletChecks": 258,
+    "soundEvents": [
+      {
+        "at": 8.945600000000024,
+        "duration": 0.7,
+        "peak": 0.3223588466644287,
+        "rms": 0.08335631058923815
+      },
+      {
+        "at": 10.595600000000053,
+        "duration": 0.7,
+        "peak": 0.3153330385684967,
+        "rms": 0.08290152299288535
+      },
+      {
+        "at": 14.262600000000214,
+        "duration": 0.7,
+        "peak": 0.3410976529121399,
+        "rms": 0.08314664547314916
+      },
+      {
+        "at": 17.270800000000254,
+        "duration": 0.7,
+        "peak": 0.33505958318710327,
+        "rms": 0.0829441740115993
+      }
+    ],
+    "action": null
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

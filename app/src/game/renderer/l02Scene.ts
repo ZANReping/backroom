@@ -140,13 +140,24 @@ function worldUV(g: THREE.BufferGeometry, scale: number) {
   }
   return g
 }
+/** Keep tripod feet on level flooring, clear of studs and the rubble ramp. */
+export function houseLampPositions(h: Hole) {
+  const F = h.house, O = h.open, clearance = .36, obstacles = [h.ramp, ...housePartition(h)]
+  const clear = (x: number, y: number) => x >= F.x + clearance && y >= F.y + clearance && x <= F.x + F.w - clearance && y <= F.y + F.h - clearance && obstacles.every(r => Math.hypot(Math.max(r.x - x, 0, x - r.x - r.w), Math.max(r.y - y, 0, y - r.y - r.h)) >= clearance)
+  const grid: { x: number; y: number }[] = []
+  for (let y = F.y + .5; y <= F.y + F.h - .5; y += .25) for (let x = F.x + .5; x <= F.x + F.w - .5; x += .25) if (clear(x, y)) grid.push({ x, y })
+  const result: { x: number; y: number; z: number }[] = []
+  for (const preferred of [{ x: O.x + O.w * .25, y: O.y + O.h * .7 }, { x: F.x + F.w - .6, y: F.y + .6 }]) {
+    const candidates = [preferred, ...grid].filter(p => clear(p.x, p.y) && result.every(q => Math.hypot(q.x - p.x, q.y - p.y) >= .8))
+    candidates.sort((a, b) => (a.x - preferred.x) ** 2 + (a.y - preferred.y) ** 2 - (b.x - preferred.x) ** 2 - (b.y - preferred.y) ** 2)
+    if (candidates[0]) result.push({ ...candidates[0], z: -h.depth + 1.5 })
+  }
+  return result
+}
 function buildHouse(h: Hole): THREE.Group {
   const root = new THREE.Group(); root.name = 'l02-house:' + h.id
   const F = h.house, O = h.open, D = h.depth, slab = 0.25
-  const lamps = [
-    { x: O.x + O.w * 0.25, y: O.y + O.h * 0.7, z: -D + 1.5 },
-    { x: F.x + F.w - 0.6, y: F.y + 0.6, z: -D + 1.5 },
-  ]
+  const lamps = houseLampPositions(h)
   const buckets = new Map<string, THREE.BufferGeometry[]>()
   const add = (k: string, g: THREE.BufferGeometry) => { const l = buckets.get(k) ?? []; l.push(g); buckets.set(k, l) }
   // 地面（胶合板）

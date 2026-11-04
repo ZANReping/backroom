@@ -6,6 +6,7 @@
 //   前装      hammer · rodX/rodY/rodZ/rodRx 通条（枪坐标，直接给位置和翻转角）· cap 火帽显示
 //   活门      block 活门 · hammer · ext 抽壳器
 import * as THREE from 'three'
+import { kraftPaperTexture } from './ammoBoxMesh'
 import { litMaterial } from './shared'
 import { tube, cyl, mesh, boxUV, sideProfile, makeMats, brassTex, type GunRig } from './firearmMesh'
 import { AMMO, type AmmoType } from '../content/firearms'
@@ -34,7 +35,7 @@ export function buildCartMesh(ammo: AmmoType, spent = false): THREE.Group {
   const g = new THREE.Group(); g.userData.shell = ammo
   if (ammo === 'cart_paper') {
     // 纸包弹（.69 弹丸 + 黑火药）：牛皮纸卷、尾部扭成一个结、前端包着弹丸鼓起
-    const paper = litMaterial({ color: '#d8ccb0', roughness: .92 })
+    const paper = litMaterial({ color: '#f2e8d4', map: kraftPaperTexture(), roughness: .92 }) // 牛皮纸纤维 + 卷纸接缝（ammoBoxMesh）
     g.add(mesh(lathe([[0, 0], [0.0025, -0.002], [0.002, -0.008], [0.0062, -0.014], [0.0085, -0.02], [0.0085, -0.05], [0.0095, -0.055], [0.0098, -0.062], [0.0085, -0.069], [0.004, -0.072], [0, -0.0722]], 14), paper))
     const twine = litMaterial({ color: '#6a5034', roughness: .9 })
     g.add(mesh(rodZ(0.0089, 0.0089, -0.0495, -0.0515, 0, 0, 14), twine)) // 弹丸处的扎线

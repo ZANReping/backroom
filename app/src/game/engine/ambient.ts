@@ -2,6 +2,7 @@ import {bursterAmbient} from './bursterAI'
 import { wranglerAmbient } from './wranglerAI'
 import { flickerL1Crates,tickL1Dynamics } from './l1State'
 import {updateL9Fog} from './l9Fog'
+import { updateHotel } from './l5Hotel'
 import {l0Sample} from '../world/l0Architecture'
 import {mapWallOccluded} from '../content/mapPlayer'
 import {revealMapSight,mapSight} from '../world/mapSight'
@@ -57,6 +58,7 @@ export function updateAmbient(eng: Engine, dt: number) {
     const inf=eng.map?.inf;if(inf?.l1Dynamics)bcast(eng,{t:'l1crates',seed:inf.seed,epoch:inf.l1Dynamics.epoch,hidden:inf.l1Dynamics.hidden})
   }
   updateL9Fog(eng, dt)
+  updateHotel(eng, dt) // L5 恐怖旅馆：关注度 / 换班 / 自洁 / 门时钟 / 氛围事件
   updateL10Weather(eng, dt)
   kazooAmbient(eng, dt) // [kazoo] L8 乐器洞石风铃：被戳响后经久不息的诱饵声源
   // 开发者现象开关：强制触发/屏蔽「闪烁」

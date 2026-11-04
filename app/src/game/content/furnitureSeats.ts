@@ -1,3 +1,4 @@
+import { toiletSeat } from './toiletParts'
 // Seat surfaces are authored in the furniture's local model space, in metres.
 import type { Structure } from '../core/types'
 import { l11DecorDef } from './l11Decor'
@@ -10,6 +11,7 @@ export interface FurnitureSeat {
   yaw: number // Three.js rotation: model front is +Z
   label: string
   relaxed?: boolean
+  toilet?: boolean
 }
 
 const seat = (y: number, x = 0, z = 0, yaw = 0, label = '座椅', relaxed = false): FurnitureSeat => ({ x, y, z, yaw, label, relaxed })
@@ -17,6 +19,7 @@ const seat = (y: number, x = 0, z = 0, yaw = 0, label = '座椅', relaxed = fals
 /** Explicit seat surfaces, never inferred from a prop's bounding box (tables are not seats). */
 export function furnitureSeats(s: Structure, level: number): FurnitureSeat[] {
   if (s.data?.fallen || s.data?.hidden || s.data?.noSit) return []
+  if(s.data?.dressing==='wcstall')return [{...toiletSeat(),z:toiletSeat().z-.42}]
   if(s.data?.tradersModel==='waiting')return [-1.18,0,1.18].map(x=>seat(.46,x,0,0,'候场排椅'))
   if(s.data?.tradersModel==='workstation')return [seat(.46,0,.76,Math.PI,'工作椅')]
   if(s.data?.tradersModel==='lounge')return [-1,1].flatMap(side=>[-.7,.7].map(z=>seat(.54,side*1.55,z,-side*Math.PI/2,'休息软座',true)))
@@ -28,6 +31,18 @@ export function furnitureSeats(s: Structure, level: number): FurnitureSeat[] {
       if (!Number.isFinite(height)) return []
       const count = Math.max(1, Math.min(32, Number(s.data?.seatCount ?? 1)))
       return Array.from({ length: count }, (_, i) => seat(height, (i + .5) * w / count - w / 2, 0, Number(s.data?.seatYaw ?? 0), String(s.data?.seatLabel ?? '座椅'), !!s.data?.seatRelaxed))
+    }
+    case 'l02fix': {
+      if(s.data?.fix!=='toilet')return []
+      const a=Number(s.data?.yaw??0),p=toiletSeat()
+      return [{...p,x:Math.sin(a)*p.z,z:Math.cos(a)*p.z,yaw:a}]
+    }
+    case 'l4prop': return s.data?.detail==='toilet'?[toiletSeat()]:[]
+    case 'l10outhouse': return level===10?[{x:0,y:.46,z:-(Number(s.data?.deg??0)%180?s.w:s.h)/2+.43,yaw:0,label:'旱厕坐凳',toilet:true}]:[]
+    case 'l9toilet': return [toiletSeat('worn')]
+    case 'stoneinstruments': {
+      const a=Number(s.data?.rot??0)+Math.PI+.15,yaw=Math.atan2(-Math.cos(a),-Math.sin(a)),p=toiletSeat('stone')
+      return [{...p,x:Math.cos(a)*1.3+Math.sin(yaw)*p.z,z:Math.sin(a)*1.3+Math.cos(yaw)*p.z,yaw}]
     }
     case 'table': return s.data?.chair ? [seat(s.data?.l0Furniture ? .488 : .475)] : []
     case 'officechair': return [seat(level === 4 ? .52 : .475, 0, 0, level === 4 ? Math.PI : 0, '办公椅')]
@@ -53,6 +68,7 @@ export function furnitureSeats(s: Structure, level: number): FurnitureSeat[] {
   const city = l11DecorDef(k)
   if (!city) return []
   switch (k) {
+    case 'l11_toilet': {const p=toiletSeat();return [{...p,z:-p.z,yaw:Math.PI}]}
     case 'l11_task_chair': return [seat(.55, 0, -.03, Math.PI, '办公椅')]
     case 'l11_cafe_chair': return [seat(.4775, 0, -.025, Math.PI, '咖啡椅')]
     case 'l11_dining_chair': return [seat(.492, 0, -.03, Math.PI, '餐椅')]

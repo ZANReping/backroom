@@ -1,3 +1,4 @@
+import { toiletSeat } from '../content/toiletParts'
 import * as THREE from 'three'
 import type { Structure } from '../core/types'
 import { furnitureSeats } from '../content/furnitureSeats'
@@ -6,9 +7,9 @@ import { setModelSeats } from '../world/seating'
 /** Capture the actual built model transform, including wall flush, scale and nested chair rotation. */
 export function syncFurnitureSeats(s: Structure, root: THREE.Object3D, ground: number, level: number) {
   if (s.kind.startsWith('alpha_')) return // Alpha's instanced parts already use world coordinates.
-  const defs = furnitureSeats(s, level)
+  const defs = s.kind === 'stoneinstruments' ? [toiletSeat('stone')] : furnitureSeats(s, level)
   if (!defs.length) return
-  const owner = s.kind === 'table' && s.data?.chair && !s.data?.l0Furniture ? root.children.find(o => o.type === 'Group') ?? root : root
+  const owner = s.kind === 'stoneinstruments' ? root.getObjectByName('instr:toilet') ?? root : s.kind === 'l10outhouse' && root.userData.l10Building ? root.children[0] ?? root : s.kind === 'table' && s.data?.chair && !s.data?.l0Furniture ? root.children.find(o => o.type === 'Group') ?? root : root
   root.updateWorldMatrix(true, true)
   setModelSeats(s, defs.map((seat, index) => {
     const p = owner.localToWorld(new THREE.Vector3(seat.x, seat.y, seat.z))

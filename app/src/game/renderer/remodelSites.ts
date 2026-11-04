@@ -2,6 +2,8 @@
 // 全部为程序几何 + Canvas 贴图（无外部素材）。按施工点 id 缓存，每帧按无限窗口原点平移；
 // 改造渐变期间路障从地面升起（scale），门从墙面「显影」（透明度）。
 import * as THREE from 'three'
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
+import { stripedConeGeometry, supportGeometry } from './constructionGeometry'
 import { afterSceneCompile } from './sceneWarmup'
 import type { Engine } from '../engine'
 import { REMODEL_TUNING, remodelProgress, type RemodelProp, type RemodelSite } from '../world/remodelSites'
@@ -33,7 +35,7 @@ const signTex = () => canvasTex('sign', 256, 320, (g) => {
   g.fillStyle = '#efc419'; g.beginPath(); g.moveTo(128, 62); g.lineTo(184, 148); g.lineTo(72, 148); g.closePath(); g.fill()
   g.fillStyle = '#1c1b18'; g.fillRect(122, 84, 12, 38); g.fillRect(122, 130, 12, 10)
   g.font = 'bold 54px "Noto Sans CJK SC","Microsoft YaHei",sans-serif'; g.textAlign = 'center'; g.fillText('施工中', 128, 222)
-  g.font = 'bold 20px sans-serif'; g.fillText('UNDER CONSTRUCTION', 128, 254)
+  g.font = 'bold 20px sans-serif'; g.fillText('UNDER CONSTRUCTION', 128, 254, 216)
   g.font = '18px "Noto Sans CJK SC",sans-serif'; g.fillText('后室装修公司', 128, 288)
 })
 const doorTex = () => canvasTex('door', 256, 512, (g) => {
@@ -94,26 +96,33 @@ function buildProp(p: RemodelProp): THREE.Group {
     const leg = mat('leg', () => std('#d9d7cf', { roughness: 0.5 }))
     const lamp = mat('blink', () => new THREE.MeshBasicMaterial({ color: '#ffb22e' }))
     for (const y of [0.92, 0.6]) box(g, 1.24, 0.16, 0.025, 0, y, 0, board)
-    for (const sx of [-0.52, 0.52]) for (const sz of [-1, 1]) { const l = box(g, 0.05, 1.02, 0.045, sx, 0.5, sz * 0.09, leg); l.rotation.x = sz * 0.17 }
+    const legs: THREE.BufferGeometry[] = []
+    for (const sx of [-.52, .52]) for (const sz of [-1, 1]) legs.push(supportGeometry(new THREE.Vector3(sx, .004, sz * .175), new THREE.Vector3(sx, 1.01, 0), .05, .045))
+    const supports = new THREE.Mesh(mergeGeometries(legs), leg); legs.forEach(geo => geo.dispose()); supports.castShadow = supports.receiveShadow = true; g.add(supports)
     const b = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 0.07, 12), lamp); b.position.set(0.52, 1.06, 0); b.name = 'remodel-blink'; g.add(b)
   } else if (p.kind === 'cone') {
     const orange = mat('cone', () => std('#e8541b', { roughness: 0.55, emissiveIntensity: 0.3 }))
     const white = mat('band', () => std('#f4f4f0', { roughness: 0.3, emissiveIntensity: 0.35 }))
     const base = mat('coneBase', () => std('#25231f', { roughness: 0.9, emissiveIntensity: 0.05 }))
     box(g, 0.36, 0.035, 0.36, 0, 0.018, 0, base)
-    const c = new THREE.Mesh(new THREE.ConeGeometry(0.15, 0.66, 18, 1, true), orange); c.position.y = 0.36; c.castShadow = true; g.add(c)
-    const band = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.098, 0.11, 18, 1, true), white); band.position.y = 0.43; g.add(band)
+    const cone = stripedConeGeometry({ bottomY: .035, topY: .695, bottomRadius: .15, topRadius: .012, bands: [[.375, .485]], segments: 18 })
+    const c = new THREE.Mesh(cone.body, orange); c.castShadow = c.receiveShadow = true; g.add(c)
+    const band = new THREE.Mesh(cone.reflective, white); band.receiveShadow = true; g.add(band)
   } else if (p.kind === 'sign') {
     const face = mat('signFace', () => std('#ffffff', { map: signTex(), emissiveMap: signTex(), emissiveIntensity: 0.3, roughness: 0.5 }))
-    for (const s of [-1, 1]) { const panel = box(g, 0.56, 0.72, 0.02, 0, 0.5, s * 0.12, face, s > 0 ? 0 : Math.PI); panel.rotation.x = s * 0.24 }
+    for (const s of [-1, 1]) { const panel = box(g, .56, .72, .02, 0, .5, s * Math.sin(.24) * .36, face, s > 0 ? 0 : Math.PI); panel.rotation.x = -s * .24 }
     const hinge = mat('leg', () => std('#d9d7cf'))
-    box(g, 0.58, 0.04, 0.05, 0, 0.88, 0, hinge)
+    const frame: THREE.BufferGeometry[] = [new THREE.BoxGeometry(.58, .04, .05).translate(0, .86, 0)]
+    for (const x of [-.255, .255]) for (const side of [-1, 1]) frame.push(supportGeometry(new THREE.Vector3(x, .005, side * .21), new THREE.Vector3(x, .86, 0), .03, .03))
+    const support = new THREE.Mesh(mergeGeometries(frame), hinge); frame.forEach(geo => geo.dispose()); support.castShadow = support.receiveShadow = true; g.add(support)
   } else {
     // 施工灯：三脚架 + 冷白方形泛光灯（自发光；不另加实时光源，避免挤占光源池）
     const metal = mat('lampLeg', () => std('#2c2c2a', { metalness: 0.6, roughness: 0.4, emissiveIntensity: 0.05 }))
     const head = mat('lampHead', () => std('#e6c21a', { metalness: 0.3, roughness: 0.4 }))
     const glass = mat('lampGlass', () => new THREE.MeshBasicMaterial({ color: '#f2f8ff' }))
-    for (let i = 0; i < 3; i++) { const a = (i / 3) * Math.PI * 2, l = box(g, 0.025, 1.2, 0.025, Math.cos(a) * 0.16, 0.58, Math.sin(a) * 0.16, metal); l.rotation.set(Math.sin(a) * 0.25, 0, -Math.cos(a) * 0.25) }
+    const legs: THREE.BufferGeometry[] = []
+    for (let i = 0; i < 3; i++) { const a = i / 3 * Math.PI * 2; legs.push(supportGeometry(new THREE.Vector3(Math.cos(a) * .3, .004, Math.sin(a) * .3), new THREE.Vector3(0, 1.16, 0), .025)) }
+    const tripod = new THREE.Mesh(mergeGeometries(legs), metal); legs.forEach(geo => geo.dispose()); tripod.castShadow = tripod.receiveShadow = true; g.add(tripod)
     box(g, 0.03, 0.45, 0.03, 0, 1.35, 0, metal)
     box(g, 0.34, 0.26, 0.12, 0, 1.62, 0, head)
     box(g, 0.28, 0.2, 0.01, 0, 1.62, 0.062, glass)

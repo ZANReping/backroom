@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:entry-texture-upload
+> esbuild scripts/check-entry-texture-upload.ts --bundle --platform=node --format=esm --outfile=.cache/check-entry-texture-upload.mjs && node .cache/check-entry-texture-upload.mjs
+
+
+  .cache\check-entry-texture-upload.mjs  444.1kb
+
+Done in 88ms
+{"passed":13}

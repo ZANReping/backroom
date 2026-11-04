@@ -33,6 +33,13 @@ import { buildShrimpMesh } from './shrimpMesh'
 import { buildPartygoerMesh } from './partygoerMesh'
 import {buildJerryMesh} from './jerryMesh'
 import { buildFerrenMesh } from './ferrenMesh' // [ferren]
+import { buildMaidEntityMesh } from './maidRender' // [maid]
+import { buildConciergeEntityMesh } from './conciergeRender' // [concierge]
+import { buildBellhopEntityMesh } from './bellhopRender' // [bellhop]
+import { buildBeastEntityMesh } from './beastRender' // [beast]
+import { buildGreeterEntityMesh, buildWindupEntityMesh } from './spokesRender' // [spokes]
+import { buildChefEntityMesh } from './chefRender' // [chef]
+import { buildJazzEntityMesh } from './jazzRender' // [jazz]
 import { buildCreeperEntityMesh } from './creeperRender' // [creeper]
 import { buildNWMesh } from './watchRender'
 import { ENTITIES } from '../entities'
@@ -56,6 +63,20 @@ type PartMap = Record<string, THREE.Object3D>
 // v53：实体建模变体（L3 高智能实体：无面灵错位面部器官/石器工具、尸鼠水豚形态；seed=实体 id，保证重建一致）
 // ratMorph：尸鼠按层级固定形态——L2 灰白廊道种群 / L3 水豚（capybara 优先）/ L5 酒店正装（小西装+领结）/ 其余层级深褐（旧档「死亡鼠」）
 export interface EntityMeshOpts {
+  /** [maid] 图鉴档案定格姿态序号（MAID_ARCHIVE_POSES）；游戏内不传 */
+  maidPose?: number
+  /** [concierge] 图鉴档案定格姿态序号（CONCIERGE_ARCHIVE_POSES）；游戏内不传 */
+  conciergePose?: number
+  /** [bellhop] 图鉴档案定格姿态序号（BELLHOP_ARCHIVE_POSES）；游戏内不传 */
+  bellhopPose?: number
+  /** [beast] 图鉴档案定格姿态序号（BEAST_ARCHIVE_POSES）；游戏内不传 */
+  beastPose?: number
+  /** [chef] 图鉴档案定格姿态序号（CHEF_ARCHIVE_POSES）；游戏内不传 */
+  chefPose?: number
+  /** [jazz] 图鉴档案定格姿态序号（JAZZ_ARCHIVE_POSES：头儿 / 萨克斯 / 低音提琴 / 鼓手）；游戏内不传 */
+  jazzPose?: number
+  /** [spokes] 图鉴档案定格姿态序号（SPOKES_ARCHIVE_POSES）；游戏内不传 */
+  greeterPose?: number
   /** [creeper] 爬菌 Entity 17：宿主 / 阶段 / 尸鼠形态 / 蛛形纲外形 / 种子（creeperRender.buildCreeperEntityMesh） */
   creep?: import('./creeperRender').CreepMeshOpts
   /** [window] 窗户 Entity 2：窗型 / 生命阶段 / 种子 */
@@ -206,6 +227,14 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
   if (type === 'arms') return buildArmsEntityMesh(opts?.arms?.count,opts?.arms?.seed) // 手臂重制：风口 + 1–3 条蒙皮长臂（armsMesh），动画由 renderer.updateArmsMesh 按 AI 状态驱动
   if(type==='jerry')return buildJerryMesh()
   if (type === 'creeper') return buildCreeperEntityMesh(opts?.creep) // [creeper] 爬菌 Entity 17：感染体（尸鼠 / 蛛形纲 1–4 阶）/ 爬菌人
+  if (type === 'concierge') return buildConciergeEntityMesh(opts?.conciergePose) // [concierge] 看门人 Entity 131（conciergeMesh LOD0/LOD1 + 前台 / 升降梯；动画 conciergeAnim，摆位 conciergeRender）
+  if (type === 'jazz') return buildJazzEntityMesh(opts?.jazzPose) // [jazz] 爵士脑 Entity 197（jazzMesh LOD0/1/2，按 e.jz.who 首帧建；动画 jazzAnim，摆位 jazzRender）
+  if (type === 'chef') return buildChefEntityMesh(opts?.chefPose) // [chef] 厨师 Entity 800（chefMesh LOD0/1/2；动画 chefAnim，摆位 / 融进环境 chefRender）
+  if (type === 'greeter') return buildGreeterEntityMesh(opts?.greeterPose) // [spokes] 迎宾女郎 Entity 28（spokesMesh LOD0/LOD1；动画 spokesAnim，摆位 spokesRender）
+  if (type === 'windup') return buildWindupEntityMesh() // [spokes] 发条兔（spokesProps.buildWindupRabbit）
+  if (type === 'beast') return buildBeastEntityMesh(opts?.beastPose) // [beast] 第五层的野兽 Entity 18（beastMesh LOD0/LOD1；动画 beastAnim，摆位 beastRender）
+  if (type === 'bellhop') return buildBellhopEntityMesh(opts?.bellhopPose) // [bellhop] 行李员 Entity 135（bellhopMesh LOD0/LOD1，8 张可换面盘；动画 bellhopAnim，摆位 bellhopRender）
+  if (type === 'maid') return buildMaidEntityMesh(opts?.maidPose) // [maid] 管家 Entity 111（maidMesh + 清洁车；动画 maidAnim，摆位 maidRender）
   if (type === 'ferren') return buildFerrenMesh() // [ferren] 重制 Ferren（Entity 92，貂色雪貂）
   if (type === 'nguithr') return buildNguithrEntityMesh(opts?.nguithr?.scale,opts?.nguithr?.sacs.length,opts?.nguithr?.seed) // 重制 Nguithr'xurh：避日目蒙皮模型（58 骨，3 次绘制）+ 程序化动画；巢由渲染层按 AI 的巢种子补建
   if (type === 'watcher' || type === 'strider' || type === 'mangled') return buildNWMesh(type) // 重制邻里守望 / 残缺者（WATCH-REMAKE.md）
@@ -470,26 +499,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       eyes(1.12, 0.07, '#ffe9b0', 0.04, 0.16)
       break
     }
-    case 'bellhop': { // 侍者：酒红制服 + 金扣/帽带 + 白手套 + 黄铜行李车
-      humanoid(1.8, 0.95, '#7a2e2e', { head: '#c9a58a' })
-      eyes(1.68, 0.08, '#ffd9a0', 0.045)
-      for (let i = 0; i < 3; i++) grp.add(glow(0.035, 0.035, 0.02, '#b08d46', 0, 1.3 - i * 0.18, 0.135)) // 金扣
-      grp.add(box(0.3, 0.1, 0.28, '#7a2e2e', 0, 1.76, 0)) // 帽
-      grp.add(box(0.31, 0.035, 0.29, '#b08d46', 0, 1.72, 0)) // 帽带
-      grp.add(box(0.36, 0.2, 0.02, '#5e2424', 0, 0.62, -0.14)) // 衣摆后片
-      tip(parts.armL, 0.1, 0.1, 0.1, '#e8e2d2', -0.8) // 白手套
-      tip(parts.armR, 0.1, 0.1, 0.1, '#e8e2d2', -0.8)
-      const cart = new THREE.Group() // 黄铜行李车
-      cart.add(box(0.5, 0.04, 0.6, '#b08d46', 0, 0.12, 0))
-      cart.add(cyl(0.025, 0.025, 0.95, '#b08d46', 0, 0.6, -0.26, 6))
-      cart.add(cyl(0.025, 0.025, 0.95, '#b08d46', 0, 0.6, 0.26, 6))
-      const bar = cyl(0.02, 0.02, 0.55, '#b08d46', 0, 1.05, 0, 6); bar.rotation.x = Math.PI / 2; cart.add(bar)
-      const cw1 = cyl(0.07, 0.07, 0.05, '#6a5a2e', 0, 0.07, -0.2, 8); cw1.rotation.x = Math.PI / 2; cart.add(cw1)
-      const cw2 = cyl(0.07, 0.07, 0.05, '#6a5a2e', 0, 0.07, 0.2, 8); cw2.rotation.x = Math.PI / 2; cart.add(cw2)
-      cart.position.set(0.55, 0, 0)
-      tag(cart, 'cart'); grp.add(cart)
-      break
-    }
+    // [bellhop] 旧「侍者」内联模型（酒红制服 + 方块帽 + 简易行李车）已删除：type 'bellhop' = Entity 135 行李员，见函数开头 buildBellhopEntityMesh
     case 'mirrorself': { // 镜中人：苍白「你」+ 胸前镜片 + 纯黑眼
       humanoid(1.75, 0.9, '#d8ccc0')
       eyes(1.63, 0.08, '#0c0507', 0.05)

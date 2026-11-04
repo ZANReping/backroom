@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { ENTITIES } from '../entities'
+import { ENTITIES, isHotelStaffType } from '../entities'
 import { entityArchiveView } from '../entities/archiveViews'
 import type { MothForm } from '../entities/types'
 import type { SmilerKind } from '../entities/smilers'
@@ -18,6 +18,13 @@ export function entityArchiveOptions(type: string, step = 0): EntityMeshOpts {
     smilerKind: type === 'smiler' ? form?.id as SmilerKind : undefined,
     l3clump: traits?.l3clump, l3face: traits?.l3face, tool: traits?.tool,
     wranglerKind:traits?.wranglerKind,
+    maidPose: type === 'maid' ? specimen : undefined, // [maid] 四个定格姿态
+    conciergePose: type === 'concierge' ? specimen : undefined, // [concierge] 四个定格姿态
+    bellhopPose: type === 'bellhop' ? specimen : undefined,
+    jazzPose: type === 'jazz' ? specimen : undefined, // [jazz] 四个定格姿态（头儿独奏 / 萨克斯 / 低音提琴托头 / 鼓手弹钢琴）
+    chefPose: type === 'chef' ? specimen : undefined, // [chef] 四个定格姿态（捧紫甘蓝 / 搅锅 / 敲桌 / 抡锅）
+    greeterPose: type === 'greeter' ? specimen : undefined, // [spokes] 四个定格姿态（迎宾 / 推销 / 心声 / 上发条）
+    beastPose: type === 'beast' ? specimen : undefined, // [beast] 四个定格姿态（绅士 / 说话 / 余光 / 真身） // [bellhop] 四个定格姿态（每个换一张脸）
     houndNeutral: traits?.houndKind === 'neutral', houndKind: traits?.houndKind, wretchKind: traits?.wretchKind,
     ratMorph: type === 'corpserat' ? ratMorphFor(0, traits ?? {}) : undefined,
     capybara: traits?.capybara, ceilingCrawler: traits?.ceilingCrawler,
@@ -43,14 +50,28 @@ export function buildEntityArchiveModel(type: string, step = 0): THREE.Group | n
   if (type === 'deathmoth') model.rotation.x = .95
   model.updateMatrixWorld(true)
   // Studio lighting must not sample the active level's darkness or probe field.
-  // Only this new model's material uniforms are replaced; world uniforms stay intact.
-  // Archive lighting is instance-local even for pooled procedural fungus materials.
-  const privateMaterials=new Map<THREE.Material,THREE.Material>()
-  if(type==='creeper')model.traverse(o=>{const m=o as THREE.Mesh;if(!m.material)return;const copy=(src:THREE.Material)=>{if(!src.userData.entityShared)return src;let mat=privateMaterials.get(src);if(!mat){mat=src.clone();mat.onBeforeCompile=src.onBeforeCompile;mat.customProgramCacheKey=src.customProgramCacheKey.bind(src);mat.userData={...src.userData,entityShared:false};privateMaterials.set(src,mat)}return mat};m.material=Array.isArray(m.material)?m.material.map(copy):copy(m.material)})
+  // Pooled models share materials with the world. Patch only studio-owned copies.
+  const isolateMaterials = isHotelStaffType(type) || type === 'creeper'
+  const copies = new Map<THREE.Material, THREE.Material>()
   const materials = new Set<THREE.Material>()
+  function studioMaterial(src: THREE.Material) {
+    let material = src
+    if (isolateMaterials && src.userData.entityShared) {
+      const previous = copies.get(src)
+      if (previous) return previous
+      material = src.clone()
+      material.onBeforeCompile = src.onBeforeCompile
+      const key = src.customProgramCacheKey()
+      material.customProgramCacheKey = () => key
+      material.userData = { ...src.userData, entityShared: false }
+      copies.set(src, material)
+    }
+    materials.add(material)
+    return material
+  }
   model.traverse(o => {
-    const m = o as THREE.Mesh
-    if (m.material) for (const material of Array.isArray(m.material) ? m.material : [m.material]) materials.add(material)
+    const mesh = o as THREE.Mesh
+    if (mesh.material) mesh.material = Array.isArray(mesh.material) ? mesh.material.map(studioMaterial) : studioMaterial(mesh.material)
   })
   for (const material of materials) {
     const compile = material.onBeforeCompile, key = material.customProgramCacheKey()

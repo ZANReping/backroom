@@ -1,4 +1,8 @@
 // 第一人称手部/手持物品 viewmodel + 屏幕中心准心（DOM 注入）
+import { buildL5ItemMesh } from './l5ItemModels'
+import { buildSpokesItemMesh } from './spokesItemModels' // [spokes]
+import { buildChefItemMesh } from './chefItemModels' // [chef]
+import { buildJazzItemMesh } from './jazzItemModels' // [jazz]
 import * as THREE from 'three'
 import { buildItemMesh } from './itemsMesh'
 import { buildRefinedItemMesh } from './refinedItemMesh'
@@ -9,6 +13,7 @@ import { buildFirearmMesh } from './firearmMesh'
 import { isGun } from '../content/firearms'
 import { buildMeleeMesh, type MeleeType } from './meleeMesh'
 import { MELEE_HOLD, meleePose } from './meleeAnim'
+import { dieThrowPose } from '../engine/fateDieSim' // [l5items 收尾]
 import { buildRetroHand, heldHandPose, FLASH_HAND_POSE, SWIM_LEFT_HAND_POSE, KAZOO_HELD, type RetroHand } from './retroViewHand'
 export { heldHandPose, heldBox, LIGHTER_HAND_POSE, FLASH_HAND_POSE, SWIM_LEFT_HAND_POSE, KAZOO_HAND_POSE, buildRetroHand, sleeveKindOf } from './retroViewHand'
 
@@ -175,6 +180,10 @@ export function vmAnimPose(st: VmAnimState) {
       // 空手出拳：直线快速前刺，节奏比挥舞更急促
       const kj = Math.sin(Math.min(1, pr * 1.3) * Math.PI)
       pz -= kj * 0.28; py += kj * 0.02; rx = -kj * 0.3; rz = kj * 0.1
+    } else if (kind === 'dieThrow') {
+      // [l5items 收尾] 命运之骰：抬手 → 前挥 → 松手（0.33 s，骰子从手中出手）→ 收回；与 fateDieSim.dieHandPoint 同一姿势表
+      const d = dieThrowPose(pr)
+      px += d[0]; py += d[1]; pz += d[2]; rx = d[3]; ry = d[4]; rz = d[5]
     } else if (kind === 'throw') {
       // 投掷：抬臂后向前上方甩出
       rx = -k * 0.75; py += k * 0.12; pz -= k * 0.16; rz = -k * 0.18
@@ -277,6 +286,66 @@ export function buildHeldItem(type: string): THREE.Group {
       detail.scale.setScalar(.9)
       detail.position.set(0, .08, -.11)
       g.add(detail)
+      break
+    }
+    case 'mahjongtile': case 'key437': case 'bagTag': { // L5 小件：竖着捏在指尖，正面朝镜头
+      const m = buildL5ItemMesh(type, 'upright')
+      m.scale.setScalar(type === 'mahjongtile' ? .8 : .9); m.rotation.set(-.15, .25, 0)
+      m.position.set(0, type === 'mahjongtile' ? .085 : .06, -.15)
+      g.add(m)
+      break
+    }
+    case 'megform': case 'chefphoto': { // [chef] 表单 / 拍立得：竖着捏在手里
+      const m = buildChefItemMesh(type, 'upright')
+      m.scale.setScalar(type === 'megform' ? .55 : 1.0); m.rotation.set(-.35, .18, 0)
+      m.position.set(0, type === 'megform' ? .07 : .05, -.17)
+      g.add(m)
+      break
+    }
+    case 'megcamera': case 'megmic': { // [chef] 相机：端在胸前、镜头朝前；胸麦：托在掌心
+      const m = buildChefItemMesh(type, 'upright')
+      if (type === 'megcamera') { m.rotation.set(0, Math.PI, 0); m.position.set(0, -.02, -.2) } else { m.scale.setScalar(1.6); m.rotation.set(-1.0, .3, 0); m.position.set(0, .04, -.16) }
+      g.add(m)
+      break
+    }
+    case 'habanero': { // [jazz] 哈瓦那辣椒酱：竖着握在手里，标签朝镜头
+      const m = buildJazzItemMesh('habanero', 'upright')
+      m.scale.setScalar(1.25); m.rotation.set(-0.12, 0.35, 0.08); m.position.set(0, -0.06, -0.16)
+      g.add(m)
+      break
+    }
+    case 'chefpot': { // [chef] 带把手的锅：握着把手，锅朝前上
+      const m = buildChefItemMesh('chefpot', 'upright')
+      m.rotation.set(-1.1, 0, 0); m.position.set(0, -.02, -.12)
+      g.add(m)
+      break
+    }
+    case 'spokesposter': case 'spokesphoto': case 'detbadge': { // [spokes] 海报 / 照片 / 证件：竖着捏在手里，正面朝镜头、微微后仰
+      const m = buildSpokesItemMesh(type, 'upright')
+      m.scale.setScalar(type === 'spokesposter' ? .55 : .95); m.rotation.set(-.35, .18, 0)
+      m.position.set(0, type === 'spokesposter' ? .07 : .05, -.17)
+      g.add(m)
+      break
+    }
+    case 'windupgear': { // [spokes] 发条零件：托在掌心，钥匙朝上
+      const m = buildSpokesItemMesh('windupgear', 'upright')
+      m.scale.setScalar(1.15); m.rotation.set(-1.1, .3, 0)
+      m.position.set(0, .04, -.16)
+      g.add(m)
+      break
+    }
+    case 'roomtea': { // 客房茶：茶托平托在掌上，杯把朝右
+      const m = buildL5ItemMesh('roomtea')
+      m.scale.setScalar(.85); m.rotation.set(.12, -.5, 0)
+      m.position.set(0, .03, -.17)
+      g.add(m)
+      break
+    }
+    case 'gentletter': { // 情书：信封正面「致行李员」朝向玩家，向后仰
+      const m = buildL5ItemMesh('gentletter', 'upright')
+      m.scale.setScalar(.75); m.rotation.set(-.85, .15, .05)
+      m.position.set(-.01, .05, -.17)
+      g.add(m)
       break
     }
     case 'brc_permit': {

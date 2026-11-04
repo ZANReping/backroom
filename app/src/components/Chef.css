@@ -1,0 +1,10 @@
+/* [chef] 厨师（Entity 800）：字幕（念头 = 暖色斜体，征兆 = 灰白）/ 吃饭时屏幕边缘变暖 / 闪光 / 冷库霜边 / 打烊小牌 */
+.ch-subs { position: fixed; left: 50%; bottom: 21%; transform: translateX(-50%); max-width: min(720px, 92vw); display: flex; flex-direction: column; align-items: center; gap: 4px; pointer-events: none; z-index: 47; text-align: center; }
+.ch-sub { padding: 3px 12px; font-family: 'Songti SC', 'SimSun', 'Noto Serif CJK SC', serif; font-size: 17px; letter-spacing: 1px; text-shadow: 0 1px 3px #000, 0 0 10px rgba(0, 0, 0, 0.7); }
+.ch-sub.thought { color: #f2c48a; font-style: italic; }
+.ch-sub.sys { color: #e8e4dc; background: rgba(10, 6, 6, 0.55); }
+.ch-sub.chef { color: #ffd7c8; }
+.ch-warm { position: fixed; inset: 0; pointer-events: none; z-index: 29; background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 52%, rgba(214, 120, 40, 0.28) 78%, rgba(150, 50, 20, 0.55) 100%); mix-blend-mode: screen; transition: opacity 0.4s linear; }
+.ch-flash { position: fixed; inset: 0; pointer-events: none; z-index: 57; background: #fffdf4; }
+.ch-cold { position: fixed; inset: 0; pointer-events: none; z-index: 30; background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 45%, rgba(170, 215, 240, 0.25) 75%, rgba(220, 240, 255, 0.6) 100%); }
+.ch-closed { position: fixed; top: 12%; left: 50%; transform: translateX(-50%); pointer-events: none; z-index: 33; padding: 3px 14px; color: #e8d2a8; background: rgba(40, 10, 12, 0.6); border: 1px solid rgba(200, 160, 90, 0.5); font-family: 'Songti SC', 'SimSun', 'Noto Serif CJK SC', serif; letter-spacing: 4px; font-size: 13px; }

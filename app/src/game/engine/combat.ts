@@ -1,4 +1,11 @@
 import { creeperKilled, creeperMeleeKill, creepFistMult, creepBurnAt } from './creeperAI' // [creeper]
+import { maidKillGuard } from './maidAI' // [maid]
+import { conciergeKillGuard } from './conciergeAI' // [concierge]
+import { bellhopKillGuard, bellhopOnDeath } from './bellhopAI' // [bellhop]
+import { beastKillGuard } from './beastAI' // [beast]
+import { spokesKillGuard } from './spokesAI' // [spokes]
+import { chefKillGuard } from './chefAI' // [chef]
+import { jazzKillGuard } from './jazzAI' // [jazz]
 import { facelingAgeOf } from './facelingAI'
 import { isVm36, vm36Struck, vm36Shocked, vm36KillGuard } from './vendingAI'
 import { FACELING_AGE_HEIGHT } from '../entities/facelingTraits'
@@ -57,6 +64,7 @@ export function die(eng: Engine, cause: string, force = false) {
   releaseDullerPlayer(eng)
   releaseClumpPlayer(eng)
   releaseNW(eng)
+  bellhopOnDeath(eng) // [bellhop] 在 L5 死亡：身上的东西由行李员搬去 10F 行李房（按存档位记，下一局取回）
   eng.over = true
   eng.player.hp = 0
   eng.usingItem = null
@@ -168,6 +176,13 @@ function startAttackAnimation(eng: Engine, kind: Engine['attackAnimKind'], durat
 }
 
 export function killCheck(eng: Engine, e: Entity) {
+  if (maidKillGuard(eng, e)) return // [maid] 管家不可击杀：挨打 = 打扰值拉满
+  if (conciergeKillGuard(eng, e)) return // [concierge] 看门人不可击杀：挨打 = 更快动手
+  if (jazzKillGuard(eng, e)) return // [jazz] 乐手打不死：挨打只让他们很失望（好感 −）
+  if (chefKillGuard(eng, e)) return // [chef] 厨师打不死：挨打只顿一下（stun）并盯上你
+  if (spokesKillGuard(eng, e)) return // [spokes] 迎宾女郎不可击杀（打她 = 心声「再用力一点」+ 关注度）；发条兔血量见底 = 砸开，掉发条零件
+  if (beastKillGuard(eng, e)) return // [beast] 野兽不可击杀：动手 = 怀疑他（真身缠抓 / 熄灯惩罚）
+  if (bellhopKillGuard(eng, e)) return // [bellhop] 行李员不受伤：后退一步、摇恼怒铃
   if (vm36KillGuard(eng, e)) return // [vending] Entity 36 血量见底只会瘫倒（之后可撬开后部暗格）
   if (thingKillGuard(eng, e)) return
   if (e.def.type === 'windowent' && windowKillGuard(eng, e)) return // [window] 窗户不可杀；打中手臂 = 松手

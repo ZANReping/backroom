@@ -32,6 +32,8 @@ import { LORIGINALS } from './l112'
 import { LEMPTYNEST } from './l113'
 import { LHAMMOZ } from './l114'
 import { LCORNUCOPIA } from './l116'
+import { LBEASTOFFICE, LLOBBY } from './l5pocket' // L5 1c 口袋房间
+import { LCASINO } from './l5casino' // [casino] Level 5.1 赌场（内部 id 119）
 
 import { LFOYER } from './lfoyer'
 import { L02 } from './l02'
@@ -50,9 +52,15 @@ export const FOYER_LEVEL_DEF: LevelDef = LFOYER
 /** Level 0.2「重塑的混乱」（id 902）：同前厅，只经 levelDefOf 解析。 */
 export const L02_LEVEL_DEF: LevelDef = L02
 
-export function levelDefOf(id: number): LevelDef | undefined {
+const HOTEL_LEVELS = Array.from({ length: 13 }, (_, l5Floor): LevelDef => ({ ...L5, l5Floor }))
+
+export function levelDefOf(id: number, hotelFloor?: number): LevelDef | undefined {
+  if (id === 5 && hotelFloor !== undefined) return HOTEL_LEVELS[hotelFloor] ?? HOTEL_LEVELS[1]
   if (id === LFOYER.id) return LFOYER
   if (id === L02.id) return L02
+  if (id === LBEASTOFFICE.id) return LBEASTOFFICE
+  if (id === LLOBBY.id) return LLOBBY
+  if (id === LCASINO.id) return LCASINO // [casino] 内部 id 119 → Level 5.1
   return OUTPOST_LEVEL_DEFS[id] ?? LEVELS[id]
 }
 

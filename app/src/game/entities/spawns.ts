@@ -16,6 +16,14 @@ export interface EntitySpawn { id: number; w: number; event?: boolean }
 export const ENTITY_EVENT_SPAWNS: Record<string, number[]> = {
   smiler: [1, 2],
   arms: [1],
+  concierge: [5], // [concierge] 看门人 Entity 131：L5 1F 主厅前台（被盯上时出现在任意楼层），由 conciergeAI.stepConciergeWorld 生成
+  greeter: [118], // [spokes] 迎宾女郎 Entity 28：118 大堂前台 / 办公室，由 spokesAI.spokesLobbyArrive 生成
+  windup: [5, 118],
+  jazz: [5], // [jazz] 爵士脑 Entity 197：L5 厨师餐厅的舞台 / 吧台，由 jazzAI.stepJazzWorld 生成（四人）
+  chef: [5], // [chef] 厨师 Entity 800：L5 餐厅后场，由 chefAI.stepChefWorld 生成（孤例） // [spokes] 发条兔：她在大堂放出；L5 迷路太久 / 跟出大堂时由 spokesAI 生成
+  beast: [5], // [beast] 第五层的野兽 Entity 18：L5 余光 / 117 办公室 / 惩罚，由 beastAI 生成
+  bellhop: [5], // [bellhop] 行李员 Entity 135：L5 任一楼层的长走廊尽头（10F 必出现），由 bellhopAI.stepBellhopWorld 生成
+  maid: [5], // [maid] 管家 Entity 111：L5 每张地图最多 1 个，进层 90 s 后由 maidAI.stepMaidWorld 生成
   ferren: [102], // Ferren：仅商人之家的雪貂笼出没（非生成池，生成器定点放置）
   jerry: [274], // 鹉主杰瑞：仅 Level 274 主间栖木（生成器定点放置）
   windowent: [2, 4, 12], // [window] 只占据 L2 / L4 / L601 的普通窗户（windowAI），不在生成池

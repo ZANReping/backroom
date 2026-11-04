@@ -128,9 +128,12 @@ export class Builder{
    if(!b.geometries.length)continue
    const geo=mergeGeometries(b.geometries,false);b.geometries.forEach(g=>g.dispose())
    if(!geo)throw Error('Traders geometry merge')
-   if(b.material.userData.tradersBaked)yield* bakeTradersGeometry(geo)
-   const mesh=new THREE.Mesh(geo,b.material);mesh.castShadow=mesh.receiveShadow=b.material.userData.tradersBaked===true
-   parent.add(mesh);yield
+   let installed=false
+   try{
+    if(b.material.userData.tradersBaked)yield* bakeTradersGeometry(geo)
+    const mesh=new THREE.Mesh(geo,b.material);mesh.castShadow=mesh.receiveShadow=b.material.userData.tradersBaked===true
+    parent.add(mesh);installed=true;yield
+   }finally{if(!installed)geo.dispose()}
   }
   this.buckets.clear()
  }

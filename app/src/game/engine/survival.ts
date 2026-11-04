@@ -1,3 +1,4 @@
+import { chefHungerMul } from './chefAI' // [chef]
 // v53：生存属性（饥饿/口渴/理智/电池/体力提示/低理智幻影 + 现象判定汇总）——
 // 自 engine.ts step 内联段拆分，逻辑逐语句搬运；返回 true 表示本帧已死亡（原 step 的 return）。
 // v55：疫疾（Entity 19）隐藏感染值——湿地/锅炉房积累、四阶段效果、升阶计图鉴遭遇。
@@ -5,6 +6,7 @@ import { tileAt } from '../world/mapgen'
 import {l0Sample,l0Meeting} from '../world/l0Architecture'
 import { audio } from '../core/audio'
 import { recordEncounter } from '../entities'
+import { FOYER_ID } from '../world/foyerLayout'
 import type { Engine } from '../engine'
 
 type DiffMult = { dmg: number; drain: number }
@@ -18,23 +20,26 @@ export function infectionStageOf(infection: number): number {
 export function updateSurvival(eng: Engine, dt: number, dm: DiffMult, mag: number): boolean {
   const p = eng.player, m = eng.map!
   // ---- 生存消耗（v51：据点中饥饿下降 ×1/3；玩家不动时 ×1/2，可叠加）----
-  const hungerK = (eng.inOutpost ? 1 / 3 : 1) * (mag > 0.1 ? 1 : 0.5)
-  p.hunger = Math.max(0, p.hunger - 0.28 * dm.drain * (eng.levelDef.entropy ?? 1) * hungerK * dt)
-  if (p.hunger <= 25 && eng.statusMsgT.hunger <= 0) {
-    eng.statusMsgT.hunger = 8
-    eng.msg('你饿得头晕。', 'damage')
-    audio.stomach()
+  // 前厅是序章安全区：不消耗饥饿/口渴，也不触发对应警告或饥渴伤害；其他生存系统仍照常运行。
+  if (eng.levelDef.id !== FOYER_ID) {
+    const hungerK = (eng.inOutpost ? 1 / 3 : 1) * (mag > 0.1 ? 1 : 0.5)
+    p.hunger = Math.max(0, p.hunger - 0.28 * dm.drain * (eng.levelDef.entropy ?? 1) * hungerK * chefHungerMul(eng) * dt)
+    if (p.hunger <= 25 && eng.statusMsgT.hunger <= 0) {
+      eng.statusMsgT.hunger = 8
+      eng.msg('你饿得头晕。', 'damage')
+      audio.stomach()
+    }
+    if (p.hunger <= 0 && !eng.dev.god) { p.hp -= 1.2 * dt; if (p.hp <= 0) { eng.die('饿死了'); return true } }
+    // v54：口渴值——与饥饿同率自然流失（据点 ×1/3、不动 ×1/2 同规则叠加）；体力耗尽（stamina ≤1，同 movement 冲刺耗尽阈值）时流失 ×2
+    const thirstK = hungerK * (p.stamina <= 1 ? 2 : 1)
+    p.thirst = Math.max(0, p.thirst - 0.28 * dm.drain * (eng.levelDef.entropy ?? 1) * thirstK * dt)
+    if (p.thirst <= 25 && eng.statusMsgT.thirst <= 0) {
+      eng.statusMsgT.thirst = 8
+      eng.msg('你渴得喉咙发干。', 'damage')
+      audio.stomach()
+    }
+    if (p.thirst <= 0 && !eng.dev.god) { p.hp -= 1.2 * dt; if (p.hp <= 0) { eng.die('渴死了'); return true } }
   }
-  if (p.hunger <= 0 && !eng.dev.god) { p.hp -= 1.2 * dt; if (p.hp <= 0) { eng.die('饿死了'); return true } }
-  // v54：口渴值——与饥饿同率自然流失（据点 ×1/3、不动 ×1/2 同规则叠加）；体力耗尽（stamina ≤1，同 movement 冲刺耗尽阈值）时流失 ×2
-  const thirstK = hungerK * (p.stamina <= 1 ? 2 : 1)
-  p.thirst = Math.max(0, p.thirst - 0.28 * dm.drain * (eng.levelDef.entropy ?? 1) * thirstK * dt)
-  if (p.thirst <= 25 && eng.statusMsgT.thirst <= 0) {
-    eng.statusMsgT.thirst = 8
-    eng.msg('你渴得喉咙发干。', 'damage')
-    audio.stomach()
-  }
-  if (p.thirst <= 0 && !eng.dev.god) { p.hp -= 1.2 * dt; if (p.hp <= 0) { eng.die('渴死了'); return true } }
   // ---- v55：疫疾（Entity 19）隐藏感染值 ----
   // 积累：站在潮湿地板（wet=1，液态水里不算）或 L3/L5 锅炉房区域，每秒 +1
   {

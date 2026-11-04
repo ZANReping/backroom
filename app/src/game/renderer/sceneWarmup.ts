@@ -1,13 +1,26 @@
 import * as THREE from 'three'
 import { waitForSubmittedPrograms } from './programCompletion'
 
+const uploadTargets = new WeakMap<THREE.WebGLRenderer, THREE.WebGLRenderTarget>()
+function uploadTarget(renderer: THREE.WebGLRenderer) {
+  let target = uploadTargets.get(renderer)
+  if (!target) {
+    target = new THREE.WebGLRenderTarget(4, 4, { depthBuffer: true })
+    uploadTargets.set(renderer, target)
+  }
+  return target
+}
+export function disposeSceneUploadTarget(renderer: THREE.WebGLRenderer) {
+  uploadTargets.get(renderer)?.dispose()
+  uploadTargets.delete(renderer)
+}
+
 export type WarmupTarget = THREE.WebGLRenderTarget | null | (() => THREE.WebGLRenderTarget | null)
 
 const pendingRoots = new WeakMap<THREE.Object3D, Set<Promise<void>>>()
 const pendingRenderers = new WeakMap<THREE.WebGLRenderer, Set<Promise<void>>>()
 
-// Three's async compiler polls material programs after compileAsync returns.
-// Keep their materials alive when loading is cancelled during that polling.
+// Keep in-flight resources alive until the submitted programs are ready.
 export function afterSceneCompile(root: THREE.Object3D, dispose: () => void) {
   const pending = pendingRoots.get(root)
   if (pending?.size) void Promise.all([...pending]).then(dispose)
@@ -32,8 +45,9 @@ class CompileView extends THREE.Object3D {
   }
 }
 
-// compileAsync waits for the driver asynchronously, but its initial traversal
-// and program preparation are synchronous. Limit that work too, and omit the
+// Submit small compile batches and track the actual WebGL programs. Three's
+// compileAsync polls material.currentProgram, which may disappear when a
+// shared or animated material is retired. Omit the
 // hidden source meshes retained only for collision/animation after batching.
 export function* compileSceneJob(
   renderer: THREE.WebGLRenderer, root: THREE.Object3D,
@@ -42,10 +56,29 @@ export function* compileSceneJob(
 ): Generator<void, void, unknown> {
   const objects: THREE.Object3D[] = []
   const lights: THREE.Object3D[] = []
+  const representatives = new Map<THREE.Material, Set<string>>()
+  const layouts = new Map<THREE.BufferGeometry, string>()
+  // Authored static roots opt in. Three's stock Mesh programs depend on the
+  // material, scene/camera and attribute features, never vertex positions/counts.
+  // Skinning, instancing, morphs, material arrays and custom shaders stay unchanged.
+  const duplicate = (object: THREE.Object3D) => {
+    const mesh = object as THREE.Mesh, material = mesh.material
+    if (!root.userData.compileEquivalentMeshes || object.constructor !== THREE.Mesh || Array.isArray(material) || !mesh.geometry
+      || Object.keys(mesh.geometry.morphAttributes).length
+      || !(material instanceof THREE.MeshStandardMaterial || material instanceof THREE.MeshLambertMaterial || material instanceof THREE.MeshPhongMaterial || material instanceof THREE.MeshBasicMaterial)) return false
+    let layout = layouts.get(mesh.geometry)
+    if (layout === undefined) {
+      layout = (mesh.geometry.index ? 'indexed|' : 'plain|') + Object.keys(mesh.geometry.attributes).sort().map(name => { const a = mesh.geometry.getAttribute(name); return [name, a.itemSize, a.normalized, a.array.constructor.name].join(':') }).join('|')
+      layouts.set(mesh.geometry, layout)
+    }
+    const seen = representatives.get(material) ?? new Set<string>()
+    if (seen.has(layout)) return true
+    seen.add(layout); representatives.set(material, seen); return false
+  }
   root.traverseVisible(object => {
     if ((object as THREE.Light).isLight && object.layers.test(camera.layers)) lights.push(object)
     const renderable = object as THREE.Mesh | THREE.Line | THREE.Points | THREE.Sprite
-    if (renderable.material && object.layers.test(camera.layers)) objects.push(object)
+    if (renderable.material && object.layers.test(camera.layers) && !duplicate(object)) objects.push(object)
   })
   let pending = 0
   const rootJobs = pendingRoots.get(root) ?? new Set<Promise<void>>()
@@ -58,15 +91,11 @@ export function* compileSceneJob(
     // HDR composition uses linear output without tone mapping. Compiling against
     // the canvas creates different programs, which then block the first real draw.
     const previousTarget = renderer.getRenderTarget()
-    let compiled: ReturnType<THREE.WebGLRenderer['compileAsync']>
     try {
       if (renderTarget !== undefined) renderer.setRenderTarget(typeof renderTarget === 'function' ? renderTarget() : renderTarget)
-      compiled = renderer.compileAsync(view, camera, scene)
+      renderer.compile(view, camera, scene)
     } finally { renderer.setRenderTarget(previousTarget) }
-    const job = Promise.all([
-      compiled.then(() => undefined, () => undefined),
-      waitForSubmittedPrograms(renderer),
-    ]).then(() => undefined).finally(() => {
+    const job = waitForSubmittedPrograms(renderer).finally(() => {
       pending--; rootJobs.delete(job); rendererJobs.delete(job)
     })
     rootJobs.add(job); rendererJobs.add(job)
@@ -143,8 +172,9 @@ export function* uploadSceneJob(
         if (geometry && !ranges.has(geometry)) { ranges.set(geometry, geometry.drawRange.count); geometry.drawRange.count = 0 }
       }
       renderer.autoClear = false
-      if (renderTarget !== undefined) renderer.setRenderTarget(renderTarget)
-      // compileAsync covers surface programs, but Three creates depth programs
+      // A zero-range submission still dirties the canvas backbuffer. Keep it offscreen.
+      renderer.setRenderTarget(renderTarget ?? uploadTarget(renderer))
+      // The compile pass covers surface programs, but Three creates depth programs
       // only in a shadow pass. Prepare the actual casters in the same zero-range
       // batches; never clear unrelated sunlight/point-light shadow maps.
       // A caster whose shadow map does not exist yet is bound to Three's plain

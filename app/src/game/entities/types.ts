@@ -55,7 +55,7 @@ export interface EntityDef {
   jamsLight?: boolean // 瘫痪手电（电弧体）
   grabs?: boolean // 攻击减速（旧团块标记；v64 肢团改由 clumpAI 专属处理，仅联机提线木偶保留读取）
   ambusher?: boolean // 埋伏：近身才现身（管道蠕虫）
-  feignNeutral?: boolean // 假装中立，近身暴起（侍者）
+  feignNeutral?: boolean // 假装中立（设定标记；[bellhop] 旧侍者的通用近身暴起分支已删除，派对客走 partygoerAI）
   mirrorMove?: boolean // 镜像移动（镜中人）
   spawnsFakes?: boolean // 复制幻影（复印机幽灵）
   charger?: boolean // 直线冲撞（运输车）
@@ -176,6 +176,14 @@ export interface Entity {
   sm?: import('./smilers').SmilerState // v61：笑魇变种与 AI 运行时状态（不入存档/联机）
   th?: import('../engine/thingAI').ThingState // 七层之物：身体链、休眠、割肉、惊逃
   cr?: import('../engine/creeperAI').CreepEntState // [creeper] Entity 17：感染体 / 爬菌人运行时状态（片段 / 记仇 / 扑击根位移；不入存档/联机）
+  cg?: import('../engine/conciergeAI').ConciergeEntState // [concierge] Entity 131 看门人：前台 / 追踪 / 眨眼瞬移 / 追逐 / 捆绑 / 升降梯（不入存档/联机；局内统计在 eng.hotel.concierge）
+  gr?: import('../engine/spokesAI').SpokesEntState // [spokes] Entity 28 迎宾女郎：大堂日程 / 迎宾 / 邀请 / 写海报 / 放兔子 / 照片（不入存档；局内数据在 eng.hotel.spokes）
+  wu?: import('../engine/spokesAI').WindupEntState // [spokes] 迎宾女郎的发条兔：等待 / 引路 / 停下回头 / 停摆
+  ck?: import('../engine/chefAI').ChefEntState // [chef] Entity 800 厨师：灶前 / 上菜 / 应铃 / 盯上 / 敲桌 / 抡锅 / 拖行 / 冷库取刀 / 打烊闩门 / 守灶 / 暴怒（不入存档；局内数据在 eng.hotel.chef）
+  bst?: import('../engine/beastAI').BeastEntState // [beast] Entity 18 第五层的野兽：余光 / 办公室待客 / 签约握手 / 怀疑→真身缠抓（不入存档/联机；局内数据在 eng.hotel.beast）
+  jz?: import('../engine/jazzAI').JazzEntState // [jazz] Entity 197 爵士脑四人：台上演奏 / 独奏 / 假吸魂 / 鞠躬 / 上下台 / 吧台喝酒·托头·弹钢琴 / 搭话（不入存档；局内数据在 eng.hotel.jazz）
+  bh?: import('../engine/bellhopAI').BellhopEntState // [bellhop] Entity 135 行李员：注视冻结 / 拧头 / 换脸 / 服务片段队列（不入存档/联机；局内数据在 eng.hotel.bellhop）
+  md?: import('../engine/maidAI').MaidEntState // [maid] Entity 111 管家：巡楼 / 打扰值 / 推车（不入存档；失物车在 eng.hotel.maid）
   fr?: import('../engine/ferrenAI').FerrenEntState // [ferren] Entity 92：作息行为 / 片段 / 切行（不入存档/联机；作息时钟在 eng.ferrenRun）
   vm?: import('../engine/vendingAI').Vm36State // [vending] Entity 36：库存 / 出货片段 / 活化状态机（不入存档/联机）
   win?: import('../engine/windowAI').WinEntState // [window] 窗户 Entity 2：挂墙位姿 / 三态 / 片段（不入存档/联机）

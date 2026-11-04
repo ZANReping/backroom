@@ -46,6 +46,12 @@ import MegTerminal from './MegTerminal'
 import { completedMegLines, megState, trackMegTask } from '@/game/engine/megMissions'
 import { isMegQuest, megQuestProgress } from '@/game/content/megTerminal'
 import FactionTerminal from './FactionTerminal'
+import HotelLedger, { HotelLedgerCard } from './HotelLedger'
+import { factionPanelOrder, TERROR_HOTEL_FACTION } from '@/game/content/factionTerritory'
+import MaidCodexFile from './MaidCodexFile' // [maid] Entity 111 图鉴专页
+import ConciergeCodexFile from './ConciergeCodexFile' // [concierge] Entity 131 图鉴专页
+import { BeastCodexFile, GreeterCodexFile, ChefCodexFile, JazzCodexFile } from './L5StaffCodexFile'
+import BellhopCodexFile from './BellhopCodexFile' // [bellhop] Entity 135 图鉴专页（员工档案 + 见过的面孔） // L5 恐怖旅馆：住客登记簿
 import { FACTION_TERMINALS, isEnhancedFaction, isNewFaction, questFaction, NEW_FACTIONS } from '@/game/content/factionTerminals'
 import { completedFactionLines, factionState, trackFactionTask } from '@/game/engine/factionMissions'
 import DocOverlay from './DocOverlay'
@@ -53,6 +59,8 @@ import {requestDevMapPreview,devMapTeleport,type DevMapPreview} from '@/game/eng
 import AlphaMapPanel from './AlphaMapPanel'
 import TradersMapPanel from './TradersMapPanel'
 import L11MapPanel from './L11MapPanel'
+import L5MapPanel from './L5MapPanel' // [l5map]
+import { isL5MapLevel } from '@/game/content/l5Map'
 // （物品显示稀有度已由 IOTS 罕见度取代，见 codexScores.ITEM_IOTS / IOTS_FREQ_COLORS）
 import { PHENOMENA, rarityText } from '@/game/content/phenomena'
 import { IconIsolation, IconPlant, IconStamina } from './icons'
@@ -530,8 +538,18 @@ function LevelRoutes({ level, direction }: { level: LevelDef; direction: 'in' | 
   )
 }
 
+const HOTEL_STAFF_FILES = {
+  maid: { title: 'THE HOUSEKEEPER', File: MaidCodexFile },
+  concierge: { title: 'THE CONCIERGE', File: ConciergeCodexFile },
+  bellhop: { title: 'THE BELLHOPPER', File: BellhopCodexFile },
+  beast: { title: 'THE BEAST', File: BeastCodexFile },
+  greeter: { title: 'THE SPOKESWOMAN', File: GreeterCodexFile },
+  chef: { title: 'THE CHEF', File: ChefCodexFile },
+  jazz: { title: 'THE JAZZ BRAINS', File: JazzCodexFile },
+} as const
+
 // 图鉴详情卡（实体渐进解锁 / 物品 / 层级）
-function CodexDetail({ detail, onBack }: { detail: { kind: 'entity' | 'item' | 'level'; id: string }; onBack: () => void }) {
+function CodexDetail({ detail, onBack, engine }: { detail: { kind: 'entity' | 'item' | 'level'; id: string }; onBack: () => void; engine: Engine }) {
   const Row = ({ k, v }: { k: string; v: React.ReactNode }) => (
     <div className="flex gap-2 text-[12px] leading-relaxed">
       <span className="font-mono2 w-16 shrink-0" style={{ color: 'var(--amber)' }}>{k}</span>
@@ -549,12 +567,13 @@ function CodexDetail({ detail, onBack }: { detail: { kind: 'entity' | 'item' | '
         // 阵营主题实体（杰瑞→信众 / Ferren→BNTG）：边框/标题用阵营色，配阵营字体与标志水印
         const fac = ENTITY_FACTION[e.type] ? FACTIONS[ENTITY_FACTION[e.type]] : null
         const facFonts = fac ? FACTION_FONTS[fac.id] : undefined
+        const staff = Object.hasOwn(HOTEL_STAFF_FILES, e.type) ? HOTEL_STAFF_FILES[e.type as keyof typeof HOTEL_STAFF_FILES] : undefined
         return (
-          <div className="hud-panel relative overflow-hidden p-4" style={fac ? { borderColor: fac.color } : undefined}>
+          <div className="hud-panel relative overflow-hidden p-4" style={fac ? { borderColor: fac.color } : staff ? { borderColor: '#b8924a', boxShadow: 'inset 0 0 0 2px rgba(184,146,74,.25)' } : undefined}>
             {fac?.logo && <FactionLogo file={fac.logo} name={fac.name} />}
             <div className="relative" style={facFonts?.body ? { fontFamily: facFonts.body } : undefined}>
             <div className="mb-1 flex items-baseline justify-between">
-              <span className="font-title text-[22px]" style={{ color: fac ? (fac.sub ?? fac.color) : 'var(--blood)', fontFamily: facFonts?.title }}>{e.name}</span>
+              <span className="font-title text-[22px]" style={{ color: fac ? (fac.sub ?? fac.color) : staff ? '#e2c47a' : 'var(--blood)', fontFamily: staff ? "'Songti SC','SimSun','Noto Serif CJK SC',serif" : facFonts?.title, letterSpacing: staff ? 4 : undefined }}>{e.name}{staff && <span style={{ fontFamily: "Georgia,'Times New Roman',serif", fontSize: 12, letterSpacing: 3, color: '#a8915e', marginLeft: 10 }}>{staff.title}</span>}</span>
               <span className="font-mono2 text-[11px]" style={{ color: 'var(--text-dim)', fontFamily: facFonts?.mono }}>{e.codex.no} · 遭遇 {n} 次</span>
             </div>
             {fac && (
@@ -566,6 +585,7 @@ function CodexDetail({ detail, onBack }: { detail: { kind: 'entity' | 'item' | '
               <Row k="行为" v={tier >= 2 ? e.codex.behavior : `【未解锁：再遭遇 ${3 - n} 次】`} />
               <Row k="应对方法" v={tier >= 3 ? e.codex.counter : `【未解锁：再遭遇 ${6 - n} 次】`} />
             </div>
+            {staff && <staff.File engine={engine} tier={tier} met={n} />}
             {forms.length > 0 && (
               <div className="mt-3 border-t pt-2" style={{ borderColor: 'var(--panel-edge)' }}>
                 <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--amber)' }}>子变种</div>
@@ -730,7 +750,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
   const [detail, setDetail] = useState<{ kind: 'entity' | 'item' | 'level'; id: string } | null>(null)
   // 图鉴分类子页面（v41 排序：层级/实体/物品/现象/团体/据点/人士/文档）
   const [codexCat, setCodexCat] = useState<'层级' | '实体' | '物品' | '现象' | '团体' | '据点' | '人士' | '文档'>(initialFaction?'团体':'层级')
-  const [factionPage,setFactionPage]=useState<string|null>(initialFaction && isEnhancedFaction(initialFaction) ? initialFaction : null)
+  const [factionPage,setFactionPage]=useState<string|null>(initialFaction && (isEnhancedFaction(initialFaction) || initialFaction === 'terrorhotel') ? initialFaction : null)
   const [megEntryTab, setMegEntryTab] = useState<'个人' | '任务'>('个人')
   // 图鉴「文档」分类的阅读视图（已解锁文档可重读）
   const [readingDoc, setReadingDoc] = useState<string | null>(null)
@@ -938,14 +958,17 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                     {selDef.anomalous ? '后室物品' : '普通物品'} · <span style={{ color: IOTS_FREQ_COLORS[ITEM_IOTS[selSlot.type].frequency] }}>{ITEM_IOTS[selSlot.type].frequency}</span>
                   </div>
                   {/* 来源层级标签（迁跃浆果：食用传送回标签记录的层级；不同标签不混堆） */}
-                  {selSlot.tag !== undefined && (
+                  {selSlot.tag !== undefined && selSlot.type === 'bagTag' && ( // [bellhop] 行李牌：tag = 编号
+                    <div className="font-mono2 text-center text-[10px]" style={{ color: '#e2c47a' }}>行李牌 No.{selSlot.tag} · 凭牌向行李员取回寄存物</div>
+                  )}
+                  {selSlot.tag !== undefined && selSlot.type !== 'bagTag' && (
                     <div className="font-mono2 text-center text-[10px]" style={{ color: 'var(--exit)' }}>
                       标签：发现于 {levelLabel(selSlot.tag)}{selSlot.type === 'warpberry' ? ' · 食用后传送回该层' : ''}
                     </div>
                   )}
                   {/* 数值/属性/实际效果芯片（与描述分离） */}
                   <div className="flex flex-wrap justify-center gap-1">
-                    {itemStatChips(selDef, engine, selSlot.tag !== undefined ? levelLabel(selSlot.tag) : undefined).map((c) => (
+                    {itemStatChips(selDef, engine, selSlot.tag !== undefined && selSlot.type !== 'bagTag' ? levelLabel(selSlot.tag) : undefined).map((c) => (
                       <span key={c} className="font-mono2 border px-1.5 py-0.5 text-[10px]" style={{ borderColor: 'var(--panel-edge)', color: 'var(--amber)', background: 'color-mix(in srgb, var(--text-dim) 12%, transparent)' }}>{c}</span>
                     ))}
                   </div>
@@ -1148,7 +1171,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
 
         {tab === '图鉴' && (
           detail ? (
-            <CodexDetail detail={detail} onBack={() => setDetail(null)} />
+            <CodexDetail detail={detail} onBack={() => setDetail(null)} engine={engine} />
           ) : (
           <div className="codex-list">
             {/* 分类子页面切换：实体 / 层级 / 物品 / 现象 */}
@@ -1207,11 +1230,11 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                     key={e.type}
                     data-entity-card={e.type}
                     className="hud-panel p-2 text-left transition-transform active:scale-95"
-                    style={{ opacity: tier >= 1 ? 1 : 0.45, cursor: tier >= 1 ? 'pointer' : 'default', borderColor: tier >= 1 && efac ? efac.color : undefined }}
+                    style={{ opacity: tier >= 1 ? 1 : 0.45, cursor: tier >= 1 ? 'pointer' : 'default', borderColor: tier >= 1 && efac ? efac.color : tier >= 1 && (e.type === 'maid' || e.type === 'concierge' || e.type === 'bellhop') ? '#b8924a' : undefined }}
                     onClick={() => { if (tier >= 1) { setDetail({ kind: 'entity', id: e.type }); audio.uiTick() } }}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="font-title text-[15px]" style={{ color: tier >= 1 ? (efac ? (efac.sub ?? efac.color) : 'var(--blood)') : 'var(--text-dim)', fontFamily: tier >= 1 && ef ? ef.title : undefined }}>{tier >= 1 ? e.name : '？？？'}</div>
+                      <div className="font-title text-[15px]" style={{ color: tier >= 1 ? (efac ? (efac.sub ?? efac.color) : e.type === 'maid' || e.type === 'concierge' || e.type === 'bellhop' ? '#e2c47a' : 'var(--blood)') : 'var(--text-dim)', fontFamily: tier >= 1 && ef ? ef.title : undefined }}>{tier >= 1 ? e.name : '？？？'}</div>
                       {tier >= 1 && <span className="font-mono2 text-[9px]" style={{ color: 'var(--text-dim)' }}>遭遇 {n}</span>}
                     </div>
                     <div className="text-[11px] leading-snug" style={{ color: 'var(--text-dim)', fontFamily: tier >= 1 && ef ? ef.body : undefined }}>
@@ -1503,12 +1526,16 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
             <div className="grid gap-2">
               <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--amber)' }}>团体（后室中的人类组织与你和它们的声望）</div>
               {factionPage&&<button className="menu-btn px-3 py-2 text-left" onClick={()=>setFactionPage(null)}>← 返回团体列表</button>}
-              {Object.values(FACTIONS).filter(f=>!factionPage||f.id===factionPage).sort((a,b) => Number(b.id==='wanderer')-Number(a.id==='wanderer')).map((f) => {
+              {factionPage==='terrorhotel' && <HotelLedger engine={engine} readOnly={!!codexOnly} />}
+              {(factionPage ? [factionPage] : factionPanelOrder(engine)).map(id => {
+                if (id === TERROR_HOTEL_FACTION) return factionPage ? null : <HotelLedgerCard key={id} engine={engine} onOpen={() => setFactionPage(id)} />
+                const f = FACTIONS[id]
+                if (!f) return null
                 if (factionPage === 'meg' && f.id === 'meg') return <MegTerminal key={f.id} engine={engine} codex={codex} readOnly={!!codexOnly} initialTab={megEntryTab} />
                 if (factionPage && isNewFaction(factionPage) && f.id === factionPage) return <FactionTerminal key={f.id} faction={factionPage} engine={engine} codex={codex} readOnly={!!codexOnly} initialTab={megEntryTab} />
                 const rep = engine.rep[f.id] ?? 0
                 return (
-                  <div key={f.id} className="hud-panel relative overflow-hidden p-3" style={{ borderColor: f.color }}>
+                  <div key={f.id} data-faction-card={f.id} className="hud-panel relative overflow-hidden p-3" style={{ borderColor: f.color }}>
                     {f.logo && <FactionLogo file={f.logo} name={f.name} />}
                     <div className="relative">
                     <div className="flex items-center gap-2">
@@ -1587,7 +1614,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
           </div>
         )}
 
-        {tab === '地图' && (engine.player.level === 11 && engine.map?.inf
+        {tab === '地图' && (isL5MapLevel(engine.levelDef.id) ? <L5MapPanel engine={engine} /> : engine.player.level === 11 && engine.map?.inf
           ? <L11MapPanel engine={engine} />
           : engine.map?.traders
             ? <TradersMapPanel engine={engine} />

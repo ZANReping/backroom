@@ -38,7 +38,7 @@ function App() {
   useEffect(() => { const resize = () => refresh(n => n + 1); window.addEventListener('resize', resize); return () => window.removeEventListener('resize', resize) }, [])
   return <>
     <CareerTracker />
-    <HUD engine={engine} isMobile log={[]} toasts={[]} devMode={false} fxScale={0} onPause={() => {}} onInventory={() => {}} onPhone={() => {}} onSelectSlot={() => {}} onUseSlot={() => {}} />
+    <HUD engine={engine} isMobile log={[]} toasts={[]} devMode={false} fxScale={0} onPause={() => {}} onInventory={() => {}} onHotelLedger={() => {}} onPhone={() => {}} onSelectSlot={() => {}} onUseSlot={() => {}} />
     <TouchControls engine={engine} settings={settings} layout={(loadTouchLayout() as any)[innerWidth > innerHeight ? 'landscape' : 'portrait'] ?? {}} onInventory={() => {}} onPause={() => {}} />
   </>
 }

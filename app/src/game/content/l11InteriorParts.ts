@@ -1,3 +1,4 @@
+import { toiletParts } from './toiletParts'
 import { L11PropBuilder } from './l11PropKit'
 
 /** Purpose-built interior prop parts for Level 11. Coordinates are metres. */
@@ -42,11 +43,8 @@ export function l11InteriorParts(key: string, b: L11PropBuilder): boolean {
     case 'dining_table': b.box(0, H - .08, 0, w, .16, d, 'wood'); legs(4, .07, H * .8, 'wood'); b.sphere(0, H + .04, 0, .22, .1, .22, 'metal'); return true
     case 'dining_chair': legs(4, .06, H * .44, 'wood'); b.box(0, H * .48, 0, w, .12, d, 'wood'); for (const x of [-w / 2 + .08, w / 2 - .08]) b.box(x, H * .75, d / 2 - .05, .06, H * .5, .06, 'wood'); for (let i = 0; i < 3; i++) b.box(0, H * (.62 + i * .15), d / 2 - .05, w - .12, .05, .05, 'wood'); return true
     case 'toilet': {
-      b.cylinder(0,.18,.04,.14,.32,'porcelain','#ebe9df').taper=1.12
-      b.sphere(0,.38,-.07,w*.95,.29,d*.72,'porcelain','#ebe9df',true)
-      const seat=b.ring(0,.525,-.075,w*.49,.035,'porcelain','#f4f0df');seat.h=d*.69;seat.rx=Math.PI/2
-      b.box(0,.60,d/2-.08,w*.86,.38,.16,'porcelain','#ebe9df');b.box(0,.805,d/2-.08,w*.88,.035,.18,'porcelain','#ebe9df')
-      b.cylinder(w*.22,.83,d/2-.08,.025,.01,'metal',undefined,false)
+      // City furnishings face -Z. Rotate the shared physical fixture once, including its hollow profile.
+      for(const part of toiletParts())b.parts.push({...part,x:-part.x,z:-part.z,ry:Math.PI,color:part.finish==='metal'?'#a7afa9':part.finish==='inner'?'#c7c8bc':part.finish==='seat'?'#f4f0df':'#ebe9df'})
       return true
     }
     case 'wash_basin': {
