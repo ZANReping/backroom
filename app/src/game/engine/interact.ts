@@ -10,7 +10,7 @@ import {bntgDoorAllowed} from './bntg'
 import type { CareerId } from '../content/settlementTypes'
 // v53：交互（scanInteract/doInteract/容器搜索/战利品面板/结构触发伤害/配电箱嗡鸣）——
 // 自 engine.ts 拆分，逻辑逐语句搬运；triggerStructs 返回 true 表示本帧已死亡（原 step 的 return）。
-import { enableRuntimeStructCollisionIndex, bandOfZ, bandOfPlayerZ, floorHeight, groundHeightAt, structBlocksSight, l11InteractionBlocked, structColliders, wallAt, FLOOR_H } from '../world/mapgen'
+import { enableRuntimeStructCollisionIndex, bandOfZ, bandOfPlayerZ, floorHeight, groundHeightAt, structBlocksSight, l11InteractionBlocked, structColliders, wallAt, FLOOR_H, type GameMap } from '../world/mapgen'
 import { canOccupy, PLAYER_RADIUS } from '../core/player'
 import { CONTAINERS, CONTAINER_RARE } from '../decorations/containers'
 import { DECOR_VIEWS, GRAFFITI_LORE, GRAFFITI_LORE_KIND, BRAILLE_MARKS, GLASSWIN_TEXT } from '../decorations/lore'
@@ -524,7 +524,45 @@ export function viewAngle(eng: Engine, x: number, y: number): number {
 // 统一可交互目标选择（HUD 提示与 doInteract 执行共用本函数结果）。
 // v57：出口/物品/结构/NPC/特殊实体全部进入同一个准星评分器，避免旧版“数组类别先返回”让
 // 身旁出口或地面物品抢走玩家正对目标。优先级：准星实际覆盖 > 3D 角误差 > 距离 > 可执行性。
-export function scanInteract(eng: Engine) {
+const INTERACT_CELL = 8
+const interactIndex = new WeakMap<GameMap, { rev: number; structures: Structure[]; count: number; buckets: Map<string, Structure[]>; order: Map<Structure, number> }>()
+/** Footprint grid so a 7k-structure outpost does not measure every prop each frame.
+ * The distance test below still drops anything outside the real interact radius,
+ * and the original structure order is restored so exact score ties do not change. */
+function structuresNear(m: GameMap, x: number, y: number, reach: number): readonly Structure[] {
+  const rev = m.inf?.rev ?? 0
+  let index = interactIndex.get(m)
+  if (!index || index.rev !== rev || index.structures !== m.structures || index.count !== m.structures.length) {
+    const buckets = new Map<string, Structure[]>()
+    const order = new Map<Structure, number>()
+    for (let i = 0; i < m.structures.length; i++) {
+      const s = m.structures[i]
+      order.set(s, i)
+      const x0 = Math.floor(s.x / INTERACT_CELL), x1 = Math.floor((s.x + s.w) / INTERACT_CELL)
+      const y0 = Math.floor(s.y / INTERACT_CELL), y1 = Math.floor((s.y + s.h) / INTERACT_CELL)
+      for (let ty = y0; ty <= y1; ty++) for (let tx = x0; tx <= x1; tx++) {
+        const key = tx + ',' + ty
+        const list = buckets.get(key)
+        if (list) list.push(s)
+        else buckets.set(key, [s])
+      }
+    }
+    index = { rev, structures: m.structures, count: m.structures.length, buckets, order }
+    interactIndex.set(m, index)
+  }
+  const x0 = Math.floor((x - reach) / INTERACT_CELL), x1 = Math.floor((x + reach) / INTERACT_CELL)
+  const y0 = Math.floor((y - reach) / INTERACT_CELL), y1 = Math.floor((y + reach) / INTERACT_CELL)
+  const out: Structure[] = []
+  const seen = new Set<Structure>()
+  for (let ty = y0; ty <= y1; ty++) for (let tx = x0; tx <= x1; tx++) {
+    const list = index.buckets.get(tx + ',' + ty)
+    if (!list) continue
+    for (const s of list) if (!seen.has(s)) { seen.add(s); out.push(s) }
+  }
+  out.sort((a, b) => (index!.order.get(a) ?? 0) - (index!.order.get(b) ?? 0))
+  return out
+}
+export function scanInteract(eng: Engine, brute = false) {
   const p = eng.player, m = eng.map!
   eng.interactTarget = null
   const band = bandOfPlayerZ(m, p.z,p.x,p.y)
@@ -647,7 +685,7 @@ export function scanInteract(eng: Engine) {
       profile.horizontalRadius, volume, d, s, profile.verticalRadius)
   }
   for (const marker of fieldTargets(eng)) consider('careerField','记录现场证据',marker,Math.hypot(marker.x-p.x,marker.y-p.y),true)
-  for (const s of m.structures) {
+  for (const s of brute ? m.structures : structuresNear(m, p.x, p.y, INTERACT_RANGE.object)) {
     if(s.data?.windowGone)continue // The disappeared frame is now an ordinary wall.
     // v13：结构按楼层过滤（楼上楼下同名容器互不干扰）；lift 跨层服务
     if (s.kind !== 'lift' && (s.floor ?? 0) !== band) continue

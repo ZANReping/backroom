@@ -78,6 +78,8 @@
     "check:l11-dev-ground": "esbuild scripts/check-l11-dev-ground.ts --bundle --platform=node --format=esm --outfile=.cache/check-l11-dev-ground.mjs && node .cache/check-l11-dev-ground.mjs",
     "verify:l11-dev-map-park": "node scripts/verify-l11-dev-map-park.mjs",
     "check:dev-teleport": "esbuild scripts/check-dev-teleport-preparation.ts --bundle --platform=node --format=esm --outfile=.cache/check-dev-teleport-preparation.mjs && node .cache/check-dev-teleport-preparation.mjs",
+    "check:level-sight-cache": "esbuild scripts/check-level-sight-cache.ts --bundle --platform=node --format=esm --outfile=.cache/check-level-sight-cache.mjs && node .cache/check-level-sight-cache.mjs",
+    "profile:level-runtime": "esbuild scripts/profile-level-runtime.ts --bundle --platform=node --format=esm --outfile=.cache/profile-level-runtime.mjs && node .cache/profile-level-runtime.mjs",
     "verify:dev-teleport": "node scripts/verify-dev-teleport-performance.mjs",
     "check:l11-ecology": "esbuild scripts/check-l11-ecology.ts --bundle --platform=node --format=esm --outfile=.cache/check-l11-ecology.mjs && node .cache/check-l11-ecology.mjs",
     "verify:l11-ecology": "node scripts/verify-l11-ecology.mjs",

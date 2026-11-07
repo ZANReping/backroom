@@ -271,6 +271,31 @@ export function endBlackout(eng: Engine) {
   bcast(eng, { t: 'blackout', ph: 'end' })
   if(eng.map?.inf?.l1Dynamics)bcast(eng,{t:'l1crates',seed:eng.map.inf.seed,epoch:eng.map.inf.l1Dynamics.epoch,hidden:eng.map.inf.l1Dynamics.hidden}) // v59：联机同步
 }
+// Level 0 partition walls live in world space on the loaded chunks. Rebuilding
+// that list with flatMap every frame allocated a new array just to test an 8 m
+// disk; the chunk revision already tells us when the walls themselves change.
+type SightWall = { x: number; y: number; w: number; h: number; bottom: number; top: number }
+const l0WallCache = new WeakMap<Engine, { rev: number; chunks: unknown; walls: SightWall[] }>()
+const l0WallScratch: SightWall[] = []
+function l0SightWalls(eng: Engine, eye: number, wx: number, wy: number, r: number): SightWall[] | undefined {
+  const inf = eng.map?.inf
+  if (!inf?.l0) return undefined
+  let entry = l0WallCache.get(eng)
+  if (!entry || entry.rev !== inf.rev || entry.chunks !== inf.chunks) {
+    const walls: SightWall[] = []
+    for (const c of inf.chunks.values()) for (const w of c.l0?.walls ?? []) walls.push(w)
+    entry = { rev: inf.rev, chunks: inf.chunks, walls }
+    l0WallCache.set(eng, entry)
+  }
+  const out = l0WallScratch
+  let n = 0
+  const x0 = wx - r, x1 = wx + r, y0 = wy - r, y1 = wy + r
+  for (const w of entry.walls) {
+    if (w.bottom < eye && w.top > eye && w.x < x1 && w.x + w.w > x0 && w.y < y1 && w.y + w.h > y0) out[n++] = w
+  }
+  out.length = n
+  return out
+}
 // ---------- 视野 ----------
 export function computeVisibility(eng: Engine) {
   const m = eng.map!, p = eng.player
@@ -292,7 +317,7 @@ export function computeVisibility(eng: Engine) {
   const r = 8
   const px = Math.floor(p.x), py = Math.floor(p.y)
   const offset=seatedEyeOffset(eng),inf=m.inf,wx=p.x+offset.x+(inf?.ox??0),wy=p.y+offset.y+(inf?.oy??0),eye=p.z+(eng.seating?seatedEyeHeight(eng):p.crouching?.95:1.55)
-  const l0Walls=inf?.l0?[...inf.chunks.values()].flatMap(c=>c.l0?.walls??[]).filter(w=>w.bottom<eye&&w.top>eye&&w.x<wx+r&&w.x+w.w>wx-r&&w.y<wy+r&&w.y+w.h>wy-r):undefined
+  const l0Walls=l0SightWalls(eng,eye,wx,wy,r)
   for (let y = Math.max(0, py - r); y <= Math.min(m.h - 1, py + r); y++) {
     for (let x = Math.max(0, px - r); x <= Math.min(m.w - 1, px + r); x++) {
       const d = Math.hypot(x + 0.5 - p.x, y + 0.5 - p.y)
