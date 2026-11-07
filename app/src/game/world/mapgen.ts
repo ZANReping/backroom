@@ -550,6 +550,9 @@ type ModelColliderEntry = {
 }
 const modelColliderCache = new WeakMap<Structure, ModelColliderEntry>()
 let modelColliderSpatialRev = 0
+/** Bumps when a structure's horizontal collider footprint changes. Sight and
+ * movement indexes rebuild from this rather than scanning every frame. */
+export const colliderSpatialStamp = () => modelColliderSpatialRev + l11CollisionRevision
 const modelFootprint = (boxes: readonly ModelColliderBox[]) => ({
   x0: Math.min(...boxes.map((b) => b.x0)), y0: Math.min(...boxes.map((b) => b.y0)),
   x1: Math.max(...boxes.map((b) => b.x1)), y1: Math.max(...boxes.map((b) => b.y1)),
@@ -1543,9 +1546,17 @@ export function generateLevel(def: LevelDef, seed: number, firstVisit = true): G
   // 质量校验重 roll（限 6 次，兜底返回最后一次结果；据点为手工布局，跳过校验）
   for (let attempt = 0; attempt < 6; attempt++) {
     const m = thinObject70(genOnce(def, seed + attempt * 10007), def.id)
-    if (attempt === 5 || def.gen === 'outpost' || validate(m, def)) return m
+    if (attempt === 5 || def.gen === 'outpost' || validate(m, def)) return finishFinite(def, m)
   }
-  return thinObject70(genOnce(def, seed), def.id)
+  return finishFinite(def, thinObject70(genOnce(def, seed), def.id))
+}
+
+/** Outposts enable this index on the first line of scene upload. Level 601 is
+ * finite but not an outpost, so without this its LOS scanned every shelf until
+ * that upload finished (measured around 15 ms per visibility pass). */
+function finishFinite(def: LevelDef, m: GameMap): GameMap {
+  if (def.gen !== 'outpost' && m.structures.length) enableRuntimeStructCollisionIndex(m)
+  return m
 }
 
 function genOnce(def: LevelDef, seed: number): GameMap {

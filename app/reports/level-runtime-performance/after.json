@@ -1,0 +1,1993 @@
+{
+  "kind": "node-engine-cpu",
+  "note": "Synthetic headless timings of the real Engine. Not GPU frame time and not a FPS claim. Collision index is enabled before steady samples, matching the renderer after a level finishes building. beforeIndexVisibility is the same visibility pass before that index exists.",
+  "node": "v22.23.4",
+  "platform": "linux",
+  "arch": "x64",
+  "cpus": [
+    "Intel(R) Xeon(R) Processor",
+    "Intel(R) Xeon(R) Processor",
+    "Intel(R) Xeon(R) Processor",
+    "Intel(R) Xeon(R) Processor"
+  ],
+  "seed": 424242,
+  "capturedAt": "2026-11-07T16:59:59.815Z",
+  "rows": [
+    {
+      "level": 0,
+      "label": "Level 0",
+      "name": "教学关卡",
+      "gen": "rooms",
+      "infinite": true,
+      "fullMap": false,
+      "w": 160,
+      "h": 160,
+      "structures": 997,
+      "solid": 997,
+      "entities": 0,
+      "items": 46,
+      "exits": 0,
+      "lights": 951,
+      "chunks": 25,
+      "npcs": 0,
+      "loadMs": 88.09845200000001,
+      "beforeIndexVisibility": {
+        "n": 12,
+        "median": 0.09638200000006236,
+        "p90": 0.1287849999999935,
+        "max": 6.202729999999974
+      },
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.5976739999999836,
+        "p90": 1.5894160000000284,
+        "max": 1.9046910000000707
+      },
+      "computeVisibilityWhileMoving": {
+        "n": 36,
+        "median": 0.8240519999999378,
+        "p90": 1.1658009999999877,
+        "max": 1.798787999999945
+      },
+      "scanInteract": {
+        "n": 80,
+        "median": 0.050633999999945445,
+        "p90": 0.06637499999999363,
+        "max": 1.71750899999995
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.006004999999959182,
+        "p90": 0.0588750000000573,
+        "max": 2.5714080000000195
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.8810520000000679,
+        "p90": 1.2686329999999089,
+        "max": 13.623653999999988
+      },
+      "walkedMetres": 5.919777777776403,
+      "shiftMs": 16.55928599999993,
+      "sightHeapDeltaBytes": -6687432,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.5028939999999693,
+        "p90": 0.5908300000000963,
+        "max": 0.9771729999999934
+      }
+    },
+    {
+      "level": 1,
+      "label": "Level 1",
+      "name": "宜居地带",
+      "gen": "garage",
+      "infinite": true,
+      "fullMap": false,
+      "w": 160,
+      "h": 160,
+      "structures": 919,
+      "solid": 878,
+      "entities": 14,
+      "items": 31,
+      "exits": 0,
+      "lights": 1030,
+      "chunks": 25,
+      "npcs": 0,
+      "loadMs": 478.32002699999987,
+      "beforeIndexVisibility": {
+        "n": 12,
+        "median": 0.8518209999999726,
+        "p90": 1.0530189999999493,
+        "max": 14.66179000000011
+      },
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.6324149999998099,
+        "p90": 0.8453759999999875,
+        "max": 1.0049369999999271
+      },
+      "computeVisibilityWhileMoving": {
+        "n": 36,
+        "median": 0.9805149999999685,
+        "p90": 1.2426409999998214,
+        "max": 2.4961949999999433
+      },
+      "scanInteract": {
+        "n": 80,
+        "median": 0.027787999999873136,
+        "p90": 0.03408999999987827,
+        "max": 0.621695999999929
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.1302140000000236,
+        "p90": 0.21573399999988396,
+        "max": 4.273147999999992
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 1.561378999999988,
+        "p90": 1.920432000000119,
+        "max": 2.8866190000001097
+      },
+      "walkedMetres": 3.1540187998398608,
+      "shiftMs": 88.88325899999995,
+      "sightHeapDeltaBytes": 3483176,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.4566859999999906,
+        "p90": 0.7998079999999845,
+        "max": 1.6246169999999438
+      }
+    },
+    {
+      "level": 2,
+      "label": "Level 2",
+      "name": "废弃公共带",
+      "gen": "pipes",
+      "infinite": true,
+      "fullMap": false,
+      "w": 160,
+      "h": 160,
+      "structures": 1307,
+      "solid": 1129,
+      "entities": 22,
+      "items": 8,
+      "exits": 2,
+      "lights": 214,
+      "chunks": 25,
+      "npcs": 0,
+      "loadMs": 40.17879400000015,
+      "beforeIndexVisibility": {
+        "n": 12,
+        "median": 0.4569459999997889,
+        "p90": 0.5928870000000188,
+        "max": 4.3704139999999825
+      },
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.05262999999990825,
+        "p90": 0.1178859999999986,
+        "max": 0.2511140000001433
+      },
+      "computeVisibilityWhileMoving": {
+        "n": 36,
+        "median": 0.10869500000012522,
+        "p90": 0.28677300000003925,
+        "max": 2.07099600000015
+      },
+      "scanInteract": {
+        "n": 80,
+        "median": 0.026612999999997555,
+        "p90": 0.03764099999989412,
+        "max": 0.6722069999998439
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.2446469999999863,
+        "p90": 0.503488999999945,
+        "max": 9.09225699999979
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.6304749999999331,
+        "p90": 1.2251370000001316,
+        "max": 3.044586999999865
+      },
+      "walkedMetres": 0.45866666666663036,
+      "shiftMs": 9.789359000000104,
+      "sightHeapDeltaBytes": -7408264,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.051093000000037136,
+        "p90": 0.05862100000013015,
+        "max": 0.5669909999999163
+      }
+    },
+    {
+      "level": 3,
+      "label": "Level 3",
+      "name": "电站",
+      "gen": "grid",
+      "infinite": true,
+      "fullMap": false,
+      "w": 160,
+      "h": 160,
+      "structures": 982,
+      "solid": 553,
+      "entities": 13,
+      "items": 85,
+      "exits": 1,
+      "lights": 431,
+      "chunks": 25,
+      "npcs": 0,
+      "loadMs": 21.03006000000005,
+      "beforeIndexVisibility": {
+        "n": 12,
+        "median": 0.16599799999994502,
+        "p90": 0.20898699999997916,
+        "max": 1.337212000000136
+      },
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.050639999999930296,
+        "p90": 0.15400099999988015,
+        "max": 0.23562799999990602
+      },
+      "computeVisibilityWhileMoving": {
+        "n": 36,
+        "median": 0.11285500000008142,
+        "p90": 0.3258379999999761,
+        "max": 1.2773879999999735
+      },
+      "scanInteract": {
+        "n": 80,
+        "median": 0.07025599999997212,
+        "p90": 0.10915899999986323,
+        "max": 0.4887309999999161
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.23200900000006186,
+        "p90": 0.3497219999999288,
+        "max": 1.5912349999998696
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.7017039999996086,
+        "p90": 0.9709720000000743,
+        "max": 2.0419110000000273
+      },
+      "walkedMetres": 1.1798333333331072,
+      "shiftMs": 7.251307999999881,
+      "sightHeapDeltaBytes": 4808968,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.02438099999994847,
+        "p90": 0.11161100000003898,
+        "max": 0.22639400000002752
+      }
+    },
+    {
+      "level": 4,
+      "label": "Level 4",
+      "name": "废弃办公室",
+      "gen": "office",
+      "infinite": true,
+      "fullMap": false,
+      "w": 160,
+      "h": 160,
+      "structures": 2092,
+      "solid": 1530,
+      "entities": 0,
+      "items": 75,
+      "exits": 1,
+      "lights": 1578,
+      "chunks": 25,
+      "npcs": 0,
+      "loadMs": 33.97911500000009,
+      "beforeIndexVisibility": {
+        "n": 12,
+        "median": 0.19323899999972127,
+        "p90": 0.1986359999996239,
+        "max": 9.070843999999852
+      },
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.4600719999998546,
+        "p90": 0.5276260000000548,
+        "max": 1.8076089999999567
+      },
+      "computeVisibilityWhileMoving": {
+        "n": 36,
+        "median": 0.6464260000002469,
+        "p90": 0.7930810000002566,
+        "max": 2.625614999999925
+      },
+      "scanInteract": {
+        "n": 80,
+        "median": 0.034407999999984895,
+        "p90": 0.035266999999748805,
+        "max": 0.7970909999999094
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.0036869999998998537,
+        "p90": 0.00547599999981685,
+        "max": 0.12226000000009662
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.9079769999998462,
+        "p90": 1.056362000000263,
+        "max": 2.638488999999936
+      },
+      "walkedMetres": 5.919777777776403,
+      "shiftMs": 4.386617000000115,
+      "sightHeapDeltaBytes": 1350928,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.5033809999999903,
+        "p90": 0.7232450000001336,
+        "max": 1.0227709999999206
+      }
+    },
+    {
+      "level": 5,
+      "label": "Level 5",
+      "name": "恐怖酒店",
+      "gen": "hotel",
+      "infinite": true,
+      "fullMap": false,
+      "w": 160,
+      "h": 160,
+      "structures": 2239,
+      "solid": 583,
+      "entities": 0,
+      "items": 42,
+      "exits": 3,
+      "lights": 877,
+      "chunks": 25,
+      "npcs": 0,
+      "loadMs": 52.879391999999825,
+      "beforeIndexVisibility": {
+        "n": 12,
+        "median": 0.14645299999983763,
+        "p90": 0.1676790000001347,
+        "max": 2.135667000000012
+      },
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.024056000000200584,
+        "p90": 0.03252599999996164,
+        "max": 0.21094799999991665
+      },
+      "computeVisibilityWhileMoving": {
+        "n": 36,
+        "median": 0.08180300000003626,
+        "p90": 0.18642300000010437,
+        "max": 1.1684100000002218
+      },
+      "scanInteract": {
+        "n": 80,
+        "median": 0.04631199999994351,
+        "p90": 0.05026799999996001,
+        "max": 0.44452300000011746
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.06999600000017381,
+        "p90": 0.08286199999974997,
+        "max": 0.2957800000003772
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.5961400000001049,
+        "p90": 1.2139259999999013,
+        "max": 7.737542999999732
+      },
+      "walkedMetres": 0.17875000000002217,
+      "shiftMs": 9.47427000000016,
+      "sightHeapDeltaBytes": 3935544,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.024419000000307278,
+        "p90": 0.03176399999983914,
+        "max": 0.21110799999996743
+      }
+    },
+    {
+      "level": 6,
+      "label": "Level 6",
+      "name": "熄灯",
+      "gen": "darkhall",
+      "infinite": true,
+      "fullMap": false,
+      "w": 160,
+      "h": 160,
+      "structures": 498,
+      "solid": 114,
+      "entities": 0,
+      "items": 3,
+      "exits": 0,
+      "lights": 0,
+      "chunks": 25,
+      "npcs": 0,
+      "loadMs": 32.96432400000003,
+      "beforeIndexVisibility": {
+        "n": 12,
+        "median": 0.4469870000002629,
+        "p90": 0.4808619999998882,
+        "max": 2.8047449999999117
+      },
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 1.382865000000038,
+        "p90": 1.605544000000009,
+        "max": 2.418322999999873
+      },
+      "computeVisibilityWhileMoving": {
+        "n": 36,
+        "median": 1.6182929999999942,
+        "p90": 1.7502669999998943,
+        "max": 2.240031999999701
+      },
+      "scanInteract": {
+        "n": 80,
+        "median": 0.01896100000021761,
+        "p90": 0.030139999999846623,
+        "max": 0.7863959999999679
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.0042929999999614665,
+        "p90": 0.0048180000003412715,
+        "max": 0.09449199999971825
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 1.807980999999927,
+        "p90": 2.7469320000000153,
+        "max": 19.09063500000002
+      },
+      "walkedMetres": 5.919777777776403,
+      "shiftMs": 3.833078000000114,
+      "sightHeapDeltaBytes": 5079592,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 1.370382999999947,
+        "p90": 1.4523699999999735,
+        "max": 2.098735999999917
+      }
+    },
+    {
+      "level": 7,
+      "label": "Level 7",
+      "name": "深海恐惧",
+      "gen": "ocean",
+      "infinite": true,
+      "fullMap": false,
+      "w": 160,
+      "h": 160,
+      "structures": 247,
+      "solid": 24,
+      "entities": 1,
+      "items": 27,
+      "exits": 2,
+      "lights": 3,
+      "chunks": 25,
+      "npcs": 0,
+      "loadMs": 418.22202100000004,
+      "beforeIndexVisibility": {
+        "n": 12,
+        "median": 0.46050900000000183,
+        "p90": 0.6616549999998824,
+        "max": 1.5473980000001575
+      },
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.05189199999995253,
+        "p90": 0.16665999999986525,
+        "max": 0.20288799999980256
+      },
+      "computeVisibilityWhileMoving": {
+        "n": 36,
+        "median": 0.11044099999980972,
+        "p90": 0.4938120000001618,
+        "max": 0.6015250000000378
+      },
+      "scanInteract": {
+        "n": 80,
+        "median": 0.015398999999888474,
+        "p90": 0.027805000000171276,
+        "max": 0.640020999999706
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.03227500000002692,
+        "p90": 0.10591400000021167,
+        "max": 0.8096190000001116
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.5128840000002128,
+        "p90": 0.7988940000000184,
+        "max": 1.632078999999976
+      },
+      "walkedMetres": 3.171819444445248,
+      "shiftMs": 83.36559099999977,
+      "sightHeapDeltaBytes": 9499520,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.05154799999991155,
+        "p90": 0.15913700000010067,
+        "max": 0.32557500000029904
+      }
+    },
+    {
+      "level": 8,
+      "label": "Level 8",
+      "name": "洞穴系统",
+      "gen": "caves",
+      "infinite": true,
+      "fullMap": false,
+      "w": 160,
+      "h": 160,
+      "structures": 415,
+      "solid": 349,
+      "entities": 35,
+      "items": 35,
+      "exits": 0,
+      "lights": 18,
+      "chunks": 25,
+      "npcs": 0,
+      "loadMs": 308.4608210000001,
+      "beforeIndexVisibility": {
+        "n": 12,
+        "median": 0.5387329999998656,
+        "p90": 0.580377000000226,
+        "max": 7.353790000000117
+      },
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.3854980000000978,
+        "p90": 0.41390299999966373,
+        "max": 0.8802100000002611
+      },
+      "computeVisibilityWhileMoving": {
+        "n": 36,
+        "median": 0.728570000000218,
+        "p90": 0.9374010000001363,
+        "max": 1.4176449999999932
+      },
+      "scanInteract": {
+        "n": 80,
+        "median": 0.051652000000103726,
+        "p90": 0.05988999999999578,
+        "max": 0.6956629999999677
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.6713509999999587,
+        "p90": 1.1453369999999268,
+        "max": 8.675197000000026
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 2.181106999999429,
+        "p90": 2.7197910000004413,
+        "max": 6.856625999999778
+      },
+      "walkedMetres": 5.919777777776403,
+      "shiftMs": 59.45020999999997,
+      "sightHeapDeltaBytes": -6544432,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.36157900000034715,
+        "p90": 0.5729080000000977,
+        "max": 1.1395489999999882
+      }
+    },
+    {
+      "level": 9,
+      "label": "Level 9",
+      "name": "郊区",
+      "gen": "suburb",
+      "infinite": true,
+      "fullMap": false,
+      "w": 160,
+      "h": 160,
+      "structures": 1720,
+      "solid": 1320,
+      "entities": 5,
+      "items": 1,
+      "exits": 1,
+      "lights": 40,
+      "chunks": 25,
+      "npcs": 0,
+      "loadMs": 41.71672300000046,
+      "beforeIndexVisibility": {
+        "n": 12,
+        "median": 0.441237000000001,
+        "p90": 0.49115700000038487,
+        "max": 5.652928999999858
+      },
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.1645829999997659,
+        "p90": 0.2181190000001152,
+        "max": 0.2501620000002731
+      },
+      "computeVisibilityWhileMoving": {
+        "n": 36,
+        "median": 0.45559700000012526,
+        "p90": 0.5259689999993498,
+        "max": 2.8821060000000216
+      },
+      "scanInteract": {
+        "n": 80,
+        "median": 0.008816999999908148,
+        "p90": 0.01005399999939982,
+        "max": 0.6937250000000859
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.05006199999934324,
+        "p90": 0.07311099999969883,
+        "max": 1.5284019999999146
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.5139730000000782,
+        "p90": 0.629823999999644,
+        "max": 1.4972829999996975
+      },
+      "walkedMetres": 4.754997222221874,
+      "shiftMs": 6.128815000000031,
+      "sightHeapDeltaBytes": -284992,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.16523700000016106,
+        "p90": 0.3070509999997739,
+        "max": 0.6719069999999192
+      }
+    },
+    {
+      "level": 10,
+      "label": "Level 10",
+      "name": "丰裕",
+      "gen": "field",
+      "infinite": true,
+      "fullMap": false,
+      "w": 160,
+      "h": 160,
+      "structures": 1721,
+      "solid": 1133,
+      "entities": 0,
+      "items": 2,
+      "exits": 1,
+      "lights": 0,
+      "chunks": 25,
+      "npcs": 0,
+      "loadMs": 170.69859199999973,
+      "beforeIndexVisibility": {
+        "n": 12,
+        "median": 0.21880700000019715,
+        "p90": 0.2267039999996996,
+        "max": 3.817608000000291
+      },
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.759436999999707,
+        "p90": 0.9367860000002111,
+        "max": 1.6185120000000097
+      },
+      "computeVisibilityWhileMoving": {
+        "n": 36,
+        "median": 0.977802999999767,
+        "p90": 1.1163189999997485,
+        "max": 2.5868310000005295
+      },
+      "scanInteract": {
+        "n": 80,
+        "median": 0.004553000000669272,
+        "p90": 0.005032000000028347,
+        "max": 0.35321699999985867
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.004256000000168569,
+        "p90": 0.005061999999270483,
+        "max": 0.09536400000069989
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 1.0691530000003695,
+        "p90": 1.1978079999998954,
+        "max": 2.5973800000001575
+      },
+      "walkedMetres": 5.801395359786098,
+      "shiftMs": 34.802380999999514,
+      "sightHeapDeltaBytes": -1138928,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.7637009999998554,
+        "p90": 0.8605479999996533,
+        "max": 1.1478060000008554
+      }
+    },
+    {
+      "level": 11,
+      "label": "Level 11",
+      "name": "不夜城",
+      "gen": "city",
+      "infinite": true,
+      "fullMap": false,
+      "w": 160,
+      "h": 160,
+      "structures": 390,
+      "solid": 331,
+      "entities": 4,
+      "items": 0,
+      "exits": 3,
+      "lights": 49,
+      "chunks": 25,
+      "npcs": 0,
+      "loadMs": 737.3424439999999,
+      "beforeIndexVisibility": {
+        "n": 12,
+        "median": 0.08119299999998475,
+        "p90": 0.10375799999928859,
+        "max": 150.5681999999997
+      },
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.6884190000000672,
+        "p90": 0.8996059999999488,
+        "max": 2.1485920000004626
+      },
+      "computeVisibilityWhileMoving": {
+        "n": 36,
+        "median": 0.7118430000000444,
+        "p90": 0.7960180000000037,
+        "max": 1.3358289999996487
+      },
+      "scanInteract": {
+        "n": 80,
+        "median": 0.004412000000229455,
+        "p90": 0.00477599999976519,
+        "max": 0.3005559999992329
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.014908000000104948,
+        "p90": 0.0189009999994596,
+        "max": 0.39987100000053033
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.9887979999994059,
+        "p90": 3.1350039999997534,
+        "max": 141.36650999999983
+      },
+      "walkedMetres": 26.080222222223597,
+      "shiftMs": 43.863374999999905,
+      "sightHeapDeltaBytes": -3565816,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.6763199999995777,
+        "p90": 0.715900999999576,
+        "max": 1.2734959999997955
+      }
+    },
+    {
+      "level": 12,
+      "label": "Level 601",
+      "name": "终末",
+      "gen": "library",
+      "infinite": false,
+      "fullMap": false,
+      "w": 64,
+      "h": 64,
+      "structures": 645,
+      "solid": 576,
+      "entities": 2,
+      "items": 8,
+      "exits": 2,
+      "lights": 99,
+      "chunks": 0,
+      "npcs": 0,
+      "loadMs": 22.07670599999983,
+      "beforeIndexVisibility": {
+        "n": 12,
+        "median": 0.5454359999994267,
+        "p90": 0.7810280000003331,
+        "max": 5.391947000000073
+      },
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.1494620000003124,
+        "p90": 0.6871320000000196,
+        "max": 1.0580259999996997
+      },
+      "computeVisibilityWhileMoving": {
+        "n": 36,
+        "median": 0.3784560000003694,
+        "p90": 0.4337709999999788,
+        "max": 1.5637870000000476
+      },
+      "scanInteract": {
+        "n": 80,
+        "median": 0.03293100000064442,
+        "p90": 0.04990499999985332,
+        "max": 0.4013230000000476
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.02555000000029395,
+        "p90": 0.042295000000194705,
+        "max": 0.9386799999992945
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.44482000000061817,
+        "p90": 0.6945830000004207,
+        "max": 1.269643000000542
+      },
+      "walkedMetres": 4.259694444444605,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": -4367760,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.16789499999958934,
+        "p90": 0.18477399999937916,
+        "max": 0.6268129999998564
+      }
+    },
+    {
+      "level": 101,
+      "label": "Alpha 基地",
+      "name": "M.E.G. Alpha 基地",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 152,
+      "h": 152,
+      "structures": 6921,
+      "solid": 3990,
+      "entities": 0,
+      "items": 0,
+      "exits": 3,
+      "lights": 488,
+      "chunks": 0,
+      "npcs": 29,
+      "loadMs": 17.347733999999946,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.17807099999936327,
+        "p90": 0.8979999999992287,
+        "max": 46.43645000000015
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.03643400000055408,
+        "p90": 0.03824400000030437,
+        "max": 3.0070400000004156
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.003544000000147207,
+        "p90": 0.007805999999618507,
+        "max": 0.07922800000051211
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.6529710000004343,
+        "p90": 0.8689590000003591,
+        "max": 10.581983000000037
+      },
+      "walkedMetres": 4.889555555555219,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": -5300048,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.130076000000372,
+        "p90": 0.19480799999928422,
+        "max": 1.9251000000003842
+      }
+    },
+    {
+      "level": 102,
+      "label": "商人之家",
+      "name": "商人之家",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 428,
+      "h": 284,
+      "structures": 1323,
+      "solid": 1318,
+      "entities": 1,
+      "items": 0,
+      "exits": 3,
+      "lights": 0,
+      "chunks": 0,
+      "npcs": 0,
+      "loadMs": 120.80007399999977,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.2583309999999983,
+        "p90": 1.181724000000031,
+        "max": 14.12620699999934
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.0036259999997128034,
+        "p90": 0.0038640000002487795,
+        "max": 0.7011279999996987
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.005495000000337313,
+        "p90": 0.019737000000532134,
+        "max": 0.7605340000000069
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.1456849999995029,
+        "p90": 0.3077320000002146,
+        "max": 6.179102000000057
+      },
+      "walkedMetres": 5.919777777777597,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": 10617032,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.2762009999996735,
+        "p90": 0.3644669999994221,
+        "max": 0.41592799999943963
+      }
+    },
+    {
+      "level": 103,
+      "label": "希波克拉底 - 1",
+      "name": "希波克拉底 - 1",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 80,
+      "h": 80,
+      "structures": 208,
+      "solid": 199,
+      "entities": 0,
+      "items": 0,
+      "exits": 3,
+      "lights": 114,
+      "chunks": 0,
+      "npcs": 14,
+      "loadMs": 2.696132000000034,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.10407500000019354,
+        "p90": 0.1297230000000127,
+        "max": 0.45924700000068697
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.010686000000532658,
+        "p90": 0.011392999999770836,
+        "max": 0.14186500000050728
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.003483000000414904,
+        "p90": 0.0037739999997938867,
+        "max": 0.0463819999995394
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.08742600000005041,
+        "p90": 0.11251099999935832,
+        "max": 1.7882900000004156
+      },
+      "walkedMetres": 5.919777777777995,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": -9330976,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.14609399999972084,
+        "p90": 0.2977280000004612,
+        "max": 1.4859250000008615
+      }
+    },
+    {
+      "level": 104,
+      "label": "Tom 的餐馆",
+      "name": "Tom 的餐馆",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 80,
+      "h": 80,
+      "structures": 133,
+      "solid": 126,
+      "entities": 0,
+      "items": 0,
+      "exits": 3,
+      "lights": 46,
+      "chunks": 0,
+      "npcs": 10,
+      "loadMs": 0.7083409999995638,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.11381100000016886,
+        "p90": 0.1434079999999085,
+        "max": 0.35327700000016193
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.010992000000442204,
+        "p90": 0.011806999999862455,
+        "max": 0.9620300000005955
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.0035779999998339918,
+        "p90": 0.0074629999999160646,
+        "max": 0.045104999999239226
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.12691299999914918,
+        "p90": 0.2594540000000052,
+        "max": 1.060696000000462
+      },
+      "walkedMetres": 4.178611111111273,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": 5589864,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.14197000000058324,
+        "p90": 0.2868239999997968,
+        "max": 0.3391070000006948
+      }
+    },
+    {
+      "level": 105,
+      "label": "办公区EL3A",
+      "name": "办公区EL3A",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 80,
+      "h": 80,
+      "structures": 221,
+      "solid": 136,
+      "entities": 0,
+      "items": 0,
+      "exits": 3,
+      "lights": 59,
+      "chunks": 0,
+      "npcs": 9,
+      "loadMs": 12.902208000000428,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.26982499999940046,
+        "p90": 0.5186279999998078,
+        "max": 0.8650559999996403
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.013257999999950698,
+        "p90": 0.013598000000456523,
+        "max": 0.13066799999978684
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.0035550000002331217,
+        "p90": 0.003966000000218628,
+        "max": 0.1082219999998415
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.13912899999922956,
+        "p90": 0.19028100000014092,
+        "max": 0.8818299999993542
+      },
+      "walkedMetres": 3.179527777777899,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": -3143888,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.04655800000000454,
+        "p90": 0.34185099999922386,
+        "max": 0.9134610000000976
+      }
+    },
+    {
+      "level": 106,
+      "label": "M.E.G. Gemma 基地",
+      "name": "M.E.G. Gemma 基地",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 80,
+      "h": 80,
+      "structures": 208,
+      "solid": 156,
+      "entities": 0,
+      "items": 0,
+      "exits": 1,
+      "lights": 233,
+      "chunks": 0,
+      "npcs": 10,
+      "loadMs": 9.83737099999962,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.04534400000011374,
+        "p90": 0.11396400000012363,
+        "max": 0.25481000000036147
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.0032400000000052387,
+        "p90": 0.0033929999999600113,
+        "max": 0.058527000000140106
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.003434000000197557,
+        "p90": 0.00365700000020297,
+        "max": 0.04386900000008609
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.09597699999994802,
+        "p90": 0.1382739999999103,
+        "max": 0.7058029999998325
+      },
+      "walkedMetres": 2.178916666666751,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": 7154272,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.044601999999940745,
+        "p90": 0.09876600000006874,
+        "max": 0.11933000000044558
+      }
+    },
+    {
+      "level": 107,
+      "label": "存储设施",
+      "name": "B.N.T.G. 存储设施",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 80,
+      "h": 80,
+      "structures": 87,
+      "solid": 59,
+      "entities": 0,
+      "items": 0,
+      "exits": 3,
+      "lights": 185,
+      "chunks": 0,
+      "npcs": 6,
+      "loadMs": 2.376350999999886,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.019391999999243126,
+        "p90": 0.07980200000019977,
+        "max": 0.23729499999990367
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.006177000000207045,
+        "p90": 0.0068099999998594285,
+        "max": 0.7616669999997612
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.0034530000002632733,
+        "p90": 0.0037779999993290403,
+        "max": 0.06873900000027788
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.07510700000057113,
+        "p90": 0.10117899999931979,
+        "max": 0.4080500000000029
+      },
+      "walkedMetres": 2.178916666666751,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": 2650704,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.01976699999977427,
+        "p90": 0.07098300000052404,
+        "max": 0.10562000000027183
+      }
+    },
+    {
+      "level": 108,
+      "label": "蓝色救赎",
+      "name": "蓝色救赎",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 80,
+      "h": 80,
+      "structures": 47,
+      "solid": 24,
+      "entities": 0,
+      "items": 0,
+      "exits": 1,
+      "lights": 99,
+      "chunks": 0,
+      "npcs": 2,
+      "loadMs": 8.02372699999978,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.019483000000036554,
+        "p90": 0.08520399999997608,
+        "max": 0.14177299999937532
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.0023559999999633874,
+        "p90": 0.0024610000000393484,
+        "max": 0.033171999999467516
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.0026929999994536047,
+        "p90": 0.005121000000144704,
+        "max": 0.05673899999965215
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.06313799999952607,
+        "p90": 0.08506099999976868,
+        "max": 0.6585119999999733
+      },
+      "walkedMetres": 2.178916666666751,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": 2659984,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.020011000000522472,
+        "p90": 0.0710559999997713,
+        "max": 0.08574099999987084
+      }
+    },
+    {
+      "level": 109,
+      "label": "M.E.G. Omega 基地",
+      "name": "M.E.G. Omega 基地",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 80,
+      "h": 80,
+      "structures": 162,
+      "solid": 113,
+      "entities": 0,
+      "items": 0,
+      "exits": 3,
+      "lights": 194,
+      "chunks": 0,
+      "npcs": 10,
+      "loadMs": 2.8321210000003703,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.019295999999485502,
+        "p90": 0.08216399999946589,
+        "max": 0.2682730000005904
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.0065160000003743335,
+        "p90": 0.006911000000400236,
+        "max": 0.09397999999964668
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.0018619999991642544,
+        "p90": 0.002013999999689986,
+        "max": 0.03837700000076438
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.07991299999957846,
+        "p90": 0.09675599999991391,
+        "max": 0.9681359999995038
+      },
+      "walkedMetres": 2.178916666666751,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": 2655128,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.020442000000002736,
+        "p90": 0.07503100000030827,
+        "max": 0.09197099999983038
+      }
+    },
+    {
+      "level": 110,
+      "label": "M.E.G. 哨所「家政服务」",
+      "name": "M.E.G. 哨所「家政服务」",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 80,
+      "h": 80,
+      "structures": 23,
+      "solid": 18,
+      "entities": 0,
+      "items": 0,
+      "exits": 1,
+      "lights": 31,
+      "chunks": 0,
+      "npcs": 4,
+      "loadMs": 1.2449829999995927,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.01967999999942549,
+        "p90": 0.08601499999986117,
+        "max": 0.1287979999997333
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.003215000000636792,
+        "p90": 0.0033580000008441857,
+        "max": 0.11045700000067882
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.0018229999996037805,
+        "p90": 0.0020620000004782923,
+        "max": 0.034122999999453896
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.05373099999997066,
+        "p90": 0.062436999999590626,
+        "max": 0.7266060000001744
+      },
+      "walkedMetres": 3.1795277777778885,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": 2726728,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.019677000000228873,
+        "p90": 0.08806900000035967,
+        "max": 0.16790500000024622
+      }
+    },
+    {
+      "level": 111,
+      "label": "家常酒店",
+      "name": "家常酒店",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 80,
+      "h": 80,
+      "structures": 23,
+      "solid": 17,
+      "entities": 0,
+      "items": 0,
+      "exits": 1,
+      "lights": 34,
+      "chunks": 0,
+      "npcs": 5,
+      "loadMs": 0.8902100000004793,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.01940900000045076,
+        "p90": 0.08489000000008673,
+        "max": 0.15551000000050408
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.0037449999999807915,
+        "p90": 0.00392199999987497,
+        "max": 0.030323999999382067
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.0013920000001235167,
+        "p90": 0.001599000000169326,
+        "max": 0.0236430000004475
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.0536709999996674,
+        "p90": 0.0671409999995376,
+        "max": 1.087242999999944
+      },
+      "walkedMetres": 3.1795277777778885,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": 2690456,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.021442999999635504,
+        "p90": 0.08345900000040274,
+        "max": 0.09232800000063435
+      }
+    },
+    {
+      "level": 112,
+      "label": "原住民",
+      "name": "原住民",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 80,
+      "h": 80,
+      "structures": 26,
+      "solid": 13,
+      "entities": 0,
+      "items": 0,
+      "exits": 1,
+      "lights": 46,
+      "chunks": 0,
+      "npcs": 7,
+      "loadMs": 1.1058869999997114,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.01944900000034977,
+        "p90": 0.08907399999952759,
+        "max": 0.1593460000003688
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.004552000000330736,
+        "p90": 0.004786999999851105,
+        "max": 0.06213399999978719
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.0014140000002953457,
+        "p90": 0.0014980000005380134,
+        "max": 0.028715000000374857
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.05678899999929854,
+        "p90": 0.06964100000004692,
+        "max": 0.5895580000005793
+      },
+      "walkedMetres": 3.1795277777778885,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": 2704208,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.019988000000012107,
+        "p90": 0.08390199999939796,
+        "max": 0.11340600000039558
+      }
+    },
+    {
+      "level": 113,
+      "label": "M.E.G.“空巢”前哨站",
+      "name": "M.E.G.“空巢”前哨站",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 64,
+      "h": 64,
+      "structures": 31,
+      "solid": 18,
+      "entities": 0,
+      "items": 0,
+      "exits": 1,
+      "lights": 6,
+      "chunks": 0,
+      "npcs": 3,
+      "loadMs": 0.9404729999996562,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.019578999999794178,
+        "p90": 0.08772599999974773,
+        "max": 0.12829900000087946
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.00401400000009744,
+        "p90": 0.004300000000512227,
+        "max": 0.08619899999939662
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.0013040000003456953,
+        "p90": 0.0013760000001639128,
+        "max": 0.026675000000068394
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.04626399999960995,
+        "p90": 0.06318999999984953,
+        "max": 0.25285100000019156
+      },
+      "walkedMetres": 3.1795277777778885,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": 2696792,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.019935000000259606,
+        "p90": 0.08856999999989057,
+        "max": 0.10350500000004104
+      }
+    },
+    {
+      "level": 114,
+      "label": "哈莫兹洞穴社群",
+      "name": "哈莫兹洞穴社群",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 64,
+      "h": 64,
+      "structures": 34,
+      "solid": 23,
+      "entities": 0,
+      "items": 0,
+      "exits": 1,
+      "lights": 7,
+      "chunks": 0,
+      "npcs": 3,
+      "loadMs": 0.8977329999997892,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.01938499999960186,
+        "p90": 0.08978899999965506,
+        "max": 0.14118899999994028
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.003971999999521358,
+        "p90": 0.0040949999993245,
+        "max": 0.03983700000026147
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.0012959999994563987,
+        "p90": 0.0013930000004620524,
+        "max": 0.025956000000405766
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.039874000000054366,
+        "p90": 0.04817599999933009,
+        "max": 0.2477230000004056
+      },
+      "walkedMetres": 3.1795277777778885,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": -13544952,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.02225700000053621,
+        "p90": 0.0888199999999415,
+        "max": 0.73446899999999
+      }
+    },
+    {
+      "level": 116,
+      "label": "丰饶角",
+      "name": "丰饶角",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 80,
+      "h": 80,
+      "structures": 176,
+      "solid": 165,
+      "entities": 0,
+      "items": 0,
+      "exits": 3,
+      "lights": 114,
+      "chunks": 0,
+      "npcs": 13,
+      "loadMs": 0.7837840000001961,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.15536000000065542,
+        "p90": 0.18806900000072346,
+        "max": 0.40137400000003254
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.009777999999641906,
+        "p90": 0.010244999999486026,
+        "max": 0.07387400000061461
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.0013030000000071595,
+        "p90": 0.0013569999991887016,
+        "max": 0.03887200000008306
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.053783999999723164,
+        "p90": 0.06672400000024936,
+        "max": 0.5223240000004807
+      },
+      "walkedMetres": 5.919777777777995,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": -10015320,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.2342109999999593,
+        "p90": 0.5399189999998271,
+        "max": 1.1423570000006293
+      }
+    },
+    {
+      "level": 274,
+      "label": "Level 274 · 杰瑞的房间",
+      "name": "杰瑞的房间",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 80,
+      "h": 80,
+      "structures": 82,
+      "solid": 59,
+      "entities": 1,
+      "items": 0,
+      "exits": 1,
+      "lights": 24,
+      "chunks": 0,
+      "npcs": 7,
+      "loadMs": 3.0018890000001193,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.019909000000552624,
+        "p90": 0.07344300000022486,
+        "max": 0.18890899999951216
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.00568699999985256,
+        "p90": 0.009578000000146858,
+        "max": 0.3531540000003588
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.004033999999592197,
+        "p90": 0.011895000000549771,
+        "max": 0.6129170000003796
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.06733100000019476,
+        "p90": 0.08407499999975698,
+        "max": 0.6228090000004158
+      },
+      "walkedMetres": 1.1798333333333773,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": -13336216,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.02014800000051764,
+        "p90": 0.021999999999934516,
+        "max": 0.9119600000003629
+      }
+    },
+    {
+      "level": 900,
+      "label": "前厅",
+      "name": "前厅",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 160,
+      "h": 160,
+      "structures": 135,
+      "solid": 134,
+      "entities": 0,
+      "items": 0,
+      "exits": 0,
+      "lights": 45,
+      "chunks": 0,
+      "npcs": 7,
+      "loadMs": 3.2668350000003556,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.0598069999996369,
+        "p90": 0.08315700000002835,
+        "max": 0.6532200000001467
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.1300490000003265,
+        "p90": 0.15390800000022864,
+        "max": 1.2647690000003422
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.0038199999999051215,
+        "p90": 0.0046469999997498235,
+        "max": 0.1280239999996411
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.17266300000028423,
+        "p90": 0.2875960000001214,
+        "max": 1.6580599999997503
+      },
+      "walkedMetres": 1.5189722222222253,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": 8583424,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.07396599999992759,
+        "p90": 0.09694200000012643,
+        "max": 0.3441659999998592
+      }
+    },
+    {
+      "level": 902,
+      "label": "Level 0.2",
+      "name": "重塑的混乱",
+      "gen": "rooms",
+      "infinite": true,
+      "fullMap": false,
+      "w": 160,
+      "h": 160,
+      "structures": 565,
+      "solid": 523,
+      "entities": 0,
+      "items": 12,
+      "exits": 8,
+      "lights": 1342,
+      "chunks": 25,
+      "npcs": 0,
+      "loadMs": 29.728143000000273,
+      "beforeIndexVisibility": {
+        "n": 12,
+        "median": 0.5682210000004488,
+        "p90": 0.6557499999998981,
+        "max": 4.123270999999477
+      },
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 1.272223999999369,
+        "p90": 1.3956459999999424,
+        "max": 2.8353640000004816
+      },
+      "computeVisibilityWhileMoving": {
+        "n": 36,
+        "median": 1.5525120000002062,
+        "p90": 1.7241340000000491,
+        "max": 2.6452259999996386
+      },
+      "scanInteract": {
+        "n": 80,
+        "median": 0.016094999999950232,
+        "p90": 0.02210800000011659,
+        "max": 0.3879689999994298
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.0037689999999201973,
+        "p90": 0.004858000000240281,
+        "max": 0.046186999999918044
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 1.8028070000000298,
+        "p90": 2.0039430000006178,
+        "max": 2.7183420000001206
+      },
+      "walkedMetres": 5.919777777776403,
+      "shiftMs": 4.3334120000008625,
+      "sightHeapDeltaBytes": 7577928,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 1.2214739999999438,
+        "p90": 1.3173289999995177,
+        "max": 1.9921299999996336
+      }
+    },
+    {
+      "level": 117,
+      "label": "恐怖旅馆 · 办公室",
+      "name": "办公室",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 40,
+      "h": 40,
+      "structures": 15,
+      "solid": 8,
+      "entities": 0,
+      "items": 0,
+      "exits": 1,
+      "lights": 6,
+      "chunks": 0,
+      "npcs": 0,
+      "loadMs": 1.084632000000056,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.21208200000000943,
+        "p90": 0.21852300000045943,
+        "max": 0.30456599999979517
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.002802999999403255,
+        "p90": 0.0028590000001713634,
+        "max": 0.04314399999930174
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.00355900000067777,
+        "p90": 0.0039249999999810825,
+        "max": 0.045440000000780856
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.05587199999990844,
+        "p90": 0.08270900000024994,
+        "max": 0.5422010000002047
+      },
+      "walkedMetres": 5.919777777777995,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": -8698304,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.04258399999980611,
+        "p90": 0.22609900000043126,
+        "max": 0.8764280000004874
+      }
+    },
+    {
+      "level": 118,
+      "label": "恐怖旅馆 · 大堂",
+      "name": "大堂",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 40,
+      "h": 40,
+      "structures": 12,
+      "solid": 8,
+      "entities": 0,
+      "items": 1,
+      "exits": 1,
+      "lights": 8,
+      "chunks": 0,
+      "npcs": 0,
+      "loadMs": 1.498976999999286,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.2542330000005677,
+        "p90": 0.3025290000005043,
+        "max": 1.0135609999997541
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.003258000000641914,
+        "p90": 0.0035289999996166443,
+        "max": 0.04277899999942747
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.003004999999575375,
+        "p90": 0.003464999999778229,
+        "max": 0.04909399999996822
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.04736700000012206,
+        "p90": 0.15293299999939336,
+        "max": 0.8076060000003054
+      },
+      "walkedMetres": 5.919777777777995,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": 7632032,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.04339900000013586,
+        "p90": 0.26460300000053394,
+        "max": 0.27794900000026246
+      }
+    },
+    {
+      "level": 119,
+      "label": "Level 5.1 · 赌场",
+      "name": "恐怖旅馆赌场盛大开幕",
+      "gen": "outpost",
+      "infinite": false,
+      "fullMap": true,
+      "w": 58,
+      "h": 58,
+      "structures": 119,
+      "solid": 119,
+      "entities": 0,
+      "items": 0,
+      "exits": 1,
+      "lights": 30,
+      "chunks": 0,
+      "npcs": 0,
+      "loadMs": 7.76749000000018,
+      "beforeIndexVisibility": null,
+      "mapSightWhileMoving": {
+        "n": 36,
+        "median": 0.36880699999983335,
+        "p90": 0.4352980000003299,
+        "max": 0.5986509999993359
+      },
+      "computeVisibilityWhileMoving": null,
+      "scanInteract": {
+        "n": 80,
+        "median": 0.004344999999375432,
+        "p90": 0.004536000000371132,
+        "max": 0.06343900000047142
+      },
+      "updateEntities": {
+        "n": 40,
+        "median": 0.0030019999994692625,
+        "p90": 0.003184999999575666,
+        "max": 0.037624000000505475
+      },
+      "walkUpdate": {
+        "n": 120,
+        "median": 0.1091839999999138,
+        "p90": 0.1727179999998043,
+        "max": 7.875199000000066
+      },
+      "walkedMetres": 0.7193055555555752,
+      "shiftMs": null,
+      "sightHeapDeltaBytes": -6677704,
+      "sightAllocWhileMoving": {
+        "n": 80,
+        "median": 0.4813089999997828,
+        "p90": 0.5412609999993947,
+        "max": 1.1771049999997558
+      }
+    }
+  ]
+}

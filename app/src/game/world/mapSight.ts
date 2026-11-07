@@ -1,5 +1,5 @@
 import type {Engine} from '../engine'
-import {floorHeight,structColliders,wallAt} from './mapgen'
+import {colliderSpatialStamp,floorHeight,structColliders,wallAt} from './mapgen'
 import {mapVision} from '../content/mapPlayer'
 import {look} from '../renderer/shared'
 import {inPolygon,type Polygon} from './l11Geometry'
@@ -18,20 +18,22 @@ function polygonRay(polygon:Polygon,x:number,y:number,dx:number,dy:number){
  return best
 }
 export type MapSight={points:{x:number;y:number}[];cells:number[];range:number}
-const states=new WeakMap<Engine,{time:number;gameTime:number;x:number;y:number;z:number;band:number;yaw:number;fov:number;range:number;rev:number;map:unknown;sight:MapSight}>()
-const cityBins=new WeakMap<Engine,{map:unknown;structures:unknown;rev:number;band:number;low:number;high:number;bins:Map<number,Rect[]>}>()
+const states=new WeakMap<Engine,{time:number;gameTime:number;x:number;y:number;z:number;band:number;yaw:number;fov:number;range:number;rev:number;stamp:number;map:unknown;sight:MapSight}>()
+const sightBins=new WeakMap<Engine,{map:unknown;structures:unknown;rev:number;stamp:number;band:number;low:number;high:number;bins:Map<number,Rect[]>}>()
 const revealed=new WeakMap<Engine,{cells:number[];explored:unknown}>()
 /** Ray/grid traversal visits only visible cells, rather than doing a long LOS
  * test for every tile in a large circle. Both map overlays and exploration use
- * these exact hit points. Querying a paused map never reveals new cells. */
-export function mapSight(eng:Engine,yaw=look.yaw):MapSight{
- const m=eng.map!,p=eng.player,range=Math.min(mapVision.range,Math.hypot(m.w,m.h)),old=states.get(eng),rev=m.inf?.rev??eng.mapRev,time=performance.now()
+ * these exact hit points. Querying a paused map never reveals new cells.
+ * `fresh` rebuilds the collider index and the cone; checks use it to prove the
+ * steady-state cache matches an uncached query. */
+export function mapSight(eng:Engine,yaw=look.yaw,fresh=false):MapSight{
+ const m=eng.map!,p=eng.player,range=Math.min(mapVision.range,Math.hypot(m.w,m.h)),old=states.get(eng),rev=m.inf?.rev??eng.mapRev,stamp=colliderSpatialStamp(),time=performance.now()
  const eye=p.z+(eng.seating?seatedEyeHeight(eng):p.crouching?.95:1.55),band=p.floor,fov=mapVision.fov,city=p.level===11
  const offset=seatedEyeOffset(eng),ox=p.x+offset.x,oy=p.y+offset.y
  // Wall-clock expiry also catches opening a door while the map/game is paused.
- if(old&&old.map===m&&old.rev===rev&&time-old.time<80&&eng.time-old.gameTime<.08&&(city?Math.hypot(p.x-old.x,p.y-old.y)<.18&&Math.abs(eye-old.z)<.12&&Math.abs(yaw-old.yaw)<.006:p.x===old.x&&p.y===old.y&&eye===old.z&&yaw===old.yaw)&&band===old.band&&fov===old.fov&&old.range===range)return old.sight
- const cached=city?cityBins.get(eng):undefined,reuse=cached&&cached.map===m&&cached.structures===m.structures&&cached.rev===rev&&cached.band===band&&eye>cached.low&&eye<cached.high
- const bins=reuse?cached.bins:new Map<number,Rect[]>(),cells=new Set<number>(),points:MapSight['points']=[]
+ if(!fresh&&old&&old.map===m&&old.rev===rev&&old.stamp===stamp&&time-old.time<80&&eng.time-old.gameTime<.08&&(city?Math.hypot(p.x-old.x,p.y-old.y)<.18&&Math.abs(eye-old.z)<.12&&Math.abs(yaw-old.yaw)<.006:p.x===old.x&&p.y===old.y&&eye===old.z&&yaw===old.yaw)&&band===old.band&&fov===old.fov&&old.range===range)return old.sight
+ const cached=sightBins.get(eng),reuse=!fresh&&!!cached&&cached.map===m&&cached.structures===m.structures&&cached.rev===rev&&cached.stamp===stamp&&cached.band===band&&eye>cached.low&&eye<cached.high
+ const bins=reuse&&cached?cached.bins:new Map<number,Rect[]>(),cells=new Set<number>(),points:MapSight['points']=[]
  let low=-Infinity,high=Infinity
  if(!reuse){
  for(const s of m.structures){
@@ -39,18 +41,19 @@ export function mapSight(eng:Engine,yaw=look.yaw):MapSight{
   const base=s.l11?.base??floorHeight(m,s.x+s.w/2,s.y+s.h/2,band)
   for(const b of city&&s.l11?l11BuildingSightColliders(s):structColliders(s,m)){
    const bottom=base+(b.bottom??0)-.04,top=base+(s.kind==='frontdesk'?1.24:b.top)+.04
-   // Reuse the city index until the eye crosses an actual vertical obstacle
+   // Reuse the index until the eye crosses an actual vertical obstacle
    // boundary. Gentle terrain and ordinary footsteps need no re-indexing.
+   // Horizontal range is applied per ray, so walking does not rebuild it.
    if(eye<bottom){high=Math.min(high,bottom);continue}
    if(eye>top){low=Math.max(low,top);continue}
    low=Math.max(low,bottom);high=Math.min(high,top)
-   if(!city&&(b.x0>p.x+range||b.x1<p.x-range||b.y0>p.y+range||b.y1<p.y-range))continue
    const r:Rect={x:b.x0,y:b.y0,w:b.x1-b.x0,h:b.y1-b.y0,polygon:b.polygon}
    for(let y=Math.max(0,Math.floor(b.y0));y<=Math.min(m.h-1,Math.floor(b.y1));y++)for(let x=Math.max(0,Math.floor(b.x0));x<=Math.min(m.w-1,Math.floor(b.x1));x++){const k=y*m.w+x,list=bins.get(k)??[];list.push(r);bins.set(k,list)}
   }
  }
- if(city)cityBins.set(eng,{map:m,structures:m.structures,rev,band,low,high,bins})
+ sightBins.set(eng,{map:m,structures:m.structures,rev,stamp,band,low,high,bins})
  }
+ const maxX=p.x+range,minX=p.x-range,maxY=p.y+range,minY=p.y-range
  const ray=(angle:number,reach:number)=>{
   const dx=-Math.sin(angle),dy=-Math.cos(angle),sx=dx<0?-1:1,sy=dy<0?-1:1
   let x=Math.floor(ox),y=Math.floor(oy),t=0,tx=Math.abs(dx)<1e-8?Infinity:((dx<0?x:x+1)-ox)/dx,ty=Math.abs(dy)<1e-8?Infinity:((dy<0?y:y+1)-oy)/dy
@@ -58,7 +61,12 @@ export function mapSight(eng:Engine,yaw=look.yaw):MapSight{
    const i=y*m.w+x;cells.add(i)
    if(!city&&wallAt(m,x,y,band))return Math.min(t,reach)
    let hit=Infinity
-   for(const b of bins.get(i)??[]){
+   const list=bins.get(i)
+   if(list)for(let n=0;n<list.length;n++){
+    const b=list[n]
+    // Level 11 already stored every facade. Other levels keep the old
+    // player±range reject, now applied here so walking can reuse the index.
+    if(!city&&(b.x>maxX||b.x+b.w<minX||b.y>maxY||b.y+b.h<minY))continue
     let lo=0,hi=reach
     if(Math.abs(dx)<1e-8){if(ox<b.x||ox>b.x+b.w)continue}else{const a=(b.x-ox)/dx,c=(b.x+b.w-ox)/dx;lo=Math.max(lo,Math.min(a,c));hi=Math.min(hi,Math.max(a,c))}
     if(Math.abs(dy)<1e-8){if(oy<b.y||oy>b.y+b.h)continue}else{const a=(b.y-oy)/dy,c=(b.y+b.h-oy)/dy;lo=Math.max(lo,Math.min(a,c));hi=Math.min(hi,Math.max(a,c))}
@@ -77,7 +85,7 @@ export function mapSight(eng:Engine,yaw=look.yaw):MapSight{
  }
  for(let i=0;i<32;i++)ray(i*Math.PI/16,mapVision.near)
  const sight={points,cells:[...cells],range}
- states.set(eng,{time,gameTime:eng.time,x:p.x,y:p.y,z:eye,band,yaw,fov,range,rev,map:m,sight})
+ states.set(eng,{time,gameTime:eng.time,x:p.x,y:p.y,z:eye,band,yaw,fov,range,rev,stamp,map:m,sight})
  return sight
 }
 export function revealMapSight(eng:Engine){
