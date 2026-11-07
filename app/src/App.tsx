@@ -245,6 +245,7 @@ function Game() {
     engine.swimMode = settings.swimMode === 'flat' ? 'flat' : 'view' // [swim]
     if (!settings.devMode) {
       engine.dev.mapReveal = false
+      engine.dev.hotelAttentionLock = false
       if (engine.dev.fly) engine.devSetFlight(false)
     }
     engine.dev.god = settings.devMode // 开发者模式：无敌

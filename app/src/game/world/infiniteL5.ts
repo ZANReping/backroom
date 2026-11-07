@@ -338,6 +338,12 @@ export function l5VariantOf(seed: number, cx: number, cy: number): L5Variant {
   return best
 }
 
+export function l5LobbyDoorCandidate(seed: number, cx: number, cy: number, floor: number): boolean {
+  if (cx === 0 && cy === 0) return false
+  for (let i = 0; i < 4; i++) if (h01(seed, 0x5c30 + i, cx, cy, floor) < .004) return true
+  return false
+}
+
 // ---------- chunk 生成（纯函数：同种子同坐标必一致；GenChunk 契约见 infiniteRegistry）----------
 export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forceVariant?: string): GenChunk {
   const previousFloor = L5_FLOOR
@@ -1107,9 +1113,7 @@ function generateHotelChunk(def: LevelDef, seed: number, cx: number, cy: number,
       const sp = wallSpot(0x5c20 + i * 2)
       if (sp) pushStruct('l5rule', sp.x, sp.y, 1, 1, false, { l5: 1, wx: sp.x, wy: sp.y }) // wx/wy：世界坐标（卡面内容按它算，窗口平移不影响）
     }
-    let lobby = false
-    for (let q = 0; q < 4 && !lobby; q++) if (h01(seed, 0x5c30 + q, cx, cy, getL5Floor()) < 0.004) lobby = true
-    if (lobby && !(cx === 0 && cy === 0)) {
+    if (l5LobbyDoorCandidate(seed, cx, cy, getL5Floor())) {
       const sp = wallSpot(0x5c40)
       if (sp) pushStruct('l5pocketdoor', sp.x, sp.y, 1, 1, false, { l5: 1, pocket: 'lobby' })
     }

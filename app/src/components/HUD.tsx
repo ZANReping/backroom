@@ -48,6 +48,8 @@ import {drawTradersMap} from '@/game/content/tradersMap'
 import L11MapPanel, { L11Minimap } from './L11MapPanel'
 import L5MapPanel, { L5Minimap } from './L5MapPanel' // [l5map]
 import { isL5MapLevel } from '@/game/content/l5Map'
+import { L5_STAFF } from '@/game/content/l5Staff'
+import { L02_ID } from '@/game/world/l02Layout'
 import DevExitTools from './DevExitTools'
 import {drawL0Map} from '@/game/content/l0Map'
 import {drawL1Map} from '@/game/content/l1Map'
@@ -1442,6 +1444,17 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                     </div>
                   ))}
                 </DevSection>
+                {p.level === L02_ID && engine.l02 && (
+                  <DevSection label="崩塌调试">
+                    <div className="flex flex-wrap items-center gap-1" data-dev-l02-stage>
+                      <span className="text-[10px] text-neutral-400">崩塌 t={Math.round(engine.l02.t)}s · 阶段 {engine.l02.stage}{engine.l02.stopped ? '（已停止）' : engine.l02.lull ? '（喘息）' : ''} · 粉尘 {engine.l02.dust.toFixed(2)}</span>
+                      {[0, 1, 2, 3, 4].map(n => <DevBtn key={n} active={engine.l02?.stage === n} onClick={() => engine.devL02Stage(n)}>跳到崩塌阶段 {n}</DevBtn>)}
+                      <DevBtn onClick={() => engine.devL02Stage(-1)}>停止崩塌</DevBtn>
+                      <DevBtn onClick={() => engine.devRemodel('back')}>回 L0 施工门旁</DevBtn>
+                    </div>
+                  </DevSection>
+                )}
+
                 <DevSection label="时间控制">
                   <div className="flex gap-1">
                     <DevBtn onClick={() => engine.devFastForward(60)}>⏩ 快进 60 秒</DevBtn>
@@ -1555,26 +1568,53 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                     </div>
                   </DevSection>
                 )}
-                {/* 施工许可 / Level 0.2「重塑的混乱」调试（engine/remodel.ts）：第五轮改为默认收起的可展开分区，标题「Level 0.2」 */}
-                <details className="mb-2" data-dev-l02-section>
-                  <summary className="cursor-pointer select-none" style={{ color: 'var(--amber)' }}>Level 0.2</summary>
-                  <div className="mb-1 mt-1 text-[10px] text-neutral-400" style={{ overflowWrap: 'anywhere' }}>施工许可：BRC 声望 {engine.rep.brc ?? 0} · 许可{p.remodel?.permitIssued ? (p.remodel.armed ? '可用' : '冷却中') : '未发放'} · 施工点 {p.remodel?.sites.length ?? 0}</div>
-                  <div className="flex flex-wrap gap-1" data-dev-remodel>
-                    <DevBtn onClick={() => engine.devRemodel('rep')}>声望设为 61</DevBtn>
-                    <DevBtn onClick={() => engine.devRemodel('permit')}>发放许可</DevBtn>
-                    <DevBtn onClick={() => engine.devRemodel('rearm')}>重置冷却</DevBtn>
-                    <DevBtn onClick={() => engine.devRemodel('clear')}>清除施工点</DevBtn>
-                    <DevBtn active={p.level === 902} onClick={() => engine.devRemodel('enter')}>直接进 L0.2</DevBtn>
-                    <DevBtn onClick={() => engine.devRemodel('back')}>回 L0 施工门旁</DevBtn>
-                  </div>
-                  {p.level === 902 && engine.l02 && (
-                    <div className="mt-1 flex flex-wrap items-center gap-1" data-dev-l02-stage>
-                      <span className="text-[10px] text-neutral-400">崩塌 t={Math.round(engine.l02.t)}s · 阶段 {engine.l02.stage}{engine.l02.stopped ? '（已停止）' : engine.l02.lull ? '（喘息）' : ''} · 粉尘 {engine.l02.dust.toFixed(2)}：</span>
-                      {[0, 1, 2, 3, 4].map((n) => <DevBtn key={n} active={engine.l02?.stage === n} onClick={() => engine.devL02Stage(n)}>跳到崩塌阶段 {n}</DevBtn>)}
-                      <DevBtn onClick={() => engine.devL02Stage(-1)}>停止崩塌</DevBtn>
+                {p.level === 0 && (
+                  <details className="mb-2" data-dev-l02-section>
+                    <summary className="cursor-pointer select-none" style={{ color: 'var(--amber)' }}>Level 0.2</summary>
+                    <div className="mb-1 mt-1 text-[10px] text-neutral-400" style={{ overflowWrap: 'anywhere' }}>施工许可：BRC 声望 {engine.rep.brc ?? 0} · 许可{p.remodel?.permitIssued ? (p.remodel.armed ? '可用' : '冷却中') : '未发放'} · 施工点 {p.remodel?.sites.length ?? 0}</div>
+                    <div className="flex flex-wrap gap-1" data-dev-remodel>
+                      <DevBtn onClick={() => engine.devRemodel('rep')}>声望设为 61</DevBtn>
+                      <DevBtn onClick={() => engine.devRemodel('permit')}>发放许可</DevBtn>
+                      <DevBtn onClick={() => engine.devRemodel('rearm')}>重置冷却</DevBtn>
+                      <DevBtn onClick={() => engine.devRemodel('clear')}>清除施工点</DevBtn>
+                      <DevBtn onClick={() => engine.devRemodel('enter')}>直接进 L0.2</DevBtn>
+                      <DevBtn onClick={() => engine.devRemodel('back')}>回 L0 施工门旁</DevBtn>
                     </div>
-                  )}
-                </details>
+                  </details>
+                )}
+                {p.level === 5 && (
+                  <div data-dev-l5-section>
+                    <DevSection label="L5 恐怖旅馆">
+                      <label className="mb-1 flex items-center gap-2">
+                        <span className="shrink-0">关注度</span>
+                        <input data-dev-l5-attention aria-label="关注度" type="range" min={0} max={100}
+                          className="h-7 min-w-0 flex-1 accent-[var(--amber)]" value={Math.round(engine.hotel.attn)}
+                          onChange={e => engine.devHotelSetAttention(e.currentTarget.valueAsNumber)} />
+                        <span className="w-7 shrink-0 text-right">{Math.round(engine.hotel.attn)}</span>
+                      </label>
+                      <div className="mb-2 flex flex-wrap gap-1">
+                        <DevBtn active={engine.dev.hotelAttentionLock} onClick={() => engine.devHotelToggleAttentionLock()}>
+                          关注度锁定{engine.dev.hotelAttentionLock ? '：开' : '：关'}
+                        </DevBtn>
+                        <DevBtn onClick={() => engine.devHotelSetAttention(0)}>清零</DevBtn>
+                        <DevBtn onClick={() => engine.devHotelSetAttention(100)}>设为 100</DevBtn>
+                      </div>
+                      <div className="grid grid-cols-2 gap-1">
+                        <DevBtn onClick={() => void engine.devHotelGo('elevator')}>传送到电梯</DevBtn>
+                        <DevBtn onClick={() => void engine.devHotelGo('casinoDoor')}>传送到赌场门口</DevBtn>
+                        <DevBtn onClick={() => void engine.devHotelGo('lobbyDoor')}>传送到大堂门口</DevBtn>
+                        <DevBtn onClick={() => void engine.devHotelGo('casino')}>直接进入赌场</DevBtn>
+                      </div>
+                      <div className="mb-1 mt-2 text-[10px] text-neutral-400">员工定位 · 优先寻找已出现的员工</div>
+                      <div className="grid grid-cols-2 gap-1">
+                        {L5_STAFF.map(s => (
+                          <DevBtn key={s.id} onClick={() => void engine.devHotelGotoStaff(s.id)}>{s.name}</DevBtn>
+                        ))}
+                      </div>
+                    </DevSection>
+                  </div>
+                )}
+
                 <DevSection label="据点跳转">
                   <div className="grid grid-cols-2 gap-1">
                     {Object.values(OUTPOSTS).map((o) => {

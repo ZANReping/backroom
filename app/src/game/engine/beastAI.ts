@@ -16,7 +16,7 @@ import type { Engine } from '../engine'
 import type { Entity } from '../entities'
 import { makeEntity } from '../entities'
 import type { BeastClip } from '../renderer/beastAnim'
-import { hotelAddAttn, saveBook, POCKET_LEVEL } from './l5Hotel'
+import { hotelAddAttn, hotelSetAttn, saveBook, POCKET_LEVEL } from './l5Hotel'
 import { casinoBeastDrag } from './casinoAI' // [casino]
 import { bellhopSave } from './bellhopAI'
 import type { SpecialAction } from './special'
@@ -360,7 +360,7 @@ function officeOffense(eng: Engine, e: Entity, why: NonNullable<BeastSave['offic
 /** 好处结算（握手握住的瞬间） */
 export function beastApplyBoon(eng: Engine, o: BeastOffer) {
   const p = eng.player, sv = beastSave(eng)
-  if (o.boon === 'calm') { eng.hotel.attn = 0; eng.msg('契约生效：酒店对你的关注，一笔勾销。', 'system') }
+  if (o.boon === 'calm') { hotelSetAttn(eng, 0); eng.msg('契约生效：酒店对你的关注，一笔勾销。', 'system') }
   else if (o.boon === 'fearless') { p.sanity = beastSanMax(eng); sv.fearT = BE.boonFearless; eng.msg('契约生效：你再也不会感到恐惧。（理智回满，10 分钟内不会下降）', 'system') }
   else if (o.item) {
     if (eng.addItem(o.item)) eng.msg(`契约生效：他把「${itemName(o.item)}」推到你面前。`, 'loot')
@@ -390,7 +390,7 @@ function applyHarsh(eng: Engine, clause: BeastHarsh) {
   if (clause === 'mind') { sv.sanCut = Math.min(BE.sanCutMax, sv.sanCut + BE.harshSanCut); p.sanity = Math.min(p.sanity, beastSanMax(eng)); eng.msg(`苛刻契约：你的理智上限永久 −${BE.harshSanCut}（现为 ${beastSanMax(eng)}）。`, 'damage') }
   sv.harsh.push({ clause, ...(item ? { item } : {}), t: Date.now() }); while (sv.harsh.length > 12) sv.harsh.shift()
   delete sv.forced
-  eng.hotel.attn = Math.min(eng.hotel.attn, BE.afterAttn)
+  hotelSetAttn(eng, Math.min(eng.hotel.attn, BE.afterAttn))
 }
 export const beastSanMax = (eng: Engine) => 100 - ((eng.hotel as { beast?: BeastSave }).beast?.sanCut ?? 0)
 

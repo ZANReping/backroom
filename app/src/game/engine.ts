@@ -64,6 +64,7 @@ import * as hotel from './engine/l5Hotel'
 import * as bntgBank from './engine/bntgBank'
 import * as ambient from './engine/ambient'
 import * as dev from './engine/dev'
+import * as devHotel from './engine/devHotel'
 import * as remodel from './engine/remodel'
 import * as l02c from './engine/l02Collapse'
 import { L02_ID } from './world/l02Layout'
@@ -222,7 +223,7 @@ export class Engine {
   fakeEnds = 0
   pocketsAlarmT = 6
   manilaT = 4
-  transition: { anim: string; t: number; startedAt?: number; dest: number | 'random' | 'win'; fallDamage?: number; preparing?: boolean; prepared?: boolean; mapSeed?: number } | null = null
+  transition: { anim: string; t: number; startedAt?: number; dest: number | 'random' | 'win'; fallDamage?: number; preparing?: boolean; prepared?: boolean; mapSeed?: number; devHotelArrival?: devHotel.DevHotelArrival } | null = null
   explored: Uint8Array = new Uint8Array(0)
   visible: Uint8Array = new Uint8Array(0)
   fakes: { x: number; y: number; t: number }[] = [] // 理智幻影
@@ -292,7 +293,7 @@ export class Engine {
   seating: SittingState | null = null
   // 开发者模式（noAttackCooldown=true 时仅绕过攻击间隔；体力消耗仍保留，便于单独调试战斗节奏）
   devEnabled = false
-  dev = { mapReveal: false, god: false, noclip: false, fly: false, speed: false, statLock: true, oneHit: false, invisible: false, frozenAI: false, bright: false, noAttackCooldown: false, phenOn: new Set<string>(), phenOff: new Set<string>(), hintDist: 30 }
+  dev = { mapReveal: false, god: false, noclip: false, fly: false, speed: false, statLock: true, hotelAttentionLock: false, oneHit: false, invisible: false, frozenAI: false, bright: false, noAttackCooldown: false, phenOn: new Set<string>(), phenOff: new Set<string>(), hintDist: 30 }
   // 地图就地修改版本号（开发者强制生成固定结构时 +1；渲染层据此重建有限层静态几何）
   mapRev = 0
   // 开场爬起动画计时（>0 时锁定移动/攻击/跳跃，渲染层相机从贴地侧躺缓慢起身）
@@ -568,7 +569,7 @@ export class Engine {
     const def = levelDefOf(t.dest, t.dest === 5 ? level.hotelArrivalFloor(this) : undefined)
     if (!def || !canPrepareChunks(def)) return
     t.preparing = true
-    t.mapSeed = level.nextMapSeed(this, t.dest)
+    t.mapSeed ??= level.nextMapSeed(this, t.dest)
     void prepareChunkWindow(def, t.mapSeed).catch(() => undefined).then(() => { t.prepared = true })
   }
   msg(text: string, kind: MsgKind = 'system') {
@@ -1078,6 +1079,7 @@ export class Engine {
             if (p.hp <= 0) { this.die('坠亡'); return }
           }
           this.loadLevel(dest, undefined, t.mapSeed)
+          if (t.devHotelArrival) void devHotel.devFinishHotelArrival(this, t.devHotelArrival).then(moved => { if (moved) save.persist(this, 'auto') })
           applyFoyerLanding(this) // 前厅 M4：Level 0 着陆散落（仅从前厅坠落时有待散落物）
           this.emit({ kind: 'transition', anim: 'intro' })
         }
@@ -1244,6 +1246,10 @@ export class Engine {
   devTeleport(target: 'exit' | 'entity' | 'container' | 'spawn' | 'landmark' | 'island'): boolean { return dev.devTeleport(this, target) }
   /** v57t：传送到最近的 L7 荒岛 */
   devGotoIsland(): boolean { return dev.devGotoIsland(this) }
+  devHotelSetAttention(value: number) { devHotel.devHotelSetAttention(this, value) }
+  devHotelToggleAttentionLock() { devHotel.devHotelToggleAttentionLock(this) }
+  devHotelGo(target: devHotel.DevHotelTarget) { return devHotel.devHotelGo(this, target) }
+  devHotelGotoStaff(type: string) { return devHotel.devHotelGotoStaff(this, type) }
   /** 开发者：传送到本层指定 NPC 身旁（DevPanel 传送页 NPC 列表） */
   devGotoNpc(id: string): boolean { return dev.devGotoNpc(this, id) }
   /** 时间快进：模拟 sec 秒的生存消耗（饥饿/理智/电池），不触发伤害死亡 */

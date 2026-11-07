@@ -80,7 +80,7 @@ export function requestDevMapPreview(eng:Engine,view:{x:number;y:number;span:num
  })
 }
 
-export async function devMapTeleport(eng:Engine,target:{x:number;y:number;floor:number}):Promise<boolean>{
+export async function devMapTeleport(eng:Engine,target:{x:number;y:number;floor:number},accept?:(x:number,y:number)=>boolean):Promise<boolean>{
  const m=eng.map;if(!eng.devEnabled||!m||![target.x,target.y].every(Number.isFinite)||Math.max(Math.abs(target.x),Math.abs(target.y))>1e6||![-1,0,1,2].includes(target.floor))return false
  const inf=m.inf,wx=eng.player.x+(inf?.ox??0),wy=eng.player.y+(inf?.oy??0)
  const confinement=inf?.l0?redZonesNear(inf.seed,Math.floor(wx/32),Math.floor(wy/32)).find(z=>insideRedZone(z,wx,wy)&&inf.l0?.redProgress?.[z.id]?.closed.length===z.gates.length):undefined
@@ -102,7 +102,7 @@ export async function devMapTeleport(eng:Engine,target:{x:number;y:number;floor:
   const candidates=[{x,y}]
   for(let r=.25;r<=3;r+=.25)for(let i=0;i<32;i++)candidates.push({x:x+r*Math.cos(i*Math.PI/16),y:y+r*Math.sin(i*Math.PI/16)})
   for(const p of candidates){
-   if(p.x<1||p.y<1||p.x>=m.w-1||p.y>=m.h-1)continue
+   if(p.x<1||p.y<1||p.x>=m.w-1||p.y>=m.h-1||accept&&!accept(p.x,p.y))continue
    if(confinement&&!insideRedZone(confinement,p.x+m.inf!.ox,p.y+m.inf!.oy,.4))continue
    const z=floorHeight(m,p.x,p.y,floor),i=Math.floor(p.y)*m.w+Math.floor(p.x)
    if(!Number.isFinite(z)||(!l7&&(floor===0&&z< -1||m.liquid[i]===1))||!canOccupy(m,p.x,p.y,PLAYER_RADIUS,{z:z+.02,band:floor,crouch:false,...(l7?{from:p}:{})}))continue

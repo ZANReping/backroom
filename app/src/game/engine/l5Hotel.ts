@@ -256,13 +256,19 @@ export function hotelUnseen(eng: Engine, x: number, y: number): boolean {
 }
 function inShift(eng: Engine) { return eng.hotelShift.phase === 'shift' }
 
+const attentionLocked = (eng: Engine) => eng.devEnabled && eng.dev.hotelAttentionLock && eng.levelDef.id === 5
+
+export function hotelSetAttn(eng: Engine, value: number) {
+  if (!attentionLocked(eng)) eng.hotel.attn = clamp(value, 0, 100)
+}
+
 /** 关注度增量（换班 ×2；在客房里不受换班影响） */
 export function hotelAddAttn(eng: Engine, amt: number) {
-  if (eng.levelDef.id !== 5 || amt === 0) return
+  if (eng.levelDef.id !== 5 || amt === 0 || attentionLocked(eng)) return
   const h = eng.hotel
   let k = 1
   if (amt > 0 && inShift(eng) && !hotelHere(eng)?.inRoom) k = HT.shiftMul
-  h.attn = clamp(h.attn + amt * k, 0, 100)
+  hotelSetAttn(eng, h.attn + amt * k)
   if (h.attn >= 100 && !beastAttnFull(eng)) hotelGaze(eng) // [beast] 关注度满 = 野兽现身（熄灯 → 背后缠抓 → 拖进办公室）；冷却内 / 不能接管时退回旧的全屏注视
 }
 
@@ -343,7 +349,7 @@ export function updateHotel(eng: Engine, dt: number) {
   if (rest && Math.hypot(p.x - rest.x, p.y - rest.y) > 0.35) r.restAt = null
   const sprinting = !!eng.input.sprint && eng.mv.sprintK > 0.5 && eng.mv.speed > 4
   if (r.restAt) {
-    h.attn = clamp(h.attn - HT.attnRest * (hotelOwnRoom(eng) ? CARD_REST_MUL : 1) * dt, 0, 100) // [l5items] 房卡：你的房间降得更快
+    hotelSetAttn(eng, h.attn - HT.attnRest * (hotelOwnRoom(eng) ? CARD_REST_MUL : 1) * dt) // [l5items] 房卡：你的房间降得更快
     p.sanity = Math.min(100, p.sanity + HT.restSanity * dt)
   } else {
     if (sprinting && !here.inRoom) { hotelAddAttn(eng, HT.attnRun * dt); if (h.attn >= HT.tiers[0]) hotelRuleProve(eng, 'run') }
@@ -353,7 +359,7 @@ export function updateHotel(eng: Engine, dt: number) {
     if (here.inRoom) for (const L of m.lights) if (L.on !== false && Math.abs(L.x - p.x) < HT.darkR && Math.abs(L.y - p.y) < HT.darkR && Math.hypot(L.x - p.x, L.y - p.y) < HT.darkR) { lit = true; break }
     r.darkT = here.inRoom && !lit ? r.darkT + dt : 0
     if (r.darkT > HT.darkDelay) hotelAddAttn(eng, HT.attnDark * dt)
-    if (!sprinting) h.attn = clamp(h.attn - HT.attnDecay * dt, 0, 100)
+    if (!sprinting) hotelSetAttn(eng, h.attn - HT.attnDecay * dt)
   }
   // ---- 档位征兆 ----
   if (tier !== r.lastTier) {
@@ -406,8 +412,8 @@ const rnd = ([a, b]: readonly [number, number]) => a + Math.random() * (b - a)
 
 /** 关注度满：「先生」的注视（员工期改为野兽现身） */
 export function hotelGaze(eng: Engine) {
-  const h = eng.hotel, p = eng.player
-  h.attn = HT.gazeDrop; eng.hotelBook.gazes++; saveBook(eng.hotelBook)
+  const p = eng.player
+  hotelSetAttn(eng, HT.gazeDrop); eng.hotelBook.gazes++; saveBook(eng.hotelBook)
   p.sanity = Math.max(0, p.sanity - HT.gazeSanity)
   eng.hotelGazeT = 2.2
   eng.emit({ kind: 'sanityhit' })
@@ -833,11 +839,11 @@ export function findViewWall(eng: Engine): { x: number; y: number; wall: number 
 }
 // ---- 口袋房间（野兽办公室 117 / 大堂 118）----
 /** 推开口袋门：记录返程（楼层 + 地图种子 + 位置），走据点同款 bloom 过场 */
-export function hotelEnterPocket(eng: Engine, kind: PocketKind) {
+export function hotelEnterPocket(eng: Engine, kind: PocketKind, { dev = false } = {}) {
   const m = eng.map
   if (!m || eng.levelDef.id !== 5 || eng.transition) return false
   const h = eng.hotel
-  if (kind === 'beast') { hotelAddAttn(eng, HT1C.attnBeastDoor); hotelRuleProve(eng, 'flicker') }
+  if (kind === 'beast' && !(dev && eng.devEnabled)) { hotelAddAttn(eng, HT1C.attnBeastDoor); hotelRuleProve(eng, 'flicker') }
   if (kind === 'lobby') spokesSnapshot(eng) // [spokes] 推开大堂门这一刻：给迎宾女郎的心声拍一张 L5 快照（出口 / 危险房间 / 员工）
   h.pocket = { kind, floor: h.floor, mapSeed: eng.mapSeed }
   eng.hotelEventDoor = null
@@ -910,6 +916,14 @@ export function hotelShiftHint(eng: Engine): string {
 const lobbyKey = (eng: Engine, s: Structure) => `${s.x + (eng.map?.inf?.ox ?? 0)},${s.y + (eng.map?.inf?.oy ?? 0)}`
 export function hotelLobbyShownKey(eng: Engine, key: string) { const r = FR.get(eng); return !!r && r.lobbyMap === eng.map && r.lobbyShown.has(key) }
 export function hotelLobbyShown(eng: Engine, s: Structure) { return s.data?.pocket !== 'lobby' || !!s.data?.event || hotelLobbyShownKey(eng, lobbyKey(eng, s)) } // [spokes] 海报邀请浮出的大堂门（event）一出现就能推
+export function hotelRevealLobbyDoor(eng: Engine, wx: number, wy: number) {
+  const m = eng.map
+  if (!eng.devEnabled || eng.levelDef.id !== 5 || !m?.inf) return
+  const r = frt(eng)
+  if (r.lobbyMap !== m) { r.lobbyMap = m; r.lobbyShown.clear(); r.lobbyAway.clear() }
+  const key = `${wx},${wy}`
+  r.lobbyShown.add(key); r.lobbyAway.delete(key)
+}
 function updateLobbyDoors(eng: Engine, dt: number) {
   const m = eng.map!, p = eng.player, r = frt(eng)
   if (r.lobbyMap !== m) { r.lobbyMap = m; r.lobbyShown.clear(); r.lobbyAway.clear() }
@@ -961,7 +975,7 @@ export function hotelRegisterCard(eng: Engine): 'new' | 'reissue' | null {
   const floor = Math.max(1, eng.hotel.floor)
   const re = !!o.card
   if (!eng.addItem('roomcard')) return null
-  if (re) { eng.hotel.attn = clamp(eng.hotel.attn + CARD_REISSUE_ATTN, 0, 100); eng.msg(`补办了一张房卡（${o.card!.no} 号）。她的笑容停顿了半拍。`, 'system') }
+  if (re) { hotelSetAttn(eng, eng.hotel.attn + CARD_REISSUE_ATTN); eng.msg(`补办了一张房卡（${o.card!.no} 号）。她的笑容停顿了半拍。`, 'system') }
   else { o.card = { no: 100 + Math.floor(Math.random() * 900), floor }; eng.msg(`你在登记簿上签了名。房卡：${floor} 楼——刷你遇到的第一扇关着的客房门，那就是你的房间。`, 'system') }
   const b = eng.hotelBook; b.src.roomcard ??= `${floor}F · 118 大堂前台`; saveBook(b)
   return re ? 'reissue' : 'new'
@@ -979,12 +993,12 @@ export function hotelDoorBlocked(eng: Engine): boolean { return eng.levelDef.id 
 export function l5Hooks(eng: Engine): L5ObjHooks {
   return {
     msg: (t, k) => eng.msg(t, (k ?? 'system') as Parameters<Engine['msg']>[1]),
-    addAttn: (n) => { eng.hotel.attn = clamp(eng.hotel.attn + n, 0, 100) },
+    addAttn: (n) => { hotelSetAttn(eng, eng.hotel.attn + n) },
     addItem: (t) => eng.addItem(t),
     beastGaze: () => { beastSpawnPeripheral(eng) },
     lift13: () => { conciergeStartLift(eng) },
     teleport: () => { const id = 1 + Math.floor(Math.random() * Math.max(1, NORMAL_LEVELS - 1)); eng.loadLevel(id === 5 ? 4 : id) },
-    randomEvent: () => { const k = Math.floor(Math.random() * 3); if (k === 0) audio.hotelBell(0.8); else if (k === 1) { eng.hotelVanishT = Math.max(eng.hotelVanishT, 3); audio.hotelScratch(0.8) } else { eng.hotel.attn = clamp(eng.hotel.attn + 10, 0, 100); audio.hotelSteps(0.8) } },
+    randomEvent: () => { const k = Math.floor(Math.random() * 3); if (k === 0) audio.hotelBell(0.8); else if (k === 1) { eng.hotelVanishT = Math.max(eng.hotelVanishT, 3); audio.hotelScratch(0.8) } else { hotelSetAttn(eng, eng.hotel.attn + 10); audio.hotelSteps(0.8) } },
     phono: (on) => { audio.phonoO18 = on },
   }
 }

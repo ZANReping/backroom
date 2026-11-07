@@ -1,0 +1,220 @@
+{
+  "seed": 515151.25,
+  "mode": "realistic",
+  "port": 6872,
+  "cdp": 6873,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:6872/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Wed, 04 Nov 2026 15:49:25 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 293,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 6872,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 111751.144592,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 4.84,
+        "sendEnd": 4.904,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 155.715,
+        "receiveHeadersEnd": 155.963
+      },
+      "responseTime": 1793807365974.491,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    },
+    {
+      "url": "http://127.0.0.1:6872/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Wed, 04 Nov 2026 15:49:25 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 293,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 6872,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 111751.213046,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 88.13,
+        "sendEnd": 88.194,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 113.515,
+        "receiveHeadersEnd": 114.414
+      },
+      "responseTime": 1793807366000.746,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l5-dev-world-20261104\\realistic\\qa-1793807338138-49088",
+    "--remote-debugging-port=6873",
+    "--headless=new",
+    "--autoplay-policy=no-user-gesture-required",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 51068,
+    "server": 5072
+  },
+  "appBootMs": 25523.294,
+  "entryMs": 5466.466500000002,
+  "firstPlayableMs": 44311.2731,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 5,
+    "point": {
+      "x": 15.5,
+      "y": 15.5,
+      "z": 0,
+      "seed": 515151.25,
+      "floor": 1
+    },
+    "checks": [],
+    "draws": 1,
+    "triangles": 1
+  },
+  "attention": {
+    "value": 0,
+    "editsWhileLocked": true,
+    "lockedAboveThreshold": true
+  },
+  "elevator": {
+    "x": 15.400000000000006,
+    "y": 19.5,
+    "level": 5,
+    "floor": 1
+  },
+  "concierge": {
+    "x": 33.5,
+    "y": 48.45,
+    "level": 5,
+    "floor": 1,
+    "distance": 1.7999999999999972
+  },
+  "lobbyDoor": {
+    "x": -40.5,
+    "y": 135.6,
+    "level": 5,
+    "floor": 1
+  },
+  "chef": {
+    "x": -44.54492817847054,
+    "y": 137.6722479077843,
+    "level": 5,
+    "floor": 1,
+    "distance": 1.6740392862703461
+  },
+  "casinoDoor": {
+    "x": 112.5,
+    "y": -62.900000000000006,
+    "level": 5,
+    "floor": 1,
+    "distance": 1.0999999999999943
+  },
+  "casino": {
+    "x": 29.5,
+    "y": 37.5,
+    "level": 119
+  },
+  "casinoReturn": {
+    "x": 112.5,
+    "y": -62.900000000000006,
+    "level": 5,
+    "floor": 1
+  },
+  "greeter": {
+    "x": 18.544928178470546,
+    "y": 11.277752092215696,
+    "level": 118,
+    "distance": 1.6740392862703395
+  },
+  "beast": {
+    "x": 21.74720441845382,
+    "y": 14.696644650470597,
+    "level": 117,
+    "distance": 1.5779482696508627
+  },
+  "l0": {
+    "x": 15.5,
+    "y": 15.5,
+    "level": 0
+  },
+  "l02": {
+    "x": 16.5,
+    "y": 16.5,
+    "level": 902
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

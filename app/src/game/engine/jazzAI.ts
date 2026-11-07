@@ -28,7 +28,7 @@ import type { Engine } from '../engine'
 import type { Entity } from '../entities'
 import { makeEntity } from '../entities'
 import type { SpecialAction } from './special'
-import { hotelAddAttn, hotelPlayStart, saveBook } from './l5Hotel'
+import { hotelAddAttn, hotelSetAttn, hotelPlayStart, saveBook } from './l5Hotel'
 import { audio } from '../core/audio'
 import { itemName } from '../content/items'
 import { floorHeight } from '../world/mapgen'
@@ -315,7 +315,7 @@ export function stepJazzGlobal(eng: Engine, dt: number) {
     if (k === 'stamina') p.stamina = Math.min(100, p.stamina + SONG_BUFF.stamina * dt)
     else if (k === 'sanity') p.sanity = Math.min(100, p.sanity + SONG_BUFF.sanity * dt)
     else if (k === 'hunger') p.hunger = Math.min(100, p.hunger + SONG_BUFF.hunger * dt)
-    else if (k === 'attn' && inL5(eng)) eng.hotel.attn = Math.max(0, eng.hotel.attn - SONG_BUFF.attn * dt)
+    else if (k === 'attn' && inL5(eng)) hotelSetAttn(eng, eng.hotel.attn - SONG_BUFF.attn * dt)
     if (sv.buffT <= 0) sv.buff = -1
   }
   if (!inL5(eng)) { setJazzLive(eng, false); lastView = null; audio.jazzBand?.(null) }
@@ -898,7 +898,7 @@ export function jazzReport(eng: Engine): boolean {
   const sv = jazzSave(eng), p = eng.player
   if (sv.reported) return false
   sv.reported = 1; sv.goneT = JK.reportGone; sv.n.report++; sv.priv = 0; sv.favor = -100; eng.hotel.staff.jazz = -100
-  eng.hotel.attn = Math.max(0, eng.hotel.attn - JK.reportAttnCut)
+  hotelSetAttn(eng, eng.hotel.attn - JK.reportAttnCut)
   const bs = beastSave(eng); bs.strikes = Math.max(0, bs.strikes - JK.reportStrike)
   p.sanity = Math.min(100, p.sanity + JK.reportSan)
   const r = rt(eng)

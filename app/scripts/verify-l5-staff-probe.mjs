@@ -5,7 +5,8 @@ import path from'node:path'
 import net from'node:net'
 import{performance}from'node:perf_hooks'
 const polish=process.argv.includes('--polish')
-const app=fileURLToPath(new URL('../',import.meta.url)),mode=process.argv.includes('--classic')?'classic':'realistic',label=process.argv.find(a=>a.startsWith('--label='))?.slice(8)??('game-'+mode),seed=515151.25,out=path.join(app,polish?'reports/l5-polish-20261104':'reports/l5-staff-fixes-20261104',label)
+const devWorld=process.argv.includes('--dev-world')
+const app=fileURLToPath(new URL('../',import.meta.url)),mode=process.argv.includes('--classic')?'classic':'realistic',label=process.argv.find(a=>a.startsWith('--label='))?.slice(8)??('game-'+mode),seed=515151.25,out=path.join(app,devWorld?'reports/l5-dev-world-20261104':polish?'reports/l5-polish-20261104':'reports/l5-staff-fixes-20261104',label)
 mkdirSync(out,{recursive:true});const profile=path.join(out,`qa-${Date.now()}-${process.pid}`);mkdirSync(profile)
 const sleep=ms=>new Promise(r=>setTimeout(r,ms)),free=()=>new Promise(resolve=>{const s=net.createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>resolve(p))})})
 const port=await free(),cdp=await free(),base=`http://127.0.0.1:${port}`,result={seed,mode,port,cdp,errors:[],failedRequests:[]};let server,browser,ws,seq=0,log='';const pending=new Map()
@@ -34,7 +35,38 @@ try{
  const run=async name=>{result[name]=await ev('importQA.'+name+'()');if(result[name]?.captureData){writeFileSync(path.join(out,name+'.png'),Buffer.from(result[name].captureData.split(',')[1],'base64'));delete result[name].captureData}else await shot(name);console.log(name,JSON.stringify({level:result[name].level,checks:result[name].checks,round5Checks:result[name].round5Checks}));writeFileSync(path.join(out,'progress.json'),JSON.stringify(result,null,2))}
 
  const arrived=(id,floor)=>wait(()=>ev('hotelImportApp.level==='+id+'&&!hotelImportApp.engine.transition&&!hotelImportApp.paused'+(floor===undefined?'':'&&hotelImportApp.engine.map.inf?.l5Floor==='+floor)), 'arrival '+id+'/'+floor)
- if(polish){
+ if(devWorld){
+   await ev("import('/verifier/l5-dev-world-check.ts').then(m=>window.devWorldQA=m.mount(hotelImportApp))")
+   await ev('devWorldQA.showWorld()')
+   const run=async (name,expr)=>{result[name]=await ev('devWorldQA.'+expr);console.log(name,JSON.stringify(result[name]));writeFileSync(path.join(out,'progress.json'),JSON.stringify(result,null,2))}
+   await run('attention','attention()');await shot('world-l5')
+   await run('elevator','elevator()')
+   await run('concierge','staff("concierge","看门人")')
+   await run('lobbyDoor','lobbyDoor()')
+   await run('chef','staff("chef","厨师")')
+   await ev('devWorldQA.floor(2)');await arrived(5,2)
+   await ev('devWorldQA.click("传送到赌场门口")');await arrived(5,1)
+   await run('casinoDoor','casinoDoor()');await shot('casino-door')
+   const from=await ev('devWorldQA.loc()')
+   await ev('devWorldQA.click("直接进入赌场")');await arrived(119)
+   await run('casino','checkScope(false,false)')
+   await ev('devWorldQA.leavePocket()');await arrived(5,1)
+   await run('casinoReturn','returned('+JSON.stringify(from)+')')
+   await ev('devWorldQA.click("迎宾女郎")');await arrived(118)
+   await run('greeter','staff("greeter")');await shot('greeter')
+   await ev('devWorldQA.leavePocket()');await arrived(5,1)
+   await ev('devWorldQA.click("第五层的野兽")');await arrived(117)
+   await run('beast','staff("beast")')
+   await ev('devWorldQA.leavePocket()');await arrived(5,1)
+   await ev('hotelImportApp.engine.devJump(0)');await arrived(0)
+   await run('l0','checkScope(false,true)');await shot('world-l0')
+   await ev('devWorldQA.click("直接进 L0.2",document.querySelector("[data-dev-l02-section]"))');await arrived(902)
+   await run('l02','checkScope(false,false)')
+   await ev('devWorldQA.click("状态",document)')
+   await wait(()=>ev('!!document.querySelector("[data-dev-l02-stage]")'),'L0.2 collapse controls in State')
+   result.l02CollapseControls=true
+   await shot('state-l02')
+ }else if(polish){
    await ev("import('/verifier/l5-polish-check.ts').then(m=>window.polishQA=m.mount(hotelImportApp))")
    const run=async name=>{result[name]=await ev('polishQA.'+name+'()');console.log(name,JSON.stringify(result[name]));writeFileSync(path.join(out,'progress.json'),JSON.stringify(result,null,2))}
    await run('uiOrder');await run('icons');await shot('pixel-icons')
@@ -94,7 +126,7 @@ try{
   if(!await ev('staffProbe.tryOfficeExit()'))throw Error('Exit stayed locked after payment')
  }
  }
- result.ok=!result.errors.length&&!result.failedRequests.some(r=>!r.url.endsWith("/favicon.ico"))&&(polish||result.staff.every(x=>x.finite&&x.visible&&x.meshes>0&&!x.pending&&!x.contextLost))
+ result.ok=!result.errors.length&&!result.failedRequests.some(r=>!r.url.endsWith("/favicon.ico"))&&(devWorld||polish||result.staff.every(x=>x.finite&&x.visible&&x.meshes>0&&!x.pending&&!x.contextLost))
 }catch(error){result.ok=false;result.failure=String(error);console.error(error);try{result.partial=await ev('window.importQA?.summary()');result.bootstrap=await ev('({boot:window.hotelImportBoot,text:document.body.innerText.slice(0,1800)})');await shot('failure')}catch{}process.exitCode=1}
 finally{
  if(ws?.readyState===1){try{await send('Browser.close')}catch{}ws.close()}if(browser?.exitCode===null)browser.kill();if(server?.exitCode===null)server.kill();await sleep(500)
