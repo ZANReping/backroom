@@ -1,3 +1,4 @@
+import {chefGeometryReady,prepareChefGeometry} from './chefMesh'
 import { isHotelStaffType } from '../entities'
 import { interactionLos3D } from '../engine/interact'
 import { flickerMul, hotelLobbyShownKey } from '../engine/l5Hotel'
@@ -874,7 +875,7 @@ export class Renderer3D {
   private pendingEnvProbe: LevelDef | null = null
 
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement | OffscreenCanvas) {
     this.scene.matrixAutoUpdate = false
     // WebGL 只能向浏览器表达 GPU 偏好，不能越权强制设备提频；这里明确请求高性能适配器。
     this.three = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' })
@@ -1285,6 +1286,11 @@ export class Renderer3D {
     for (const ch of Array.from(el.querySelectorAll('[data-crosshair-mark]')) as HTMLElement[]) ch.style.background = color
   }
 
+  /** Optional diagnostic counters, enabled only by the isolated Worker trial. */
+  beginFrameStats() { this.three.info.autoReset = false; this.three.info.reset() }
+  getFrameStats() { const {render,memory}=this.three.info; return {calls:render.calls,triangles:render.triangles,textures:memory.textures,geometries:memory.geometries} }
+  getPreparationStats() { return {chunks:this.chunkBuilds.size,finite:!!this.finiteTask,distant:!!this.cityDistantTask} }
+
   resize(w: number, h: number, dpr: number) {
     this.three.setPixelRatio(dpr)
     this.three.setSize(w, h, false)
@@ -1321,7 +1327,7 @@ export class Renderer3D {
   private fateDie: FateDieFx | null = null // [l5items v2]
   private dieHandW: THREE.Vector3 | null = null // [l5items 收尾] 挥臂期间手中骰子的世界位置（松手衔接）
   private readonly dieBox = new THREE.Box3()
-  render(canvas: HTMLCanvasElement, engine: Engine, opts: RenderOpts, dt: number) {
+  render(canvas: HTMLCanvasElement | OffscreenCanvas, engine: Engine, opts: RenderOpts, dt: number) {
     // Warm-up views never escape a render call into gameplay, saves or input.
     const warming = engine.player.level === FOYER_ID && !this.foyerWarmDone
     const p = engine.player
@@ -1330,7 +1336,7 @@ export class Renderer3D {
     finally { if (saved && engine.player === p) { p.x = saved.x; p.y = saved.y; p.z = saved.z; Object.assign(look, saved.look) } }
   }
 
-  private renderFrame(_canvas: HTMLCanvasElement, engine: Engine, opts: RenderOpts, dt: number) {
+  private renderFrame(_canvas: HTMLCanvasElement | OffscreenCanvas, engine: Engine, opts: RenderOpts, dt: number) {
     const frameStarted = performance.now()
     this.time += dt
     updateLiquidTime(this.time) // v57t：推进真实水体波浪统一时间
@@ -2904,6 +2910,7 @@ export class Renderer3D {
   private *warmSceneTextures(root: THREE.Object3D): Generator<void, void, unknown> {
     const textures=this.retainWorldTextures(root)
     for (const texture of textures) {
+      while(texture.userData.generatedPending)yield
       if (!textureUploadReady(this.three, texture)) { uploadTexture(this.three, texture); yield }
     }
   }
@@ -4611,6 +4618,7 @@ export class Renderer3D {
       if(grp&&e.def.type==='hound'&&(grp.userData.houndNeutral!==eOpts?.houndNeutral||grp.userData.houndKind!==eOpts?.houndKind)){this.scene.remove(grp);this.disposeItemModel(grp);this.entityMeshes.delete(e.id);grp=undefined}
       if (!grp) {
         e.presentationPending = true
+        if(e.def.type==='chef'&&(!chefGeometryReady(1)||!chefGeometryReady(2))){prepareChefGeometry(2);prepareChefGeometry(1);continue}
         if (e.def.type === 'jazz') {
           const who = e.jz?.who ?? 'leader'
           if (!this.entityCpuWarmup.request('jazz-' + who + '-2', jazzGeometryReady(who, 2), () => prepareJazzGeometry(who, 2))) continue

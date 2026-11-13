@@ -1,0 +1,96 @@
+{
+  "seed": 424243,
+  "mode": "realistic",
+  "port": 10286,
+  "cdp": 10287,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\boot-poster\\first-look\\qa-1794490569103-94808",
+    "--remote-debugging-port=10287",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 100732,
+    "server": 60276
+  },
+  "checks": [
+    "The scene draws before the app module runs",
+    "Both mobile orientations draw the fixture",
+    "Reduced motion still disables the progress animation",
+    "The poster canvas is removed with the startup shell",
+    "The poster resize observer disconnects after startup"
+  ],
+  "desktop": {
+    "size": [
+      1440,
+      900
+    ],
+    "backing": [
+      1440,
+      900
+    ],
+    "dpr": 1,
+    "top": 194,
+    "status": "正在寻找入口……",
+    "state": "loading"
+  },
+  "portrait": {
+    "size": [
+      390,
+      844
+    ],
+    "backing": [
+      585,
+      1266
+    ],
+    "dpr": 3,
+    "top": 194,
+    "status": "正在寻找入口……",
+    "state": "loading"
+  },
+  "landscape": {
+    "size": [
+      844,
+      390
+    ],
+    "backing": [
+      1266,
+      585
+    ],
+    "dpr": 3,
+    "top": 194,
+    "status": "正在寻找入口……",
+    "state": "loading"
+  },
+  "largeViewport": {
+    "size": [
+      3840,
+      2160
+    ],
+    "backing": [
+      1633,
+      919
+    ],
+    "dpr": 2,
+    "top": 193,
+    "status": "正在寻找入口……",
+    "state": "loading"
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

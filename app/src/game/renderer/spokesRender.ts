@@ -10,7 +10,7 @@
 import * as THREE from 'three'
 import type { Entity } from '../entities'
 import type { Structure } from '../core/types'
-import { buildSpokes, spokesGeometryReady, type SpokesRig } from './spokesMesh'
+import { deferSpokesGeometry, buildSpokes, spokesGeometryReady, type SpokesRig } from './spokesMesh'
 import { SPOKES_CLIPS, spokesPose, mixSpokesPose, cloneSpokesPose, applySpokesPose, resetSpokesDynamics, animateWindupRabbit, resetWindupRabbit, SPOKES_SEAT_Y, SPOKES_DESK_Y, SPOKES_DESK_Z, type SpokesClip, type SpokesPose, type SpokesAnimOpts } from './spokesAnim'
 import { buildWindupRabbit, buildNameplate, buildRadio, buildPosterDrops, posterTexture } from './spokesProps'
 import { SPOKES_LOBBY as LY } from '../content/spokesLayout'
@@ -92,7 +92,7 @@ function syncHeld(rig: SpokesRig, v: View, clip: SpokesClip, t: number, speakerO
 export function animateGreeterEntity(grp: THREE.Group, e: Entity, dt: number, distance: number, preparedOnly = false) {
   if (grp.userData.archive) return
   const s = e.gr
-  if (distance < SPOKES_RLOD.build && (!preparedOnly || spokesGeometryReady(0))) ensureLod0(grp)
+  if (distance < SPOKES_RLOD.build && !deferSpokesGeometry(0) && (!preparedOnly || spokesGeometryReady(0))) ensureLod0(grp)
   let v = grp.userData.grView as View | undefined
   if (!v) { v = { clip: s?.clip ?? 'idle', seq: -1, t: 0, gt: 0, fadeT: 1, blend: 0.3, prev: null, last: null, lod: 1, photo: 1 }; grp.userData.grView = v }
   const h1 = grp.userData.lod1 as THREE.Group, h0 = grp.userData.lod0 as THREE.Group | undefined

@@ -11,7 +11,7 @@ import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
 import { litMaterial } from './shared'
-import { heightToNormal } from './pbrCanvas' // [l5items v2]
+import { normalTexture } from './pbrCanvas' // [l5items v2]
 
 export const L5_ITEM_TYPES = ['mahjongtile', 'key437', 'bagTag', 'roomtea', 'gentletter', 'roomcard', 'fatedie', 'brokendie', 'brokenrecord', 'diereceipt'] as const
 export type L5ItemType = typeof L5_ITEM_TYPES[number]
@@ -534,7 +534,7 @@ function atlas2(): THREE.CanvasTexture {
   if (atlas2Tex) return atlas2Tex
   atlas2Canvas = drawAtlas2('c')
   atlas2Tex = makeAtlas2Tex(atlas2Canvas, true, 'l5-items-atlas2')
-  atlas2N = makeAtlas2Tex(heightToNormal(drawAtlas2('h'), 2.2), false, 'l5-items-atlas2-normal')
+  atlas2N = normalTexture(drawAtlas2('h'), 2.2, 'l5-items-atlas2-normal')
   atlas2R = makeAtlas2Tex(drawAtlas2('r'), false, 'l5-items-atlas2-rough')
   return atlas2Tex
 }

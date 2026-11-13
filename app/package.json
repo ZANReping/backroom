@@ -327,7 +327,11 @@
     "check:l02-props": "esbuild scripts/check-l02-props.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l02-props.mjs && node .cache/check-l02-props.mjs",
     "verify:l02-props": "node scripts/verify-l02-props.mjs --steps=houseSetup,coneClose,coneBack,lampClose,sinkClose,toiletClose,tileSetup,entranceSetup,entranceCone,entranceSign,entranceBarrier,entranceLamp,resources",
     "check:toilets": "esbuild scripts/check-toilets.ts --bundle --platform=node --format=esm --outfile=.cache/check-toilets.mjs && node .cache/check-toilets.mjs",
-    "verify:toilets": "node scripts/verify-toilets.mjs"
+    "verify:toilets": "node scripts/verify-toilets.mjs",
+    "check:worker-pipeline": "node scripts/check-worker-pipeline.mjs",
+    "check:worker-map-parity": "node scripts/check-worker-map-parity.mjs",
+    "verify:worker-pipeline": "node scripts/verify-worker-pipeline.mjs",
+    "measure:worker-pipeline": "node scripts/measure-worker-pipeline.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

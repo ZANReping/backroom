@@ -5,7 +5,7 @@ import {updateL9Fog} from './l9Fog'
 import { updateHotel } from './l5Hotel'
 import {l0Sample} from '../world/l0Architecture'
 import {mapWallOccluded} from '../content/mapPlayer'
-import {revealMapSight,mapSight} from '../world/mapSight'
+import {revealMapSight} from '../world/mapSight'
 import { seatedEyeHeight, seatedEyeOffset } from './seating'
 // v53：现象与停电（层级氛围事件播报、L1「闪烁」停电链、视野计算）——
 // 自 engine.ts 拆分，逻辑逐语句搬运。
@@ -281,12 +281,12 @@ export function computeVisibility(eng: Engine) {
     return
   }
   eng.visible.fill(0)
-  revealMapSight(eng)
+  const sightCells = revealMapSight(eng)
   // L11 already computed the exact room/door/window visibility above. The
   // legacy 8m tile circle repeated ~200 LOS marches through every facade trim
   // collider per frame, even though both city maps use mapSight directly.
   if(eng.levelDef.id===11){
-    for(const i of mapSight(eng).cells)eng.visible[i]=1
+    for(const i of sightCells)eng.visible[i]=1
     return
   }
   const r = 8

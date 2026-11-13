@@ -1,0 +1,181 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 12696,
+  "cdp": 12697,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\melee-charge-release\\realistic\\qa-1794489891946-88076",
+    "--remote-debugging-port=12697",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 52628,
+    "server": 86876
+  },
+  "appBootMs": 43711.6488,
+  "entryMs": 5444.001199999999,
+  "firstPlayableMs": 57891.3904,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 4,
+    "paused": false,
+    "near": false,
+    "chunks": 9,
+    "tasks": 4,
+    "memory": {
+      "geometries": 466,
+      "textures": 66,
+      "programs": 61
+    },
+    "world": [
+      15.5,
+      15.5,
+      0
+    ]
+  },
+  "weapons": [
+    {
+      "weapon": "axe",
+      "before": {
+        "xyz": [
+          0.2317943818108646,
+          -0.01718479403316958,
+          -0.27927896219868126
+        ],
+        "angles": [
+          1.2964599958908296,
+          0.05,
+          -0.12
+        ],
+        "visible": true
+      },
+      "release": {
+        "xyz": [
+          0.23776285409162012,
+          -0.013400783943108896,
+          -0.2782008831293814
+        ],
+        "angles": [
+          1.3082890426155573,
+          0.05,
+          -0.12
+        ],
+        "visible": true
+      },
+      "held": 1,
+      "progress": 0.5,
+      "hitDelay": 0,
+      "cooldown": 1.62,
+      "startHits": 0,
+      "hitsAfterRelease": 0,
+      "action": {
+        "hits": 1,
+        "active": true,
+        "xyz": [
+          0.1275385337246171,
+          -0.5331284428654849,
+          -0.7588440228691506
+        ],
+        "pitch": -0.5035307282471505
+      }
+    },
+    {
+      "weapon": "knife",
+      "before": {
+        "xyz": [
+          0.2157625323684557,
+          -0.30958248534615246,
+          -0.4835528799572655
+        ],
+        "angles": [
+          -0.36934411516847987,
+          0.20227155829379115,
+          -0.08090862331751647
+        ],
+        "visible": true
+      },
+      "release": {
+        "xyz": [
+          0.21543147880919114,
+          -0.3098737948388591,
+          -0.48356563750236947
+        ],
+        "angles": [
+          -0.3700009897536359,
+          0.20227155829379115,
+          -0.08090862331751647
+        ],
+        "visible": true
+      },
+      "held": 0.6515151515151523,
+      "progress": 0.24490747697359305,
+      "hitDelay": 0.05895736427637232,
+      "cooldown": 0.62,
+      "startHits": 1,
+      "hitsAfterRelease": 1,
+      "action": {
+        "hits": 2,
+        "active": true,
+        "xyz": [
+          0.12727130919797608,
+          -0.2938865062710641,
+          -0.7395597993398828
+        ],
+        "pitch": -0.3457513373340824
+      }
+    }
+  ],
+  "ok": false,
+  "failure": "Error: Swing or hit did not progress once: knife",
+  "partial": {
+    "checks": [
+      "real L4 has safe melee interaction position",
+      "real L4 has safe melee interaction position"
+    ],
+    "records": [],
+    "status": {
+      "level": 4,
+      "paused": false,
+      "near": true,
+      "chunks": 15,
+      "tasks": 1,
+      "memory": {
+        "geometries": 858,
+        "textures": 96,
+        "programs": 76
+      },
+      "world": [
+        15.5,
+        15.5,
+        0
+      ]
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 40177
+    },
+    "text": "HP\n100\n体力\n88\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 4\n废弃办公室\nB4\n磁带\n0/6\n空旷区\n100%\n刀 60/60\n1\n2\n3\n4\n5\n6\n7\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

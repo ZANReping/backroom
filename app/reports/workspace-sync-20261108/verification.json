@@ -1,6 +1,68 @@
-{
-  "command": "npm --prefix app ls --depth=0",
-  "exitCode": 0,
-  "durationMs": 2170,
-  "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261108\\dependency-check.txt"
-}
+[
+  {
+    "command": "npm --prefix app ls --depth=0",
+    "exitCode": 0,
+    "durationMs": 2170,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261108\\dependency-check.txt"
+  },
+  {
+    "command": "npm run build",
+    "exitCode": 0,
+    "durationMs": 87283,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261108\\build-check.txt"
+  },
+  {
+    "command": "node app/scripts/check-vercel-config.mjs --built",
+    "exitCode": 0,
+    "durationMs": 7794,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261108\\config-built-check.txt"
+  },
+  {
+    "command": "npm --prefix app run check:l5hotel",
+    "exitCode": 0,
+    "durationMs": 4302,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261108\\check-04.txt"
+  },
+  {
+    "command": "npm --prefix app run check:l5map",
+    "exitCode": 0,
+    "durationMs": 4940,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261108\\check-05.txt"
+  },
+  {
+    "command": "npm --prefix app run check:l5-integration",
+    "exitCode": 0,
+    "durationMs": 3413,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261108\\check-06.txt"
+  },
+  {
+    "command": "npm --prefix app run check:l5tails",
+    "exitCode": 0,
+    "durationMs": 2648,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261108\\check-07.txt"
+  },
+  {
+    "command": "npm --prefix app run check:beast",
+    "exitCode": 0,
+    "durationMs": 6427,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261108\\check-08.txt"
+  },
+  {
+    "command": "npm --prefix app run check:jazz",
+    "exitCode": 0,
+    "durationMs": 8189,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261108\\check-09.txt"
+  },
+  {
+    "command": "npm --prefix app run check:hound-l02-integration",
+    "exitCode": 0,
+    "durationMs": 2285,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261108\\check-10.txt"
+  },
+  {
+    "command": "npm --prefix app run check:l02-round5",
+    "exitCode": 0,
+    "durationMs": 2043,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261108\\check-11.txt"
+  }
+]

@@ -65,11 +65,13 @@ const mulberry = (a: number) => () => {
 
 // ---------- 贴图池 ----------
 const atlasCache = new Map<string, THREE.Texture>()
-const imgCache = new Map<string, Promise<HTMLImageElement>>()
+const imgCache = new Map<string, Promise<HTMLImageElement | ImageBitmap>>()
 const loadImg = (url: string) => {
   let p = imgCache.get(url)
   if (!p) {
-    p = new Promise<HTMLImageElement>((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = url })
+    p = typeof Image === 'undefined'
+      ? fetch(url).then(r=>{if(!r.ok)throw new Error('Avatar image '+r.status);return r.blob()}).then(blob=>createImageBitmap(blob,{imageOrientation:'none',premultiplyAlpha:'none',colorSpaceConversion:'none'}))
+      : new Promise<HTMLImageElement | ImageBitmap>((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = url })
     imgCache.set(url, p)
   }
   return p

@@ -17,7 +17,7 @@ const FOYER_STEPS: TutorialStep[] = [
   { id: 'look', trigger: always, hint: '{look}，环顾四周', complete: ev('look') },
   { id: 'news', trigger: always, hint: '屏幕上开着新闻网站——对准电脑按 {interact} 阅读', complete: flag('read_news') },
   { id: 'forum', trigger: flag('read_news'), hint: '论坛有新回帖在闪。再按 {interact} 看看那个帖子', complete: flag('read_forum') },
-  { id: 'phone', trigger: flag('read_forum'), hint: '手机在书桌右侧的充电器上。对准它按 {interact} 拿起来', complete: flag('got_phone') },
+  { id: 'phone', trigger: flag('read_forum'), hint: '面向电脑，向左下方低头看。手机在桌上的充电座上，对准它按 {interact} 拿起', complete: flag('got_phone') },
   { id: 'phone_open', trigger: flag('got_phone'), hint: '手机装在【副手】。按 {phone} 打开手机：手电、笔记、时钟、相机', complete: ev('phone_open') },
   // 低电量提醒：旁支小提示（独立显示，不占主线纸带、不阻塞、不持久化）
   {

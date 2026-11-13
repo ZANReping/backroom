@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:l02-round5
+> esbuild scripts/check-l02-round5.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l02-round5.mjs && node .cache/check-l02-round5.mjs
+
+
+  .cache\check-l02-round5.mjs  6.4mb
+
+Done in 406ms
+{"checks":30940,"failures":0,"seeds":400,"routers":400,"clipboards":400,"doorCount":4939,"sceneMeshes":45,"sceneVertices":16432,"disposedGeometry":45,"disposedShared":0}

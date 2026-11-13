@@ -1,3 +1,5 @@
+import {requestHotelGeometry} from './hotelGeometryQueue'
+import {unpackGeometryTree} from './geometryPacket'
 import { shareHotelRigAssets } from './shared'
 // [beast] 第五层的野兽（Entity 18 / The Beast of Level 5）重制·阶段 1 建模（只建模，不做动画 / 机制）。
 // 参照 ZAN 附图：瘦高 1.95 m 的绅士——近黑带酒红底的单排扣西装、白衬衫、黑细领带、黑西裤皮鞋，苍白细长的手上 3 枚戒指（金 / 暗绿宝石）；
@@ -265,15 +267,33 @@ function ensureTentacleBones() {
 function headPart(): Part {
   return { name: 'head', k: 0, sdf: headPartSdf, box: HEAD_BOX, h: [0.0027, 0.0062], target: [10400, 2350], keep: (_x, y) => y > 1.505, shade: headShade, weights: headWeights, ao: bhSdfW(bodySdf), aoScale: 0.01 }
 }
+const pendingGeometry = new Set<number>()
+/** Keep the existing detail visible while its immutable high-detail buffers build. */
+export function deferBeastGeometry(lod = 0): boolean {
+  if (cache[lod]) return false
+  if (pendingGeometry.has(lod)) return true
+  pendingGeometry.add(lod)
+  const accepted = requestHotelGeometry('beast', lod, tree => {
+    pendingGeometry.delete(lod)
+    if (tree && !cache[lod]) { ensureTentacleBones(); cache[lod] = unpackGeometryTree(tree) as Built }
+  })
+  if (!accepted) pendingGeometry.delete(lod)
+  return accepted
+}
 export function beastGeometryReady(lod = 0): boolean { return !!cache[lod] }
 export function buildBeastGeometry(lod = 0): Built {
-  const task = prepareBeastGeometry(lod)
+  const task = prepareBeastGeometry(lod, false)
   let step = task.next()
   while (!step.done) step = task.next()
   return step.value
 }
-export function* prepareBeastGeometry(lod = 0): Generator<void, Built> {
+export function* prepareBeastGeometry(lod = 0, allowWorker = true): Generator<void, Built> {
   if (cache[lod]) return cache[lod]
+  if (allowWorker && deferBeastGeometry(lod)) {
+    while (pendingGeometry.has(lod) && !cache[lod]) yield
+    if (cache[lod]) return cache[lod]
+  }
+
   const t0 = performance.now(), stats: Record<string, number> = {}
   tentaclePaths(); ensureTentacleBones()
   stats.paths_ms = Math.round(performance.now() - t0)

@@ -41,12 +41,11 @@
       .boot-room { position: absolute; inset: 0; overflow: hidden; background: radial-gradient(ellipse at 50% 34%, #c7bd79 0%, #8c854f 22%, #49482d 58%, #191b12 100%); }
       .boot-wall { position: absolute; inset: 0; background: repeating-linear-gradient(90deg, #b9ab6126 0 2px, transparent 2px 20px), linear-gradient(110deg, #292a19, #aca366 60%, #8c814b); clip-path: polygon(0 0, 41% 30%, 41% 66%, 0 100%); }
       .boot-wall-right { transform: scaleX(-1); background: repeating-linear-gradient(90deg, #c5b86f26 0 2px, transparent 2px 20px), linear-gradient(110deg, #181d13, #9c9355 60%, #6d6941); }
-      .boot-ceiling { position: absolute; inset: 0; clip-path: polygon(0 0, 100% 0, 59% 30%, 41% 30%); background: repeating-linear-gradient(0deg, transparent 0 70px, #4b483954 71px 73px), repeating-linear-gradient(90deg, #777762 0 100px, #424537 102px 104px); }
-      .boot-lamp { position: absolute; top: 5%; left: 43%; width: 14%; height: 12%; clip-path: polygon(0 0, 100% 0, 76% 100%, 24% 100%); background: #edebbb; box-shadow: 0 0 70px #e4e2ab; }
-      .boot-lamp-far { top: 23%; left: 48%; width: 4%; height: 3%; opacity: .7; }
+      .boot-ceiling { position: absolute; inset: 0 0 auto; width: 100%; height: 30%; clip-path: polygon(0 0, 100% 0, 59% 100%, 41% 100%); background: radial-gradient(ellipse at 50% 32%, #b7ad80, #6f694e 37%, #423f2d 80%); }
       .boot-floor { position: absolute; inset: 0; clip-path: polygon(41% 66%, 59% 66%, 100% 100%, 0 100%); background: repeating-linear-gradient(90deg, transparent 0 2px, #6e633626 3px 4px), linear-gradient(#6b6440 50%, #292518); }
-      .boot-door { position: absolute; top: 35%; bottom: 34%; left: 46%; width: 8%; background: linear-gradient(90deg, #151912, #090e0a); border: 2px solid #514e2d; box-shadow: 8px 0 12px #2b301755; }
-      .boot-shade { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 37%, transparent 0 15%, #0d100735 50%, #090c09ed 100%), linear-gradient(transparent 40%, #0d100900 50%, #0c0e09 100%); }
+      .boot-door { position: absolute; top: 35%; bottom: 34%; left: 46%; width: 8%; background: linear-gradient(90deg, #8da991 0 13%, #334138 17%, #202822); border: 2px solid #796d4d; box-shadow: 8px 0 12px #2b301755; }
+      .boot-scene { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .boot-shade { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 46%, transparent 22%, #101a1638 59%, #0b110ecf 100%), linear-gradient(transparent 53%, #11150e4d 75%, #080e0c 100%); }
       .boot-top { position: absolute; top: max(24px, env(safe-area-inset-top)); left: max(28px, env(safe-area-inset-left)); right: max(28px, env(safe-area-inset-right)); display: flex; justify-content: space-between; gap: 12px; font-size: 10px; letter-spacing: .22em; color: #e3ddae9e; }
       .boot-copy { position: absolute; left: 24px; right: 24px; bottom: max(8%, calc(env(safe-area-inset-bottom) + 24px)); margin: auto; max-width: 430px; text-align: center; }
       .boot-eyebrow { font-size: 10px; letter-spacing: .42em; color: #bdb68a; }
@@ -68,8 +67,9 @@
   <body>
     <div id="boot-loader" role="status" aria-live="polite" aria-label="正在加载后室">
       <div class="boot-room" aria-hidden="true">
-        <div class="boot-ceiling"></div><div class="boot-lamp"></div><div class="boot-lamp boot-lamp-far"></div>
-        <div class="boot-wall"></div><div class="boot-wall boot-wall-right"></div><div class="boot-floor"></div><div class="boot-door"></div><div class="boot-shade"></div>
+        <div class="boot-ceiling"></div><div class="boot-wall"></div><div class="boot-wall boot-wall-right"></div>
+        <div class="boot-floor"></div><div class="boot-door"></div>
+        <canvas id="boot-scene" class="boot-scene"></canvas><div class="boot-shade"></div>
       </div>
       <div class="boot-top" aria-hidden="true"><span>ARCHIVE / 000</span><span>NO SIGNAL</span></div>
       <div class="boot-copy">
@@ -104,6 +104,317 @@
           document.getElementById('boot-status').textContent = '入口连接失败，请重试。';
           retry.hidden = false;
         }, true);
+      })();
+    </script>
+    <script>
+      (() => {
+        const scene = document.getElementById('boot-scene');
+        const ctx = scene.getContext('2d', { alpha: false });
+        if (!ctx) return;
+
+        function paint(width, height) {
+          const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5, Math.sqrt(1_500_000 / (width * height)));
+          scene.width = Math.ceil(width * pixelRatio);
+          scene.height = Math.ceil(height * pixelRatio);
+          ctx.setTransform(scene.width / width, 0, 0, scene.height / height, 0, 0);
+
+          // All surfaces share one vanishing point. A wider near plane keeps portrait door proportions.
+          const horizon = .45;
+          const farScale = .23;
+          const corridorWidth = Math.max(width, height * 1.16);
+          const project = (u, v, depth) => {
+            const scale = 1 / (1 + (1 / farScale - 1) * depth);
+            return [width * .5 + corridorWidth * (u - .5) * scale, height * (horizon + (v - horizon) * scale)];
+          };
+          function path(points) {
+            ctx.beginPath();
+            ctx.moveTo(...points[0]);
+            for (const point of points.slice(1)) ctx.lineTo(...point);
+            ctx.closePath();
+          }
+          function fill(points, color) {
+            path(points);
+            ctx.fillStyle = color;
+            ctx.fill();
+          }
+          function clip(points, draw) {
+            ctx.save();
+            path(points);
+            ctx.clip();
+            draw();
+            ctx.restore();
+          }
+          function gradient(x0, y0, x1, y1, stops) {
+            const g = ctx.createLinearGradient(x0, y0, x1, y1);
+            for (const [at, color] of stops) g.addColorStop(at, color);
+            return g;
+          }
+          function pool(x, y, rx, ry, color) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(rx, ry);
+            const g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+            g.addColorStop(0, color);
+            g.addColorStop(.55, color.slice(0, 7) + '25');
+            g.addColorStop(1, color.slice(0, 7) + '00');
+            ctx.fillStyle = g;
+            ctx.fillRect(-1, -1, 2, 2);
+            ctx.restore();
+          }
+          let seed = 64193;
+          const random = () => {
+            seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+            return seed / 4294967296;
+          };
+
+          const [left, top] = project(0, 0, 1);
+          const [right, sill] = project(1, 1, 1);
+          const center = width * .5;
+          const frameWidth = Math.min((right - left) * .52, height * .125);
+          const doorLeft = center - frameWidth * .5;
+          const doorRight = center + frameWidth * .5;
+          const lintel = sill - (sill - top) * .82;
+          const frame = Math.max(2, frameWidth * .055);
+          const openingX = doorLeft + frame;
+          const openingWidth = frameWidth - 2 * frame;
+
+          ctx.fillStyle = gradient(0, top, 0, sill, [[0, '#918361'], [.5, '#9f8c62'], [1, '#504936']]);
+          ctx.fillRect(0, 0, width, height);
+          pool(center - frameWidth * .25, top + (sill - top) * .26, (right - left) * .69, height * .21, '#ead39574');
+
+          // Repeating botanical wallpaper. Each mark is projected onto its own wall plane.
+          function wallpaper(point, columns, rows, stemColor, leafColor) {
+            for (let col = 0; col < columns; col++) {
+              const u = (col + .5) / columns;
+              const w = .048 / columns;
+              fill([point(u - w, 0), point(u + w, 0), point(u + w, 1), point(u - w, 1)], stemColor);
+            }
+            ctx.beginPath();
+            for (let col = 0; col < columns; col++) {
+              const u = (col + .5) / columns;
+              const du = .33 / columns;
+              for (let row = 0; row < rows; row++) {
+                const v = (row + (col % 2 ? .26 : .69)) / rows;
+                const dv = .33 / rows;
+                ctx.moveTo(...point(u, v + dv));
+                ctx.quadraticCurveTo(...point(u - du * .9, v + dv * .36), ...point(u - du, v - dv * .54));
+                ctx.quadraticCurveTo(...point(u - du * .2, v - dv * .27), ...point(u, v + dv * .64));
+                ctx.quadraticCurveTo(...point(u + du * .14, v - dv * .51), ...point(u + du, v - dv * .93));
+                ctx.quadraticCurveTo(...point(u + du * .85, v + dv * .27), ...point(u, v + dv));
+                ctx.closePath();
+              }
+            }
+            ctx.fillStyle = leafColor;
+            ctx.fill();
+          }
+          const rear = [[left, top], [right, top], [right, sill], [left, sill]];
+          clip(rear, () => {
+            wallpaper((u, v) => project(u, v, 1), 16, 12, '#c1ab7420', '#64533729');
+            ctx.fillStyle = gradient(0, top, 0, top + height * .065, [[0, '#30291c60'], [1, '#30291c00']]);
+            ctx.fillRect(left, top, right - left, height * .065);
+          });
+
+          for (const side of [0, 1]) {
+            const nearX = project(side, 0, 0)[0];
+            const farX = project(side, 0, 1)[0];
+            const point = (depth, v) => project(side, v, depth);
+            const wall = [point(0, 0), point(1, 0), point(1, 1), point(0, 1)];
+            fill(wall, gradient(nearX, 0, farX, 0, side === 0
+              ? [[0, '#344138'], [.28, '#645f42'], [.72, '#ae9562'], [1, '#877b52']]
+              : [[0, '#343932'], [.32, '#766449'], [.68, '#b49b6e'], [1, '#8e8057']]));
+            clip(wall, () => {
+              pool(farX + (nearX - farX) * .26, height * .36, corridorWidth * .26, height * .39, '#ffe2a650');
+              wallpaper(point, 35, 15, '#d8bd8128', '#43382435');
+              fill([point(0, .89), point(1, .89), point(1, .904), point(0, .904)], '#56483470');
+              fill([point(0, .885), point(1, .885), point(1, .89), point(0, .89)], '#c3a87b75');
+              ctx.fillStyle = gradient(0, height * .31, 0, height * .94, [[0, '#1c211b00'], [.54, '#302d2242'], [1, '#141e1ac7']]);
+              ctx.fillRect(0, 0, width, height);
+            });
+          }
+
+          const floor = [project(0, 1, 1), project(1, 1, 1), project(1, 1, 0), project(0, 1, 0)];
+          fill(floor, gradient(0, sill, 0, height, [[0, '#766a4a'], [.37, '#584831'], [1, '#22271e']]));
+          clip(floor, () => {
+            pool(center, sill + height * .07, corridorWidth * .41, height * .22, '#b2986474');
+            const lightX = openingX + openingWidth * .12;
+            pool(lightX + frameWidth * .18, sill + height * .019, frameWidth * 1.32, height * .125, '#bacfb186');
+            pool(lightX, sill + height * .005, frameWidth * .61, height * .052, '#dde4bc65');
+            for (let i = 0; i < 12; i++) {
+              const [x, y] = project(random(), 1, random() * .75);
+              pool(x, y, height * (.038 + random() * .14), height * (.008 + random() * .03), '#3d35232c');
+            }
+            for (const color of ['#ddc89531', '#1d201b51']) {
+              ctx.fillStyle = color;
+              for (let i = 0; i < 2600; i++) {
+                const z = random() ** 2.4;
+                const [x, y] = project(random(), 1, z);
+                const strand = (.4 + random() * 1.8) / (1 + 3 * z);
+                ctx.fillRect(x, y, strand, strand * .49);
+              }
+            }
+            for (const [span, shade] of [[.042, '#252c2310'], [.025, '#2027201a'], [.012, '#1a231b26']]) {
+              fill([project(0, 1, 1), project(span, 1, 1), project(span, 1, 0), project(0, 1, 0)], shade);
+              fill([project(1 - span, 1, 1), project(1, 1, 1), project(1, 1, 0), project(1 - span, 1, 0)], shade);
+            }
+          });
+
+          // A slightly open door, seen through a real reveal. Cold light is limited to its opening.
+          const doorHeight = sill - lintel;
+          const innerTop = lintel + frame;
+          pool(center + frameWidth * .25, lintel + doorHeight * .54, frameWidth * 1.5, doorHeight * .84, '#2d392b60');
+          ctx.fillStyle = gradient(doorLeft, lintel, doorRight, sill, [[0, '#d1bc88'], [.27, '#8f774f'], [.64, '#544838'], [1, '#2e2f24']]);
+          ctx.fillRect(doorLeft, lintel, frameWidth, doorHeight);
+          ctx.fillStyle = '#e6ce914e';
+          ctx.fillRect(doorLeft, lintel, frameWidth, Math.max(1, frame * .28));
+          ctx.fillRect(doorLeft, lintel, Math.max(1, frame * .3), doorHeight);
+          ctx.fillStyle = '#242b22';
+          ctx.fillRect(openingX, innerTop, openingWidth, sill - innerTop);
+          clip([[openingX, innerTop], [openingX + openingWidth, innerTop], [openingX + openingWidth, sill], [openingX, sill]], () => {
+            pool(openingX + openingWidth * .17, sill - doorHeight * .38, openingWidth * 1.04, doorHeight * .76, '#8eac907a');
+            const glow = gradient(openingX, innerTop, openingX, sill, [[0, '#81917b8a'], [.37, '#a6c0a4'], [.8, '#8caa91'], [1, '#d1dfb7']]);
+            fill([[openingX + frame * .28, innerTop + frame * .22], [openingX + openingWidth * .21, innerTop + frame * .35],
+              [openingX + openingWidth * .18, sill], [openingX + frame * .28, sill]], glow);
+            fill([[openingX + openingWidth * .17, innerTop + frame * 1.15], [openingX + openingWidth, innerTop],
+              [openingX + openingWidth, sill], [openingX + openingWidth * .17, sill - frame * .3]],
+            gradient(openingX, innerTop, doorRight, sill, [[0, '#48594d'], [.48, '#303c34'], [1, '#202822']]));
+            const leafX = openingX + openingWidth * .18;
+            const panelLeft = leafX + openingWidth * .12;
+            const panelRight = openingX + openingWidth * .9;
+            const panelTop = innerTop + doorHeight * .14;
+            const panelBottom = sill - doorHeight * .12;
+            const panel = [[panelLeft, panelTop + frame * .48], [panelRight, panelTop],
+              [panelRight, panelBottom], [panelLeft, panelBottom - frame * .32]];
+            fill(panel, gradient(panelLeft, panelTop, panelRight, panelBottom, [[0, '#1c302943'], [1, '#19261d0c']]));
+            path(panel);
+            ctx.strokeStyle = '#8c9a7d29';
+            ctx.lineWidth = Math.max(.5, frame * .13);
+            ctx.stroke();
+            ctx.fillStyle = '#81957c66';
+            ctx.fillRect(leafX, innerTop + frame * 1.15, Math.max(.7, frame * .23), doorHeight - frame * 2.25);
+            const knobX = openingX + openingWidth * .32;
+            const knobY = innerTop + doorHeight * .56;
+            fill([[knobX, knobY], [knobX + frame * .7, knobY - frame * .12],
+              [knobX + frame * .7, knobY + frame * .17], [knobX, knobY + frame * .28]], '#b0a479');
+          });
+          ctx.fillStyle = gradient(doorLeft, 0, doorRight, 0, [[0, '#5d5b46'], [.23, '#d0d1a6'], [.66, '#756a4d'], [1, '#34382b']]);
+          ctx.fillRect(doorLeft, sill - .75, frameWidth, Math.max(1.1, frame * .3));
+
+          // Suspended mineral-fiber ceiling and fluorescent fixtures share the wall corners.
+          const ceilingHeight = top;
+          const ceilingPoint = (across, depth) => project(across, 0, depth);
+          const surface = (l, near, r, far, color) => fill(
+            [ceilingPoint(l, near), ceilingPoint(r, near), ceilingPoint(r, far), ceilingPoint(l, far)], color);
+          const ceilingFace = [ceilingPoint(0, 0), ceilingPoint(1, 0), ceilingPoint(1, 1), ceilingPoint(0, 1)];
+          clip(ceilingFace, () => {
+            const base = ctx.createLinearGradient(0, 0, 0, ceilingHeight);
+            base.addColorStop(0, '#69634b');
+            base.addColorStop(.52, '#807558');
+            base.addColorStop(1, '#696049');
+            ctx.fillStyle = base;
+            ctx.fillRect(0, 0, width, ceilingHeight);
+
+            // Adjust tile width to the viewport while keeping a centered bay for the fixtures.
+            const columns = Math.max(5, Math.min(13, 2 * Math.round(corridorWidth / ceilingHeight * .7) + 1));
+            const rows = 12;
+            const bay = (columns - 1) / 2;
+            const tileShades = ['#b4a57514', '#241f120e', '#3e342608', '#bea67a0a', '#00000000'];
+            for (let row = 0; row < rows; row++) {
+              for (let col = 0; col < columns; col++) {
+                const shade = (row * 13 + col * 7 + row * col) % 5;
+                surface(col / columns, row / rows, (col + 1) / columns, (row + 1) / rows, tileShades[shade]);
+              }
+            }
+
+            const fixtures = [1, 3, 6].map(row => {
+              const [x, y] = ceilingPoint(.5, (row + .5) / rows);
+              const [left, near] = ceilingPoint(bay / columns, row / rows);
+              const [, far] = ceilingPoint((bay + 1) / columns, (row + 1) / rows);
+              const span = 2 * (x - left);
+              return { row, x, y, span, rise: far - near };
+            });
+            for (const { x, y, span, rise } of fixtures) {
+              pool(x, y, span * 2.55, rise * 2.65, '#ffedac72');
+            }
+
+            // Small mineral-fiber pores. Draw at startup and on resize only.
+            ctx.fillStyle = '#332e233f';
+            const pores = Math.min(2400, Math.round(width * ceilingHeight / 115));
+            for (let i = 0; i < pores; i++) {
+              const z = random() ** 2;
+              const [x, y] = ceilingPoint(random(), z);
+              const size = (.55 + random() * 1.15) / (1 + 2.5 * z);
+              ctx.fillRect(x, y, size, size * .55);
+            }
+
+            // The recessed grid, its shadow and the exposed runners share the tile coordinates.
+            for (let col = 1; col < columns; col++) {
+              const u = col / columns;
+              surface(u - .001, 0, u + .001, 1, '#40382a89');
+              surface(u + .001, 0, u + .002, 1, '#bcae7938');
+            }
+            for (let row = 1; row < rows; row++) {
+              const z = row / rows;
+              surface(0, z - .0018, 1, z + .0014, '#443a2b9c');
+              surface(0, z + .0014, 1, z + .0038, '#c3b18637');
+            }
+
+            for (const { row, x, y, span, rise } of fixtures) {
+              const panel = (left, near, right, far, color) =>
+                surface((bay + left) / columns, (row + near) / rows, (bay + right) / columns, (row + far) / rows, color);
+              panel(.01, .01, .99, .99, '#383225');
+              panel(.025, .025, .975, .975, '#baac83');
+              panel(.052, .06, .948, .94, '#514736');
+              panel(.075, .105, .925, .895, '#9e906a');
+              for (let tube = 0; tube < 4; tube++) {
+                const center = .18 + tube * .213;
+                panel(center - .094, .12, center + .094, .88, '#6c6045');
+                panel(center - .069, .14, center + .069, .86, '#d1bc86');
+                panel(center - .040, .17, center + .040, .83, '#ffefb5');
+                panel(center - .022, .18, center + .022, .82, '#fffbe8');
+              }
+              for (const z of [.22, .41, .61, .79]) {
+                panel(.077, z, .923, z + .025, '#73664b');
+                panel(.077, z + .025, .923, z + .042, '#d0bb82');
+              }
+              pool(x, y, span * .95, rise * 1.1, '#fff3bc2c');
+            }
+
+            const seam = ctx.createLinearGradient(0, ceilingHeight * .94, 0, ceilingHeight);
+            seam.addColorStop(0, 'transparent');
+            seam.addColorStop(1, '#2c261943');
+            ctx.fillStyle = seam;
+            ctx.fillRect(0, ceilingHeight * .94, width, ceilingHeight * .06);
+          });
+
+          // Static film grain softens the perfectly uniform gradients without an extra render pass.
+          for (const color of ['#e6d29c19', '#121a1829']) {
+            ctx.fillStyle = color;
+            const count = Math.min(7200, Math.round(width * height / 165));
+            for (let i = 0; i < count; i++) {
+              const size = .35 + random() * .95;
+              ctx.fillRect(random() * width, random() * height, size, size);
+            }
+          }
+
+        }
+
+        const { width, height } = scene.getBoundingClientRect();
+        if (width && height) paint(width, height);
+        if (typeof ResizeObserver === 'undefined') return;
+        let lastWidth = width;
+        let lastHeight = height;
+        const observer = new ResizeObserver(([entry]) => {
+          if (!scene.isConnected) {
+            observer.disconnect();
+            return;
+          }
+          const { width, height } = entry.contentRect;
+          if (!width || !height || (width === lastWidth && height === lastHeight)) return;
+          lastWidth = width;
+          lastHeight = height;
+          paint(width, height);
+        });
+        observer.observe(scene);
       })();
     </script>
     <script id="app-entry" type="module" src="/src/main.tsx"></script>

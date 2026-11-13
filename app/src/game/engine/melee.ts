@@ -3,7 +3,7 @@
 import type { Engine, InvSlot } from '../engine'
 import { ITEMS } from '../content/items'
 import {
-  MELEE, isMelee, type MeleeKind, HEAVY_MIN_CHARGE, heavyDamageMul, HEAVY_STAMINA_MUL, CHARGE_DELAY,
+  MELEE, isMelee, type MeleeKind, HEAVY_MIN_CHARGE, heavyDamageMul, meleeChargeProgress, HEAVY_STAMINA_MUL, CHARGE_DELAY,
   DUR_HIT, DUR_HEAVY_HIT, DUR_WALL, REPAIR_MATERIALS, REPAIR_TO, REPAIR_TIME, LOW_DUR,
 } from '../content/melee'
 import { audio } from '../core/audio'
@@ -113,6 +113,7 @@ export function startMeleeSwing(eng: Engine, heavy: boolean, charge: number): bo
   p.stamina = Math.max(0, p.stamina - (heavy ? cost : base))
   const tm = heavy ? MELEE[kind].heavy : MELEE[kind].light
   const duration = tm.dur * meleeIntervalMul(eng)
+  const startProgress = heavy ? meleeChargeProgress(tm.windup, charge) : 0
   const exhausted = p.stamina <= 0.01
   const cd = exhausted ? Math.max(3.1, duration * 4.5) : duration
   eng.attackCooldownDur = eng.dev.noAttackCooldown ? 0 : cd
@@ -121,8 +122,8 @@ export function startMeleeSwing(eng: Engine, heavy: boolean, charge: number): bo
   eng.meleeHeavy = heavy
   eng.attackAnimKind = 'swing'
   eng.attackAnimDur = duration
-  eng.attackAnimT = duration
-  eng.meleePending = { t: tm.windup * duration, kind, heavy, charge, slot: held }
+  eng.attackAnimT = (1 - startProgress) * duration
+  eng.meleePending = { t: (tm.windup - startProgress) * duration, kind, heavy, charge, slot: held }
   if (exhausted && eng.statusMsgT.stamina <= 0) {
     eng.msg('体力已经耗尽——手臂沉得抬不起来，下一次攻击需要很久。', 'system')
     eng.statusMsgT.stamina = 2.5

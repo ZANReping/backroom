@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:hound-l02-integration
+> esbuild scripts/check-hound-l02-integration.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-hound-l02-integration.mjs && node .cache/check-hound-l02-integration.mjs
+
+
+  .cache\check-hound-l02-integration.mjs  6.4mb
+
+Done in 400ms
+{"checks":142,"failures":0,"scope":"cooperative hounds, L0 quests/key items/save, L02 generation/collapse/facilities"}

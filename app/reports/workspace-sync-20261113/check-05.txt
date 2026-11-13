@@ -1,0 +1,15 @@
+
+> my-app@0.0.0 check:worker-map-parity
+> node scripts/check-worker-map-parity.mjs
+
+file:///C:/Users/ZANRe/Documents/GitHub/backroom/app/scripts/check-worker-map-parity.mjs:6
+if(!fs.existsSync(baseline))throw Error('Keep the task source-before fixture to reproduce map parity')
+                                  ^
+
+Error: Keep the task source-before fixture to reproduce map parity
+    at file:///C:/Users/ZANRe/Documents/GitHub/backroom/app/scripts/check-worker-map-parity.mjs:6:35
+    at ModuleJob.run (node:internal/modules/esm/module_job:377:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:671:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.11.1

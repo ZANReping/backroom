@@ -1,5 +1,9 @@
 // WebAudio 程序合成音频：荧光灯嗡鸣/脚步/受击/拾取/出口/低语/UI + 每层梦核BGM
 import { isAudioSong, loadMidi, musicAudioUrl, musicUrl, resolveMidiSong, type MidiNoteEv, type MidiSongParsed } from './midi'
+import { FOYER_ID } from '../world/foyerLayout'
+import { createFluorescentHum } from './fluorescentHum'
+import { FoyerSoundscape, type FoyerAudioMix } from './foyerSoundscape'
+
 interface BgmLayer {
   level: number
   gain: GainNode
@@ -67,6 +71,10 @@ export class GameAudio {
   private sfx: GainNode | null = null
   private humOsc: OscillatorNode[] = []
   private humBus:GainNode|null=null
+  private fluorescentHum: ReturnType<typeof createFluorescentHum> | null = null
+  private l0HumLevel: number | null = null
+  private breakHumOwner: symbol | null = null
+  private foyerSoundscape: FoyerSoundscape | null = null
   private manilaBus:GainNode|null=null
   private manilaNoteAt=0
   // Level 0.2：空调低频风声总线 + 远处电钻/敲击定时器
@@ -147,7 +155,7 @@ export class GameAudio {
     try {
       this.ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
       this.master = this.ctx.createGain()
-      this.master.gain.value = this.volume
+      this.master.gain.value = this.muted ? 0 : this.volume
       // v13：master → 水下低通 → destination（入水后所有声音闷化）
       this.uwFilter = this.ctx.createBiquadFilter()
       this.uwFilter.type = 'lowpass'
@@ -216,9 +224,17 @@ export class GameAudio {
   startHum(levelId: number) {
     this.ensure()
     if (!this.ctx || !this.ambient) return
-    this.stopHum()
-    if(this.bgmBus)this.bgmBus.gain.value=.55*this.bgmVol
-    if(this.hotelLocalBus)this.hotelLocalBus.gain.value=.55*this.bgmVol
+    this.stopRoomAmbience()
+    if (this.bgmBus) this.bgmBus.gain.value = .55 * this.bgmVol
+    if (this.hotelLocalBus) this.hotelLocalBus.gain.value = .55 * this.bgmVol
+    if (levelId === 0) {
+      this.l0HumLevel = .4
+      const hum = this.getFluorescentHum()
+      if (!this.breakHumOwner) hum.setLevel(this.l0HumLevel)
+      return
+    }
+    this.stopFluorescentHum()
+    if (levelId === FOYER_ID) return
     this.humBus=this.ctx.createGain();this.humBus.connect(this.ambient)
     const base = levelId >= 100 ? 56 : 50 + levelId * 6 // v36：据点 id≥100——别让 id 直接乘出刺耳高频哼声
     for (const [mult, gain] of [[1, 0.035], [2, 0.018], [3, 0.008]] as const) {
@@ -241,11 +257,61 @@ export class GameAudio {
     this.humOsc.push(noise as unknown as OscillatorNode)
   }
   stopHum() {
+    this.stopRoomAmbience()
+    this.stopFluorescentHum()
+  }
+
+  private stopRoomAmbience() {
     this.stopDeepPressure()
+    this.stopFoyerSoundscape()
     for (const o of this.humOsc) { try { o.stop() } catch { /* */ } }
     this.humOsc = []
     this.humBus?.disconnect();this.humBus=null
     if(this.manilaBus&&this.ctx)this.manilaBus.gain.setTargetAtTime(0,this.ctx.currentTime,.4)
+  }
+
+  updateFoyerSoundscape(mix: FoyerAudioMix) {
+    if (!this.foyerSoundscape && (mix.home || mix.traffic || mix.hum)) {
+      this.ensure()
+      if (!this.ctx || !this.bgmBus || !this.ambient) return
+      this.foyerSoundscape = new FoyerSoundscape(this.ctx, this.bgmBus, this.ambient, () => this.noiseSrc())
+    }
+    this.foyerSoundscape?.update(mix)
+  }
+
+  private stopFoyerSoundscape() {
+    this.foyerSoundscape?.stop()
+    this.foyerSoundscape = null
+  }
+
+  private getFluorescentHum() {
+    return this.fluorescentHum ??= createFluorescentHum(this.ctx!, this.ambient!, this.noiseSrc())
+  }
+
+  private stopFluorescentHum(fade?: number) {
+    this.fluorescentHum?.stop(fade)
+    this.fluorescentHum = null
+    this.breakHumOwner = null
+    this.l0HumLevel = null
+  }
+
+  /** Pass the playing voice from the end of the fall to Level 0 without restarting it. */
+  beginBreakHum() {
+    this.stopFoyerSoundscape()
+    const hum = this.getFluorescentHum()
+    const owner = Symbol()
+    this.breakHumOwner = owner
+    return {
+      setLevel: (level: number) => {
+        if (this.breakHumOwner === owner) hum.setLevel(level)
+      },
+      stop: (fade: number) => {
+        if (this.breakHumOwner !== owner) return
+        this.breakHumOwner = null
+        if (this.l0HumLevel === null) this.stopFluorescentHum(fade)
+        else hum.setLevel(this.l0HumLevel, fade / 3)
+      },
+    }
   }
 
   /** Level 0.2：空调低频风声（低通噪声 + 缓慢起伏）；远处偶尔电钻/敲击。全部程序合成。 */
@@ -307,7 +373,10 @@ export class GameAudio {
   setL0Ambience(meeting:number,dark:boolean,red:boolean,remodel=0){
     const c=this.ctx;if(!c||!this.ambient)return
     // remodel：施工许可改造区内嗡鸣渐停（0..1）
-    this.humBus?.gain.setTargetAtTime(dark?0:(1-meeting)*(red?.62:1)*(1-remodel),c.currentTime,.6)
+    if (this.l0HumLevel !== null) {
+      this.l0HumLevel = dark ? 0 : .4 * (1 - meeting) * (red ? .62 : 1) * (1 - remodel)
+      if (!this.breakHumOwner) this.fluorescentHum?.setLevel(this.l0HumLevel, .6)
+    }
     if(this.bgmBus)this.bgmBus.gain.setTargetAtTime(.55*this.bgmVol*(1-meeting)*(dark?0:1),c.currentTime,1.2)
     if(!this.manilaBus){this.manilaBus=c.createGain();this.manilaBus.gain.value=0;this.manilaBus.connect(this.master??this.ambient)}
     this.manilaBus.gain.setTargetAtTime(meeting*.1*this.bgmVol,c.currentTime,1.2)
@@ -1777,6 +1846,10 @@ export class GameAudio {
   }
 
   startBGM(level: number) {
+    if (level === FOYER_ID) {
+      this.stopBGM()
+      return
+    }
     this.ensure()
     if (!this.ctx || !this.bgmBus) return
     if (this.bgmLevel !== level && (this.bgmLevel === 5 || level === 5)) {

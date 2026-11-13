@@ -2,7 +2,7 @@ import CareerTracker from '@/components/CareerTracker'
 // 应用状态机：标题 → 层级进入 → 游戏（HUD）→ 暂停/背包/死亡/胜利
 import { shouldStartInFoyer } from '@/game/core/foyerFlag'
 import { FOYER_ID } from '@/game/world/foyerLayout'
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { Routes, Route } from 'react-router'
 import { engine } from '@/game/engine'
 import type { SaveSlotId, SlotInfo } from '@/game/engine'
@@ -109,6 +109,7 @@ export default function App() {
 
 function Game() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const syncMouseCapture = useRef<(() => void) | null>(null)
   const rendererRef = useRef<Renderer3D | null>(null)
   const [screen, setScreen] = useState<Screen>('title')
   const [overlay, setOverlay] = useState<Overlay>('none')
@@ -228,7 +229,6 @@ function Game() {
     engine.paused = true
     Object.assign(engine.input, { mx: 0, my: 0, sprint: false, crouch: false, jump: false, attack: false, interact: false, toggleLight: false })
     engine.inspectHeld = false
-    if (document.pointerLockElement) document.exitPointerLock()
   }, [portraitBlocked])
   const activeTouchLayout = touchLayout[landscapeNow ? 'landscape' : 'portrait'] ?? {}
   const customPause = isMobile && !!activeTouchLayout.pause
@@ -263,11 +263,6 @@ function Game() {
       if (el) el.style.display = 'none'
     }
   }, [screen, overlay])
-
-  // 打开任意覆盖层时释放鼠标指针（PC 指针锁定下无法操作面板）
-  useEffect(() => {
-    if (overlay !== 'none') document.exitPointerLock?.()
-  }, [overlay])
 
   // v56：暂停（暂停菜单及其子页）时挂起全部音频——乐手演奏/BGM/环境音一起暂停，恢复后接着播。
   // 电台管理页除外：它是音乐播放器（试听/BGM 照常播放），关回暂停菜单再挂起
@@ -650,7 +645,8 @@ function Game() {
         if (overlayRef.current === 'jazzmenu') return // [jazz] 点歌菜单自己处理 1–5 / Esc
         if (overlayRef.current === 'casinomenu') return // [casino] 赌场菜单自己处理按键 / Esc
         if (e.key === 'Escape' && overlayRef.current !== 'none' && overlayRef.current !== 'death' && overlayRef.current !== 'victory') {
-          setOverlay(screenRef.current === 'game' ? 'none' : 'none')
+          e.preventDefault()
+          setOverlay('none')
         }
         return
       }
@@ -781,65 +777,135 @@ function Game() {
     return () => document.removeEventListener('visibilitychange', fn)
   }, [])
 
-  // 鼠标捕获的生命周期独立于画面设置，避免重建渲染循环时撤销正在建立的锁定。
+  // Keep the raw mouse listener alive across settings changes. The UI below
+  // hands the pointer back only after a panel has actually returned to the game.
+  const lootPanelOpen = engine.lootPanel !== null
   useEffect(() => {
     const canvas = canvasRef.current!
-    // 桌面 Pointer Lock 鼠标视角
+    const mouseLook = new MouseLookInput()
     let capturePending = false
     let rawRequestAccepted = false
-    // Owning the element alone does not prove raw capture has completed (for
-    // example an old lock can survive HMR). Keep input closed until both agree.
-    let rawCaptureReady = false
+    let releasing = false
+    let resumeAfterPanel = false
+    let closingWithEscape = false
+    let escapeResumeTimer: number | undefined
     let disposed = false
-    const canCapture = () => !disposed && !portraitBlockedRef.current && screenRef.current === 'game' && overlayRef.current === 'none' && document.hasFocus() && !document.hidden
-    const onClick = () => {
-      if (isMobile) return
-      if (canCapture() && (!rawCaptureReady || document.pointerLockElement !== canvas) && !capturePending && typeof canvas.requestPointerLock === 'function') {
-        capturePending = true
-        rawRequestAccepted = false
-        rawCaptureReady = false
-        look.locked = false
-        canvas.dataset.mouseInput = 'pending'
-        void requestMouseCapture(canvas).then(() => {
-          // Permission UI can transiently change focus. Only a real screen/menu
-          // change cancels an acquired lock; the browser handles focus loss.
-          if (disposed || portraitBlockedRef.current || screenRef.current !== 'game' || overlayRef.current !== 'none') {
-            if (document.pointerLockElement === canvas) document.exitPointerLock()
-            return
-          }
-          rawRequestAccepted = true
-          rawCaptureReady = document.pointerLockElement === canvas
-          canvas.dataset.mouseInput = rawCaptureReady ? 'raw' : 'unlocked'
-          onFocusChange()
-        }).catch(() => {
-          // Escape, focus loss, or a denied capture leave the camera inactive.
-          rawRequestAccepted = false
-          rawCaptureReady = false
-          canvas.dataset.mouseInput = 'unlocked'
-          if (document.pointerLockElement === canvas) document.exitPointerLock()
-          look.locked = false
-        }).finally(() => { capturePending = false })
-      }
+
+    const inDesktopGame = () => !disposed && !isMobile && screenRef.current === 'game'
+      && !portraitBlockedRef.current && !engine.over
+    const hasOverlay = () => overlayRef.current !== 'none'
+    const focused = () => document.hasFocus() && !document.hidden
+    const ownsLock = () => document.pointerLockElement === canvas
+    const rawLocked = () => rawRequestAccepted && !releasing && ownsLock()
+    const canCapture = () => inDesktopGame() && !hasOverlay() && focused()
+      && !worldLoadingRef.current && cutRef.current === null
+    const canUseMouse = () => canCapture() && rawLocked() && !engine.paused
+
+    const publishLock = () => {
+      const locked = rawLocked()
+      look.locked = locked && inDesktopGame() && !hasOverlay() && focused()
+      canvas.dataset.mouseInput = locked ? 'raw' : capturePending && !hasOverlay() ? 'pending' : 'unlocked'
     }
-    const mouseLook = new MouseLookInput()
-    const onLockChange = () => {
-      if (document.pointerLockElement !== canvas) rawRequestAccepted = false
-      rawCaptureReady = rawRequestAccepted && document.pointerLockElement === canvas
-      canvas.dataset.mouseInput = rawCaptureReady ? 'raw' : capturePending ? 'pending' : 'unlocked'
-      look.locked = rawCaptureReady && document.pointerLockElement === canvas
+    const resetMouseInput = () => {
+      engine.input.aimHeld = false
+      engine.input.attackHeld = false
+      engine.input.attack = false
+      engine.specialHeld = false
+      engine.specialPressed = false
+      engine.meleePress = null
+      engine.meleePending = null
+      engine.meleeCharge = 0
       mouseLook.reset(performance.now())
     }
-    const onFocusChange = () => { engine.input.aimHeld = false; engine.input.attackHeld = false; engine.specialHeld = false; engine.specialPressed = false; engine.input.attack = false; engine.meleePress = null; engine.meleePending = null; engine.meleeCharge = 0; mouseLook.reset(performance.now());look.locked=rawCaptureReady&&document.hasFocus()&&!document.hidden&&document.pointerLockElement===canvas }
+    const releasePointer = () => {
+      rawRequestAccepted = false
+      resetMouseInput()
+      if (ownsLock() && !releasing) {
+        releasing = true
+        document.exitPointerLock()
+      }
+      publishLock()
+    }
+
+    const requestCapture = () => {
+      if (!canCapture() || capturePending || releasing || closingWithEscape || typeof canvas.requestPointerLock !== 'function') return
+      resumeAfterPanel = false
+      if (rawLocked()) return
+      capturePending = true
+      rawRequestAccepted = false
+      publishLock()
+      void requestMouseCapture(canvas).then(() => {
+        // A permission prompt can momentarily take focus. Check the game
+        // context again because the request can outlive the panel that closed.
+        if (!inDesktopGame() || hasOverlay()) {
+          releasePointer()
+          return
+        }
+        rawRequestAccepted = true
+        resetMouseInput()
+      }, releasePointer).finally(() => {
+        capturePending = false
+        if (disposed) return
+        publishLock()
+        resumeCapture()
+      })
+    }
+    const resumeCapture = () => {
+      if (resumeAfterPanel && !engine.lootPanel) requestCapture()
+    }
+    const syncCapture = () => {
+      if (isMobile) return
+      if (!inDesktopGame() || overlayRef.current === 'death' || overlayRef.current === 'victory') {
+        resumeAfterPanel = false
+        releasePointer()
+        return
+      }
+      if (hasOverlay() || engine.lootPanel) resumeAfterPanel = true
+      if (hasOverlay()) releasePointer()
+      else resumeCapture()
+    }
+    const onLockChange = () => {
+      if (!ownsLock()) {
+        rawRequestAccepted = false
+        releasing = false
+      } else if (!inDesktopGame() || hasOverlay()) {
+        releasePointer()
+      }
+      resetMouseInput()
+      publishLock()
+      resumeCapture()
+    }
+    const onEscapeDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || (!hasOverlay() && !engine.lootPanel)) return
+      window.clearTimeout(escapeResumeTimer)
+      closingWithEscape = true
+    }
+    const onEscapeUp = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || !closingWithEscape) return
+      window.clearTimeout(escapeResumeTimer)
+      // The browser also uses Escape to unlock. Let it finish processing the
+      // gesture before asking for a new lock.
+      escapeResumeTimer = window.setTimeout(() => {
+        closingWithEscape = false
+        resumeCapture()
+      }, 0)
+    }
+    const onFocusChange = () => {
+      if (!focused()) {
+        window.clearTimeout(escapeResumeTimer)
+        closingWithEscape = false
+      }
+      resetMouseInput()
+      publishLock()
+      resumeCapture()
+    }
     // Pointer Lock's mousemove is the authoritative relative-motion stream.
     // Do not also consume pointermove/coalesced events or reconstruct movement
     // from screen coordinates: the browser can recenter its hidden OS cursor.
     const motionEvent = 'mousemove'
     const onMouseMove = (e: MouseEvent) => {
       if ('pointerType' in e && e.pointerType !== 'mouse') return
-      look.locked=rawCaptureReady&&document.pointerLockElement===canvas
-      const active=!isMobile&&look.locked&&document.hasFocus()&&!document.hidden&&
-        screenRef.current==='game'&&overlayRef.current==='none'&&!engine.paused&&cutRef.current===null
-      const delta=mouseLook.read(e,active)
+      const delta = mouseLook.read(e, canUseMouse())
       if(!delta)return
       const wheel = squirtWheelRef.current
       if (wheel) {
@@ -884,8 +950,7 @@ function Game() {
     }
     // 鼠标按键（仅在指针锁定游戏中触发；未锁定时的点击用于锁定不触发动作）
     const onMouseDown = (e: MouseEvent) => {
-      if (!look.locked) return
-      if (portraitBlockedRef.current || screenRef.current !== 'game' || overlayRef.current !== 'none') return
+      if (!canUseMouse()) return
       if (cameraModeRef.current && `Mouse${e.button}` === getKeybinds().attack) { snapPhoto(); return } // 相机快门
       if (`Mouse${e.button}` === getKeybinds().attack) engine.input.attackHeld = true // 近战重制：按住蓄力
       fireDiscrete(`Mouse${e.button}`)
@@ -897,15 +962,16 @@ function Game() {
     }
     // 滚轮：先分发给绑定到 WheelUp/WheelDown 的动作，再循环切换快捷栏选中格
     const onWheel = (e: WheelEvent) => {
-      if (!look.locked) return
-      if (portraitBlockedRef.current || screenRef.current !== 'game' || overlayRef.current !== 'none') return
+      if (!canUseMouse()) return
       fireDiscrete(e.deltaY < 0 ? 'WheelUp' : 'WheelDown')
       const dir = e.deltaY > 0 ? 1 : -1
       engine.player.selected = (engine.player.selected + dir + engine.player.hotbar.length) % engine.player.hotbar.length
       audio.uiTick()
     }
-    canvas.addEventListener('click', onClick)
+    canvas.addEventListener('click', requestCapture)
     document.addEventListener('pointerlockchange', onLockChange)
+    window.addEventListener('keydown', onEscapeDown, true)
+    window.addEventListener('keyup', onEscapeUp, true)
     window.addEventListener('blur',onFocusChange)
     window.addEventListener('focus',onFocusChange)
     document.addEventListener('visibilitychange',onFocusChange)
@@ -915,11 +981,17 @@ function Game() {
     window.addEventListener('contextmenu', onContextMenu)
     window.addEventListener('wheel', onWheel, { passive: true })
 
-    onLockChange()
+    syncMouseCapture.current = syncCapture
+    syncCapture()
     return () => {
       disposed = true
-      canvas.removeEventListener('click', onClick)
+      syncMouseCapture.current = null
+      releasePointer()
+      canvas.removeEventListener('click', requestCapture)
       document.removeEventListener('pointerlockchange', onLockChange)
+      window.removeEventListener('keydown', onEscapeDown, true)
+      window.removeEventListener('keyup', onEscapeUp, true)
+      window.clearTimeout(escapeResumeTimer)
       window.removeEventListener('blur',onFocusChange)
       window.removeEventListener('focus',onFocusChange)
       document.removeEventListener('visibilitychange',onFocusChange)
@@ -931,6 +1003,10 @@ function Game() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useLayoutEffect(() => {
+    syncMouseCapture.current?.()
+  }, [screen, overlay, lootPanelOpen, worldLoading, cut, portraitBlocked])
 
   // 主循环（Three.js 第一人称渲染）
   useEffect(() => {

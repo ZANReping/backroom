@@ -5,21 +5,30 @@ import { afterSceneCompile, afterRendererCompile } from '../src/game/renderer/sc
 
 let checks = 0
 const check = (ok: unknown, label: string) => { assert.ok(ok, label); checks++ }
-const flush = async () => { for (let i=0;i<12;i++) await Promise.resolve() }
+const flush = async () => { await new Promise(resolve=>setTimeout(resolve,15)); for (let i=0;i<12;i++) await Promise.resolve() }
 const geometry = new THREE.BoxGeometry(), material = new THREE.MeshLambertMaterial()
 const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(), queue = new ModelWarmupQueue()
+const excludedPixels=new THREE.Texture();excludedPixels.userData.generatedPending=true
+const excludedMaterial=new THREE.MeshLambertMaterial({map:excludedPixels})
 const calls: {objects: THREE.Object3D[], target: THREE.WebGLRenderTarget | null, resolve: () => void, reject: () => void}[] = []
 let renderTarget: THREE.WebGLRenderTarget | null = null
-const renderer = { info: { programs: [] }, getRenderTarget() { return renderTarget }, setRenderTarget(target: THREE.WebGLRenderTarget | null) { renderTarget = target }, compileAsync(view: THREE.Object3D, c: THREE.Camera, s: THREE.Scene) {
-  check(c===camera && s===scene, 'compiler uses the live camera and scene lighting')
-  const objects: THREE.Object3D[] = [];view.traverse(o=>objects.push(o))
-  return new Promise<void>((resolve,reject)=>calls.push({objects,target:renderTarget,resolve,reject:()=>reject(new Error('driver unavailable'))}))
-} } as unknown as THREE.WebGLRenderer
+let contextLost=false
+const programs:{program:{done:boolean}}[]=[]
+const renderer = {
+ info:{programs},getRenderTarget(){return renderTarget},setRenderTarget(target:THREE.WebGLRenderTarget|null){renderTarget=target},
+ getContext(){return {getExtension:()=>({COMPLETION_STATUS_KHR:1}),isContextLost:()=>contextLost,getProgramParameter:(p:{done:boolean})=>p.done}},
+ compile(view:THREE.Object3D,c:THREE.Camera,s:THREE.Scene){
+  check(c===camera&&s===scene,'compiler uses the live camera and scene lighting')
+  const objects:THREE.Object3D[]=[];view.traverse(o=>objects.push(o))
+  const entry={program:{done:false}};programs.push(entry)
+  calls.push({objects,target:renderTarget,resolve:()=>{entry.program.done=true},reject:()=>{contextLost=true}})
+ }
+} as unknown as THREE.WebGLRenderer
 const model = () => {
   const root = new THREE.Group();root.visible=false
   for (let i=0;i<17;i++) root.add(new THREE.Mesh(geometry,material))
   const hidden = new THREE.Group();hidden.visible=false;hidden.add(new THREE.Mesh(geometry,material));root.add(hidden)
-  const excluded = new THREE.Mesh(geometry,material);excluded.layers.set(1);root.add(excluded)
+  const excluded = new THREE.Mesh(geometry,excludedMaterial);excluded.layers.set(1);root.add(excluded)
   scene.add(root);return root
 }
 const a=model(), b=model(), snapshots=[a,b].map(root=>({root,children:[...root.children],parent:root.parent}))
@@ -41,20 +50,21 @@ try {
   check(!queue.ready(a)&&!queue.ready(b),'models remain hidden while driver promises are pending')
   for(let i=1;i<calls.length;i+=2)calls[i].resolve()
   await flush();advance(4)
-  check(queue.ready(b)&&!queue.ready(a),'a slow model does not block another completed model')
+  check(!queue.ready(b)&&!queue.ready(a),'submitted program barrier retains shared pending shader variants')
   let disposed=0,rendererDisposed=0
   queue.cancel(a);afterSceneCompile(a,()=>disposed++);afterRendererCompile(renderer,()=>rendererDisposed++)
   check(queue.ready(a)&&disposed===0&&rendererDisposed===0,'cancellation stops future work while preserving pending material lifetimes')
   const before=calls.length;advance(3);check(calls.length===before,'cancelled jobs cannot issue more compiler calls')
   for(let i=0;i<calls.length;i+=2)calls[i].resolve()
-  await flush();check(disposed===1&&rendererDisposed===1,'pending root and renderer disposal each run exactly once')
+  await flush();advance(2);check(queue.ready(b),'completed global shader barrier releases the remaining model');check(disposed===1&&rendererDisposed===1,'pending root and renderer disposal each run exactly once')
   queue.enqueue(a,renderer,camera,scene);queue.cancel(a)
   afterSceneCompile(a,()=>disposed++)
   check(disposed===2,'cancellation before compilation disposes immediately')
   queue.enqueue(a,renderer,camera,scene);advance(4)
   for(const c of calls.slice(before))c.reject()
   await flush();advance(2)
-  check(queue.ready(a),'rejected asynchronous compilation permits normal rendering fallback')
+  check(queue.ready(a),'context loss releases shader waiters without stale material polling')
+  contextLost=false;for(const c of calls)c.resolve();await flush()
   const hdr = new THREE.WebGLRenderTarget(16,16), hdrNext = new THREE.WebGLRenderTarget(16,16), previousTarget = new THREE.WebGLRenderTarget(8,8)
   renderTarget=previousTarget
   let dynamicTarget: THREE.WebGLRenderTarget | null = null, getterReads=0
@@ -69,12 +79,25 @@ try {
   check(calls.slice(hdrStart).some(c=>c.target===hdrNext)&&getterReads===calls.length-hdrStart,'target getter is read for every submitted batch')
   for(const c of calls.slice(hdrStart))c.resolve()
   await flush();advance(2);hdr.dispose();hdrNext.dispose();previousTarget.dispose()
-  const failed = new ModelWarmupQueue(), throwing = { getRenderTarget() { return null }, setRenderTarget(_target: THREE.WebGLRenderTarget | null) {}, compileAsync(){throw new Error('synchronous failure')}} as unknown as THREE.WebGLRenderer
+  const failed = new ModelWarmupQueue(), throwing = { getRenderTarget() { return null }, setRenderTarget(_target: THREE.WebGLRenderTarget | null) {}, compile(){throw new Error('synchronous failure')}} as unknown as THREE.WebGLRenderer
   failed.enqueue(a,throwing,camera,scene);failed.advance()
   assert.throws(()=>failed.advance(),/synchronous failure/);checks++
   check(!a.visible,'synchronous compiler failure restores hidden visibility')
   failed.cancel(a)
-} finally {geometry.dispose();material.dispose()}
+  const generated=new THREE.Texture();generated.userData.generatedPending=true
+  const generatedRoot=new THREE.Group();generatedRoot.visible=false
+  const generatedMat=new THREE.MeshBasicMaterial({map:generated});generatedRoot.add(new THREE.Mesh(geometry,generatedMat));scene.add(generatedRoot)
+  const pixelQueue=new ModelWarmupQueue(),pixelStart=calls.length
+  pixelQueue.enqueue(generatedRoot,renderer,camera,scene)
+  for(let i=0;i<5;i++)pixelQueue.advance()
+  check(calls.length===pixelStart&&!pixelQueue.ready(generatedRoot),'pending Worker pixels prevent first program submission')
+  generated.userData.generatedPending=false
+  for(let i=0;i<3;i++)pixelQueue.advance()
+  for(const c of calls.slice(pixelStart))c.resolve()
+  await flush();pixelQueue.advance()
+  check(pixelQueue.ready(generatedRoot),'completed Worker pixels release model warmup')
+  generated.dispose();generatedMat.dispose();generatedRoot.removeFromParent()
+} finally {geometry.dispose();material.dispose();excludedPixels.dispose();excludedMaterial.dispose()}
 
 // upload=true: compile first, then initialize each unique texture and upload one
 // zero-range mesh batch per frame while preserving the live scene state.
@@ -88,7 +111,7 @@ try {
     info: { programs: [] }, autoClear: true, shadowMap,
     getRenderTarget: () => activeTarget,
     setRenderTarget: (target: unknown) => { activeTarget = target },
-    compileAsync: () => Promise.resolve(),
+    compile: () => {},
     initTexture: (texture: THREE.Texture) => { initCalls.push(texture) },
     render: (view: THREE.Scene) => {
       const objects = [...view.children]

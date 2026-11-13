@@ -1,0 +1,936 @@
+{
+  "mode": "realistic",
+  "only": "all",
+  "checks": [
+    "owned native headless session",
+    "Level 1 actual App sight backend",
+    "Level 5 actual App sight backend",
+    "Offscreen PBR brushes and GL normals match Canvas fallback byte for byte",
+    "Beast, greeter and chef geometry prepared in real Worker",
+    "transferred hotel models render with finite skinned animation matrices",
+    "late sight result cannot reveal a replacement map",
+    "Level 11 actual App sight backend",
+    "Level 1 renders original scene in Worker",
+    "Level 1 continues rendering while main thread is blocked for 250 ms"
+  ],
+  "scenes": [
+    {
+      "level": 1,
+      "gpu": {
+        "calls": 1,
+        "triangles": 1,
+        "textures": 108,
+        "geometries": 239
+      },
+      "sight": {
+        "submitted": 13,
+        "completed": 13,
+        "superseded": 0,
+        "failures": 0,
+        "workerMs": 17.5,
+        "dispatchMs": 18.799999989569187,
+        "active": 0,
+        "queued": 0,
+        "running": true,
+        "failed": false
+      },
+      "pbr": {
+        "submitted": 0,
+        "completed": 0,
+        "failures": 0,
+        "workerMs": 0,
+        "queued": 0,
+        "active": 0,
+        "running": false,
+        "failed": false
+      },
+      "geometry": {
+        "submitted": 0,
+        "completed": 0,
+        "failures": 0,
+        "workerMs": 0,
+        "queued": 0,
+        "active": 0,
+        "running": false,
+        "failed": false
+      },
+      "explored": 970
+    },
+    {
+      "level": 5,
+      "gpu": {
+        "calls": 1,
+        "triangles": 1,
+        "textures": 208,
+        "geometries": 1524
+      },
+      "sight": {
+        "submitted": 7,
+        "completed": 7,
+        "superseded": 0,
+        "failures": 0,
+        "workerMs": 2.9999999962747097,
+        "dispatchMs": 3.099999997764826,
+        "active": 0,
+        "queued": 0,
+        "running": true,
+        "failed": false
+      },
+      "pbr": {
+        "submitted": 12,
+        "completed": 12,
+        "failures": 0,
+        "workerMs": 527.8999999947846,
+        "queued": 0,
+        "active": 0,
+        "running": true,
+        "failed": false
+      },
+      "geometry": {
+        "submitted": 2,
+        "completed": 2,
+        "failures": 0,
+        "workerMs": 1489.6999999955297,
+        "queued": 0,
+        "active": 0,
+        "running": true,
+        "failed": false
+      },
+      "explored": 226
+    },
+    {
+      "level": 11,
+      "gpu": {
+        "calls": 1,
+        "triangles": 1,
+        "textures": 123,
+        "geometries": 1310
+      },
+      "sight": {
+        "submitted": 93,
+        "completed": 93,
+        "superseded": 0,
+        "failures": 0,
+        "workerMs": 422.8999999836087,
+        "dispatchMs": 3.3000000044703484,
+        "active": 0,
+        "queued": 0,
+        "running": true,
+        "failed": false
+      },
+      "pbr": {
+        "submitted": 0,
+        "completed": 0,
+        "failures": 0,
+        "workerMs": 0,
+        "queued": 0,
+        "active": 0,
+        "running": false,
+        "failed": false
+      },
+      "geometry": {
+        "submitted": 0,
+        "completed": 0,
+        "failures": 0,
+        "workerMs": 0,
+        "queued": 0,
+        "active": 0,
+        "running": false,
+        "failed": false
+      },
+      "explored": 7385
+    },
+    {
+      "level": 1,
+      "stats": {
+        "kind": "frame",
+        "at": 1794131621564.3,
+        "frames": 1577,
+        "sequence": 1711,
+        "ready": false,
+        "cpuMs": 7.5,
+        "calls": 160,
+        "triangles": 102938,
+        "textures": 99,
+        "geometries": 198
+      },
+      "mainFrames": 2086,
+      "withinBlock": [
+        {
+          "at": 1794131621143.5,
+          "frames": 1512
+        },
+        {
+          "at": 1794131621143.5,
+          "frames": 1512
+        },
+        {
+          "at": 1794131621143.5,
+          "frames": 1512
+        },
+        {
+          "at": 1794131621143.5,
+          "frames": 1512
+        },
+        {
+          "at": 1794131621143.5,
+          "frames": 1512
+        },
+        {
+          "at": 1794131621143.5,
+          "frames": 1512
+        },
+        {
+          "at": 1794131621143.5,
+          "frames": 1512
+        },
+        {
+          "at": 1794131621143.5,
+          "frames": 1512
+        },
+        {
+          "at": 1794131621143.5,
+          "frames": 1512
+        }
+      ],
+      "error": null
+    }
+  ],
+  "errors": [],
+  "console": [
+    {
+      "type": "warning",
+      "args": [
+        {
+          "type": "string",
+          "value": "THREE.WebGLProgram: Program Info Log:"
+        },
+        {
+          "type": "string",
+          "value": "(210,91-147): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1794131547250.263,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "warn",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 296,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "onFirstUse",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 36018,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "WebGLProgram.getUniforms",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 36045,
+            "columnNumber": 6
+          },
+          {
+            "functionName": "setProgram",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 42520,
+            "columnNumber": 33
+          },
+          {
+            "functionName": "WebGLRenderer.renderBufferDirect",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 41864,
+            "columnNumber": 22
+          },
+          {
+            "functionName": "renderObject",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 42317,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "renderObjects",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 42299,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "renderScene",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 42216,
+            "columnNumber": 36
+          },
+          {
+            "functionName": "WebGLRenderer.render",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 42119,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "_applyGGXFilter",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 33524,
+            "columnNumber": 13
+          },
+          {
+            "functionName": "_applyPMREM",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 33488,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "_fromTexture",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 33356,
+            "columnNumber": 9
+          },
+          {
+            "functionName": "fromEquirectangular",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 33275,
+            "columnNumber": 16
+          },
+          {
+            "functionName": "envProbe",
+            "scriptId": "232",
+            "url": "http://127.0.0.1:9532/src/game/renderer/envProbe.ts",
+            "lineNumber": 51,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "applyEnvProbe",
+            "scriptId": "11",
+            "url": "http://127.0.0.1:9532/src/game/renderer/renderer.ts",
+            "lineNumber": 4861,
+            "columnNumber": 29
+          },
+          {
+            "functionName": "buildInfiniteEnv",
+            "scriptId": "11",
+            "url": "http://127.0.0.1:9532/src/game/renderer/renderer.ts",
+            "lineNumber": 3941,
+            "columnNumber": 9
+          },
+          {
+            "functionName": "renderFrame",
+            "scriptId": "11",
+            "url": "http://127.0.0.1:9532/src/game/renderer/renderer.ts",
+            "lineNumber": 1504,
+            "columnNumber": 13
+          },
+          {
+            "functionName": "render",
+            "scriptId": "11",
+            "url": "http://127.0.0.1:9532/src/game/renderer/renderer.ts",
+            "lineNumber": 1371,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "loop",
+            "scriptId": "779",
+            "url": "http://127.0.0.1:9532/src/App.tsx",
+            "lineNumber": 1148,
+            "columnNumber": 19
+          }
+        ]
+      }
+    },
+    {
+      "type": "warning",
+      "args": [
+        {
+          "type": "string",
+          "value": "THREE.WebGLProgram: Program Info Log:"
+        },
+        {
+          "type": "string",
+          "value": "(210,91-147): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision"
+        }
+      ],
+      "executionContextId": 3,
+      "timestamp": 1794131567788.7,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "warn",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 296,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "onFirstUse",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 36018,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "WebGLProgram.getUniforms",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 36045,
+            "columnNumber": 6
+          },
+          {
+            "functionName": "setProgram",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 42520,
+            "columnNumber": 33
+          },
+          {
+            "functionName": "WebGLRenderer.renderBufferDirect",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 41864,
+            "columnNumber": 22
+          },
+          {
+            "functionName": "renderObject",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 42317,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "renderObjects",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 42299,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "renderScene",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 42216,
+            "columnNumber": 36
+          },
+          {
+            "functionName": "WebGLRenderer.render",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 42119,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "_applyGGXFilter",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 33524,
+            "columnNumber": 13
+          },
+          {
+            "functionName": "_applyPMREM",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 33488,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "_fromTexture",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 33356,
+            "columnNumber": 9
+          },
+          {
+            "functionName": "fromEquirectangular",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 33275,
+            "columnNumber": 16
+          },
+          {
+            "functionName": "getPMREM",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 34217,
+            "columnNumber": 60
+          },
+          {
+            "functionName": "get",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 34169,
+            "columnNumber": 13
+          },
+          {
+            "functionName": "getParameters",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 36179,
+            "columnNumber": 32
+          },
+          {
+            "functionName": "getProgram",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 42327,
+            "columnNumber": 39
+          },
+          {
+            "functionName": "prepareMaterial",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 41955,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 41996,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "traverse",
+            "scriptId": "190",
+            "url": "http://127.0.0.1:9532/src/game/renderer/sceneWarmup.ts",
+            "lineNumber": 34,
+            "columnNumber": 39
+          },
+          {
+            "functionName": "WebGLRenderer.compile",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 41983,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "compileSceneJob",
+            "scriptId": "190",
+            "url": "http://127.0.0.1:9532/src/game/renderer/sceneWarmup.ts",
+            "lineNumber": 84,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "buildInfiniteChunk",
+            "scriptId": "11",
+            "url": "http://127.0.0.1:9532/src/game/renderer/renderer.ts",
+            "lineNumber": 4577,
+            "columnNumber": 18
+          },
+          {
+            "functionName": "advance",
+            "scriptId": "188",
+            "url": "http://127.0.0.1:9532/src/game/renderer/chunkBuildQueue.ts",
+            "lineNumber": 25,
+            "columnNumber": 20
+          },
+          {
+            "functionName": "syncInfinite",
+            "scriptId": "11",
+            "url": "http://127.0.0.1:9532/src/game/renderer/renderer.ts",
+            "lineNumber": 4106,
+            "columnNumber": 21
+          },
+          {
+            "functionName": "renderFrame",
+            "scriptId": "11",
+            "url": "http://127.0.0.1:9532/src/game/renderer/renderer.ts",
+            "lineNumber": 1506,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "render",
+            "scriptId": "11",
+            "url": "http://127.0.0.1:9532/src/game/renderer/renderer.ts",
+            "lineNumber": 1371,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "loop",
+            "scriptId": "779",
+            "url": "http://127.0.0.1:9532/src/App.tsx",
+            "lineNumber": 1148,
+            "columnNumber": 19
+          }
+        ]
+      }
+    },
+    {
+      "type": "warning",
+      "args": [
+        {
+          "type": "string",
+          "value": "THREE.WebGLProgram: Program Info Log:"
+        },
+        {
+          "type": "string",
+          "value": "(210,91-147): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision"
+        }
+      ],
+      "executionContextId": 4,
+      "timestamp": 1794131590801.181,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "warn",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 296,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "onFirstUse",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 36018,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "WebGLProgram.getUniforms",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 36045,
+            "columnNumber": 6
+          },
+          {
+            "functionName": "setProgram",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 42520,
+            "columnNumber": 33
+          },
+          {
+            "functionName": "WebGLRenderer.renderBufferDirect",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 41864,
+            "columnNumber": 22
+          },
+          {
+            "functionName": "renderObject",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 42317,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "renderObjects",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 42299,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "renderScene",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 42216,
+            "columnNumber": 36
+          },
+          {
+            "functionName": "WebGLRenderer.render",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 42119,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "_applyGGXFilter",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 33524,
+            "columnNumber": 13
+          },
+          {
+            "functionName": "_applyPMREM",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 33488,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "_fromTexture",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 33356,
+            "columnNumber": 9
+          },
+          {
+            "functionName": "fromEquirectangular",
+            "scriptId": "493",
+            "url": "http://127.0.0.1:9532/reports/offscreen-20261108/realistic-complete/qa-1794131525953-58168/vite/deps/chunk-BWT6IPVN.js?v=0de296b4",
+            "lineNumber": 33275,
+            "columnNumber": 16
+          },
+          {
+            "functionName": "envProbe",
+            "scriptId": "232",
+            "url": "http://127.0.0.1:9532/src/game/renderer/envProbe.ts",
+            "lineNumber": 51,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "applyEnvProbe",
+            "scriptId": "11",
+            "url": "http://127.0.0.1:9532/src/game/renderer/renderer.ts",
+            "lineNumber": 4861,
+            "columnNumber": 29
+          },
+          {
+            "functionName": "renderFrame",
+            "scriptId": "11",
+            "url": "http://127.0.0.1:9532/src/game/renderer/renderer.ts",
+            "lineNumber": 1519,
+            "columnNumber": 35
+          },
+          {
+            "functionName": "render",
+            "scriptId": "11",
+            "url": "http://127.0.0.1:9532/src/game/renderer/renderer.ts",
+            "lineNumber": 1371,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "loop",
+            "scriptId": "779",
+            "url": "http://127.0.0.1:9532/src/App.tsx",
+            "lineNumber": 1148,
+            "columnNumber": 19
+          }
+        ]
+      }
+    }
+  ],
+  "httpErrors": [
+    {
+      "url": "http://127.0.0.1:9532/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sun, 08 Nov 2026 09:52:22 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 149,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 9532,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 20370.496407,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.319,
+        "sendEnd": 0.34,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 60.62,
+        "receiveHeadersEnd": 60.763
+      },
+      "responseTime": 1794131542788.436,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "port": 9532,
+  "cdp": 9533,
+  "profile": "E:\\ZAN\\backroom\\app\\reports\\offscreen-20261108\\realistic-complete\\qa-1794131525953-58168",
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--headless=new",
+    "--enable-automation",
+    "--remote-debugging-port=9533",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\offscreen-20261108\\realistic-complete\\qa-1794131525953-58168",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--disable-background-timer-throttling",
+    "--disable-renderer-backgrounding",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pixels": {
+    "rows": [
+      {
+        "surface": "wood",
+        "key": "map",
+        "diff": 0,
+        "max": 0
+      },
+      {
+        "surface": "wood",
+        "key": "normalMap",
+        "diff": 0,
+        "max": 0
+      },
+      {
+        "surface": "wood",
+        "key": "roughnessMap",
+        "diff": 0,
+        "max": 0
+      },
+      {
+        "surface": "brass",
+        "key": "map",
+        "diff": 0,
+        "max": 0
+      },
+      {
+        "surface": "brass",
+        "key": "normalMap",
+        "diff": 0,
+        "max": 0
+      },
+      {
+        "surface": "brass",
+        "key": "roughnessMap",
+        "diff": 0,
+        "max": 0
+      },
+      {
+        "surface": "brass",
+        "key": "metalnessMap",
+        "diff": 0,
+        "max": 0
+      },
+      {
+        "surface": "record",
+        "key": "map",
+        "diff": 0,
+        "max": 0
+      },
+      {
+        "surface": "record",
+        "key": "normalMap",
+        "diff": 0,
+        "max": 0
+      },
+      {
+        "surface": "record",
+        "key": "roughnessMap",
+        "diff": 0,
+        "max": 0
+      },
+      {
+        "surface": "felt",
+        "key": "map",
+        "diff": 0,
+        "max": 0
+      },
+      {
+        "surface": "felt",
+        "key": "normalMap",
+        "diff": 0,
+        "max": 0
+      },
+      {
+        "surface": "plate",
+        "key": "map",
+        "diff": 0,
+        "max": 0
+      },
+      {
+        "surface": "plate",
+        "key": "normalMap",
+        "diff": 0,
+        "max": 0
+      }
+    ],
+    "stats": {
+      "submitted": 17,
+      "completed": 17,
+      "failures": 0,
+      "workerMs": 631.5999999940395,
+      "queued": 0,
+      "active": 0,
+      "running": true,
+      "failed": false
+    }
+  },
+  "geometry": {
+    "beast": true,
+    "spokes": true,
+    "chef": true,
+    "stats": {
+      "submitted": 4,
+      "completed": 4,
+      "failures": 0,
+      "workerMs": 2803.39999999851,
+      "queued": 0,
+      "active": 0,
+      "running": true,
+      "failed": false
+    }
+  },
+  "models": [
+    {
+      "type": "beast",
+      "finite": true,
+      "meshes": 4
+    },
+    {
+      "type": "greeter",
+      "finite": true,
+      "meshes": 11
+    },
+    {
+      "type": "chef",
+      "finite": true,
+      "meshes": 3
+    }
+  ],
+  "ok": false,
+  "failure": "Error: Level 1 Worker resize",
+  "failureState": {
+    "text": "离屏渲染试验 · 原游戏建筑与材质 · 只验证场景与视角，尚未接管完整交互\n{\"kind\":\"frame\",\"at\":1794131622310.1,\"frames\":1662,\"sequence\":1822,\"ready\":false,\"cpuMs\":5.899999998509884,\"calls\":160,\"triangles\":102938,\"textures\":107,\"geometries\":198}",
+    "trial": {
+      "stats": {
+        "kind": "frame",
+        "at": 1794131622310.1,
+        "frames": 1662,
+        "sequence": 1822,
+        "ready": false,
+        "cpuMs": 5.899999998509884,
+        "calls": 160,
+        "triangles": 102938,
+        "textures": 107,
+        "geometries": 198
+      },
+      "error": null
+    }
+  },
+  "cleanup": {
+    "profileRemoved": true
+  }
+}

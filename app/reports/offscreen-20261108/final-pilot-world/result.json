@@ -1,0 +1,401 @@
+{
+  "mode": "realistic",
+  "only": "pilot",
+  "checks": [
+    "owned native headless session",
+    "Level 1 renders original scene in Worker",
+    "Level 1 continues rendering while main thread is blocked for 250 ms",
+    "Level 1 Worker resize",
+    "Level 1 world pose survives a streaming-origin shift",
+    "Level 5 renders original scene in Worker",
+    "Level 5 continues rendering while main thread is blocked for 250 ms",
+    "Level 5 Worker resize",
+    "Level 5 world pose survives a streaming-origin shift",
+    "Level 11 renders original scene in Worker",
+    "Level 11 continues rendering while main thread is blocked for 250 ms",
+    "Level 11 Worker resize",
+    "Level 11 world pose survives a streaming-origin shift",
+    "no uncaught page exceptions",
+    "no page console errors"
+  ],
+  "scenes": [
+    {
+      "level": 1,
+      "stats": {
+        "kind": "frame",
+        "worldX": 15.5,
+        "worldY": 15.5,
+        "originX": -64,
+        "originY": -64,
+        "width": 1920,
+        "height": 1080,
+        "at": 1794133006735.0999,
+        "frames": 1334,
+        "sequence": 1440,
+        "ready": false,
+        "cpuMs": 9.900000002235174,
+        "calls": 303,
+        "triangles": 198882,
+        "textures": 102,
+        "geometries": 198
+      },
+      "mainFrames": 1850,
+      "diagnostics": [
+        {
+          "kind": "log",
+          "level": "warn",
+          "message": "THREE.WebGLProgram: Program Info Log: (210,91-147): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision"
+        }
+      ],
+      "withinBlock": [
+        {
+          "at": 1794133006314.3,
+          "frames": 1279
+        },
+        {
+          "at": 1794133006314.3,
+          "frames": 1279
+        },
+        {
+          "at": 1794133006314.3,
+          "frames": 1279
+        },
+        {
+          "at": 1794133006314.3,
+          "frames": 1279
+        },
+        {
+          "at": 1794133006314.3,
+          "frames": 1279
+        },
+        {
+          "at": 1794133006314.3,
+          "frames": 1279
+        },
+        {
+          "at": 1794133006314.3,
+          "frames": 1279
+        },
+        {
+          "at": 1794133006314.3,
+          "frames": 1279
+        },
+        {
+          "at": 1794133006314.3,
+          "frames": 1279
+        },
+        {
+          "at": 1794133006314.3,
+          "frames": 1279
+        },
+        {
+          "at": 1794133006314.3,
+          "frames": 1279
+        },
+        {
+          "at": 1794133006314.3,
+          "frames": 1279
+        },
+        {
+          "at": 1794133006314.3,
+          "frames": 1279
+        },
+        {
+          "at": 1794133006314.3,
+          "frames": 1279
+        }
+      ],
+      "error": null
+    },
+    {
+      "level": 1,
+      "crossed": {
+        "before": {
+          "x": -64,
+          "y": -64
+        },
+        "after": {
+          "x": -32,
+          "y": -64
+        },
+        "worldX": 48.5,
+        "worldY": 15.5
+      },
+      "afterCross": {
+        "kind": "frame",
+        "worldX": 48.5,
+        "worldY": 15.5,
+        "originX": -32,
+        "originY": -64,
+        "width": 1920,
+        "height": 1080,
+        "at": 1794133012660,
+        "frames": 2013,
+        "sequence": 2361,
+        "ready": true,
+        "cpuMs": 6.800000000745058,
+        "calls": 218,
+        "triangles": 161055,
+        "textures": 141,
+        "geometries": 339
+      }
+    },
+    {
+      "level": 5,
+      "stats": {
+        "kind": "frame",
+        "worldX": 15.5,
+        "worldY": 15.5,
+        "originX": -64,
+        "originY": -64,
+        "width": 1920,
+        "height": 1080,
+        "at": 1794133040688.7002,
+        "frames": 2017,
+        "sequence": 2248,
+        "ready": true,
+        "cpuMs": 14.099999997764826,
+        "calls": 2000,
+        "triangles": 1455637,
+        "textures": 348,
+        "geometries": 2030
+      },
+      "mainFrames": 5424,
+      "diagnostics": [
+        {
+          "kind": "log",
+          "level": "warn",
+          "message": "THREE.WebGLProgram: Program Info Log: (210,91-147): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision"
+        }
+      ],
+      "withinBlock": [
+        {
+          "at": 1794133040251.2002,
+          "frames": 1988
+        },
+        {
+          "at": 1794133040251.2002,
+          "frames": 1988
+        },
+        {
+          "at": 1794133040251.2002,
+          "frames": 1988
+        },
+        {
+          "at": 1794133040251.2002,
+          "frames": 1988
+        },
+        {
+          "at": 1794133040251.2002,
+          "frames": 1988
+        },
+        {
+          "at": 1794133040251.2002,
+          "frames": 1988
+        }
+      ],
+      "error": null
+    },
+    {
+      "level": 5,
+      "crossed": {
+        "before": {
+          "x": -64,
+          "y": -64
+        },
+        "after": {
+          "x": -32,
+          "y": -64
+        },
+        "worldX": 47.5,
+        "worldY": 14.5
+      },
+      "afterCross": {
+        "kind": "frame",
+        "worldX": 47.5,
+        "worldY": 14.5,
+        "originX": -32,
+        "originY": -64,
+        "width": 1920,
+        "height": 1080,
+        "at": 1794133051126,
+        "frames": 2690,
+        "sequence": 2994,
+        "ready": true,
+        "cpuMs": 13.199999999254942,
+        "calls": 1536,
+        "triangles": 771267,
+        "textures": 369,
+        "geometries": 2257
+      }
+    },
+    {
+      "level": 11,
+      "stats": {
+        "kind": "frame",
+        "worldX": 26.5,
+        "worldY": 26.5,
+        "originX": -64,
+        "originY": -64,
+        "width": 1920,
+        "height": 1080,
+        "at": 1794133067508.9001,
+        "frames": 1142,
+        "sequence": 1367,
+        "ready": true,
+        "cpuMs": 5.299999997019768,
+        "calls": 615,
+        "triangles": 1859224,
+        "textures": 96,
+        "geometries": 1261
+      },
+      "mainFrames": 2245,
+      "diagnostics": [
+        {
+          "kind": "log",
+          "level": "warn",
+          "message": "THREE.WebGLProgram: Program Info Log: (210,91-147): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision"
+        }
+      ],
+      "withinBlock": [
+        {
+          "at": 1794133067071.5,
+          "frames": 1093
+        },
+        {
+          "at": 1794133067071.5,
+          "frames": 1093
+        },
+        {
+          "at": 1794133067071.5,
+          "frames": 1093
+        },
+        {
+          "at": 1794133067071.5,
+          "frames": 1093
+        },
+        {
+          "at": 1794133067071.5,
+          "frames": 1093
+        },
+        {
+          "at": 1794133067071.5,
+          "frames": 1093
+        },
+        {
+          "at": 1794133067071.5,
+          "frames": 1093
+        }
+      ],
+      "error": null
+    },
+    {
+      "level": 11,
+      "crossed": {
+        "before": {
+          "x": -64,
+          "y": -64
+        },
+        "after": {
+          "x": -32,
+          "y": -64
+        },
+        "worldX": 59.5,
+        "worldY": 26.5
+      },
+      "afterCross": {
+        "kind": "frame",
+        "worldX": 59.5,
+        "worldY": 26.5,
+        "originX": -32,
+        "originY": -64,
+        "width": 1920,
+        "height": 1080,
+        "at": 1794133073529.8,
+        "frames": 1718,
+        "sequence": 2048,
+        "ready": true,
+        "cpuMs": 5.199999999254942,
+        "calls": 642,
+        "triangles": 1971931,
+        "textures": 103,
+        "geometries": 1594
+      }
+    }
+  ],
+  "errors": [],
+  "console": [],
+  "httpErrors": [
+    {
+      "url": "http://127.0.0.1:5361/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sun, 08 Nov 2026 10:16:35 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 193,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 5361,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 21823.433778,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.47,
+        "sendEnd": 0.531,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 12.609,
+        "receiveHeadersEnd": 12.75
+      },
+      "responseTime": 1794132995677.795,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "port": 5361,
+  "cdp": 5362,
+  "profile": "E:\\ZAN\\backroom\\app\\reports\\offscreen-20261108\\final-pilot-world\\qa-1794132979216-53940",
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--headless=new",
+    "--enable-automation",
+    "--remote-debugging-port=5362",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\offscreen-20261108\\final-pilot-world\\qa-1794132979216-53940",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--disable-background-timer-throttling",
+    "--disable-renderer-backgrounding",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "ok": true,
+  "cleanup": {
+    "profileRemoved": true
+  }
+}

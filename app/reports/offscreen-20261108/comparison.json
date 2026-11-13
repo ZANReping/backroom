@@ -1,0 +1,175 @@
+{
+  "environment": {
+    "mode": "realistic",
+    "seedProtocol": "424242 + level; deterministic Math.random per level",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "targetHz": 60,
+    "dynamicResolution": false,
+    "dpr": 1,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "gpuTimer": true,
+    "hardwareConcurrency": 32,
+    "staticWorld": "full chunk/build queue + distant skyline + model preparation drained; simulation active once near-ready; two complete 360-degree warmup turns + 60 quiet frames; optional catalogue prewarming disabled equally in both variants"
+  },
+  "rows": [
+    {
+      "level": 1,
+      "seed": 424243,
+      "before": {
+        "samples": 600,
+        "frameMedian": 16.700000000000728,
+        "frameP95": 49.900000000001455,
+        "logicMedian": 1.300000000745058,
+        "logicP95": 2.399999998509884,
+        "renderMedian": 6,
+        "renderP95": 46.900000002235174,
+        "cpuMedian": 7.699999999254942,
+        "cpuP95": 48.099999997764826,
+        "drawCalls": 233,
+        "triangles": 127882,
+        "over50": 19,
+        "gpu": {
+          "samples": 601,
+          "median": 6.45632,
+          "p95": 10.747904
+        },
+        "resources": {
+          "geometries": 767,
+          "textures": 149
+        },
+        "warmupMs": 8276
+      },
+      "after": {
+        "samples": 600,
+        "frameMedian": 16.69999999999709,
+        "frameP95": 16.799999999999272,
+        "logicMedian": 0.9000000022351742,
+        "logicP95": 2,
+        "renderMedian": 5.699999999254942,
+        "renderP95": 11.600000001490116,
+        "cpuMedian": 6.699999999254942,
+        "cpuP95": 13.199999999254942,
+        "drawCalls": 227,
+        "triangles": 117398,
+        "over50": 1,
+        "gpu": {
+          "samples": 601,
+          "median": 6.69184,
+          "p95": 10.733568
+        },
+        "resources": {
+          "geometries": 773,
+          "textures": 149
+        },
+        "warmupMs": 7946
+      }
+    },
+    {
+      "level": 5,
+      "seed": 424247,
+      "before": {
+        "samples": 600,
+        "frameMedian": 24.90000000000873,
+        "frameP95": 29.19999999999709,
+        "logicMedian": 1.7999999970197678,
+        "logicP95": 2.199999999254942,
+        "renderMedian": 21.399999998509884,
+        "renderP95": 26,
+        "cpuMedian": 23.19999999552965,
+        "cpuP95": 27.699999999254942,
+        "drawCalls": 2134,
+        "triangles": 1380813,
+        "over50": 0,
+        "gpu": {
+          "samples": 600,
+          "median": 13.070336,
+          "p95": 15.117312
+        },
+        "resources": {
+          "geometries": 10238,
+          "textures": 435
+        },
+        "warmupMs": 46505.89999999851
+      },
+      "after": {
+        "samples": 600,
+        "frameMedian": 20.69999999999709,
+        "frameP95": 25,
+        "logicMedian": 0.6999999992549419,
+        "logicP95": 2.399999998509884,
+        "renderMedian": 17.699999999254942,
+        "renderP95": 21.900000002235174,
+        "cpuMedian": 18.699999999254942,
+        "cpuP95": 23.199999999254942,
+        "drawCalls": 2134,
+        "triangles": 1380813,
+        "over50": 0,
+        "gpu": {
+          "samples": 600,
+          "median": 11.455488,
+          "p95": 13.319168
+        },
+        "resources": {
+          "geometries": 10247,
+          "textures": 435
+        },
+        "warmupMs": 39289.60000000149
+      }
+    },
+    {
+      "level": 11,
+      "seed": 424253,
+      "before": {
+        "samples": 600,
+        "frameMedian": 16.69999999999709,
+        "frameP95": 16.80000000000291,
+        "logicMedian": 2.5,
+        "logicP95": 3.699999999254942,
+        "renderMedian": 4.399999998509884,
+        "renderP95": 6.600000001490116,
+        "cpuMedian": 7.200000002980232,
+        "cpuP95": 9.400000002235174,
+        "drawCalls": 407,
+        "triangles": 1551186,
+        "over50": 0,
+        "gpu": {
+          "samples": 601,
+          "median": 10.467328,
+          "p95": 13.19424
+        },
+        "resources": {
+          "geometries": 1485,
+          "textures": 155
+        },
+        "warmupMs": 13998.900000002235
+      },
+      "after": {
+        "samples": 600,
+        "frameMedian": 16.69999999999709,
+        "frameP95": 16.80000000000291,
+        "logicMedian": 0.30000000074505806,
+        "logicP95": 0.5,
+        "renderMedian": 4.300000000745058,
+        "renderP95": 6.100000001490116,
+        "cpuMedian": 4.600000001490116,
+        "cpuP95": 6.5,
+        "drawCalls": 411,
+        "triangles": 1553784,
+        "over50": 0,
+        "gpu": {
+          "samples": 601,
+          "median": 10.11888,
+          "p95": 12.83072
+        },
+        "resources": {
+          "geometries": 1484,
+          "textures": 155
+        },
+        "warmupMs": 13006
+      }
+    }
+  ]
+}

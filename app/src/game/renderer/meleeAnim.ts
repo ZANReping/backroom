@@ -5,6 +5,7 @@
 // 姿势用 vm 的增量 [px, py, pz, rx, ry, rz]（米 / 弧度），旋转顺序 YXZ：先前倾/后仰（rx）再左右扫（ry），rz 是刃面翻转。
 //   +rx：武器顶端倒向镜头（举过肩）；-rx：向前劈下。 +ry：顶端扫向左；-ry：扫向右。 +rz：顶端歪向左。
 import * as THREE from 'three'
+import { meleeChargeProgress } from '../content/melee'
 import type { HandPose } from './retroViewHand'
 import type { MeleeType } from './meleeMesh'
 
@@ -169,7 +170,7 @@ export function meleePose(st: MeleePoseInput): V6 {
   if ((st.charge ?? 0) > 0) {
     // 蓄力：慢慢拉到重击前摇姿势，满蓄后发抖（提示可以放手）
     const sw = swings(st.type, true, 1), c = Math.min(1, st.charge!)
-    const wind = interp(sw.keys, sw.windup * smooth(c))
+    const wind = interp(sw.keys, meleeChargeProgress(sw.windup, c))
     const shake = c >= 1 ? Math.sin(st.time * 47) * .006 : Math.sin(st.time * 23) * .002 * c
     p = p.map((v, j) => v + wind[j]) as V6
     p[0] += shake; p[1] += shake * .7; p[3] += shake * 2

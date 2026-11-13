@@ -1,0 +1,68 @@
+[
+  {
+    "command": "npm --prefix app ls --depth=0",
+    "exitCode": 0,
+    "durationMs": 3844,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261113\\dependency-check.txt"
+  },
+  {
+    "command": "npm run build",
+    "exitCode": 0,
+    "durationMs": 132348,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261113\\build-check.txt"
+  },
+  {
+    "command": "node app/scripts/check-vercel-config.mjs --built",
+    "exitCode": 0,
+    "durationMs": 28500,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261113\\config-built-check.txt"
+  },
+  {
+    "command": "npm --prefix app run check:worker-pipeline",
+    "exitCode": 0,
+    "durationMs": 5168,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261113\\check-04.txt"
+  },
+  {
+    "command": "npm --prefix app run check:worker-map-parity",
+    "exitCode": 0,
+    "durationMs": 8171,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261113\\check-05-retry.txt",
+    "initialAttempt": {
+      "command": "npm --prefix app run check:worker-map-parity",
+      "exitCode": 1,
+      "durationMs": 1372,
+      "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261113\\check-05.txt"
+    }
+  },
+  {
+    "command": "npm --prefix app run check:melee",
+    "exitCode": 0,
+    "durationMs": 7473,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261113\\check-06.txt"
+  },
+  {
+    "command": "npm --prefix app run check:model-warmup",
+    "exitCode": 0,
+    "durationMs": 1471,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261113\\check-07.txt"
+  },
+  {
+    "command": "npm --prefix app run check:swim-integration",
+    "exitCode": 0,
+    "durationMs": 3100,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261113\\check-08.txt"
+  },
+  {
+    "command": "npm --prefix app run check:foyer-entry",
+    "exitCode": 0,
+    "durationMs": 2725,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261113\\check-09.txt"
+  },
+  {
+    "command": "npm --prefix app run check:foyer-survival",
+    "exitCode": 0,
+    "durationMs": 2990,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261113\\check-10.txt"
+  }
+]

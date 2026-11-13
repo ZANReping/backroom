@@ -99,23 +99,42 @@ for (const k of C.MELEE_KINDS) {
 }
 
 // ---------- 4. 蓄力重击 ----------
-for (const k of ['crowbar', 'axe', 'knife'] as const) {
+for (const k of C.MELEE_KINDS) for (const full of [false, true]) {
   const { e, ents } = setup(k)
-  const st0 = e.player.stamina
+  const stats = C.MELEE[k]
+  const pose = () => vmAnimPose({
+    mx: 0, my: 0, bobPhase: 0, time: 0,
+    attackAnimT: e.attackAnimT, attackAnimDur: e.attackAnimDur, attackAnimKind: e.attackAnimKind,
+    melee: { type: k, heavy: e.meleeHeavy, side: e.meleeSide, charge: e.meleeCharge },
+  })
+  const label = k + (full ? ' 满蓄' : ' 部分蓄力')
   e.input.attack = true; e.input.attackHeld = true
-  step(e, C.CHARGE_DELAY + C.MELEE[k].chargeTime + .1)
-  ok(near(e.meleeCharge, 1), `${k}：按住 ${C.CHARGE_DELAY}+${C.MELEE[k].chargeTime}s 蓄满（${e.meleeCharge.toFixed(2)}）`)
-  ok(dmgOf(ents[0]) === 0 && e.attackAnimT <= 0, `${k}：蓄力期间不出手`)
-  const st0b = e.player.stamina
+  step(e, C.CHARGE_DELAY + stats.chargeTime * (full ? 1.2 : .65))
+  const charge = e.meleeCharge
+  ok(full ? near(charge, 1) : charge > C.HEAVY_MIN_CHARGE && charge < 1, `${label}：达到预期的蓄力进度`)
+  ok(dmgOf(ents[0]) === 0 && e.attackAnimT <= 0, `${label}：蓄力期间不出手`)
+  const heldPose = pose()
+  const stamina = e.player.stamina
   e.input.attackHeld = false
   step(e, DT)
-  const spent = st0b - e.player.stamina
-  step(e, C.MELEE[k].heavy.dur + .2)
-  ok(e.meleeHeavy, `${k}：松开后放出重击`)
-  ok(near(dmgOf(ents[0]), ITEMS[k].weapon! * 1.8, 1e-6), `${k}：满蓄重击伤害 ×1.8（${dmgOf(ents[0])}）`)
-  void st0
-  ok(Math.abs(spent - ITEMS[k].attackStamina! * 2) < .5, `${k}：重击体力消耗 ×2（${ITEMS[k].attackStamina! * 2}，实测 ${spent.toFixed(1)}）`)
-  ok(M.slotDur(e.player.hotbar[0]) === C.MELEE[k].maxDur - C.DUR_HEAVY_HIT, `${k}：重击命中扣耐久 ${C.DUR_HEAVY_HIT}`)
+  const spent = stamina - e.player.stamina
+  const releasedPose = pose()
+  ok((['px', 'py', 'pz', 'rx', 'ry', 'rz'] as const).every(axis => near(heldPose[axis], releasedPose[axis])),
+    `${label}：松手首帧沿用蓄力姿势`)
+  const hitDelay = e.meleePending?.t
+  const windup = stats.heavy.windup * stats.heavy.dur
+  ok(typeof hitDelay === 'number' && (full ? near(hitDelay, 0) : hitDelay > 0 && hitDelay < windup)
+    && near(hitDelay, e.attackAnimT - (stats.heavy.dur - windup)), `${label}：判定只等待动画剩余前摇`)
+  ok(near(e.attackCooldownDur, stats.heavy.dur), `${label}：重击冷却时长保持一致`)
+  if (full) {
+    step(e, DT)
+    ok(dmgOf(ents[0]) > 0, `${label}：松手后的下一次更新就进入出手判定`)
+  }
+  step(e, stats.heavy.dur + .2)
+  ok(e.meleeHeavy, `${label}：松开后放出重击`)
+  ok(near(dmgOf(ents[0]), ITEMS[k].weapon! * C.heavyDamageMul(charge)), `${label}：按蓄力进度结算一次伤害`)
+  ok(Math.abs(spent - ITEMS[k].attackStamina! * 2) < .5, `${label}：重击体力消耗 ×2`)
+  ok(M.slotDur(e.player.hotbar[0]) === stats.maxDur - C.DUR_HEAVY_HIT, `${label}：重击命中扣耐久 ${C.DUR_HEAVY_HIT}`)
 }
 {
   const { e, ents } = setup('wrench')

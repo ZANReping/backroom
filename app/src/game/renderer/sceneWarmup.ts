@@ -56,6 +56,7 @@ export function* compileSceneJob(
 ): Generator<void, void, unknown> {
   const objects: THREE.Object3D[] = []
   const lights: THREE.Object3D[] = []
+  const pendingPixels = new Set<THREE.Texture>()
   const representatives = new Map<THREE.Material, Set<string>>()
   const layouts = new Map<THREE.BufferGeometry, string>()
   // Authored static roots opt in. Three's stock Mesh programs depend on the
@@ -78,8 +79,12 @@ export function* compileSceneJob(
   root.traverseVisible(object => {
     if ((object as THREE.Light).isLight && object.layers.test(camera.layers)) lights.push(object)
     const renderable = object as THREE.Mesh | THREE.Line | THREE.Points | THREE.Sprite
+    if (object.layers.test(camera.layers)) for (const mat of Array.isArray(renderable.material) ? renderable.material : renderable.material ? [renderable.material] : []) {
+      for (const value of Object.values(mat)) if (value?.isTexture && value.userData?.generatedPending) pendingPixels.add(value)
+    }
     if (renderable.material && object.layers.test(camera.layers) && !duplicate(object)) objects.push(object)
   })
+  for (const texture of pendingPixels) while (texture.userData.generatedPending) yield
   let pending = 0
   const rootJobs = pendingRoots.get(root) ?? new Set<Promise<void>>()
   const rendererJobs = pendingRenderers.get(renderer) ?? new Set<Promise<void>>()

@@ -1,0 +1,96 @@
+{
+  "seed": 424243,
+  "mode": "realistic",
+  "port": 6159,
+  "cdp": 6160,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\boot-ceiling\\final\\qa-1794489342911-98104",
+    "--remote-debugging-port=6160",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 85028,
+    "server": 98800
+  },
+  "checks": [
+    "The ceiling draws before the app module runs",
+    "Both mobile orientations draw the fixture",
+    "Reduced motion still disables the progress animation",
+    "Ceiling is removed with the startup shell",
+    "The ceiling resize observer disconnects after startup"
+  ],
+  "desktop": {
+    "size": [
+      1440,
+      270
+    ],
+    "backing": [
+      1440,
+      270
+    ],
+    "dpr": 1,
+    "top": 208,
+    "status": "正在寻找入口……",
+    "state": "loading"
+  },
+  "portrait": {
+    "size": [
+      390,
+      253.1875
+    ],
+    "backing": [
+      585,
+      380
+    ],
+    "dpr": 3,
+    "top": 188,
+    "status": "正在寻找入口……",
+    "state": "loading"
+  },
+  "landscape": {
+    "size": [
+      844,
+      117
+    ],
+    "backing": [
+      1266,
+      176
+    ],
+    "dpr": 3,
+    "top": 167,
+    "status": "正在寻找入口……",
+    "state": "loading"
+  },
+  "largeViewport": {
+    "size": [
+      3840,
+      648
+    ],
+    "backing": [
+      2982,
+      504
+    ],
+    "dpr": 2,
+    "top": 162,
+    "status": "正在寻找入口……",
+    "state": "loading"
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

@@ -2,7 +2,8 @@
 // 版式：顶栏（标志 + 搜索 + 头像）/ 左侧导航 / 版块横幅与图标 / 帖子卡片（左侧投票列、版块·发帖人·时间、标题、正文/配图、评论/分享/保存）
 // / 帖子详情嵌套评论树（缩进线可点击折叠、投票）/ 右侧版块简介与版规 / 深浅色两套配色。
 // 名称、标志、图标均为自绘，不使用真实网站的名称或标志；剧情内容见 content/foyerForum.ts。
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import './ForumPage.css'
 import { audio } from '@/game/core/audio'
 import { FORUM_BOARD, FORUM_POSTS, FORUM_SIDEBAR_BOARDS, FORUM_SITE, type ForumComment, type ForumPost } from '@/game/content/foyerForum'
 
@@ -129,9 +130,9 @@ function Votes({ base, t, vertical = true, small = false }: { base: number; t: T
     </button>
   )
   return (
-    <div style={{ display: 'flex', flexDirection: vertical ? 'column' : 'row', alignItems: 'center', gap: vertical ? 0 : 4 }}>
+    <div className={vertical ? 'forum-votes forum-votes-vertical' : 'forum-votes'}>
       {btn(1)}
-      <span style={{ fontSize: small ? 12 : 13, fontWeight: 700, color: col, minWidth: vertical ? 32 : 0, textAlign: 'center' }}>{fmt(base + v)}</span>
+      <span className="forum-votes-count" style={{ fontSize: small ? 12 : 13, fontWeight: 700, color: col }}>{fmt(base + v)}</span>
       {btn(-1)}
     </div>
   )
@@ -139,7 +140,7 @@ function Votes({ base, t, vertical = true, small = false }: { base: number; t: T
 
 function ActionBtn({ icon, label, t, onClick }: { icon: string; label: string; t: Theme; onClick?: () => void }) {
   return (
-    <button onClick={(e) => { e.stopPropagation(); audio.uiTick(); onClick?.() }} style={{ display: 'flex', alignItems: 'center', gap: 6, color: t.meta, fontSize: 12, fontWeight: 700, padding: '6px 8px', borderRadius: 4 }} className="forum-act">
+    <button aria-label={label || '更多'} data-decoration={onClick ? undefined : ''} onClick={(e) => { e.stopPropagation(); audio.uiTick(); onClick?.() }} style={{ display: 'flex', alignItems: 'center', gap: 5, color: t.meta, fontSize: 12, fontWeight: 700, borderRadius: 4 }} className="forum-act px-2 py-1.5">
       <I d={icon} size={18} /> {label}
     </button>
   )
@@ -168,20 +169,20 @@ function PostCard({ p, t, onOpen }: { p: ForumPost; t: Theme; onOpen: () => void
   const [hover, setHover] = useState(false)
   const [saved, setSaved] = useState(false)
   return (
-    <article role="link" tabIndex={0} aria-label={p.title} onKeyDown={(e) => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); onOpen() } }} data-post={p.id} onClick={() => { audio.uiTick(); onOpen() }} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
-      style={{ display: 'flex', background: t.card, border: `1px solid ${hover ? t.meta : t.border}`, borderRadius: 6, marginBottom: 10, cursor: 'pointer', overflow: 'hidden' }}>
-      <div style={{ width: 44, flex: 'none', background: t.soft, padding: '8px 0', display: 'flex', justifyContent: 'center' }}><Votes base={p.score} t={t} /></div>
-      <div style={{ flex: 1, minWidth: 0, padding: '8px 10px 2px' }}>
+    <article role="link" tabIndex={0} aria-label={p.title} onKeyDown={(e) => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); onOpen() } }} data-post={p.id} className="forum-article" onClick={() => { audio.uiTick(); onOpen() }} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+      style={{ background: t.card, border: `1px solid ${hover ? t.meta : t.border}`, borderRadius: 6, marginBottom: 10, cursor: 'pointer', overflow: 'hidden' }}>
+      <div className="forum-vote-rail" style={{ background: t.soft }}><Votes base={p.score} t={t} /></div>
+      <div className="forum-article-copy">
         <PostMeta p={p} t={t} />
-        <h3 style={{ margin: '6px 0 6px', fontSize: 18, fontWeight: 600, lineHeight: 1.32, color: t.text }}><Flair f={p.flair} />{p.title}</h3>
+        <h3 className="text-[18px]" style={{ margin: '6px 0 6px', fontWeight: 600, lineHeight: 1.32, color: t.text }}><Flair f={p.flair} />{p.title}</h3>
         {p.image ? <div style={{ margin: '4px 0 6px' }}><PostImage kind={p.image} t={t} /></div>
           : <p style={{ margin: '0 0 4px', fontSize: 14, lineHeight: 1.55, color: t.text, maxHeight: 66, overflow: 'hidden', maskImage: 'linear-gradient(#000 60%, transparent)', WebkitMaskImage: 'linear-gradient(#000 60%, transparent)' }}>{p.body.join(' ')}</p>}
-        <div style={{ display: 'flex', gap: 2, marginLeft: -6 }}>
-          <ActionBtn icon={IC.comment} label={`${fmt(p.comments)} 条评论`} t={t} onClick={onOpen} />
-          <ActionBtn icon={IC.share} label="分享" t={t} />
-          <ActionBtn icon={IC.save} label={saved ? '已保存' : '保存'} t={t} onClick={() => setSaved(!saved)} />
-          <ActionBtn icon={IC.more} label="" t={t} />
-        </div>
+      </div>
+      <div className="forum-actions forum-article-actions">
+        <ActionBtn icon={IC.comment} label={`${fmt(p.comments)} 条评论`} t={t} onClick={onOpen} />
+        <ActionBtn icon={IC.share} label="分享" t={t} />
+        <ActionBtn icon={IC.save} label={saved ? '已保存' : '保存'} t={t} onClick={() => setSaved(!saved)} />
+        <ActionBtn icon={IC.more} label="" t={t} />
       </div>
     </article>
   )
@@ -193,17 +194,16 @@ function Comment({ c, t, depth }: { c: ForumComment; t: Theme; depth: number }) 
   const [hl, setHl] = useState(false)
   const count = (x: ForumComment): number => 1 + (x.replies ?? []).reduce((a, r) => a + count(r), 0)
   return (
-    <div data-comment={c.id} data-depth={depth} style={{ display: 'flex', marginTop: 10 }}>
-      <div style={{ width: 26, flex: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div data-comment={c.id} data-depth={depth} className="forum-comment">
+      <div className="forum-thread-rail">
         {c.deleted ? <span style={{ width: 24, height: 24, borderRadius: '50%', background: t.chip, flex: 'none' }} /> : <Avatar name={c.user} />}
-        {open && <button aria-label="折叠" data-thread={c.id} onClick={() => { audio.uiTick(); setOpen(false) }} onMouseEnter={() => setHl(true)} onMouseLeave={() => setHl(false)}
-          style={{ flex: 1, width: 14, marginTop: 4, display: 'flex', justifyContent: 'center', cursor: 'pointer' }}>
+        {open && <button aria-label="折叠" data-thread={c.id} onClick={() => { audio.uiTick(); setOpen(false) }} onMouseEnter={() => setHl(true)} onMouseLeave={() => setHl(false)}>
           <span style={{ width: 2, height: '100%', background: hl ? t.link : t.thread, borderRadius: 1 }} />
         </button>}
       </div>
-      <div style={{ flex: 1, minWidth: 0, paddingLeft: 6 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: t.meta, minHeight: 24 }}>
-          {!open && <button data-expand={c.id} onClick={() => { audio.uiTick(); setOpen(true) }} style={{ color: t.link, fontWeight: 700, fontSize: 12 }}>[+]</button>}
+      <div className="min-w-0">
+        <div className="forum-comment-meta" style={{ fontSize: 12, color: t.meta }}>
+          {!open && <button aria-label="展开评论" data-expand={c.id} className="forum-comment-toggle" onClick={() => { audio.uiTick(); setOpen(true) }} style={{ color: t.link, fontWeight: 700, fontSize: 12 }}>[+]</button>}
           <span style={{ color: c.deleted ? t.meta : t.text, fontWeight: 700 }}>{c.deleted ? '[已删除]' : c.user}</span>
           {c.op && <span style={{ color: t.link, fontWeight: 700 }}>楼主</span>}
           {c.mod && <span style={{ color: '#3fa96b', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 2 }}><I d={IC.shield} size={12} />版主</span>}
@@ -214,15 +214,18 @@ function Comment({ c, t, depth }: { c: ForumComment; t: Theme; depth: number }) 
           <div style={{ fontSize: 14, lineHeight: 1.6, color: c.deleted ? t.meta : t.text, marginTop: 2 }}>
             {c.body.map((b, i) => <p key={i} style={{ margin: '0 0 6px' }}>{b}</p>)}
           </div>
-          {!c.deleted && <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginLeft: -4 }}>
+          {!c.deleted && <div className="forum-actions">
             <Votes base={c.score} t={t} vertical={false} small />
             <ActionBtn icon={IC.comment} label="回复" t={t} />
             <ActionBtn icon={IC.share} label="分享" t={t} />
             <ActionBtn icon={IC.more} label="" t={t} />
+            <button aria-label="折叠评论" className="forum-compact-only forum-comment-toggle" onClick={() => { audio.uiTick(); setOpen(false) }} style={{ color: t.meta, fontSize: 12 }}>折叠 <I d={IC.chev} size={14} /></button>
           </div>}
-          {(c.replies ?? []).map((r) => <Comment key={r.id} c={r} t={t} depth={depth + 1} />)}
         </>}
       </div>
+      {open && !!c.replies?.length && <div className="forum-replies">
+        {c.replies.map((r) => <Comment key={r.id} c={r} t={t} depth={depth + 1} />)}
+      </div>}
     </div>
   )
 }
@@ -258,43 +261,58 @@ export default function ForumPage({ url, onClose }: { url?: string; onClose: () 
   const [dark, setDark] = useState(true)
   const [postId, setPostId] = useState<string | null>(null)
   const [sort, setSort] = useState('hot')
+  const [infoOpen, setInfoOpen] = useState(false)
   const scroller = useRef<HTMLDivElement>(null)
+  const comments = useRef<HTMLDivElement>(null)
+  const feedScroll = useRef(0)
   const t = dark ? DARK : LIGHT
   const post = FORUM_POSTS.find((p) => p.id === postId) ?? null
-  const open = (id: string | null) => { setPostId(id); scroller.current?.scrollTo({ top: 0 }) }
+  useLayoutEffect(() => {
+    scroller.current?.scrollTo({ top: postId ? 0 : feedScroll.current })
+  }, [postId])
+  const open = (id: string | null) => {
+    if (id && !postId) feedScroll.current = infoOpen ? 0 : scroller.current?.scrollTop ?? 0
+    if (!id && !postId) scroller.current?.scrollTo({ top: 0 })
+    setPostId(id)
+    setInfoOpen(false)
+  }
   const addr = post ? `${FORUM_SITE.host}/b/legends/t/${post.id === 'p1' ? '41907' : post.id}` : (url ?? `${FORUM_SITE.host}/b/legends`)
   const navItem = (icon: string, label: string, active = false) => (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 14px', borderRadius: 8, background: active ? t.soft : 'transparent', color: t.text, fontSize: 14 }}><I d={icon} size={19} />{label}</div>
   )
   return (
-    <div data-forum={post ? 'post' : 'home'} data-theme={dark ? 'dark' : 'light'} className="anim-slideUp relative flex h-[90dvh] w-full max-w-[1180px] flex-col overflow-hidden rounded-md"
-      style={{ background: t.bg, border: '1px solid #3a3d44', boxShadow: '0 14px 46px rgba(0,0,0,0.8), 0 0 0 6px #17191d', fontFamily: FONT }}
+    <div role="dialog" aria-modal="true" aria-label="边界线论坛" data-forum={post ? 'post' : 'home'} data-theme={dark ? 'dark' : 'light'} className="foyer-forum anim-slideUp relative flex h-[90dvh] w-full max-w-[1180px] flex-col overflow-hidden rounded-md"
+      style={{ background: t.bg, color: t.text, '--forum-border': t.border, fontFamily: FONT } as CSSProperties}
       onClick={(e) => e.stopPropagation()}>
       {/* 浏览器外框（虚构域名） */}
-      <div className="flex shrink-0 items-center gap-2 px-3 py-[6px]" style={{ background: '#2a2d33' }}>
-        <span className="inline-block h-[10px] w-[10px] rounded-full" style={{ background: '#e0605a' }} />
-        <span className="inline-block h-[10px] w-[10px] rounded-full" style={{ background: '#e6b84f' }} />
-        <span className="inline-block h-[10px] w-[10px] rounded-full" style={{ background: '#5fb66b' }} />
-        <div className="ml-2 flex-1 truncate rounded px-3 py-[3px] font-mono2 text-[12px]" style={{ background: '#1b1d21', color: '#aab0ba' }}>🔒 {addr}</div>
-        <button onClick={() => { audio.uiTick(); onClose() }} onTouchStart={() => { audio.uiTick(); onClose() }} className="font-mono2 px-3 py-[2px] text-[12px]" style={{ color: '#c8ccd3', border: '1px solid #4a4f57', borderRadius: 4 }}>离开屏幕（Esc）</button>
+      <div className="forum-browser flex shrink-0 items-center gap-2 px-3 py-[6px]">
+        <span className="forum-desktop-only inline-block h-[10px] w-[10px] rounded-full" style={{ background: '#e0605a' }} />
+        <span className="forum-desktop-only inline-block h-[10px] w-[10px] rounded-full" style={{ background: '#e6b84f' }} />
+        <span className="forum-desktop-only inline-block h-[10px] w-[10px] rounded-full" style={{ background: '#5fb66b' }} />
+        <div className="forum-desktop-only ml-2 flex-1 truncate rounded px-3 py-[3px] font-mono2 text-[12px]" style={{ background: '#1b1d21', color: '#aab0ba' }}>🔒 {addr}</div>
+        <button aria-label="离开屏幕" data-forum-close onClick={() => { audio.uiTick(); onClose() }} className="forum-exit font-mono2 px-3 py-[2px] text-[12px]">
+          离开<span className="forum-desktop-only">屏幕（Esc）</span>
+        </button>
       </div>
       {/* 顶栏 */}
-      <header style={{ height: 50, flex: 'none', display: 'flex', alignItems: 'center', gap: 14, padding: '0 16px', background: t.bar, borderBottom: `1px solid ${t.border}` }}>
-        <button onClick={() => open(null)} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <header className="forum-header" style={{ height: 50, flex: 'none', display: 'flex', alignItems: 'center', background: t.bar, borderBottom: `1px solid ${t.border}` }}>
+        <button className="forum-brand" data-forum-home aria-label={post ? '返回帖子列表' : FORUM_SITE.zh} onClick={() => { audio.uiTick(); open(null) }}>
           <Logo />
-          <span style={{ fontSize: 21, fontWeight: 800, letterSpacing: -0.5, color: t.text }}>{FORUM_SITE.name}</span>
+          {post && <span className="forum-back-icon"><I d={IC.back} size={18} /></span>}
+          <span className="forum-brand-name">{post ? <><span className="forum-desktop-only">{FORUM_SITE.name}</span><span className="forum-compact-only">帖子列表</span></> : FORUM_SITE.name}</span>
         </button>
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+        <div className="forum-desktop-only flex flex-1 justify-center">
           <div style={{ width: '100%', maxWidth: 560, height: 38, borderRadius: 19, background: t.input, border: `1px solid ${t.border}`, display: 'flex', alignItems: 'center', gap: 8, padding: '0 14px', color: t.meta }}>
             <I d={IC.search} size={18} />
             <span style={{ background: t.chip, color: t.text, fontSize: 12, padding: '2px 8px', borderRadius: 10, display: 'flex', alignItems: 'center', gap: 4 }}><BoardIcon size={14} ring="transparent" />{FORUM_BOARD.name}</span>
             <span style={{ fontSize: 14 }}>搜索本版</span>
           </div>
         </div>
-        <button aria-label="切换深浅色" title="切换深浅色" data-theme-toggle onClick={() => { audio.uiTick(); setDark(!dark) }} style={{ color: t.text, padding: 6, borderRadius: 18 }}><I d={dark ? IC.sun : IC.moon} size={20} /></button>
-        <div style={{ color: t.text, display: 'flex', alignItems: 'center', gap: 6, fontSize: 14, fontWeight: 600 }}><I d={IC.plus} size={20} /> 发帖</div>
-        <div style={{ color: t.text, position: 'relative' }}><I d={IC.bell} size={21} /><span style={{ position: 'absolute', top: -4, right: -6, background: t.up, color: '#fff', fontSize: 10, fontWeight: 700, borderRadius: 8, padding: '0 4px' }}>3</span></div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '3px 6px', borderRadius: 6, border: `1px solid ${t.border}` }}>
+        <button aria-label="版块资料" aria-controls="foyer-forum-board-info" aria-expanded={infoOpen} className="forum-compact-only forum-info-toggle" onClick={() => { audio.uiTick(); setInfoOpen(!infoOpen); if (!infoOpen) scroller.current?.scrollTo({ top: 0 }) }}><I d={IC.all} size={20} /></button>
+        <button className="forum-theme" aria-label="切换深浅色" title="切换深浅色" data-theme-toggle onClick={() => { audio.uiTick(); setDark(!dark) }} style={{ color: t.text, padding: 6, borderRadius: 18 }}><I d={dark ? IC.sun : IC.moon} size={20} /></button>
+        <div className="forum-desktop-only" style={{ color: t.text, display: 'flex', alignItems: 'center', gap: 6, fontSize: 14, fontWeight: 600 }}><I d={IC.plus} size={20} /> 发帖</div>
+        <div className="forum-desktop-only" style={{ color: t.text, position: 'relative' }}><I d={IC.bell} size={21} /><span style={{ position: 'absolute', top: -4, right: -6, background: t.up, color: '#fff', fontSize: 10, fontWeight: 700, borderRadius: 8, padding: '0 4px' }}>3</span></div>
+        <div className="forum-desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '3px 6px', borderRadius: 6, border: `1px solid ${t.border}` }}>
           <span style={{ position: 'relative' }}><Avatar name="me" size={28} /><span style={{ position: 'absolute', right: -1, bottom: -1, width: 9, height: 9, borderRadius: '50%', background: '#3fa96b', border: `2px solid ${t.bar}` }} /></span>
           <span style={{ fontSize: 12, color: t.text, lineHeight: 1.2 }}>u/夜猫子_2340<br /><span style={{ color: t.meta }}>412 积分</span></span>
           <I d={IC.chev} size={16} style={{ color: t.meta }} />
@@ -302,7 +320,7 @@ export default function ForumPage({ url, onClose }: { url?: string; onClose: () 
       </header>
       <div className="flex min-h-0 flex-1">
         {/* 左侧栏 */}
-        <nav style={{ width: 236, flex: 'none', borderRight: `1px solid ${t.border}`, background: t.bar, padding: '12px 10px', overflowY: 'auto' }} className="no-scrollbar">
+        <nav style={{ width: 236, flex: 'none', borderRight: `1px solid ${t.border}`, background: t.bar, padding: '12px 10px', overflowY: 'auto' }} className="forum-nav no-scrollbar">
           {navItem(IC.home, '首页')}{navItem(IC.trend, '热门')}{navItem(IC.all, '全部')}
           <div style={{ height: 1, background: t.border, margin: '10px 6px' }} />
           <div style={{ fontSize: 11, fontWeight: 700, color: t.meta, letterSpacing: 0.8, padding: '4px 14px 6px' }}>我加入的版块</div>
@@ -315,56 +333,58 @@ export default function ForumPage({ url, onClose }: { url?: string; onClose: () 
           <div style={{ fontSize: 11, color: t.meta, padding: '4px 14px', lineHeight: 1.7 }}>关于 · 帮助 · 用户协议<br />隐私政策 · 内容政策<br />{FORUM_SITE.zh} © 2026</div>
         </nav>
         {/* 主区 */}
-        <div ref={scroller} className="min-w-0 flex-1 overflow-y-auto" style={{ color: t.text }}>
+        <div ref={scroller} className="forum-scroll min-w-0 flex-1 overflow-y-auto" style={{ color: t.text }}>
           {!post && <>
             {/* 版块横幅 + 图标 */}
-            <div style={{ height: 96, background: 'linear-gradient(120deg,#5c4d1e 0%,#a68f3c 45%,#d9c46e 100%)', position: 'relative', overflow: 'hidden' }}>
+            <div className="forum-board-banner" style={{ background: 'linear-gradient(120deg,#5c4d1e 0%,#a68f3c 45%,#d9c46e 100%)', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', inset: 0, backgroundImage: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.08) 0 2px, transparent 2px 28px), repeating-linear-gradient(0deg, rgba(0,0,0,0.06) 0 1px, transparent 1px 14px)' }} />
               <div style={{ position: 'absolute', right: 40, top: 18, width: 120, height: 6, borderRadius: 3, background: 'rgba(255,252,220,0.85)', boxShadow: '0 0 18px rgba(255,248,200,0.9)' }} />
             </div>
-            <div style={{ background: t.bar, borderBottom: `1px solid ${t.border}`, padding: '0 24px 12px' }}>
-              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, marginTop: -26 }}>
+            <div className="forum-board-title" style={{ background: t.bar, borderBottom: `1px solid ${t.border}` }}>
+              <div className="forum-board-heading">
                 <BoardIcon size={78} ring={t.bar} />
                 <div style={{ flex: 1, paddingBottom: 4 }}>
-                  <h1 style={{ margin: 0, fontSize: 26, fontWeight: 800, color: t.text }}>{FORUM_BOARD.name}</h1>
+                  <h1 style={{ margin: 0, fontWeight: 800, color: t.text }}>{FORUM_BOARD.name}</h1>
                   <div style={{ fontSize: 13, color: t.meta }}>{FORUM_BOARD.title}</div>
                 </div>
-                <button style={{ height: 34, padding: '0 18px', borderRadius: 17, border: `1px solid ${t.text}`, color: t.text, fontWeight: 700, fontSize: 14 }}>已加入</button>
+                <span className="forum-desktop-only" style={{ lineHeight: '32px', padding: '0 18px', borderRadius: 17, border: `1px solid ${t.text}`, color: t.text, fontWeight: 700, fontSize: 14 }}>已加入</span>
               </div>
             </div>
           </>}
-          <div style={{ display: 'flex', gap: 18, padding: '14px 20px', alignItems: 'flex-start' }}>
-            <main style={{ flex: 1, minWidth: 0 }}>
+          <div className="forum-layout" data-info-open={infoOpen}>
+            <main className="forum-feed">
               {!post ? <>
                 {/* 发帖框 + 排序 */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: t.card, border: `1px solid ${t.border}`, borderRadius: 6, padding: 8, marginBottom: 10 }}>
+                <div className="forum-desktop-only" style={{ display: 'flex', alignItems: 'center', gap: 10, background: t.card, border: `1px solid ${t.border}`, borderRadius: 6, padding: 8, marginBottom: 10 }}>
                   <Avatar name="me" size={32} />
                   <div style={{ flex: 1, height: 36, borderRadius: 4, background: t.input, border: `1px solid ${t.border}`, display: 'flex', alignItems: 'center', padding: '0 12px', color: t.meta, fontSize: 14 }}>发布新帖</div>
                 </div>
-                <div style={{ display: 'flex', gap: 6, background: t.card, border: `1px solid ${t.border}`, borderRadius: 6, padding: '6px 10px', marginBottom: 10 }}>
+                <div className="forum-sort-row" style={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 6 }}>
                   {[['best', '最佳', IC.newest], ['hot', '热门', IC.hot], ['new', '最新', IC.newest], ['top', '最高', IC.top]].map(([k, l, ic]) => (
-                    <button key={k} onClick={() => { audio.uiTick(); setSort(k) }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 18, fontSize: 14, fontWeight: 700, color: sort === k ? t.text : t.meta, background: sort === k ? t.soft : 'transparent' }}><I d={ic} size={18} />{l}</button>
+                    <button key={k} aria-pressed={sort === k} className="forum-sort-button" onClick={() => { audio.uiTick(); setSort(k) }} style={{ color: sort === k ? t.text : t.meta, background: sort === k ? t.soft : 'transparent' }}><I d={ic} size={18} />{l}</button>
                   ))}
                 </div>
                 {FORUM_POSTS.map((p) => <PostCard key={p.id} p={p} t={t} onOpen={() => open(p.id)} />)}
               </> : <>
                 {/* 帖子详情 */}
-                <button data-back onClick={() => { audio.uiTick(); open(null) }} style={{ display: 'flex', alignItems: 'center', gap: 4, color: t.meta, fontSize: 13, fontWeight: 700, marginBottom: 8 }}><I d={IC.back} size={18} />返回 {FORUM_BOARD.name}</button>
-                <article style={{ display: 'flex', background: t.card, border: `1px solid ${t.border}`, borderRadius: 6 }}>
-                  <div style={{ width: 44, flex: 'none', padding: '10px 0', display: 'flex', justifyContent: 'center' }}><Votes base={post.score} t={t} /></div>
-                  <div style={{ flex: 1, minWidth: 0, padding: '10px 14px 4px 4px' }}>
+                <button data-back className="forum-desktop-only" onClick={() => { audio.uiTick(); open(null) }} style={{ display: 'flex', alignItems: 'center', gap: 4, color: t.meta, fontSize: 13, fontWeight: 700, marginBottom: 8 }}><I d={IC.back} size={18} />返回 {FORUM_BOARD.name}</button>
+                <article className="forum-article" style={{ background: t.card, border: `1px solid ${t.border}`, borderRadius: 6 }}>
+                  <div className="forum-vote-rail"><Votes base={post.score} t={t} /></div>
+                  <div className="forum-article-copy">
                     <PostMeta p={post} t={t} big />
-                    <h2 style={{ margin: '8px 0 10px', fontSize: 22, fontWeight: 700, lineHeight: 1.3 }}><Flair f={post.flair} />{post.title}</h2>
+                    <h2 className="text-[22px]" style={{ margin: '8px 0 10px', fontWeight: 700, lineHeight: 1.3 }}><Flair f={post.flair} />{post.title}</h2>
                     {post.body.map((b, i) => <p key={i} style={{ margin: '0 0 10px', fontSize: 15, lineHeight: 1.7 }}>{b}</p>)}
                     {post.image && <div style={{ margin: '4px 0 10px' }}><PostImage kind={post.image} t={t} /></div>}
-                    <div style={{ display: 'flex', gap: 2, marginLeft: -6 }}>
-                      <ActionBtn icon={IC.comment} label={`${fmt(post.comments)} 条评论`} t={t} />
-                      <ActionBtn icon={IC.share} label="分享" t={t} />
-                      <ActionBtn icon={IC.save} label="保存" t={t} />
-                      <ActionBtn icon={IC.more} label="" t={t} />
-                    </div>
-                    <div style={{ margin: '10px 0 6px', fontSize: 12, color: t.meta }}>以 <span style={{ color: t.link }}>u/夜猫子_2340</span> 的身份评论</div>
-                    <div style={{ border: `1px solid ${t.border}`, borderRadius: 6, background: t.input, minHeight: 74, padding: '10px 12px', color: t.meta, fontSize: 14 }}>说点什么……</div>
+                  </div>
+                  <div className="forum-actions forum-article-actions">
+                    <ActionBtn icon={IC.comment} label={`${fmt(post.comments)} 条评论`} t={t} onClick={() => comments.current?.scrollIntoView({ block: 'start' })} />
+                    <ActionBtn icon={IC.share} label="分享" t={t} />
+                    <ActionBtn icon={IC.save} label="保存" t={t} />
+                    <ActionBtn icon={IC.more} label="" t={t} />
+                  </div>
+                  <div ref={comments} className="forum-comments">
+                    <div className="forum-desktop-only" style={{ margin: '10px 0 6px', fontSize: 12, color: t.meta }}>以 <span style={{ color: t.link }}>u/夜猫子_2340</span> 的身份评论</div>
+                    <div className="forum-desktop-only" style={{ border: `1px solid ${t.border}`, borderRadius: 6, background: t.input, minHeight: 74, padding: '10px 12px', color: t.meta, fontSize: 14 }}>说点什么……</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '12px 0 2px', fontSize: 12, color: t.meta, fontWeight: 700 }}>排序方式：<span style={{ color: t.link }}>最佳 ▾</span><span style={{ flex: 1, height: 1, background: t.border }} /></div>
                     <div style={{ paddingBottom: 12 }}>{(post.thread ?? []).map((c) => <Comment key={c.id} c={c} t={t} depth={0} />)}</div>
                   </div>
@@ -372,7 +392,7 @@ export default function ForumPage({ url, onClose }: { url?: string; onClose: () 
               </>}
             </main>
             {/* 右侧栏 */}
-            <aside style={{ width: 300, flex: 'none' }}>
+            <aside id="foyer-forum-board-info" className="forum-board-info">
               <SideCard t={t} banner>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: -2 }}><BoardIcon size={40} ring={t.card} /><b style={{ fontSize: 15 }}>{FORUM_BOARD.name}</b></div>
                 <p style={{ fontSize: 13.5, lineHeight: 1.55, margin: '10px 0' }}>{FORUM_BOARD.about}</p>
@@ -381,7 +401,7 @@ export default function ForumPage({ url, onClose }: { url?: string; onClose: () 
                   <div><b style={{ fontSize: 16 }}><span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 4, background: '#3fa96b', marginRight: 5 }} />{FORUM_BOARD.online}</b><div style={{ fontSize: 12, color: t.meta }}>在线</div></div>
                 </div>
                 <div style={{ fontSize: 12.5, color: t.meta, margin: '8px 0 10px' }}>创建于 {FORUM_BOARD.created}</div>
-                <div style={{ height: 34, borderRadius: 17, background: t.accent, color: '#1b1b1b', fontWeight: 800, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>发布新帖</div>
+                <div className="forum-desktop-only" style={{ height: 34, borderRadius: 17, background: t.accent, color: '#1b1b1b', fontWeight: 800, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>发布新帖</div>
               </SideCard>
               <Rules t={t} />
               <SideCard t={t} title="版主">

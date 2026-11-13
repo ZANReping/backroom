@@ -1,0 +1,590 @@
+{
+  "seed": 424243,
+  "mode": "realistic",
+  "port": 8892,
+  "cdp": 8893,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:8892/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Thu, 12 Nov 2026 12:59:03 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 305,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 8892,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 206843.338539,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.829,
+        "sendEnd": 0.896,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 175.911,
+        "receiveHeadersEnd": 176.078
+      },
+      "responseTime": 1794488343518.003,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    },
+    {
+      "url": "http://127.0.0.1:8892/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Thu, 12 Nov 2026 12:59:22 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 292,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 8892,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 206862.884732,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.968,
+        "sendEnd": 1.053,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 17.541,
+        "receiveHeadersEnd": 19.611
+      },
+      "responseTime": 1794488362905.825,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\foyer-audio\\realistic-v2\\qa-1794488311092-93404",
+    "--remote-debugging-port=8893",
+    "--headless=new",
+    "--autoplay-policy=no-user-gesture-required",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 97776,
+    "server": 95924
+  },
+  "appBootMs": 29028.1535,
+  "entryMs": 11090.782799999994,
+  "bedroom": {
+    "level": 900,
+    "position": [
+      5.25,
+      5.75
+    ],
+    "flags": {
+      "flash_drawer": true
+    },
+    "music": {
+      "rms": 0.0053338805712381965,
+      "hz60": -130.45457458496094,
+      "hz120": -109.52201080322266,
+      "hz180": -112.65571594238281
+    },
+    "ambient": {
+      "rms": 0,
+      "hz60": null,
+      "hz120": null,
+      "hz180": null
+    },
+    "home": 0.68,
+    "car": false,
+    "alley": false,
+    "pan": 0,
+    "cut": false,
+    "l0Level": null,
+    "voice": false,
+    "legacyHum": false,
+    "context": "running"
+  },
+  "living": {
+    "level": 900,
+    "position": [
+      14.123000000000001,
+      11
+    ],
+    "flags": {
+      "flash_drawer": true
+    },
+    "music": {
+      "rms": 0.006382075476838285,
+      "hz60": -135.75640869140625,
+      "hz120": -117.39289855957031,
+      "hz180": -116.58759307861328
+    },
+    "ambient": {
+      "rms": 0,
+      "hz60": null,
+      "hz120": null,
+      "hz180": null
+    },
+    "home": 0.27,
+    "car": false,
+    "alley": false,
+    "pan": 0,
+    "cut": false,
+    "l0Level": null,
+    "voice": false,
+    "legacyHum": false,
+    "context": "running"
+  },
+  "lobby": {
+    "level": 900,
+    "position": [
+      40,
+      12
+    ],
+    "flags": {
+      "flash_drawer": true
+    },
+    "music": {
+      "rms": 1.0862793038214628e-7,
+      "hz60": -262.3338928222656,
+      "hz120": -231.26478576660156,
+      "hz180": -237.22413635253906
+    },
+    "ambient": {
+      "rms": 0,
+      "hz60": null,
+      "hz120": null,
+      "hz180": null
+    },
+    "home": 0,
+    "car": false,
+    "alley": false,
+    "pan": 0,
+    "cut": false,
+    "l0Level": null,
+    "voice": false,
+    "legacyHum": false,
+    "context": "running"
+  },
+  "first": {
+    "level": 900,
+    "position": [
+      133,
+      56
+    ],
+    "flags": {
+      "flash_drawer": true,
+      "act4": true,
+      "outside": true,
+      "said_outside": true,
+      "said_alley": true,
+      "reached_alley": true,
+      "tut:mart": true,
+      "on_street": true,
+      "said_empty": true
+    },
+    "music": {
+      "rms": 0,
+      "hz60": null,
+      "hz120": null,
+      "hz180": null
+    },
+    "ambient": {
+      "rms": 0.001374777516224126,
+      "hz60": -73.97639465332031,
+      "hz120": -102.63975524902344,
+      "hz180": -97.29279327392578
+    },
+    "home": 0,
+    "car": true,
+    "alley": false,
+    "pan": 0,
+    "cut": false,
+    "l0Level": null,
+    "voice": false,
+    "legacyHum": false,
+    "context": "running"
+  },
+  "second": {
+    "level": 900,
+    "position": [
+      133,
+      60.8
+    ],
+    "flags": {
+      "flash_drawer": true,
+      "act4": true,
+      "outside": true,
+      "said_outside": true,
+      "said_alley": true,
+      "reached_alley": true,
+      "tut:mart": true,
+      "on_street": true,
+      "said_empty": true,
+      "dup1": true,
+      "said_dup1": true,
+      "loop1": true
+    },
+    "music": {
+      "rms": 0,
+      "hz60": null,
+      "hz120": null,
+      "hz180": null
+    },
+    "ambient": {
+      "rms": 0,
+      "hz60": null,
+      "hz120": null,
+      "hz180": null
+    },
+    "home": 0,
+    "car": false,
+    "alley": false,
+    "pan": 0,
+    "cut": false,
+    "l0Level": null,
+    "voice": false,
+    "legacyHum": false,
+    "context": "running"
+  },
+  "third": {
+    "level": 900,
+    "position": [
+      133,
+      60.8
+    ],
+    "flags": {
+      "flash_drawer": true,
+      "act4": true,
+      "outside": true,
+      "said_outside": true,
+      "said_alley": true,
+      "reached_alley": true,
+      "tut:mart": true,
+      "on_street": true,
+      "said_empty": true,
+      "dup1": true,
+      "said_dup1": true,
+      "loop1": true,
+      "loop2": true
+    },
+    "music": {
+      "rms": 0,
+      "hz60": null,
+      "hz120": null,
+      "hz180": null
+    },
+    "ambient": {
+      "rms": 0.006640805335859133,
+      "hz60": -56.455841064453125,
+      "hz120": -63.898536682128906,
+      "hz180": -68.0211410522461
+    },
+    "home": 0,
+    "car": false,
+    "alley": true,
+    "pan": -0.05000000074505806,
+    "cut": false,
+    "l0Level": null,
+    "voice": false,
+    "legacyHum": false,
+    "context": "running"
+  },
+  "alleyRight": {
+    "level": 900,
+    "position": [
+      126,
+      57
+    ],
+    "flags": {
+      "flash_drawer": true,
+      "act4": true,
+      "outside": true,
+      "said_outside": true,
+      "said_alley": true,
+      "reached_alley": true,
+      "tut:mart": true,
+      "on_street": true,
+      "said_empty": true,
+      "dup1": true,
+      "said_dup1": true,
+      "loop1": true,
+      "loop2": true,
+      "ev:look": true,
+      "tut:look": true
+    },
+    "music": {
+      "rms": 0,
+      "hz60": null,
+      "hz120": null,
+      "hz180": null
+    },
+    "ambient": {
+      "rms": 0.0026528716741154664,
+      "hz60": -64.70895385742188,
+      "hz120": -72.13722229003906,
+      "hz180": -76.27188873291016
+    },
+    "home": 0,
+    "car": false,
+    "alley": true,
+    "pan": 0.8626060485839844,
+    "cut": false,
+    "l0Level": null,
+    "voice": false,
+    "legacyHum": false,
+    "context": "running"
+  },
+  "alleyLeft": {
+    "level": 900,
+    "position": [
+      126,
+      57
+    ],
+    "flags": {
+      "flash_drawer": true,
+      "act4": true,
+      "outside": true,
+      "said_outside": true,
+      "said_alley": true,
+      "reached_alley": true,
+      "tut:mart": true,
+      "on_street": true,
+      "said_empty": true,
+      "dup1": true,
+      "said_dup1": true,
+      "loop1": true,
+      "loop2": true,
+      "ev:look": true,
+      "tut:look": true
+    },
+    "music": {
+      "rms": 0,
+      "hz60": null,
+      "hz120": null,
+      "hz180": null
+    },
+    "ambient": {
+      "rms": 0.0018216278063674094,
+      "hz60": -67.81629943847656,
+      "hz120": -75.2480697631836,
+      "hz180": -79.37964630126953
+    },
+    "home": 0,
+    "car": false,
+    "alley": true,
+    "pan": -0.8578974604606628,
+    "cut": false,
+    "l0Level": null,
+    "voice": false,
+    "legacyHum": false,
+    "context": "running"
+  },
+  "farFromAlley": {
+    "level": 900,
+    "position": [
+      92,
+      54
+    ],
+    "flags": {
+      "flash_drawer": true,
+      "act4": true,
+      "outside": true,
+      "said_outside": true,
+      "said_alley": true,
+      "reached_alley": true,
+      "tut:mart": true,
+      "on_street": true,
+      "said_empty": true,
+      "dup1": true,
+      "said_dup1": true,
+      "loop1": true,
+      "loop2": true,
+      "ev:look": true,
+      "tut:look": true
+    },
+    "music": {
+      "rms": 0,
+      "hz60": null,
+      "hz120": null,
+      "hz180": null
+    },
+    "ambient": {
+      "rms": 0.0000038942232503122,
+      "hz60": -122.15733337402344,
+      "hz120": -129.6085968017578,
+      "hz180": -133.7238006591797
+    },
+    "home": 0,
+    "car": false,
+    "alley": true,
+    "pan": -0.8682431578636169,
+    "cut": false,
+    "l0Level": null,
+    "voice": false,
+    "legacyHum": false,
+    "context": "running"
+  },
+  "finale": {
+    "level": 900,
+    "position": [
+      60,
+      38.5
+    ],
+    "flags": {
+      "flash_drawer": true,
+      "act4": true,
+      "outside": true,
+      "said_outside": true,
+      "said_alley": true,
+      "reached_alley": true,
+      "tut:mart": true,
+      "on_street": true,
+      "said_empty": true,
+      "dup1": true,
+      "said_dup1": true,
+      "loop1": true,
+      "loop2": true,
+      "ev:look": true,
+      "tut:look": true,
+      "said_home_dark": true,
+      "fell": true,
+      "landing": true,
+      "l0_phone": true,
+      "l0_pack": true,
+      "l0_flash": true,
+      "l0_water": true,
+      "l0_snack": true
+    },
+    "music": {
+      "rms": 0,
+      "hz60": null,
+      "hz120": null,
+      "hz180": null
+    },
+    "ambient": {
+      "rms": 0.0024227625933425237,
+      "hz60": -65.23728942871094,
+      "hz120": -72.68406677246094,
+      "hz180": -76.80332946777344
+    },
+    "car": false,
+    "alley": false,
+    "cut": true,
+    "l0Level": null,
+    "voice": true,
+    "legacyHum": false,
+    "context": "running"
+  },
+  "level0": {
+    "level": 0,
+    "position": [
+      79.5,
+      79.5
+    ],
+    "flags": {
+      "flash_drawer": true,
+      "act4": true,
+      "outside": true,
+      "said_outside": true,
+      "said_alley": true,
+      "reached_alley": true,
+      "tut:mart": true,
+      "on_street": true,
+      "said_empty": true,
+      "dup1": true,
+      "said_dup1": true,
+      "loop1": true,
+      "loop2": true,
+      "ev:look": true,
+      "tut:look": true,
+      "said_home_dark": true,
+      "fell": true,
+      "landing": true,
+      "l0_phone": true,
+      "l0_pack": true,
+      "l0_flash": true,
+      "l0_water": true,
+      "l0_snack": true,
+      "l0_hud": true,
+      "l0_done": true
+    },
+    "music": {
+      "rms": 0.04032048550341812,
+      "hz60": -58.475486755371094,
+      "hz120": -90.85931396484375,
+      "hz180": -77.14424896240234
+    },
+    "ambient": {
+      "rms": 0.006662477107634669,
+      "hz60": -56.319374084472656,
+      "hz120": -63.76066589355469,
+      "hz180": -67.8844985961914
+    },
+    "car": false,
+    "alley": false,
+    "cut": false,
+    "l0Level": 0.4,
+    "voice": true,
+    "legacyHum": false,
+    "context": "running",
+    "sameVoice": true,
+    "foyerReleased": true
+  },
+  "titleReleased": true,
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

@@ -1,0 +1,367 @@
+{
+  "mode": "realistic",
+  "only": "pilot",
+  "checks": [
+    "owned native headless session",
+    "Level 1 renders original scene in Worker",
+    "Level 1 continues rendering while main thread is blocked for 250 ms",
+    "Level 1 Worker resize",
+    "Level 5 renders original scene in Worker",
+    "Level 5 continues rendering while main thread is blocked for 250 ms",
+    "Level 5 Worker resize",
+    "Level 11 renders original scene in Worker",
+    "Level 11 continues rendering while main thread is blocked for 250 ms",
+    "Level 11 Worker resize",
+    "no uncaught page exceptions"
+  ],
+  "scenes": [
+    {
+      "level": 1,
+      "stats": {
+        "kind": "frame",
+        "at": 1794128565152.8,
+        "frames": 1348,
+        "sequence": 1447,
+        "ready": true,
+        "cpuMs": 5.099999997764826,
+        "calls": 160,
+        "triangles": 102938,
+        "textures": 104,
+        "geometries": 198
+      },
+      "mainFrames": 1825,
+      "withinBlock": [
+        {
+          "at": 1794128564736.1,
+          "frames": 1295
+        },
+        {
+          "at": 1794128564736.1,
+          "frames": 1295
+        },
+        {
+          "at": 1794128564736.1,
+          "frames": 1295
+        },
+        {
+          "at": 1794128564736.1,
+          "frames": 1295
+        },
+        {
+          "at": 1794128564736.1,
+          "frames": 1295
+        },
+        {
+          "at": 1794128564736.1,
+          "frames": 1295
+        },
+        {
+          "at": 1794128564736.1,
+          "frames": 1295
+        },
+        {
+          "at": 1794128564736.1,
+          "frames": 1295
+        },
+        {
+          "at": 1794128564736.1,
+          "frames": 1295
+        },
+        {
+          "at": 1794128564736.1,
+          "frames": 1295
+        },
+        {
+          "at": 1794128564736.1,
+          "frames": 1295
+        },
+        {
+          "at": 1794128564736.1,
+          "frames": 1295
+        }
+      ],
+      "error": null
+    },
+    {
+      "level": 5,
+      "stats": {
+        "kind": "frame",
+        "at": 1794128578140.1,
+        "frames": 929,
+        "sequence": 1047,
+        "ready": true,
+        "cpuMs": 14.299999997019768,
+        "calls": 1181,
+        "triangles": 504147,
+        "textures": 205,
+        "geometries": 1212
+      },
+      "mainFrames": 1829,
+      "withinBlock": [
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        },
+        {
+          "at": 1794128577719.2,
+          "frames": 893
+        }
+      ],
+      "error": null
+    },
+    {
+      "level": 11,
+      "stats": {
+        "kind": "frame",
+        "at": 1794128589248.2,
+        "frames": 438,
+        "sequence": 554,
+        "ready": true,
+        "cpuMs": 12.599999997764826,
+        "calls": 190,
+        "triangles": 354445,
+        "textures": 92,
+        "geometries": 441
+      },
+      "mainFrames": 1385,
+      "withinBlock": [
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        },
+        {
+          "at": 1794128588927.3,
+          "frames": 406
+        }
+      ],
+      "error": null
+    }
+  ],
+  "errors": [],
+  "console": [],
+  "httpErrors": [
+    {
+      "url": "http://127.0.0.1:13834/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sun, 08 Nov 2026 09:02:33 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 148,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 13834,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 17381.750406,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.618,
+        "sendEnd": 0.674,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 12.859,
+        "receiveHeadersEnd": 12.999
+      },
+      "responseTime": 1794128553994.673,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "port": 13834,
+  "cdp": 13835,
+  "profile": "E:\\ZAN\\backroom\\app\\reports\\offscreen-20261108\\pilot-images\\qa-1794128537441-53328",
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--headless=new",
+    "--enable-automation",
+    "--remote-debugging-port=13835",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\offscreen-20261108\\pilot-images\\qa-1794128537441-53328",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--disable-background-timer-throttling",
+    "--disable-renderer-backgrounding",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "ok": true,
+  "cleanup": {
+    "profileRemoved": true
+  }
+}

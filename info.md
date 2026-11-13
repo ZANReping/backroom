@@ -7,6 +7,10 @@
 
 ## 1. 项目概述
 
+2026-11-10：修复图鉴中未发现据点的层级提示写死为 Level 1 的问题，改为读取据点注册的所属层级并格式化可见编号；保持名称／简介隐藏、已发现内容及发现记录。实际 App 16 个据点、团体筛选和触控模拟共 65 项检查及生产构建通过，无需重置存档。见 [据点图鉴修复记录](app/reports/codex-outpost-levels-20261110/README.md)。
+
+2026-11-08：启动 Worker 分阶段迁移：L1／L5／L11 开图求交、留声机及部分 PBR 像素、三类旅馆实体几何已使用有界计算 Worker，并保留故障回退和空闲释放；修复 L1 材质克隆编码 Canvas 和 L5 污渍整树查找的阻塞。OffscreenCanvas 完成三层真实场景、阻塞及跨区试点，正式游戏渲染仍在主线程，完整交互／截帧接口尚未迁移。本机 L5 主线程 CPU 中位数 23.2→18.7 ms，帧间隔 20.7／25.0 ms（中位数／P95），仍未达稳定 60 FPS。生产构建和相关回归通过。边界与操作见 [Worker 迁移说明](app/WORKER-PIPELINE.md)，前后性能、截图和复现见 [验收报告](app/reports/offscreen-20261108/README.md)。
+
 2026-11-04：接入 Level 5 完整包，加入 B1 至 12F、电梯、旅馆员工与事件、口袋房间、楼层导览、留声机和命运之骰，并开放 Level 5.1 赌场。区块缓存按楼层区分，离开据点和口袋房间后回到原楼层入口。28 组脚本回归、双光影实际游戏与生产构建通过。见 [Level 5 接入验收](app/reports/l5-full-import-20261104/README.md)。
 
 2026-11-03：修复据点出口返程：保留进入前的地图种子、世界坐标、高度、楼层及视角，地图预热与载入复用原地图，返回同一个据点入口附近的安全位置；补齐 NPC 引路、据点内存读档和连续访问路径。16 个据点往返回归共 424 项断言、36 项实际游戏检查、生涯／旧档迁移及生产构建通过，见 [据点返程验收](app/reports/outpost-return-20261103/README.md)。
@@ -2006,7 +2010,7 @@ outpost-smoke（37 张床）与 l5inf-smoke（181 张客房床）断言。**杂�
 - **设置 → 音频：BGM 曲风（v56，`bgmStyle`）**：「程序化 / MIDI」双选——程序化为既有随机合成梦核 BGM；
   MIDI 直接播放 `public/music/` 下 .mid 文件（每层与每团体独立曲目，见 §3.10）；切换立即重开当前层级 BGM
   （`audio.setBgmStyle` → `startBGM` 重入）
-- **桌面鼠标视角保护**：`core/mouseLook.ts` 必须请求 `requestPointerLock({unadjustedMovement:true})`。Windows Chromium 的原始输入路径会跳过 `ShouldMoveToCenter` 的边缘回正（[Chromium 实现](https://raw.githubusercontent.com/chromium/chromium/main/content/browser/renderer_host/render_widget_host_view_event_handler.cc)）。失败不静默回退普通锁定。App 将请求确认、实际锁定元素、焦点/可见性三者一起作为转头条件；确认前即使画布已持锁也不接收位移，确认后首包与旧时间戳仍丢弃。捕获监听独立于画面设置，Esc/菜单正常释放；仅释放鼠标不再自动暂停，也不显示继续按钮，点击画布可重新锁定；原有暂停菜单与切换到后台时的暂停行为保留。画布 `data-mouse-input` 可诊断 pending/raw/unlocked。视角只消费 `mousemove` 的设备相对位移一次，不重算 pointermove/coalesced 坐标，不用大小阈值误伤快速转头。`npm run check:mouse-look` 覆盖输入、正反回正回放、快速转动与严格 raw 请求/错误；浏览器验证 pending 时 1800 位移零转向、确认后首包零转向、正常 10 位移生效，36 次约 1000 位移连续约 13.8 圈始终 raw+持锁且光标坐标固定。自动化不能替代物理鼠标驱动的实机复测。
+- **桌面鼠标视角保护**：`core/mouseLook.ts` 必须请求 `requestPointerLock({unadjustedMovement:true})`。Windows Chromium 的原始输入路径会跳过 `ShouldMoveToCenter` 的边缘回正（[Chromium 实现](https://raw.githubusercontent.com/chromium/chromium/main/content/browser/renderer_host/render_widget_host_view_event_handler.cc)）。失败不静默回退普通锁定。App 将请求确认、实际锁定元素、焦点/可见性三者一起作为转头条件；确认前即使画布已持锁也不接收位移，确认后首包与旧时间戳仍丢弃。捕获监听独立于画面设置。游戏内覆盖层关闭并返回可操作画面时自动恢复指针锁定，Esc 关闭在松键后请求。浏览器手动释放鼠标后可点击画布重新锁定，切换到后台时自动暂停。恢复流程的实际游戏验收见 [关闭界面后恢复鼠标视角](app/reports/pointer-resume-20261112/README.md)。画布 `data-mouse-input` 可诊断 pending/raw/unlocked。视角只消费 `mousemove` 的设备相对位移一次，不重算 pointermove/coalesced 坐标，不用大小阈值误伤快速转头。`npm run check:mouse-look` 覆盖输入、正反回正回放、快速转动与严格 raw 请求/错误；浏览器验证 pending 时 1800 位移零转向、确认后首包零转向、正常 10 位移生效，36 次约 1000 位移连续约 13.8 圈始终 raw+持锁且光标坐标固定。自动化不能替代物理鼠标驱动的实机复测。
 - **设置 → 画面：真实视角摇晃（v54，`headBob`，默认关闭）**：关闭=既有基础 bob（仅小幅垂直浮动，行为不变）；
   开启后行走=垂直起伏（2 倍步频）+ 水平侧摆（沿视线右向）+ 轻微 roll 侧倾，冲刺幅度 ×1.5、蹲行 ×0.45，
   静止时幅度平滑归零（不跳变）；落地/跳跃落地按下落末速触发小段下沉回弹（~0.3s 单峰）；

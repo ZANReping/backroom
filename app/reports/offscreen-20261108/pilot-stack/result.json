@@ -1,0 +1,91 @@
+{
+  "mode": "realistic",
+  "only": "pilot",
+  "checks": [
+    "owned native headless session"
+  ],
+  "scenes": [],
+  "errors": [],
+  "console": [],
+  "httpErrors": [
+    {
+      "url": "http://127.0.0.1:5571/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sun, 08 Nov 2026 09:00:40 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 156,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 5571,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 17268.512064,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.517,
+        "sendEnd": 0.56,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 12.322,
+        "receiveHeadersEnd": 12.504
+      },
+      "responseTime": 1794128440755.794,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "port": 5571,
+  "cdp": 5572,
+  "profile": "E:\\ZAN\\backroom\\app\\reports\\offscreen-20261108\\pilot-stack\\qa-1794128419315-52376",
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--headless=new",
+    "--enable-automation",
+    "--remote-debugging-port=5572",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\offscreen-20261108\\pilot-stack\\qa-1794128419315-52376",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--disable-background-timer-throttling",
+    "--disable-renderer-backgrounding",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "ok": false,
+  "failure": "Error: TypeError: document.createElementNS is not a function\n    at createElementNS (http://127.0.0.1:5571/reports/offscreen-20261108/pilot-stack/qa-1794128419315-52376/vite/deps/chunk-BWT6IPVN.js?v=ff4a4398:252:19)\n    at ImageLoader.load (http://127.0.0.1:5571/reports/offscreen-20261108/pilot-stack/qa-1794128419315-52376/vite/deps/chunk-BWT6IPVN.js?v=ff4a4398:23741:19)\n    at retroTexture (http://127.0.0.1:5571/src/game/renderer/retroNpc.ts:43:31)\n    at Object.setLook (http://127.0.0.1:5571/src/game/renderer/retroViewHand.ts:420:42)\n    at Renderer3D.updateViewmodel (http://127.0.0.1:5571/src/game/renderer/renderer.ts:1101:26)\n    at Renderer3D.renderFrame (http://127.0.0.1:5571/src/game/renderer/renderer.ts:2263:10)\n    at Renderer3D.render (http://127.0.0.1:5571/src/game/renderer/renderer.ts:1369:12)\n    at frame (http://127.0.0.1:5571/src/game/renderer/offscreenView.worker.ts?worker_file&type=module:37:14)",
+  "failureState": {
+    "text": "离屏渲染试验 · 原游戏建筑与材质 · 只验证场景与视角，尚未接管完整交互\n{\"error\":\"TypeError: document.createElementNS is not a function\\n at createElementNS (http://127.0.0.1:5571/reports/offscreen-20261108/pilot-stack/qa-1794128419315-52376/vite/deps/chunk-BWT6IPVN.js?v=ff4a4398:252:19)\\n at ImageLoader.load (http://127.0.0.1:5571/reports/offscreen-20261108/pilot-stack/qa-1794128419315-52376/vite/deps/chunk-BWT6IPVN.js?v=ff4a4398:23741:19)\\n at retroTexture (http://127.0.0.1:5571/src/game/renderer/retroNpc.ts:43:31)\\n at Object.setLook (http://127.0.0.1:5571/src/game/renderer/retroViewHand.ts:420:42)\\n at Renderer3D.updateViewmodel (http://127.0.0.1:5571/src/game/renderer/renderer.ts:1101:26)\\n at Renderer3D.renderFrame (http://127.0.0.1:5571/src/game/renderer/renderer.ts:2263:10)\\n at Renderer3D.render (http://127.0.0.1:5571/src/game/renderer/renderer.ts:1369:12)\\n at frame (http://127.0.0.1:5571/src/game/renderer/offscreenView.worker.ts?worker_file&type=module:37:14)\"}",
+    "trial": {
+      "stats": null,
+      "error": "TypeError: document.createElementNS is not a function\n    at createElementNS (http://127.0.0.1:5571/reports/offscreen-20261108/pilot-stack/qa-1794128419315-52376/vite/deps/chunk-BWT6IPVN.js?v=ff4a4398:252:19)\n    at ImageLoader.load (http://127.0.0.1:5571/reports/offscreen-20261108/pilot-stack/qa-1794128419315-52376/vite/deps/chunk-BWT6IPVN.js?v=ff4a4398:23741:19)\n    at retroTexture (http://127.0.0.1:5571/src/game/renderer/retroNpc.ts:43:31)\n    at Object.setLook (http://127.0.0.1:5571/src/game/renderer/retroViewHand.ts:420:42)\n    at Renderer3D.updateViewmodel (http://127.0.0.1:5571/src/game/renderer/renderer.ts:1101:26)\n    at Renderer3D.renderFrame (http://127.0.0.1:5571/src/game/renderer/renderer.ts:2263:10)\n    at Renderer3D.render (http://127.0.0.1:5571/src/game/renderer/renderer.ts:1369:12)\n    at frame (http://127.0.0.1:5571/src/game/renderer/offscreenView.worker.ts?worker_file&type=module:37:14)"
+    }
+  },
+  "cleanup": {
+    "profileRemoved": true
+  }
+}

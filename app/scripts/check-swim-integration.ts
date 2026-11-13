@@ -50,9 +50,9 @@ function water(){
 }
 const numericTable=JSON.stringify(MELEE)
 for(const kind of MELEE_KINDS)for(const heavy of [false,true]){
- const start=(submerged:boolean)=>{const e=water();e.submerged=submerged;e.player.hotbar[0]={type:kind,count:1};e.player.selected=0;e.attackCooldownT=0;const success=startMeleeSwing(e,heavy,heavy?1:0);return{e,success}}
+ const start=(submerged:boolean)=>{const e=water();e.submerged=submerged;e.player.hotbar[0]={type:kind,count:1};e.player.selected=0;e.attackCooldownT=0;const success=startMeleeSwing(e,heavy,heavy?.65:0);return{e,success}}
  const land=start(false),waterCase=start(true),a=land.e,b=waterCase.e
- ok(land.success&&waterCase.success&&near(b.attackAnimDur,a.attackAnimDur*1.3)&&near(b.attackCooldownDur,a.attackCooldownDur*1.3),`${kind} ${heavy?'heavy':'light'} animation and cooldown use underwater resistance`)
+ ok(land.success&&waterCase.success&&near(b.attackAnimDur,a.attackAnimDur*1.3)&&near(b.attackAnimT,a.attackAnimT*1.3)&&near(b.attackCooldownDur,a.attackCooldownDur*1.3),`${kind} ${heavy?'heavy':'light'} animation and cooldown use underwater resistance`)
  ok(near(b.meleePending.t,a.meleePending.t*1.3)&&near(a.player.stamina,b.player.stamina),`${kind} ${heavy?'heavy':'light'} hit timing slows without extra stamina cost`)
 }
 ok(JSON.stringify(MELEE)===numericTable,'Water resistance does not mutate shared weapon damage, reach or durability tables')

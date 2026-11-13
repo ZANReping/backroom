@@ -1,0 +1,264 @@
+{
+  "label": "custom",
+  "port": 4821,
+  "cdp": 4822,
+  "checks": [
+    "isolated headless Chrome",
+    "entering gameplay leaves the first capture to the player",
+    "actual world document targeted",
+    "custom-landscape stays open after one tap",
+    "every capture requests unadjusted movement",
+    "no browser runtime errors",
+    "no missing game resources"
+  ],
+  "states": [
+    {
+      "label": "custom-landscape",
+      "duration": 0,
+      "events": [
+        {
+          "type": "pointerdown",
+          "t": 47385.29999998212,
+          "target": "svg",
+          "control": "attack",
+          "label": ""
+        },
+        {
+          "type": "touchstart",
+          "t": 47385.59999999404,
+          "target": "svg",
+          "control": "attack",
+          "label": ""
+        },
+        {
+          "type": "open",
+          "id": "meg_levels",
+          "t": 47395.69999998808
+        },
+        {
+          "type": "pointerup",
+          "t": 47508.69999998808,
+          "target": "P",
+          "label": "这是你当前所处的层级。该层级一独特性质为孤立"
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    {
+      "type": "warning",
+      "args": [
+        {
+          "type": "string",
+          "value": "THREE.WebGLProgram: Program Info Log:"
+        },
+        {
+          "type": "string",
+          "value": "(210,91-147): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1794485897863.607,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "warn",
+            "scriptId": "553",
+            "url": "http://127.0.0.1:4821/reports/touch-documents/custom/qa-1794485850550-104892/vite-cache/deps/chunk-BWT6IPVN.js?v=5e8bd872",
+            "lineNumber": 296,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "onFirstUse",
+            "scriptId": "553",
+            "url": "http://127.0.0.1:4821/reports/touch-documents/custom/qa-1794485850550-104892/vite-cache/deps/chunk-BWT6IPVN.js?v=5e8bd872",
+            "lineNumber": 36018,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "WebGLProgram.getUniforms",
+            "scriptId": "553",
+            "url": "http://127.0.0.1:4821/reports/touch-documents/custom/qa-1794485850550-104892/vite-cache/deps/chunk-BWT6IPVN.js?v=5e8bd872",
+            "lineNumber": 36045,
+            "columnNumber": 6
+          },
+          {
+            "functionName": "setProgram",
+            "scriptId": "553",
+            "url": "http://127.0.0.1:4821/reports/touch-documents/custom/qa-1794485850550-104892/vite-cache/deps/chunk-BWT6IPVN.js?v=5e8bd872",
+            "lineNumber": 42520,
+            "columnNumber": 33
+          },
+          {
+            "functionName": "WebGLRenderer.renderBufferDirect",
+            "scriptId": "553",
+            "url": "http://127.0.0.1:4821/reports/touch-documents/custom/qa-1794485850550-104892/vite-cache/deps/chunk-BWT6IPVN.js?v=5e8bd872",
+            "lineNumber": 41864,
+            "columnNumber": 22
+          },
+          {
+            "functionName": "renderObject",
+            "scriptId": "553",
+            "url": "http://127.0.0.1:4821/reports/touch-documents/custom/qa-1794485850550-104892/vite-cache/deps/chunk-BWT6IPVN.js?v=5e8bd872",
+            "lineNumber": 42317,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "renderObjects",
+            "scriptId": "553",
+            "url": "http://127.0.0.1:4821/reports/touch-documents/custom/qa-1794485850550-104892/vite-cache/deps/chunk-BWT6IPVN.js?v=5e8bd872",
+            "lineNumber": 42299,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "renderScene",
+            "scriptId": "553",
+            "url": "http://127.0.0.1:4821/reports/touch-documents/custom/qa-1794485850550-104892/vite-cache/deps/chunk-BWT6IPVN.js?v=5e8bd872",
+            "lineNumber": 42216,
+            "columnNumber": 36
+          },
+          {
+            "functionName": "WebGLRenderer.render",
+            "scriptId": "553",
+            "url": "http://127.0.0.1:4821/reports/touch-documents/custom/qa-1794485850550-104892/vite-cache/deps/chunk-BWT6IPVN.js?v=5e8bd872",
+            "lineNumber": 42119,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "_applyGGXFilter",
+            "scriptId": "553",
+            "url": "http://127.0.0.1:4821/reports/touch-documents/custom/qa-1794485850550-104892/vite-cache/deps/chunk-BWT6IPVN.js?v=5e8bd872",
+            "lineNumber": 33524,
+            "columnNumber": 13
+          },
+          {
+            "functionName": "_applyPMREM",
+            "scriptId": "553",
+            "url": "http://127.0.0.1:4821/reports/touch-documents/custom/qa-1794485850550-104892/vite-cache/deps/chunk-BWT6IPVN.js?v=5e8bd872",
+            "lineNumber": 33488,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "_fromTexture",
+            "scriptId": "553",
+            "url": "http://127.0.0.1:4821/reports/touch-documents/custom/qa-1794485850550-104892/vite-cache/deps/chunk-BWT6IPVN.js?v=5e8bd872",
+            "lineNumber": 33356,
+            "columnNumber": 9
+          },
+          {
+            "functionName": "fromEquirectangular",
+            "scriptId": "553",
+            "url": "http://127.0.0.1:4821/reports/touch-documents/custom/qa-1794485850550-104892/vite-cache/deps/chunk-BWT6IPVN.js?v=5e8bd872",
+            "lineNumber": 33275,
+            "columnNumber": 16
+          },
+          {
+            "functionName": "envProbe",
+            "scriptId": "233",
+            "url": "http://127.0.0.1:4821/src/game/renderer/envProbe.ts",
+            "lineNumber": 51,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "applyEnvProbe",
+            "scriptId": "12",
+            "url": "http://127.0.0.1:4821/src/game/renderer/renderer.ts",
+            "lineNumber": 4861,
+            "columnNumber": 29
+          },
+          {
+            "functionName": "buildLevel",
+            "scriptId": "12",
+            "url": "http://127.0.0.1:4821/src/game/renderer/renderer.ts",
+            "lineNumber": 4826,
+            "columnNumber": 9
+          },
+          {
+            "functionName": "renderFrame",
+            "scriptId": "12",
+            "url": "http://127.0.0.1:4821/src/game/renderer/renderer.ts",
+            "lineNumber": 1517,
+            "columnNumber": 105
+          },
+          {
+            "functionName": "render",
+            "scriptId": "12",
+            "url": "http://127.0.0.1:4821/src/game/renderer/renderer.ts",
+            "lineNumber": 1371,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "loop",
+            "scriptId": "780",
+            "url": "http://127.0.0.1:4821/src/App.tsx",
+            "lineNumber": 1209,
+            "columnNumber": 19
+          }
+        ]
+      }
+    }
+  ],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:4821/favicon.ico",
+      "status": 404
+    },
+    {
+      "url": "http://127.0.0.1:4821/favicon.ico",
+      "status": 404
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--headless=new",
+    "--enable-automation",
+    "--remote-debugging-port=4822",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\touch-documents\\custom\\qa-1794485850550-104892",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 91004,
+    "browser": 103008
+  },
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/157.0.8103.50",
+    "revision": "@049750111b1e5c11565c792b2aeed5541f332bad",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+    "jsVersion": "15.7.112.23"
+  },
+  "initial": {
+    "kind": "megdoc",
+    "label": "阅读 M.E.G. 文档",
+    "s": {
+      "kind": "megdoc",
+      "x": 41.45,
+      "y": 24.05,
+      "w": 0.5,
+      "h": 0.5,
+      "solid": false,
+      "data": {
+        "doc": "meg_levels"
+      }
+    }
+  },
+  "pointer": {
+    "requests": [],
+    "events": [],
+    "failures": [],
+    "deny": false,
+    "delay": 0
+  },
+  "ok": true,
+  "cleanup": {
+    "profileRemoved": true
+  }
+}

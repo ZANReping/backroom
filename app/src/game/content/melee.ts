@@ -39,6 +39,11 @@ export const MELEE: Record<MeleeKind, MeleeStats> = {
 /** 重击：伤害 ×(1.4..1.8 随蓄力)，体力 ×2，耐久消耗 ×2 */
 export const HEAVY_MIN_CHARGE = .4
 export const heavyDamageMul = (charge: number) => 1.4 + .4 * Math.max(0, Math.min(1, (charge - HEAVY_MIN_CHARGE) / (1 - HEAVY_MIN_CHARGE)))
+/** 按住时已播放到的挥击进度；松手时从这里继续。 */
+export function meleeChargeProgress(windup: number, charge: number): number {
+  const k = Math.max(0, Math.min(1, charge))
+  return windup * (k * k * (3 - 2 * k))
+}
 export const HEAVY_STAMINA_MUL = 2
 /** 按住多久才开始蓄力（之前松开 = 普攻） */
 export const CHARGE_DELAY = .2

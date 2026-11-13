@@ -1,3 +1,5 @@
+import {requestHotelGeometry} from './hotelGeometryQueue'
+import {unpackGeometryTree} from './geometryPacket'
 import { shareHotelRigAssets } from './shared'
 // [chef] 厨师（Entity 800 / The Chef）重制·阶段 1 建模（只建模，不做动画 / 机制，未接入游戏）。
 // 参照 ZAN 附图 + 定稿（11-02）：写实灰黑猪头（额头到鼻梁灰白鬃毛、粉褐湿润鼻盘两鼻孔、小黑眼深陷、半折竖耳从高褶厨师帽两侧伸出），
@@ -291,6 +293,18 @@ const cache: Record<number, Built> = {}
 /** LOD 参数：壳层层数 / 毛长 */
 export const CHEF_LOD = [{ layers: 5 }, { layers: 3 }, { layers: 0 }]
 const FUR_L = 0.011
+export function chefGeometryReady(lod = 1) { return !!cache[lod] }
+const chefPending = new Set<number>()
+export function prepareChefGeometry(lod = 1) {
+  if (cache[lod] || chefPending.has(lod)) return !!cache[lod]
+  chefPending.add(lod)
+  const accepted = requestHotelGeometry('chef', lod, tree => {
+    chefPending.delete(lod)
+    if (tree && !cache[lod]) cache[lod] = unpackGeometryTree(tree) as Built
+  })
+  if (!accepted) { chefPending.delete(lod); buildChefGeometry(lod) }
+  return !!cache[lod]
+}
 export function buildChefGeometry(lod = 0): Built {
   lod = Math.max(0, Math.min(LODS - 1, lod))
   if (cache[lod]) return cache[lod]

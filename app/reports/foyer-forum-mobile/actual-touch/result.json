@@ -1,0 +1,232 @@
+{
+  "seed": 424243,
+  "mode": "realistic",
+  "port": 13976,
+  "cdp": 13977,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:13976/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Fri, 13 Nov 2026 11:28:42 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 276,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 13976,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 28450.539294,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.517,
+        "sendEnd": 0.556,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 11.751,
+        "receiveHeadersEnd": 11.921
+      },
+      "responseTime": 1794569323005.431,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\foyer-forum-mobile\\actual-touch\\qa-1794569305387-50648",
+    "--remote-debugging-port=13977",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 26060,
+    "server": 41196
+  },
+  "entryMs": 25224.5901,
+  "checks": [
+    "844×390 occupies the phone viewport",
+    "844×390 keeps the main reading area wide",
+    "844×390 has no horizontal overflow",
+    "390×844 occupies the phone viewport",
+    "390×844 keeps the main reading area wide",
+    "390×844 has no horizontal overflow",
+    "Board info shown with a touch target",
+    "Board rules expand by touch",
+    "Theme toggles by touch",
+    "Finger swipe vertically scrolls the forum",
+    "390×844 post occupies the phone viewport",
+    "390×844 post keeps the main reading area wide",
+    "390×844 post has no horizontal overflow",
+    "Post opens at its start",
+    "Comment count jumps to replies"
+  ],
+  "landscape": {
+    "viewport": [
+      844,
+      390
+    ],
+    "panel": [
+      0,
+      0,
+      844,
+      390
+    ],
+    "feed": [
+      62,
+      128.5,
+      720,
+      1835.609375
+    ],
+    "nav": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "info": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "scroll": [
+      0,
+      844,
+      844,
+      340,
+      1930
+    ],
+    "bodyScroll": 0,
+    "post": "home",
+    "theme": "dark"
+  },
+  "portrait": {
+    "viewport": [
+      390,
+      844
+    ],
+    "panel": [
+      0,
+      0,
+      390,
+      844
+    ],
+    "feed": [
+      10,
+      148.5,
+      370,
+      1519.71875
+    ],
+    "nav": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "info": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "scroll": [
+      0,
+      390,
+      390,
+      794,
+      1634
+    ],
+    "bodyScroll": 0,
+    "post": "home",
+    "theme": "dark"
+  },
+  "post": {
+    "viewport": [
+      390,
+      844
+    ],
+    "panel": [
+      0,
+      0,
+      390,
+      844
+    ],
+    "feed": [
+      10,
+      60,
+      370,
+      2317.953125
+    ],
+    "nav": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "info": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "scroll": [
+      0,
+      390,
+      390,
+      794,
+      2344
+    ],
+    "bodyScroll": 0,
+    "post": "post",
+    "theme": "light"
+  },
+  "ok": false,
+  "failure": "Error: Touch collapse hides the whole reply branch",
+  "partial": {
+    "target": "computer",
+    "forum": "post",
+    "text": "03/22\n论坛有新回帖在闪。再按 「交互」键 看看那个帖子\n使用 电脑\n开发者模式\n🛠 开发者模式 · DEV\n▴\n离开\n帖子列表\n1.4k\nb/都市传说\n·\n由 u/noclip_0 发布\n·\n2 小时前\n整理【整理】旧仓路后巷到底是什么（附“出来”的方法）\n\n新闻里那七个人我认识其中一个的朋友。说一下我知道的：旧仓路那条没名字的后巷，墙角有一块颜色不对的地方。午夜前后贴着墙走，会“卡”进去——像游戏里穿模一样。\n\n进去以后是一片无边无际的黄色房间，荧光灯一直在嗡嗡响。圈子里叫它“后室”，那一层叫 Level 0。\n\n重点来了：有人出来过。她说出口不是门，是“档案”。你要在里面找到六盘录像带，带到一座叫 Level 11 的城市，交给那里的公共档案馆。档案馆收齐六盘，门才会开。\n\n所以如果你真要去：带手电、带水、带吃的、手机充满电。别一个人去。——我知道你们不会听。\n\n214 条评论\n排序方式：\n最佳 ▾\n匿\n匿名用户\n·\n1 小时前\n\n又是这种帖子。去年也有人说某个地铁站能卡进去，结果呢？\n\n312\n折叠\nN\nnoclip_0\n楼主\n·\n58 分钟前\n\n地铁站那个是编的。这个不一样，新闻都出来了，七个人。\n\n187\n折叠\n夜\n夜班店员\n·\n41 分钟前\n\n我在第六大街那家 24 小时便利店上夜班。那天晚上监控真的只剩一片泛黄的雪花，过了十几秒才恢复。\n\n警察来调过录像，什么都没调到。\n\n264\n折叠\n匿\n匿名用户\n·\n38 分钟前\n\n……行吧，这个有点吓人。\n\n41\n折叠\nL\n[+]\nlamplight\n版主\n·\n50 分钟前\n（已折叠 1 条）\nA\narchive_r",
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  "bootstrap": {
+    "text": "03/22\n论坛有新回帖在闪。再按 「交互」键 看看那个帖子\n使用 电脑\n开发者模式\n🛠 开发者模式 · DEV\n▴\n离开\n帖子列表\n1.4k\nb/都市传说\n·\n由 u/noclip_0 发布\n·\n2 小时前\n整理【整理】旧仓路后巷到底是什么（附“出来”的方法）\n\n新闻里那七个人我认识其中一个的朋友。说一下我知道的：旧仓路那条没名字的后巷，墙角有一块颜色不对的地方。午夜前后贴着墙走，会“卡”进去——像游戏里穿模一样。\n\n进去以后是一片无边无际的黄色房间，荧光灯一直在嗡嗡响。圈子里叫它“后室”，那一层叫 Level 0。\n\n重点来了：有人出来过。她说出口不是门，是“档案”。你要在里面找到六盘录像带，带到一座叫 Level 11 的城市，交给那里的公共档案馆。档案馆收齐六盘，门才会开。\n\n所以如果你真要去：带手电、带水、带吃的、手机充满电。别一个人去。——我知道你们不会听。\n\n214 条评论\n排序方式：\n最佳 ▾\n匿\n匿名用户\n·\n1 小时前\n\n又是这种帖子。去年也有人说某个地铁站能卡进去，结果呢？\n\n312\n折叠\nN\nnoclip_0\n楼主\n·\n58 分钟前\n\n地铁站那个是编的。这个不一样，新闻都出来了，七个人。\n\n187\n折叠\n夜\n夜班店员\n·\n41 分钟前\n\n我在第六大街那家 24 小时便利店上夜班。那天晚上监控真的只剩一片泛黄的雪花，过了十几秒才恢复。\n\n警察来调过录像，什么都没调到。\n\n264\n折叠\n匿\n匿名用户\n·\n38 分钟前\n\n……行吧，这个有点吓人。\n\n41\n折叠\nL\n[+]\nlamplight\n版主\n·\n50 分钟前\n（已折叠 1 条）\nA\narchive_rat\n·\n45 分钟前\n\n“六盘录像带 → Level 11 档案馆”这个说法我在另一个帖子里也见过，细节对得上：都说出口不是门，是“档案”。\n\n154\n折叠\nN\nnoclip_0\n楼主\n·\n40 分钟前\n\n对，就是那个说法。她出来以后什么都不肯多说，只反复讲“六盘”。\n\n72\n折叠\n[已删除]\n·\n39 分钟前\n\n[该评论已删除]\n\nC\ncassette_six\n·\n12 分钟前\n\n我今晚就去。如果明天我没回帖，你们就知道是真的了。\n\n98\n折叠\nL\nlamplight\n版主\n·\n10 分钟前\n\n别去。真的。\n\n77\n折叠\n匿\n匿名用户\n·\n9 分钟前\n\n记得带充电宝 lol\n\n33\n折叠\nC\ncassette_six\n·\n8 分钟前\n\n带了。手电、水、能量棒，手机充满了。\n\n25\n折叠\nR\n[+]\nrain_on_6th\n·\n30 分钟前\n（已折叠 1 条）"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

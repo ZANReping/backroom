@@ -1,0 +1,332 @@
+{
+  "seed": 424243,
+  "mode": "realistic",
+  "port": 13244,
+  "cdp": 13245,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:13244/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Fri, 13 Nov 2026 11:30:41 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 278,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 13244,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 28569.222897,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.637,
+        "sendEnd": 0.69,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 9.811,
+        "receiveHeadersEnd": 9.978
+      },
+      "responseTime": 1794569441687.094,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\foyer-forum-mobile\\final\\qa-1794569418027-41136",
+    "--remote-debugging-port=13245",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 2592,
+    "server": 28192
+  },
+  "entryMs": 35209.061400000006,
+  "checks": [
+    "844×390 occupies the phone viewport",
+    "844×390 keeps the main reading area wide",
+    "844×390 has no horizontal overflow",
+    "390×844 occupies the phone viewport",
+    "390×844 keeps the main reading area wide",
+    "390×844 has no horizontal overflow",
+    "Board info shown with a touch target",
+    "Board rules expand by touch",
+    "Theme toggles by touch",
+    "Finger swipe vertically scrolls the forum",
+    "390×844 post occupies the phone viewport",
+    "390×844 post keeps the main reading area wide",
+    "390×844 post has no horizontal overflow",
+    "Post opens at its start",
+    "Comment count jumps to replies",
+    "Touch collapse hides the whole reply branch",
+    "Touch expand restores deeply nested replies",
+    "Nested reply voting works",
+    "Back restores list scroll position",
+    "320×568 occupies the phone viewport",
+    "320×568 keeps the main reading area wide",
+    "320×568 has no horizontal overflow",
+    "Desktop sidebars stay usable without overflow",
+    "Exit has a full touch target",
+    "Opening camera places the phone on the lower left and the live tutorial says so"
+  ],
+  "landscape": {
+    "viewport": [
+      844,
+      390
+    ],
+    "panel": [
+      0,
+      0,
+      844,
+      390
+    ],
+    "feed": [
+      62,
+      128.5,
+      720,
+      1835.609375
+    ],
+    "nav": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "info": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "scroll": [
+      0,
+      844,
+      844,
+      340,
+      1930
+    ],
+    "bodyScroll": 0,
+    "post": "home",
+    "theme": "dark"
+  },
+  "portrait": {
+    "viewport": [
+      390,
+      844
+    ],
+    "panel": [
+      0,
+      0,
+      390,
+      844
+    ],
+    "feed": [
+      10,
+      148.5,
+      370,
+      1519.71875
+    ],
+    "nav": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "info": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "scroll": [
+      0,
+      390,
+      390,
+      794,
+      1634
+    ],
+    "bodyScroll": 0,
+    "post": "home",
+    "theme": "dark"
+  },
+  "post": {
+    "viewport": [
+      390,
+      844
+    ],
+    "panel": [
+      0,
+      0,
+      390,
+      844
+    ],
+    "feed": [
+      10,
+      60,
+      370,
+      2317.953125
+    ],
+    "nav": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "info": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "scroll": [
+      0,
+      390,
+      390,
+      794,
+      2344
+    ],
+    "bodyScroll": 0,
+    "post": "post",
+    "theme": "light"
+  },
+  "small": {
+    "viewport": [
+      320,
+      568
+    ],
+    "panel": [
+      0,
+      0,
+      320,
+      568
+    ],
+    "feed": [
+      10,
+      13.5,
+      300,
+      1441.078125
+    ],
+    "nav": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "info": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "scroll": [
+      135,
+      320,
+      320,
+      518,
+      1556
+    ],
+    "bodyScroll": 0,
+    "post": "home",
+    "theme": "light"
+  },
+  "desktop": {
+    "viewport": [
+      1440,
+      900
+    ],
+    "panel": [
+      130,
+      45,
+      1180,
+      810
+    ],
+    "feed": [
+      387,
+      172,
+      574,
+      1724.4375
+    ],
+    "nav": [
+      131,
+      132,
+      236,
+      722
+    ],
+    "info": [
+      979,
+      172,
+      300,
+      751.765625
+    ],
+    "scroll": [
+      135,
+      932,
+      932,
+      722,
+      1913
+    ],
+    "bodyScroll": 0,
+    "post": "home",
+    "theme": "light"
+  },
+  "phone": {
+    "text": "04/22\n面向电脑，往屏幕左下方看。手机就在桌上的充电座上，对准它按 「交互」键 拿起",
+    "seated": "seated",
+    "projection": [
+      -0.6731524152107692,
+      -1.117944336361497
+    ],
+    "dock": [
+      4.550000000000001,
+      6.27
+    ]
+  },
+  "ok": false,
+  "failure": "Error: Timeout phone targeted from chair",
+  "partial": {
+    "text": "04/22\n面向电脑，往屏幕左下方看。手机就在桌上的充电座上，对准它按 「交互」键 拿起\n起身\n开发者模式\n🛠 开发者模式 · DEV\n▴\n收起",
+    "viewport": [
+      844,
+      390
+    ]
+  },
+  "bootstrap": {
+    "text": "04/22\n面向电脑，往屏幕左下方看。手机就在桌上的充电座上，对准它按 「交互」键 拿起\n起身\n开发者模式\n🛠 开发者模式 · DEV\n▴\n收起"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

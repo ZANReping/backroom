@@ -32,7 +32,7 @@ function shaperCurve(amount: number): Float32Array<ArrayBuffer> {
 export function createBreakAudio(): BreakAudio {
   const nodes = audio.muted ? null : audio.fxNodes()
   if (!nodes) return SILENT
-  const { ctx, sfx, amb } = nodes
+  const { ctx, sfx } = nodes
   const now = () => ctx.currentTime
   const noise = noiseBuffer(ctx, 2)
   const live: AudioNode[] = []
@@ -53,18 +53,7 @@ export function createBreakAudio(): BreakAudio {
   const wGain = keep(ctx.createGain()); wGain.gain.value = 0
   wSrc.connect(wBp).connect(wGain).connect(sfx); wSrc.start()
 
-  // 荧光灯嗡鸣：60/120/180 Hz + 轻微高频嘶声（走环境总线）
-  const hGain = keep(ctx.createGain()); hGain.gain.value = 0
-  hGain.connect(amb)
-  for (const [f, v, t] of [[60, 0.5, 'sine'], [120, 0.35, 'sawtooth'], [180, 0.12, 'square']] as const) {
-    const o = keep(ctx.createOscillator()); o.type = t; o.frequency.value = f
-    const g = keep(ctx.createGain()); g.gain.value = v * 0.18
-    o.connect(g).connect(hGain); o.start()
-  }
-  const hissSrc = keep(ctx.createBufferSource()); hissSrc.buffer = noise; hissSrc.loop = true
-  const hissHp = keep(ctx.createBiquadFilter()); hissHp.type = 'highpass'; hissHp.frequency.value = 6000
-  const hissG = keep(ctx.createGain()); hissG.gain.value = 0.02
-  hissSrc.connect(hissHp).connect(hissG).connect(hGain); hissSrc.start()
+  const hum = audio.beginBreakHum()
 
   let stopped = false
   const ramp = (p: AudioParam, v: number, tc = 0.08) => { if (!stopped) p.setTargetAtTime(v, now(), tc) }
@@ -105,10 +94,11 @@ export function createBreakAudio(): BreakAudio {
       s.connect(lp).connect(ng).connect(sfx); s.start(t, 0, 0.4)
       ramp(dGain.gain, 0, 0.03); ramp(wGain.gain, 0, 0.03)
     },
-    hum(k) { ramp(hGain.gain, 0.9 * k, 0.4) },
+    hum(k) { if (!stopped) hum.setLevel(k) },
     stop(fade = 0.6) {
       if (stopped) return
-      for (const g of [dGain, wGain, hGain]) g.gain.setTargetAtTime(0, now(), fade / 3)
+      hum.stop(fade)
+      for (const g of [dGain, wGain]) g.gain.setTargetAtTime(0, now(), fade / 3)
       stopped = true
       window.setTimeout(() => {
         for (const n of live) { try { (n as AudioScheduledSourceNode).stop?.() } catch { /* 已停止 */ } try { n.disconnect() } catch { /* */ } }

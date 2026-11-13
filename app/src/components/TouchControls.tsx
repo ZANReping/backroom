@@ -156,6 +156,24 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
   const handsStowed = !!engine.handsStowed
   const holster = (e: React.TouchEvent) => { e.stopPropagation(); engine.toggleHands() }
 
+  const bindActionTouch = useCallback((button: HTMLButtonElement | null) => {
+    if (!button) return
+    // An interaction can unmount this button before touchend. Cancel the
+    // compatibility click before it can reach the newly opened panel.
+    const preventClick = (event: TouchEvent) => {
+      if (event.cancelable) event.preventDefault()
+    }
+    button.addEventListener('touchstart', preventClick, { passive: false })
+    return () => button.removeEventListener('touchstart', preventClick)
+  }, [])
+  const pressAttackOrInteract = (event: React.TouchEvent) => {
+    event.stopPropagation()
+    if (engine.getInteract()) engine.input.interact = true
+    else if (!engine.handsStowed) {
+      engine.input.attack = true
+      engine.input.attackHeld = true
+    }
+  }
   const interact = engine.getInteract()
   const special = specialAction(engine)
   useEffect(() => { if (!special && engine.specialHeld) engine.specialHeld = false }, [special, engine])
@@ -194,6 +212,7 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
     const s = size * it.scale
     return (
       <button
+        ref={id === 'attack' ? bindActionTouch : undefined}
         data-touch-id={id}
         aria-label={id === 'holster' ? (handsStowed ? '取出主手' : '收起主手') : id === 'attack' ? interact ? '交互' : '攻击' : id === 'crouch' ? flightActive || deepSwimming ? (deepSwimming && !flightActive ? '下潜（按住）' : '下降（按住）') : '蹲伏（切换）' : id === 'jump' ? flightActive || deepSwimming ? (deepSwimming && !flightActive ? '上浮（按住）' : '上升（按住）') : '跳跃' : undefined}
         aria-pressed={id === 'holster' ? handsStowed : undefined}
@@ -272,11 +291,7 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
       {fixedBtn(
         'attack', CONTROL_SIZES.attack,
         { borderColor: attackUnavailable ? 'var(--panel-edge)' : 'var(--amber)', color: attackUnavailable ? 'var(--text-dim)' : 'var(--amber)', opacity: attackUnavailable ? .5 : 1 },
-        (e) => {
-          e.stopPropagation()
-          if (engine.getInteract()) engine.input.interact = true
-          else if (!engine.handsStowed) { engine.input.attack = true; engine.input.attackHeld = true }
-        },
+        pressAttackOrInteract,
         (e) => { e.stopPropagation(); engine.input.attackHeld = false }, // 近战重制：按住攻击键蓄力重击
 
         interact ? <IconInteract width={30} height={30} /> : <IconAttack width={30} height={30} />,
@@ -403,16 +418,13 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
           {!isCustom('attack') && (
             <button
               aria-label={interact ? '交互' : '攻击'}
+              ref={bindActionTouch}
               data-touch-id="attack"
               aria-disabled={attackUnavailable}
               data-label={interact ? '交互' : '攻击'}
               className={`tc-btn tc-btn--main pointer-events-auto absolute inset-0 flex items-center justify-center rounded-full active:scale-90 ${interact ? 'anim-pulseAmber' : ''}`}
               style={{ ...btnBase, borderColor: attackUnavailable ? 'var(--panel-edge)' : 'var(--amber)', color: attackUnavailable ? 'var(--text-dim)' : 'var(--amber)', borderWidth: 2, opacity: attackUnavailable ? .5 : 1 }}
-              onTouchStart={(e) => {
-                e.stopPropagation()
-                if (engine.getInteract()) engine.input.interact = true
-                else if (!engine.handsStowed) { engine.input.attack = true; engine.input.attackHeld = true }
-              }}
+              onTouchStart={pressAttackOrInteract}
               onTouchEnd={(e) => { e.stopPropagation(); engine.input.attackHeld = false }}
               onTouchCancel={() => { engine.input.attackHeld = false }}
             >
@@ -487,16 +499,13 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
               )}
               {!isCustom('attack') && (
                 <button
+                  ref={bindActionTouch}
                   data-touch-id="attack"
                   aria-label={interact ? '交互' : '攻击'}
                   aria-disabled={attackUnavailable}
                   className={`flex items-center justify-center rounded-full active:scale-90 ${interact ? 'anim-pulseAmber' : ''}`}
                   style={{ ...btnBase, width: 72, height: 72, borderColor: attackUnavailable ? 'var(--panel-edge)' : 'var(--amber)', color: attackUnavailable ? 'var(--text-dim)' : 'var(--amber)', opacity: attackUnavailable ? .5 : 1 }}
-                  onTouchStart={(e) => {
-                    e.stopPropagation()
-                    if (engine.getInteract()) engine.input.interact = true
-                    else if (!engine.handsStowed) { engine.input.attack = true; engine.input.attackHeld = true }
-                  }}
+                  onTouchStart={pressAttackOrInteract}
                   onTouchEnd={(e) => { e.stopPropagation(); engine.input.attackHeld = false }}
                   onTouchCancel={() => { engine.input.attackHeld = false }}
                 >

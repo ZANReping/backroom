@@ -1,0 +1,48 @@
+
+> my-app@0.0.0 check:l5map
+> esbuild scripts/check-l5map.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l5map.mjs && node .cache/check-l5map.mjs
+
+
+  .cache\check-l5map.mjs  6.3mb
+
+Done in 399ms
+✔ 图例 28 种图标，每种都有绘制函数 + 中文标签  []
+✔ 每个图标都画出了可见像素（≥30 px @ 32²）  []
+✔ 需求清单里的要素全部在图标集中  []
+✔ 图例标签全部中文
+✔ 每种图例要素都在实际地图上画出（27/27）
+   来源： {"guestDoor":"f0/s1","puddle":"f0/s1","phono":"f0/s1","serviceLift":"f0/s1","elevator":"f0/s1","blackDoor":"f0/s1","boiler":"f0/s1","beverly":"f0/s1","kitchen":"f1/s1","lobbyDoor":"f1/s1","exit":"f1/s1","stairs":"f1/s1","dining":"f1/s1","lounge":"f2/s1","casinoDoor":"f1/s2","ownRoom":"f2 房卡绑定","maid":"视野内注入","bellhop":"视野内注入","greeter":"视野内注入","chef":"视野内注入","beast":"视野内注入","jazz":"视野内注入","cashier":"casino","slot":"casino","blackjack":"casino","roulette":"casino","craps":"casino","player":"drawArrow（大小地图都画）"}
+✔ 雾 = 未探索：160×160 窗口逐格一致（已探索 928 格，不一致 0）
+✔ 未探索格在画面上全部是雾色（6168/6168，含负世界坐标区）  {"ox":-64,"oy":-64}
+✔ 存档往返：区块类别 0 差异、要素 12 个一致  {"diff":0}
+✔ 导览图存档体积合理（4.5 KB）
+✔ 换到 2F 后 1F 页的探索记录原样保留
+✔ 2F 新页只记录 2F 已探索的格（0 = 0）
+✔ 3F 找到带房号的客房门
+✔ 未持房卡：没有「我的房间」
+✔ 房卡未绑定（dx 未定）：不高亮
+✔ 绑定 986 号：高亮 1 扇（该房号的门数 1）
+✔ 别的楼层不高亮
+✔ 找到出现了大堂门的 1F
+✔ 大堂门所在格未探索：地图上不标
+✔ 看到（探索到）之后才标出大堂门
+✔ 大堂门没出现的楼层：不标
+✔ 1F–12F 全部楼层没有黑门图标
+✔ B1 黑门未探索：不标
+✔ B1 探索后标出黑门（9 扇）
+✔ 即使记录错页，黑门也只在 B1 页显示
+✔ 分页顺序 B1 → 1F → 6F → 赌场：f0 / f1 / f6 / casino
+✔ 页标题：B1 / 1F / 12F / 大堂 / 5.1
+✔ 赌场单独一页；没有 13F 页（13 楼是消失事件，不是可到达楼层）
+✔ 大堂（118）单独一页
+✔ 分页随存档往返  ["f1","f0","f6","casino"]
+✔ 电梯过场中不记录，页键按地图实际楼层（f1），不污染 2F 页
+✔ 过场结束前地图仍是 1F：记录仍进 1F 页
+✔ 小地图 600 帧（行走 30 m）只重绘 19 次（上限 24：0.5 s 节流 + 锚点区块）
+✔ 缓存命中帧平均 0.018 ms < 1 ms（最大 0.12 ms，Node 画布）
+✔ 原地转身 120 帧：0 次重绘
+✔ 理智 ≥ 40 无效果；< 40 才渐进
+✔ 理智 5：画面变化 4.4%（有效果但 < 25%）
+✔ 玩家周围 40 px 内变化 7.1%（墨点避开中心）
+
+通过 37 / 37

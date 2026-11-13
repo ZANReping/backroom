@@ -1,0 +1,91 @@
+{
+  "mode": "realistic",
+  "only": "pilot",
+  "checks": [
+    "owned native headless session"
+  ],
+  "scenes": [],
+  "errors": [],
+  "console": [],
+  "httpErrors": [
+    {
+      "url": "http://127.0.0.1:11195/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sun, 08 Nov 2026 08:56:48 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 143,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 11195,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 17035.857297,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.47,
+        "sendEnd": 0.491,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 15.097,
+        "receiveHeadersEnd": 15.237
+      },
+      "responseTime": 1794128208103.803,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "port": 11195,
+  "cdp": 11196,
+  "profile": "E:\\ZAN\\backroom\\app\\reports\\offscreen-20261108\\pilot-first\\qa-1794128191032-31324",
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--headless=new",
+    "--enable-automation",
+    "--remote-debugging-port=11196",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\offscreen-20261108\\pilot-first\\qa-1794128191032-31324",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--disable-background-timer-throttling",
+    "--disable-renderer-backgrounding",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "ok": false,
+  "failure": "Error: Timeout Offscreen Level 1",
+  "failureState": {
+    "text": "离屏渲染试验 · 原游戏建筑与材质 · 只验证场景与视角，尚未接管完整交互\n{\"error\":\"TypeError: document.createElementNS is not a function\"}",
+    "trial": {
+      "stats": null,
+      "error": "TypeError: document.createElementNS is not a function"
+    }
+  },
+  "cleanup": {
+    "profileRemoved": true
+  }
+}

@@ -1,0 +1,271 @@
+{
+  "label": "before",
+  "port": 3687,
+  "cdp": 3688,
+  "checks": [
+    "isolated headless Chrome",
+    "entering gameplay leaves the first capture to the player",
+    "native raw capture on the first canvas click",
+    "original inventory close leaves the mouse unlocked",
+    "every capture requests unadjusted movement",
+    "no browser runtime errors",
+    "no missing game resources"
+  ],
+  "states": [
+    {
+      "label": "native raw capture on the first canvas click",
+      "lock": true,
+      "raw": "raw",
+      "look": true,
+      "yaw": 0,
+      "paused": false,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 1
+    },
+    {
+      "label": "inventory opens and frees the pointer",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": 0,
+      "paused": true,
+      "menu": true,
+      "focused": true,
+      "active": true,
+      "requests": 1
+    },
+    {
+      "label": "inventory closed",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": 0,
+      "paused": false,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 1
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    {
+      "type": "warning",
+      "args": [
+        {
+          "type": "string",
+          "value": "THREE.WebGLProgram: Program Info Log:"
+        },
+        {
+          "type": "string",
+          "value": "(210,91-147): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1794484627849.185,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "warn",
+            "scriptId": "556",
+            "url": "http://127.0.0.1:3687/reports/pointer-resume-20261112/before/qa-1794484595655-105288/vite/deps/chunk-BWT6IPVN.js?v=41753f2f",
+            "lineNumber": 296,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "onFirstUse",
+            "scriptId": "556",
+            "url": "http://127.0.0.1:3687/reports/pointer-resume-20261112/before/qa-1794484595655-105288/vite/deps/chunk-BWT6IPVN.js?v=41753f2f",
+            "lineNumber": 36018,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "WebGLProgram.getUniforms",
+            "scriptId": "556",
+            "url": "http://127.0.0.1:3687/reports/pointer-resume-20261112/before/qa-1794484595655-105288/vite/deps/chunk-BWT6IPVN.js?v=41753f2f",
+            "lineNumber": 36045,
+            "columnNumber": 6
+          },
+          {
+            "functionName": "setProgram",
+            "scriptId": "556",
+            "url": "http://127.0.0.1:3687/reports/pointer-resume-20261112/before/qa-1794484595655-105288/vite/deps/chunk-BWT6IPVN.js?v=41753f2f",
+            "lineNumber": 42520,
+            "columnNumber": 33
+          },
+          {
+            "functionName": "WebGLRenderer.renderBufferDirect",
+            "scriptId": "556",
+            "url": "http://127.0.0.1:3687/reports/pointer-resume-20261112/before/qa-1794484595655-105288/vite/deps/chunk-BWT6IPVN.js?v=41753f2f",
+            "lineNumber": 41864,
+            "columnNumber": 22
+          },
+          {
+            "functionName": "renderObject",
+            "scriptId": "556",
+            "url": "http://127.0.0.1:3687/reports/pointer-resume-20261112/before/qa-1794484595655-105288/vite/deps/chunk-BWT6IPVN.js?v=41753f2f",
+            "lineNumber": 42317,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "renderObjects",
+            "scriptId": "556",
+            "url": "http://127.0.0.1:3687/reports/pointer-resume-20261112/before/qa-1794484595655-105288/vite/deps/chunk-BWT6IPVN.js?v=41753f2f",
+            "lineNumber": 42299,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "renderScene",
+            "scriptId": "556",
+            "url": "http://127.0.0.1:3687/reports/pointer-resume-20261112/before/qa-1794484595655-105288/vite/deps/chunk-BWT6IPVN.js?v=41753f2f",
+            "lineNumber": 42216,
+            "columnNumber": 36
+          },
+          {
+            "functionName": "WebGLRenderer.render",
+            "scriptId": "556",
+            "url": "http://127.0.0.1:3687/reports/pointer-resume-20261112/before/qa-1794484595655-105288/vite/deps/chunk-BWT6IPVN.js?v=41753f2f",
+            "lineNumber": 42119,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "_applyGGXFilter",
+            "scriptId": "556",
+            "url": "http://127.0.0.1:3687/reports/pointer-resume-20261112/before/qa-1794484595655-105288/vite/deps/chunk-BWT6IPVN.js?v=41753f2f",
+            "lineNumber": 33524,
+            "columnNumber": 13
+          },
+          {
+            "functionName": "_applyPMREM",
+            "scriptId": "556",
+            "url": "http://127.0.0.1:3687/reports/pointer-resume-20261112/before/qa-1794484595655-105288/vite/deps/chunk-BWT6IPVN.js?v=41753f2f",
+            "lineNumber": 33488,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "_fromTexture",
+            "scriptId": "556",
+            "url": "http://127.0.0.1:3687/reports/pointer-resume-20261112/before/qa-1794484595655-105288/vite/deps/chunk-BWT6IPVN.js?v=41753f2f",
+            "lineNumber": 33356,
+            "columnNumber": 9
+          },
+          {
+            "functionName": "fromEquirectangular",
+            "scriptId": "556",
+            "url": "http://127.0.0.1:3687/reports/pointer-resume-20261112/before/qa-1794484595655-105288/vite/deps/chunk-BWT6IPVN.js?v=41753f2f",
+            "lineNumber": 33275,
+            "columnNumber": 16
+          },
+          {
+            "functionName": "envProbe",
+            "scriptId": "234",
+            "url": "http://127.0.0.1:3687/src/game/renderer/envProbe.ts",
+            "lineNumber": 51,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "applyEnvProbe",
+            "scriptId": "12",
+            "url": "http://127.0.0.1:3687/src/game/renderer/renderer.ts",
+            "lineNumber": 4861,
+            "columnNumber": 29
+          },
+          {
+            "functionName": "buildLevel",
+            "scriptId": "12",
+            "url": "http://127.0.0.1:3687/src/game/renderer/renderer.ts",
+            "lineNumber": 4826,
+            "columnNumber": 9
+          },
+          {
+            "functionName": "renderFrame",
+            "scriptId": "12",
+            "url": "http://127.0.0.1:3687/src/game/renderer/renderer.ts",
+            "lineNumber": 1517,
+            "columnNumber": 105
+          },
+          {
+            "functionName": "render",
+            "scriptId": "12",
+            "url": "http://127.0.0.1:3687/src/game/renderer/renderer.ts",
+            "lineNumber": 1371,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "loop",
+            "scriptId": "780",
+            "url": "http://127.0.0.1:3687/src/App.tsx",
+            "lineNumber": 1148,
+            "columnNumber": 19
+          }
+        ]
+      }
+    }
+  ],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:3687/favicon.ico",
+      "status": 404
+    },
+    {
+      "url": "http://127.0.0.1:3687/favicon.ico",
+      "status": 404
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--headless=new",
+    "--enable-automation",
+    "--remote-debugging-port=3688",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\pointer-resume-20261112\\before\\qa-1794484595655-105288",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 83996,
+    "browser": 47344
+  },
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/157.0.8103.50",
+    "revision": "@049750111b1e5c11565c792b2aeed5541f332bad",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+    "jsVersion": "15.7.112.23"
+  },
+  "pointer": {
+    "requests": [
+      {
+        "raw": true,
+        "active": true,
+        "at": 33106.09999999404
+      }
+    ],
+    "events": [
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 33581.19999998808
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 33592.29999998212
+      }
+    ],
+    "failures": [],
+    "deny": false,
+    "delay": 0
+  },
+  "ok": true,
+  "cleanup": {
+    "profileRemoved": true
+  }
+}

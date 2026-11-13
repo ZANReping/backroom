@@ -5,6 +5,7 @@ import type { Engine } from '../engine'
 import type { LightSource, Structure } from '../core/types'
 import { FOYER_DOORS, FOYER_ID, FOYER_PROPS, FOYER_SPAWN, FOYER_PICKUP_POS, foyerDoorBox, foyerRoomAt, type FoyerProp } from '../world/foyerLayout'
 import { audio } from '../core/audio'
+import { ALLEY_ARCH, streetAreaAt } from '../world/foyerStreetLayout'
 import { look } from '../renderer/shared'
 import { markFoyerCompleted } from '../core/foyerFlag'
 import { unlockAllHud, unlockHud, type HudKey } from './hud'
@@ -162,7 +163,7 @@ export function foyerTargets(eng: Engine): FoyerTarget[] {
     if (!f.got_water) { const q = FOYER_PICKUP_POS.water; out.push({ id: 'pick_water', label: '拿 瓶装水', ...q, range: 1.7, radius: 0.2, volume: boxAt(q.x + 0.04, q.y, q.z + 0.1, 0.14, 0.12, 0.13), s: struct('fridge'), priority: PICK_PRIORITY }) }
     if (!f.got_snack) { const q = FOYER_PICKUP_POS.snack; out.push({ id: 'pick_snack', label: '拿 能量棒', ...q, range: 1.7, radius: 0.2, volume: boxAt(q.x, q.y, q.z + 0.03, 0.14, 0.12, 0.08), s: struct('fridge'), priority: PICK_PRIORITY }) }
   }
-  // ---- 手机 / 充电处（书桌右侧的充电座）----
+  // ---- 手机 / 充电处（面向电脑时，玩家视角左下方的充电座）----
   {
     const dock = prop('phone_dock')
     const ph = p.phone
@@ -303,6 +304,33 @@ export function updateFoyer(eng: Engine, dt: number) {
   }
   // ---- M3：街区（下楼、调查、回程异常）----
   if (inFoyerRun(eng)) updateFoyerStreet(eng, dt)
+  if (p.level === FOYER_ID) updateFoyerAudio(eng)
+}
+
+function updateFoyerAudio(eng: Engine) {
+  const { x, y, prologue } = eng.player
+  const room = foyerRoomAt(x, y)?.id
+  const area = streetAreaAt(x, y)?.id
+  const flags = prologue?.flags
+  const yaw = look.yaw
+  const home = room === 'bedroom' ? .68 : room && room !== 'stair' ? .27 : 0
+
+  // The first gate loop is the second departure from the alley. The second loop is the third.
+  const traffic = flags?.loop1 || flags?.loop2 ? 0
+    : area === 'street' || area === 'cross' ? 1
+    : area === 'gate' ? .64
+    : area === 'compound' ? .32
+    : area === 'alley' ? .48 * Math.max(0, 1 - (y - ALLEY_ARCH.y0) / 18)
+    : 0
+
+  const dx = (ALLEY_ARCH.x0 + ALLEY_ARCH.x1) / 2 - x
+  const dy = (ALLEY_ARCH.y0 + ALLEY_ARCH.y1) / 2 - y
+  const distance = Math.hypot(dx, dy)
+  const hum = flags?.loop2 && !flags.fell && (area === 'alley' || area === 'street')
+    ? .58 * Math.max(0, 1 - distance / 18) ** 2
+    : 0
+  const humPan = (dx * Math.cos(yaw) - dy * Math.sin(yaw)) / Math.max(4, distance)
+  audio.updateFoyerSoundscape({ x, y, yaw, home, traffic, hum, humPan })
 }
 
 /** 楼道灯当前亮度（渲染层灯罩发光用）。 */

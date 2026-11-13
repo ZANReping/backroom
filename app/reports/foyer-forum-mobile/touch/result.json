@@ -1,0 +1,94 @@
+{
+  "seed": 424243,
+  "mode": "realistic",
+  "port": 7192,
+  "cdp": 7193,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:7192/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Fri, 13 Nov 2026 11:24:59 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 142,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 7192,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 28226.640312,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.331,
+        "sendEnd": 0.378,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 88.18,
+        "receiveHeadersEnd": 88.349
+      },
+      "responseTime": 1794569099182.879,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\foyer-forum-mobile\\touch\\qa-1794569079620-48612",
+    "--remote-debugging-port=7193",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 31148,
+    "server": 57668
+  },
+  "entryMs": 26799.7918,
+  "ok": false,
+  "failure": "Error: Timeout aim at the opening computer",
+  "partial": {
+    "target": "computer",
+    "text": "02/22\n屏幕上开着新闻网站——对准电脑按 「交互」键 阅读\n使用 电脑\n开发者模式\n🛠 开发者模式 · DEV\n▴\n收起",
+    "viewport": [
+      844,
+      390
+    ]
+  },
+  "bootstrap": {
+    "text": "02/22\n屏幕上开着新闻网站——对准电脑按 「交互」键 阅读\n使用 电脑\n开发者模式\n🛠 开发者模式 · DEV\n▴\n收起"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

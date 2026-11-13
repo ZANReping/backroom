@@ -1,3 +1,4 @@
+import {prepareChefGeometry,chefGeometryReady} from './chefMesh'
 // [chef] 厨师（Entity 800）阶段 3：渲染接入。
 //   · buildChefEntityMesh：实体根组（正面 +X；外层 buildChef 组 rotation.y = π/2 / facesZ）= LOD2（约 6k，立即建）+ LOD1（约 1.9 万，22 m 内才建）+ LOD0（约 6 万，11 m 内才建）；
 //     < 8 m 用 LOD0、< 17.5 m 用 LOD1、更远 LOD2（边界 ±1 m 内保持当前档，防抖）。GPU 蒙皮；?cpu=1 时 qaCpuSkin 全局替身接管。
@@ -17,7 +18,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import type { Entity } from '../entities'
 import type { Structure } from '../core/types'
 import type { Engine } from '../engine'
-import { buildChef, buildChefGeometry, chefMaterials, chefFadePatch, setChefBlood, CHEF_UNI, type ChefRig } from './chefMesh'
+import { buildChef, chefMaterials, chefFadePatch, setChefBlood, CHEF_UNI, type ChefRig } from './chefMesh'
 import { CHEF_CLIPS, chefPose, mixChefPose, cloneChefPose, applyChefPose, resetChefDynamics, type ChefClip, type ChefAnimPose, type ChefAnimOpts } from './chefAnim'
 import { buildChefPot, buildStewCauldron, buildCarvingKnife, buildCuffsPipe, buildRedCabbage, buildMeatChunk } from './chefProps'
 import { litMaterial } from './shared'
@@ -87,14 +88,14 @@ function ensureLod(grp: THREE.Group, lod: 0 | 1): void {
 }
 let warmed = false
 /** 预热：LOD2 + LOD1 几何 + 材质（走近餐厅时一次性） */
-export function prewarmChef(): boolean { if (warmed) return false; warmed = true; buildChefGeometry(2); buildChefGeometry(1); chefMaterials(); return true }
+export function prewarmChef(): boolean { if (warmed) return false; prepareChefGeometry(2); prepareChefGeometry(1); if(!chefGeometryReady(2)||!chefGeometryReady(1))return false; warmed = true; chefMaterials(); return true }
 
 /** 渲染层每帧：e.ck → 片段 / LOD / 清晰度 / 道具 */
 export function animateChefEntity(grp: THREE.Group, e: Entity, dt: number, distance: number, blood?: number) {
   if (grp.userData.archive) return
   const s = e.ck
-  if (distance < CHEF_RLOD.build1) ensureLod(grp, 1)
-  if (distance < CHEF_RLOD.build0) ensureLod(grp, 0)
+  if (distance < CHEF_RLOD.build1 && prepareChefGeometry(1)) ensureLod(grp, 1)
+  if (distance < CHEF_RLOD.build0 && prepareChefGeometry(0)) ensureLod(grp, 0)
   let v = grp.userData.ckView as View | undefined
   if (!v) { v = { clip: (s?.clip ?? 'idle') as ChefClip, seq: -1, t: 0, gt: 0, fadeT: 1, blend: 0.3, prev: null, last: null, lod: 2, vis: s?.vis ?? 0, shadow: true }; grp.userData.ckView = v }
   // —— LOD ——
@@ -601,11 +602,16 @@ export function syncChefProp(g: THREE.Object3D, s: Structure, eng: Engine | null
   void chefCooking; void chefSite; void CK
 }
 /** 餐厅地毯上的血迹（chefAI 存档 stains → 窗口坐标贴花；renderer 每帧调用） */
+const stainGroups = new WeakMap<THREE.Scene, THREE.Group>()
 export function syncChefStains(scene: THREE.Scene, eng: Engine | null) {
-  let grp = scene.getObjectByName('chefStains') as THREE.Group | undefined
+  let grp = stainGroups.get(scene)
+  if (grp && grp.parent !== scene) {
+    for (const child of grp.children) (child as THREE.Mesh).geometry.dispose()
+    stainGroups.delete(scene); grp = undefined
+  }
   const on = !!eng && eng.levelDef.id === 5 && !!eng.map?.inf
   const st = on ? chefSave(eng!).stains : []
-  if (!grp) { if (!st.length) return; grp = new THREE.Group(); grp.name = 'chefStains'; scene.add(grp) }
+  if (!grp) { if (!st.length) return; grp = new THREE.Group(); grp.name = 'chefStains'; scene.add(grp); stainGroups.set(scene, grp) }
   const ox = eng?.map?.inf?.ox ?? 0, oy = eng?.map?.inf?.oy ?? 0
   while (grp.children.length < st.length) { const m = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 1.6), M.stain()); m.rotation.x = -Math.PI / 2; m.renderOrder = 1; grp.add(m) }
   grp.children.forEach((c, i) => { const s = st[i]; c.visible = !!s; if (s) { c.position.set(s.x - ox, 0.012, s.y - oy); c.rotation.z = (i * 1.37) % 6.28 } })

@@ -1,0 +1,149 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 5351,
+  "cdp": 5352,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\melee-charge-release\\final\\qa-1794490124081-88584",
+    "--remote-debugging-port=5352",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 98364,
+    "server": 97016
+  },
+  "appBootMs": 30180.226599999998,
+  "entryMs": 3737.1928999999946,
+  "firstPlayableMs": 40765.794299999994,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 4,
+    "paused": false,
+    "near": false,
+    "chunks": 9,
+    "tasks": 4,
+    "memory": {
+      "geometries": 466,
+      "textures": 66,
+      "programs": 61
+    },
+    "world": [
+      15.5,
+      15.5,
+      0
+    ]
+  },
+  "weapons": [
+    {
+      "weapon": "axe",
+      "before": {
+        "xyz": [
+          0.24239580981269476,
+          -0.021319592495500028,
+          -0.27891105771520736
+        ],
+        "angles": [
+          1.3004915915054924,
+          0.05,
+          -0.12
+        ],
+        "visible": true
+      },
+      "release": {
+        "xyz": [
+          0.2376846411653206,
+          -0.024312001866850175,
+          -0.27976383788929027
+        ],
+        "angles": [
+          1.2911546033643038,
+          0.05,
+          -0.12
+        ],
+        "visible": true
+      },
+      "held": 1,
+      "progress": 0.5,
+      "hitDelay": 0,
+      "cooldown": 1.62,
+      "startHits": 0,
+      "hitsAfterRelease": 0,
+      "action": {
+        "hits": 1,
+        "active": true,
+        "xyz": [
+          0.1275385337246171,
+          -0.5282883821956146,
+          -0.7625146170204192
+        ],
+        "pitch": -0.502000018746979
+      }
+    },
+    {
+      "weapon": "knife",
+      "before": {
+        "xyz": [
+          0.2159902469192193,
+          -0.3004016995626591,
+          -0.4833081917344647
+        ],
+        "angles": [
+          -0.3571164218371674,
+          0.20227155829379115,
+          -0.08090862331751647
+        ],
+        "visible": true
+      },
+      "release": {
+        "xyz": [
+          0.2154800155924259,
+          -0.3008502260800108,
+          -0.4833289604829722
+        ],
+        "angles": [
+          -0.35812836614582216,
+          0.20227155829379115,
+          -0.08090862331751647
+        ],
+        "visible": true
+      },
+      "held": 0.6515151515151523,
+      "progress": 0.24490747697359305,
+      "hitDelay": 0.05895736427637232,
+      "cooldown": 0.62,
+      "startHits": 1,
+      "hitsAfterRelease": 1,
+      "action": {
+        "hits": 2,
+        "active": true,
+        "xyz": [
+          0.08896175459347216,
+          -0.2784252524325675,
+          -0.836752938159153
+        ],
+        "pitch": -0.49454042929866265
+      }
+    }
+  ],
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

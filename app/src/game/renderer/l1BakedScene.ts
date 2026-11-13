@@ -1,3 +1,4 @@
+import {cloneRenderMaterial} from './renderMaterial'
 import * as THREE from 'three'
 import type {L1ArchitectureData} from '../world/l1BuildingTypes'
 import type {LightSource} from '../core/types'
@@ -27,7 +28,7 @@ export function *buildL1BakedScene(data:L1ArchitectureData,ox:number,oz:number,g
   const started=performance.now()
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(b.position,3));geo.setAttribute('normal',new THREE.BufferAttribute(b.normal,3));geo.setAttribute('uv',new THREE.BufferAttribute(b.uv,2));geo.setAttribute('uv1',new THREE.BufferAttribute(b.uv1,2));geo.setIndex(new THREE.BufferAttribute(b.index,1));geo.computeBoundingSphere()
   const surface=b.surface==='paint'?(b.style==='maintenance'?'wall':b.style==='fabled'?'column':'columnPaint'):b.surface
-  const source=l1Material(b.style==='maintenance'&&b.surface==='paint'?'maintenance-plaster':b.style==='parking'?`parking@${b.skin}`:b.style,surface),mat=source.clone() as THREE.MeshStandardMaterial
+  const source=l1Material(b.style==='maintenance'&&b.surface==='paint'?'maintenance-plaster':b.style==='parking'?`parking@${b.skin}`:b.style,surface),mat=cloneRenderMaterial(source) as THREE.MeshStandardMaterial
   mat.onBeforeCompile=source.onBeforeCompile;mat.customProgramCacheKey=source.customProgramCacheKey
   mat.userData={...source.userData,l1Owned:true,l1Baked:true,l1Textures:[direction,...(portal?[portal]:[])]};mat.lightMap=b.surface==='leaf'?null:light;mat.lightMapIntensity=Math.PI
   const prior=mat.onBeforeCompile,key=mat.customProgramCacheKey();owners++;materials.push(mat)

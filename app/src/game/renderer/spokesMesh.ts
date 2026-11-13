@@ -1,3 +1,5 @@
+import {requestHotelGeometry} from './hotelGeometryQueue'
+import {unpackGeometryTree} from './geometryPacket'
 import { shareHotelRigAssets } from './shared'
 // [spokes] 迎宾女郎（Entity 28 / The Spokeslady）重制·阶段 1 建模（只建模，不做动画 / 机制，未接入游戏）。
 // 参照 ZAN 附图 + 定稿（11-01）：写实真兔头（灰白短毛、长竖耳内侧粉色带血管、黑亮大眼无眼白、粉鼻、长白胡须），
@@ -299,16 +301,34 @@ function addRest(g: THREE.BufferGeometry) {
   g.setAttribute('aRest', new THREE.BufferAttribute(new Float32Array(p.array as Float32Array), 3))
   g.setAttribute('aRN', new THREE.BufferAttribute(new Float32Array(n.array as Float32Array), 3))
 }
+const pendingGeometry = new Set<number>()
+/** Keep the existing detail visible while its immutable high-detail buffers build. */
+export function deferSpokesGeometry(lod = 0): boolean {
+  if (cache[lod]) return false
+  if (pendingGeometry.has(lod)) return true
+  pendingGeometry.add(lod)
+  const accepted = requestHotelGeometry('spokes', lod, tree => {
+    pendingGeometry.delete(lod)
+    if (tree && !cache[lod]) { cache[lod] = unpackGeometryTree(tree) as Built }
+  })
+  if (!accepted) pendingGeometry.delete(lod)
+  return accepted
+}
 export function spokesGeometryReady(lod = 0): boolean { return !!cache[lod] }
 export function buildSpokesGeometry(lod = 0): Built {
-  const task = prepareSpokesGeometry(lod)
+  const task = prepareSpokesGeometry(lod, false)
   let step = task.next()
   while (!step.done) step = task.next()
   return step.value
 }
-export function* prepareSpokesGeometry(lod = 0): Generator<void, Built> {
+export function* prepareSpokesGeometry(lod = 0, allowWorker = true): Generator<void, Built> {
   lod = Math.max(0, Math.min(LODS - 1, lod))
   if (cache[lod]) return cache[lod]
+  if (allowWorker && deferSpokesGeometry(lod)) {
+    while (pendingGeometry.has(lod) && !cache[lod]) yield
+    if (cache[lod]) return cache[lod]
+  }
+
   const t0 = performance.now(), stats: Record<string, number> = {}
   const ch = new Chunk()
   for (const p of parts(lod)) { yield; bakePart(ch, p, lod, stats) }

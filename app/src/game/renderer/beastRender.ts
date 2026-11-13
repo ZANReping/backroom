@@ -11,7 +11,7 @@
 //     渲染前后保存 / 恢复全局 BEAST_CHROMA uniform（画像里的他不影响书桌后那位的色素）。
 import * as THREE from 'three'
 import type { Entity } from '../entities'
-import { buildBeast, beastGeometryReady, BEAST_CHROMA, type BeastRig } from './beastMesh'
+import { deferBeastGeometry, buildBeast, beastGeometryReady, BEAST_CHROMA, type BeastRig } from './beastMesh'
 import { BEAST_CLIPS, beastPose, mixBeastPose, cloneBeastPose, applyBeastPose, resetBeastDynamics, type BeastClip, type BeastPose, type BeastAnimOpts } from './beastAnim'
 import type { V3 } from './beastRig'
 
@@ -65,7 +65,7 @@ export function animateBeastEntity(grp: THREE.Group, e: Entity, dt: number, dist
   if (grp.userData.archive) return
   const s = e.bst
   const far = !!s && FAR_MODES.has(s.mode)
-  if (distance < BEAST_LOD.build && !far && (!ctx.preparedOnly || beastGeometryReady(0))) ensureLod0(grp)
+  if (distance < BEAST_LOD.build && !far && !deferBeastGeometry(0) && (!ctx.preparedOnly || beastGeometryReady(0))) ensureLod0(grp)
   let v = grp.userData.bstView as View | undefined
   if (!v) { v = { clip: s?.clip ?? 'seatedIdle', seq: -1, t: 0, gt: 0, fadeT: 1, blend: 0.2, prev: null, last: null, lod: 1 }; grp.userData.bstView = v }
   const h1 = grp.userData.lod1 as THREE.Group, h0 = grp.userData.lod0 as THREE.Group | undefined

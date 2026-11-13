@@ -1445,7 +1445,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                         <p key={i} className="mt-1.5 text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)', fontFamily: fac ? FACTION_FONTS[fac.id]?.body : undefined }}>{para}</p>
                       ))
                     ) : (
-                      <div className="mt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>尚未发现这处据点（在 Level 1 寻找定居点地标）</div>
+                      <div className="mt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>尚未发现这处据点（在 Level {levelNo(o.parent)} 寻找定居点地标）</div>
                     )}
                     </div>
                   </div>

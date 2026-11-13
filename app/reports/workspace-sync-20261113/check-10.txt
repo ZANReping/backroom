@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:foyer-survival
+> esbuild scripts/check-foyer-survival.ts --bundle --platform=node --format=esm --outfile=.cache/check-foyer-survival.mjs && node .cache/check-foyer-survival.mjs
+
+
+  .cache\check-foyer-survival.mjs  6.3mb
+
+Done in 516ms
+{"ok":true,"checks":13}

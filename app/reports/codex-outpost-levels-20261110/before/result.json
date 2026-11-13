@@ -1,0 +1,558 @@
+{
+  "label": "before",
+  "port": 11737,
+  "cdp": 11738,
+  "checks": [
+    "owned native headless browser",
+    "all registered outposts are rendered",
+    "locked name and description: alpha",
+    "locked name and description: bntg",
+    "locked name and description: ariane",
+    "locked name and description: tom",
+    "locked name and description: el3a",
+    "locked name and description: gamma",
+    "locked name and description: storage",
+    "locked name and description: bluesalvation",
+    "locked name and description: omega",
+    "locked name and description: housekeeping",
+    "locked name and description: homely",
+    "locked name and description: originals",
+    "locked name and description: cornucopia",
+    "locked name and description: emptynest",
+    "locked name and description: hammoz",
+    "locked name and description: jerry",
+    "original hardcoded Level 1 bug reproduced",
+    "original undiscovered hints all use Level 1",
+    "no uncaught page exceptions",
+    "no console errors",
+    "no missing game resources"
+  ],
+  "errors": [],
+  "console": [
+    {
+      "type": "warning",
+      "args": [
+        {
+          "type": "string",
+          "value": "THREE.WebGLProgram: Program Info Log:"
+        },
+        {
+          "type": "string",
+          "value": "(210,91-147): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1794316318468.51,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "warn",
+            "scriptId": "379",
+            "url": "http://127.0.0.1:11737/reports/codex-outpost-levels-20261110/before/qa-1794316285716-57752/vite/deps/chunk-BWT6IPVN.js?v=10a1353d",
+            "lineNumber": 296,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "onFirstUse",
+            "scriptId": "379",
+            "url": "http://127.0.0.1:11737/reports/codex-outpost-levels-20261110/before/qa-1794316285716-57752/vite/deps/chunk-BWT6IPVN.js?v=10a1353d",
+            "lineNumber": 36018,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "WebGLProgram.getUniforms",
+            "scriptId": "379",
+            "url": "http://127.0.0.1:11737/reports/codex-outpost-levels-20261110/before/qa-1794316285716-57752/vite/deps/chunk-BWT6IPVN.js?v=10a1353d",
+            "lineNumber": 36045,
+            "columnNumber": 6
+          },
+          {
+            "functionName": "setProgram",
+            "scriptId": "379",
+            "url": "http://127.0.0.1:11737/reports/codex-outpost-levels-20261110/before/qa-1794316285716-57752/vite/deps/chunk-BWT6IPVN.js?v=10a1353d",
+            "lineNumber": 42520,
+            "columnNumber": 33
+          },
+          {
+            "functionName": "WebGLRenderer.renderBufferDirect",
+            "scriptId": "379",
+            "url": "http://127.0.0.1:11737/reports/codex-outpost-levels-20261110/before/qa-1794316285716-57752/vite/deps/chunk-BWT6IPVN.js?v=10a1353d",
+            "lineNumber": 41864,
+            "columnNumber": 22
+          },
+          {
+            "functionName": "renderObject",
+            "scriptId": "379",
+            "url": "http://127.0.0.1:11737/reports/codex-outpost-levels-20261110/before/qa-1794316285716-57752/vite/deps/chunk-BWT6IPVN.js?v=10a1353d",
+            "lineNumber": 42317,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "renderObjects",
+            "scriptId": "379",
+            "url": "http://127.0.0.1:11737/reports/codex-outpost-levels-20261110/before/qa-1794316285716-57752/vite/deps/chunk-BWT6IPVN.js?v=10a1353d",
+            "lineNumber": 42299,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "renderScene",
+            "scriptId": "379",
+            "url": "http://127.0.0.1:11737/reports/codex-outpost-levels-20261110/before/qa-1794316285716-57752/vite/deps/chunk-BWT6IPVN.js?v=10a1353d",
+            "lineNumber": 42216,
+            "columnNumber": 36
+          },
+          {
+            "functionName": "WebGLRenderer.render",
+            "scriptId": "379",
+            "url": "http://127.0.0.1:11737/reports/codex-outpost-levels-20261110/before/qa-1794316285716-57752/vite/deps/chunk-BWT6IPVN.js?v=10a1353d",
+            "lineNumber": 42119,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "_applyGGXFilter",
+            "scriptId": "379",
+            "url": "http://127.0.0.1:11737/reports/codex-outpost-levels-20261110/before/qa-1794316285716-57752/vite/deps/chunk-BWT6IPVN.js?v=10a1353d",
+            "lineNumber": 33524,
+            "columnNumber": 13
+          },
+          {
+            "functionName": "_applyPMREM",
+            "scriptId": "379",
+            "url": "http://127.0.0.1:11737/reports/codex-outpost-levels-20261110/before/qa-1794316285716-57752/vite/deps/chunk-BWT6IPVN.js?v=10a1353d",
+            "lineNumber": 33488,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "_fromTexture",
+            "scriptId": "379",
+            "url": "http://127.0.0.1:11737/reports/codex-outpost-levels-20261110/before/qa-1794316285716-57752/vite/deps/chunk-BWT6IPVN.js?v=10a1353d",
+            "lineNumber": 33356,
+            "columnNumber": 9
+          },
+          {
+            "functionName": "fromEquirectangular",
+            "scriptId": "379",
+            "url": "http://127.0.0.1:11737/reports/codex-outpost-levels-20261110/before/qa-1794316285716-57752/vite/deps/chunk-BWT6IPVN.js?v=10a1353d",
+            "lineNumber": 33275,
+            "columnNumber": 16
+          },
+          {
+            "functionName": "envProbe",
+            "scriptId": "524",
+            "url": "http://127.0.0.1:11737/src/game/renderer/envProbe.ts",
+            "lineNumber": 51,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "applyEnvProbe",
+            "scriptId": "291",
+            "url": "http://127.0.0.1:11737/src/game/renderer/renderer.ts",
+            "lineNumber": 4861,
+            "columnNumber": 29
+          },
+          {
+            "functionName": "buildLevel",
+            "scriptId": "291",
+            "url": "http://127.0.0.1:11737/src/game/renderer/renderer.ts",
+            "lineNumber": 4826,
+            "columnNumber": 9
+          },
+          {
+            "functionName": "renderFrame",
+            "scriptId": "291",
+            "url": "http://127.0.0.1:11737/src/game/renderer/renderer.ts",
+            "lineNumber": 1517,
+            "columnNumber": 105
+          },
+          {
+            "functionName": "render",
+            "scriptId": "291",
+            "url": "http://127.0.0.1:11737/src/game/renderer/renderer.ts",
+            "lineNumber": 1371,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "loop",
+            "scriptId": "779",
+            "url": "http://127.0.0.1:11737/src/App.tsx",
+            "lineNumber": 1148,
+            "columnNumber": 19
+          }
+        ]
+      }
+    }
+  ],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:11737/favicon.ico",
+      "status": 404
+    },
+    {
+      "url": "http://127.0.0.1:11737/favicon.ico",
+      "status": 404
+    }
+  ],
+  "scenes": [
+    {
+      "state": "undiscovered",
+      "cards": [
+        {
+          "title": "？？？",
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "intro": []
+        },
+        {
+          "title": "？？？",
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "intro": []
+        },
+        {
+          "title": "？？？",
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "intro": []
+        },
+        {
+          "title": "？？？",
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "intro": []
+        },
+        {
+          "title": "？？？",
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "intro": []
+        },
+        {
+          "title": "？？？",
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "intro": []
+        },
+        {
+          "title": "？？？",
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "intro": []
+        },
+        {
+          "title": "？？？",
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "intro": []
+        },
+        {
+          "title": "？？？",
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "intro": []
+        },
+        {
+          "title": "？？？",
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "intro": []
+        },
+        {
+          "title": "？？？",
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "intro": []
+        },
+        {
+          "title": "？？？",
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "intro": []
+        },
+        {
+          "title": "？？？",
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "intro": []
+        },
+        {
+          "title": "？？？",
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "intro": []
+        },
+        {
+          "title": "？？？",
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "intro": []
+        },
+        {
+          "title": "？？？",
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "intro": []
+        }
+      ],
+      "mismatches": [
+        {
+          "id": "el3a",
+          "parent": 2,
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "expected": "尚未发现这处据点（在 Level 2 寻找定居点地标）"
+        },
+        {
+          "id": "gamma",
+          "parent": 3,
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "expected": "尚未发现这处据点（在 Level 3 寻找定居点地标）"
+        },
+        {
+          "id": "storage",
+          "parent": 3,
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "expected": "尚未发现这处据点（在 Level 3 寻找定居点地标）"
+        },
+        {
+          "id": "bluesalvation",
+          "parent": 3,
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "expected": "尚未发现这处据点（在 Level 3 寻找定居点地标）"
+        },
+        {
+          "id": "omega",
+          "parent": 4,
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "expected": "尚未发现这处据点（在 Level 4 寻找定居点地标）"
+        },
+        {
+          "id": "housekeeping",
+          "parent": 5,
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "expected": "尚未发现这处据点（在 Level 5 寻找定居点地标）"
+        },
+        {
+          "id": "homely",
+          "parent": 5,
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "expected": "尚未发现这处据点（在 Level 5 寻找定居点地标）"
+        },
+        {
+          "id": "originals",
+          "parent": 5,
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "expected": "尚未发现这处据点（在 Level 5 寻找定居点地标）"
+        },
+        {
+          "id": "emptynest",
+          "parent": 8,
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "expected": "尚未发现这处据点（在 Level 8 寻找定居点地标）"
+        },
+        {
+          "id": "hammoz",
+          "parent": 8,
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "expected": "尚未发现这处据点（在 Level 8 寻找定居点地标）"
+        },
+        {
+          "id": "jerry",
+          "parent": 274,
+          "hint": "尚未发现这处据点（在 Level 1 寻找定居点地标）",
+          "expected": "尚未发现这处据点（在 Level 274 寻找定居点地标）"
+        }
+      ]
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--headless=new",
+    "--enable-automation",
+    "--remote-debugging-port=11738",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\codex-outpost-levels-20261110\\before\\qa-1794316285716-57752",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 63880,
+    "browser": 58564
+  },
+  "definitions": [
+    {
+      "id": "alpha",
+      "name": "M.E.G. Alpha 基地",
+      "faction": "meg",
+      "parent": 1,
+      "number": 1,
+      "intro": [
+        "Alpha 基地是探险者总署最古老且第二大的定居点，专注于新成员培训和勘探工作。该基地位于天鹰段，若你愿意以协助探索研究后室作为交换，便可在此获得安全的食宿保障。",
+        "Alpha 基地在小径之中取得了大量发展，与多年前的营地相比已是面目全非。与其说它是一个定居点，不如说这里是座城镇。如果你不想冒险进入更深层级，那么这里便是体验前厅般生活的最佳选择。",
+        "不过，如果你对冒险感兴趣，那么务必了解 Alpha 基地同样积极参与勘探活动，这里会定期培训新特工，安排他们到其他基地或更深层级的小型前哨工作。自组织设立之初，M.E.G. 的核心使命便是一贯的，即发现并理解这些层级，以期找到出口。因此，他们必将倾力协助像你这样的新人获得关键能力，共赴此目标。"
+      ]
+    },
+    {
+      "id": "bntg",
+      "name": "商人之家",
+      "faction": "bntg",
+      "parent": 1,
+      "number": 1,
+      "intro": [
+        "位于 Level 1 跃金地段的商人之家是 B.N.T.G. 最著名的基地，也是规模第二大的。自 2016 年成立以来，它凭借中立立场和优质设备迅速赢得了声誉——由商人和雇佣兵组成的 B.N.T.G. 比起招募与培训，更关心利润多寡，或者说物物交易的收益如何。",
+        "它的前身是人们在 Level 1 错综复杂的回廊中开辟出来的一片废墟，如今已得到完备的修缮，并扩展出了会议室、加工中心与公共生活区。这里居住着许多精英商人、资深信使、组织高管，以及大量等待被遣往其他哨站的流动流浪者。「切行」吉祥物 Ferren 也时常现身此处。",
+        "交易保险库就位于商人之家的中心，正是它的存在启发了基地的名称与布局——这里最早是一条密布车库式储藏室的走廊，如今已被改造成后室最大的集中式存储设施之一。有些储藏室分门别类地存储着冗余物资，有些被用作隔离异常物品，还有几间专用于存放高价值商品。无数人觊觎它，因此这里常年重兵把守。"
+      ]
+    },
+    {
+      "id": "ariane",
+      "name": "希波克拉底 - 1",
+      "faction": "ariane",
+      "parent": 1,
+      "number": 1,
+      "intro": [
+        "希波克拉底 - 1 是阿丽亚娜集团的一座大型医药研究所，坐落于 Level 1 哥特段的深处。它由希波克拉底团队运营——一支由外科医师与医学、生物学研究人员组成的专业团队，致力于异常生物学研究与医疗救助。",
+        "研究所洁白而整洁：接待大厅、消毒走廊、病房区、手术室、生物实验室、药房与研究办公一应俱全。这里收治受伤的流浪者，也系统性地收集具有超自然性质的物品作为研究样本——团队相信，后室的「病」与后室的「药」藏在同一处。",
+        "阿丽亚娜集团不发行货币。在这里，绷带与消毒液就是硬通货：把医疗物资交给医师与护士长，便能换到杏仁水、罐头与电池。为实验室征集异常样本的流浪者，还会在集团内赢得声望。"
+      ]
+    },
+    {
+      "id": "tom",
+      "name": "Tom 的餐馆",
+      "faction": "tom",
+      "parent": 1,
+      "number": 1,
+      "intro": [
+        "Tom 的餐馆是一家不属于任何团体的独立餐馆，藏在 Level 1 天鹰段的深处。意大利裔美国厨师 Tommaso Esposito——人人都叫他 Tom——在前厅开过半生家庭餐馆，切进后室后做的第一件事，就是重新点起炉火。",
+        "前台、餐厅、厨房、冷库一应俱全：暖木地板、白桌布、黑板菜单，锅里永远炖着什么。这里不收天鹰币也不收压印币——Tom 只认食材：把罐头、干果或彼物之肉交给他，换一碗在后室近乎奢侈的热菜；爱子还接来料加工。",
+        "跑堂的佐藤爱子是餐馆唯一的员工——传说中从实体手里救过三百多人的「撒玛利亚人」。别盯着她看，别要签名，吃饭。来这里的客人三教九流：M.E.G. 的干员、B.N.T.G. 的行商、阿丽亚娜的护工，还有和你一样无门无派的流浪者——在 Tom 的餐桌前，没人问你属于谁。"
+      ]
+    },
+    {
+      "id": "el3a",
+      "name": "办公区EL3A",
+      "faction": "bntg",
+      "parent": 2,
+      "number": 2,
+      "intro": [
+        "办公区EL3A 是 B.N.T.G. 在 Level 2 的一座物流中转站，藏在整洁的廊道深处。这里存储和分配从 Level 2 与 Level 3 搜刮来的物资——清点后打包成标准物流包裹，由押运员送往其他层级的居住地。",
+        "中转站是一座双层建筑：第一层西侧是挑高的大开间仓库，木托盘与缠绕膜包裹的箱堆码成排，壁挂斜照灯把地面照得雪亮；东侧一整片夹楼是办公区——档案室、带自动售货机的休息室、运营主任的办公室沿走廊排开，两部带扶手的阶梯上下，从栏杆边可以俯瞰整个中庭。",
+        "物流主管在仓库旁的办公室里发放押运委托：把包裹当面送到指定收件人手里，报酬是压印币与集团声望；弄丢包裹就得回去认栽。兑换间以低于商人之家的价格兑换基础物资——实在身无分文的流浪者，还能领到一份免费补给包。"
+      ]
+    },
+    {
+      "id": "gamma",
+      "name": "M.E.G. Gemma 基地",
+      "faction": "meg",
+      "parent": 3,
+      "number": 3,
+      "intro": [
+        "Gemma 基地是探险者总署在 Level 3 的主要根据地，坐落于该层级最大的开阔区域之中，持续运作至今。电站永不停转的电网为这里提供了近乎奢侈的照明——在危机四伏的 Level 3，这片灯火通明的营地本身就是一座灯塔。",
+        "基地是一栋三层建筑：第一层公共部对一切流浪者开放——大厅、食堂、补给兑换处与医疗角一应俱全；第二层住宅部是数百名常年驻防成员的宿舍与盥洗区；第三层行政部则是主管办公室、会议室与档案室，Level 3 的考察工作在这里被汇总成一份份报告。",
+        "约数百名成员常年驻防于此。罗经点小队在电站的廊道间布下了鲜黄布料地标——顺着指引，任何迷路的流浪者都能找到这里。只要你守规矩，Gemma 基地永远留一张床、一碗热饭。"
+      ]
+    },
+    {
+      "id": "storage",
+      "name": "存储设施",
+      "faction": "bntg",
+      "parent": 3,
+      "number": 3,
+      "intro": [
+        "存储设施是 B.N.T.G. 在 Level 3 的物资仓，建在电站廊道之间一片加固过的洞室里。从 Level 3 搜集来的物资——成排的货架、缠膜托盘与板条箱——在这里点数、登记、堆放，等待转运到其他层级的商站。",
+        "设施由仓管与守卫常驻看守：入库要登记，出库要批条。流浪者可以用压印币向仓管平价兑换基础物资——比商人之家便宜一点，因为货就堆在你身后的货架上。"
+      ]
+    },
+    {
+      "id": "bluesalvation",
+      "name": "蓝色救赎",
+      "faction": "jerry",
+      "parent": 3,
+      "number": 3,
+      "intro": [
+        "蓝色救赎是杰瑞的信众在 Level 3 建立的圣所——一座蓝石砌成的小教堂，藏在电站廊道深处。蓝白圣辉自吊顶洒落，长椅朝着讲坛，烛台与圣水盆一应俱全。",
+        "与 Level 274 的圣地不同，这里向信众与「足够的虔徒」开放：只有声望足够的访客才被允许进入（杰瑞的信众声望 >30）。信众在此诵咏、静修，也向路过的虔徒传扬鹉主的教义。"
+      ]
+    },
+    {
+      "id": "omega",
+      "name": "M.E.G. Omega 基地",
+      "faction": "meg",
+      "parent": 4,
+      "number": 4,
+      "intro": [
+        "Omega 基地是探险者总署在 Level 4 的主要基地——藏在无尽办公楼层深处的一片灯网整齐的区域：成排工位、服务器阵列与一眼望不到头的档案柜。全后室最丰的杏仁水在这里集散、登记、入库。",
+        "基地常驻主管、档案员与数据技师：前厅有守卫查问，数据中心全天候运转。楼层的旧楼梯间与仓储区角落的活板门分别通往 Level 5 与 Level 6——出入登记，别忘了打卡。"
+      ]
+    },
+    {
+      "id": "housekeeping",
+      "name": "M.E.G. 哨所「家政服务」",
+      "faction": "meg",
+      "parent": 5,
+      "number": 5,
+      "intro": [
+        "「家政服务」哨所是探险者总署派驻 Level 5 的小型前哨，藏在酒店综合楼深处一间翻修过的套房里。补给架、行军床与一张总被擦得很干净的桌子——哨所的名字来自一句自嘲：他们的工作就是替这个层级「打扫卫生」。",
+        "前哨的日常是登记死亡飞蛾的巢位、给迷路的流浪者发一份补给，以及把贝弗莉室里那台总在自己转动的留声机写进周报。常驻两至三名成员，接受以物易物（杏仁水计价的惯例同样适用）。"
+      ]
+    },
+    {
+      "id": "homely",
+      "name": "家常酒店",
+      "faction": "homely",
+      "parent": 5,
+      "number": 5,
+      "intro": [
+        "家常酒店是一栋与周遭年代格格不入的现代酒店：前台灯常亮、房卡按号排好、地毯上有每天吸尘的纹路。没人说得清它什么时候「搬」进 Level 5 的——员工只笑着说：酒店一直都在营业。",
+        "这里接收一切守规矩的住客，唯一的规定是先在前台登记流浪者信息。酒店不提供答案，只提供干净的床、热饮与一句「欢迎回家」。"
+      ]
+    },
+    {
+      "id": "originals",
+      "name": "原住民",
+      "faction": "originals",
+      "parent": 5,
+      "number": 5,
+      "intro": [
+        "原住民是一群在各自时代「失踪」的人：飞越大西洋的飞行员、登上邮轮的名媛、没能走下冰海的船长、消失在车里的工会领袖。他们在 Level 5 的一间居所里继续着 1937 年的生活，礼貌、健谈、拒绝谈论来路。",
+        "他们不招募、不结盟、不接受加入——声望对他们没有意义。但如果你拾到一封烫金的邀请函，他们会开门迎客，并乐意用旧时代的器物换你这个时代的补给。"
+      ]
+    },
+    {
+      "id": "cornucopia",
+      "name": "丰饶角",
+      "faction": "argos",
+      "parent": 1,
+      "number": 1,
+      "intro": [
+        "丰饶角曾是阿尔戈斯之眼在 Level 1 的贸易与补给枢纽，如今已改造成巡逻、调查与问责据点。旧货位和仓储门仍留在墙边，新的案卷室、证物库和听证室填满了中心大厅。",
+        "不同的守望者对“正义”有不同理解：有人保护弱者，有人只相信成文规则，也有人主张先惩罚再查证。访客可以报案、提交证据、接受问询，或为争议行为申请听证。"
+      ]
+    },
+    {
+      "id": "emptynest",
+      "name": "M.E.G.“空巢”前哨站",
+      "faction": "meg",
+      "parent": 8,
+      "number": 8,
+      "intro": [
+        "“空巢”是探险者总署沿第九大道设立的小型洞穴前哨。它没有把岩洞改造成另一座基地：墙壁与洞顶仍是 Level 8 的原生岩层，仅在较平整的洞底铺设防潮板、行军床与一张登记桌。",
+        "这里负责庇护刚踏上第九大道的流浪者、补充基础物资并说明沿途路标的用法。常驻人员也会记录水位、气体与岔洞变化；哈莫兹洞穴社群会派联络员在此轮值。"
+      ]
+    },
+    {
+      "id": "hammoz",
+      "name": "哈莫兹洞穴社群",
+      "faction": "hammoz",
+      "parent": 8,
+      "number": 8,
+      "intro": [
+        "哈莫兹洞穴社群由来自维多利亚时期的英国岩洞学家瑞金纳·哈莫兹爵士三世建立并统领。社群成员多是经验丰富的洞穴探索者，曾协助勘察 Level 8 并铺设第九大道。",
+        "这是一处与“空巢”紧邻的小型岩洞基地：天然岩壁、洞底和低矮洞顶被尽量保留，绳索、测绘板与样本架沿壁布置。基地深处设有 Level 8 最先进的科学实验室，负责分析岩样、气体、水质与异常生物。社群成员也会在“空巢”等其他友好据点轮值，向流浪者传授洞穴探索经验。"
+      ]
+    },
+    {
+      "id": "jerry",
+      "name": "杰瑞的房间",
+      "faction": "jerry",
+      "parent": 274,
+      "number": 274,
+      "intro": [
+        "Level 274「杰瑞的房间」是鹉主杰瑞（Entity 7）的居所，也是杰瑞的信众心中的圣地。穿过简朴的前厅，是一座教堂般的巨大穹顶主间——蓝白色的圣辉自高处洒落，鹉主本人就栖息于大厅中央的栖木之上。",
+        "进入这里只有一种方式：在信众宣传间或信众面前证明自己足够虔诚（杰瑞的信众声望 ≥10），由信众亲自引路。两名侍立信众在主间迎候；鹉主允许任何访客上前「接触」它——只是接触的代价，是你会越来越不想离开。",
+        "信众称之为「教化」：接触鹉主的流浪者会不受控地诵咏赞美它的话语，教化完成的流浪者便再也无法主动离开 Level 274。想要离开：趁教化未满时承受信众的非议离开（声望 -5），或接下一程传教使命为鹉主远行（免于惩罚）。至于用杏仁水「驯服」鹉主——千万别让信众看见。"
+      ]
+    }
+  ],
+  "ok": true,
+  "cleanup": {
+    "profileRemoved": true
+  }
+}

@@ -1,0 +1,819 @@
+{
+  "label": "desktop",
+  "port": 3502,
+  "cdp": 3503,
+  "checks": [
+    "isolated headless Chrome",
+    "entering gameplay leaves the first capture to the player",
+    "native raw capture on the first canvas click",
+    "inventory hotkey restores raw look without a click",
+    "inventory close button restores raw look",
+    "mouse movement immediately turns the actual view",
+    "close click does not attack",
+    "switching inventory tabs leaves the pointer free",
+    "map hotkey close restores raw look",
+    "capture waits until Escape is released",
+    "Escape restores view after the document has been open beyond transient activation",
+    "closing an inner document keeps the codex available",
+    "closing the codex restores raw look",
+    "facility return button restores raw look",
+    "phone key close restores raw look",
+    "release outside a panel does not schedule a new lock",
+    "returning to a parent menu does not capture",
+    "pause resume restores raw look",
+    "denied restoration leaves controls unlocked and does not loop",
+    "manual capture still works after denial",
+    "late confirmation cannot capture an open panel",
+    "return after a late request restores raw look",
+    "opening a nonmodal loot panel keeps the active view",
+    "closing inventory leaves the open loot panel available",
+    "leaving the last loot panel restores raw look",
+    "game does not capture during an outpost transition",
+    "raw look resumes when the outpost is playable",
+    "returning to title does not capture",
+    "every capture requests unadjusted movement",
+    "no browser runtime errors",
+    "no missing game resources"
+  ],
+  "states": [
+    {
+      "label": "native raw capture on the first canvas click",
+      "lock": true,
+      "raw": "raw",
+      "look": true,
+      "yaw": 0,
+      "paused": false,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 1
+    },
+    {
+      "label": "inventory opens and frees the pointer",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": 0,
+      "paused": true,
+      "menu": true,
+      "focused": true,
+      "active": true,
+      "requests": 1
+    },
+    {
+      "label": "inventory hotkey restores raw look without a click",
+      "lock": true,
+      "raw": "raw",
+      "look": true,
+      "yaw": 0,
+      "paused": false,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 2
+    },
+    {
+      "label": "inventory reopens",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": 0,
+      "paused": true,
+      "menu": true,
+      "focused": true,
+      "active": true,
+      "requests": 2
+    },
+    {
+      "label": "inventory close button restores raw look",
+      "lock": true,
+      "raw": "raw",
+      "look": true,
+      "yaw": 0,
+      "paused": false,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 3
+    },
+    {
+      "label": "inventory opens for tab switching",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": -0.1152,
+      "paused": true,
+      "menu": true,
+      "focused": true,
+      "active": true,
+      "requests": 3
+    },
+    {
+      "label": "map hotkey close restores raw look",
+      "lock": true,
+      "raw": "raw",
+      "look": true,
+      "yaw": -0.1152,
+      "paused": false,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 4
+    },
+    {
+      "label": "world document frees the pointer",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": -0.1152,
+      "paused": true,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 4
+    },
+    {
+      "label": "Escape restores view after the document has been open beyond transient activation",
+      "lock": true,
+      "raw": "raw",
+      "look": true,
+      "yaw": -0.1152,
+      "paused": false,
+      "menu": false,
+      "focused": true,
+      "active": false,
+      "requests": 5
+    },
+    {
+      "label": "codex opens",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": -0.1152,
+      "paused": true,
+      "menu": true,
+      "focused": true,
+      "active": true,
+      "requests": 5
+    },
+    {
+      "label": "document opens inside the codex",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": -0.1152,
+      "paused": true,
+      "menu": true,
+      "focused": true,
+      "active": true,
+      "requests": 5
+    },
+    {
+      "label": "closing the codex restores raw look",
+      "lock": true,
+      "raw": "raw",
+      "look": true,
+      "yaw": -0.1152,
+      "paused": false,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 6
+    },
+    {
+      "label": "facility interaction frees the pointer",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": -0.1152,
+      "paused": true,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 6
+    },
+    {
+      "label": "facility return button restores raw look",
+      "lock": true,
+      "raw": "raw",
+      "look": true,
+      "yaw": -0.1152,
+      "paused": false,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 7
+    },
+    {
+      "label": "phone frees the pointer",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": -0.1152,
+      "paused": false,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 7
+    },
+    {
+      "label": "phone key close restores raw look",
+      "lock": true,
+      "raw": "raw",
+      "look": true,
+      "yaw": -0.1152,
+      "paused": false,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 8
+    },
+    {
+      "label": "pause opens",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": -0.1152,
+      "paused": true,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 8
+    },
+    {
+      "label": "pause opens settings",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": -0.1152,
+      "paused": true,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 8
+    },
+    {
+      "label": "settings closes back to pause",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": -0.1152,
+      "paused": true,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 8
+    },
+    {
+      "label": "pause resume restores raw look",
+      "lock": true,
+      "raw": "raw",
+      "look": true,
+      "yaw": -0.1152,
+      "paused": false,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 9
+    },
+    {
+      "label": "inventory opens before simulated denial",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": -0.1152,
+      "paused": true,
+      "menu": true,
+      "focused": true,
+      "active": true,
+      "requests": 9
+    },
+    {
+      "label": "manual capture still works after denial",
+      "lock": true,
+      "raw": "raw",
+      "look": true,
+      "yaw": -0.1152,
+      "paused": false,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 11
+    },
+    {
+      "label": "inventory opens before an in-flight request",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": -0.1152,
+      "paused": true,
+      "menu": true,
+      "focused": true,
+      "active": true,
+      "requests": 11
+    },
+    {
+      "label": "reopening while capture is pending releases the pointer",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": -0.1152,
+      "paused": true,
+      "menu": true,
+      "focused": true,
+      "active": true,
+      "requests": 12
+    },
+    {
+      "label": "return after a late request restores raw look",
+      "lock": true,
+      "raw": "raw",
+      "look": true,
+      "yaw": -0.1152,
+      "paused": false,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 13
+    },
+    {
+      "label": "inventory opens over the loot panel",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": -0.1152,
+      "paused": true,
+      "menu": true,
+      "focused": true,
+      "active": true,
+      "requests": 13
+    },
+    {
+      "label": "leaving the last loot panel restores raw look",
+      "lock": true,
+      "raw": "raw",
+      "look": true,
+      "yaw": -0.1152,
+      "paused": false,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 14
+    },
+    {
+      "label": "outpost landmark opens",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": -0.1152,
+      "paused": true,
+      "menu": false,
+      "focused": true,
+      "active": true,
+      "requests": 14
+    },
+    {
+      "label": "raw look resumes when the outpost is playable",
+      "lock": true,
+      "raw": "raw",
+      "look": true,
+      "yaw": -0.1152,
+      "paused": false,
+      "menu": false,
+      "focused": true,
+      "active": false,
+      "requests": 15
+    },
+    {
+      "label": "pause opens before leaving the game",
+      "lock": false,
+      "raw": "unlocked",
+      "look": false,
+      "yaw": -0.1152,
+      "paused": true,
+      "menu": false,
+      "focused": true,
+      "active": false,
+      "requests": 15
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    {
+      "type": "warning",
+      "args": [
+        {
+          "type": "string",
+          "value": "THREE.WebGLProgram: Program Info Log:"
+        },
+        {
+          "type": "string",
+          "value": "(210,91-147): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,41-69): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,92-120): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1794484779522.669,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "warn",
+            "scriptId": "557",
+            "url": "http://127.0.0.1:3502/reports/pointer-resume-20261112/desktop/qa-1794484748429-69120/vite-cache/deps/chunk-BWT6IPVN.js?v=18839f07",
+            "lineNumber": 296,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "onFirstUse",
+            "scriptId": "557",
+            "url": "http://127.0.0.1:3502/reports/pointer-resume-20261112/desktop/qa-1794484748429-69120/vite-cache/deps/chunk-BWT6IPVN.js?v=18839f07",
+            "lineNumber": 36018,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "WebGLProgram.getUniforms",
+            "scriptId": "557",
+            "url": "http://127.0.0.1:3502/reports/pointer-resume-20261112/desktop/qa-1794484748429-69120/vite-cache/deps/chunk-BWT6IPVN.js?v=18839f07",
+            "lineNumber": 36045,
+            "columnNumber": 6
+          },
+          {
+            "functionName": "setProgram",
+            "scriptId": "557",
+            "url": "http://127.0.0.1:3502/reports/pointer-resume-20261112/desktop/qa-1794484748429-69120/vite-cache/deps/chunk-BWT6IPVN.js?v=18839f07",
+            "lineNumber": 42520,
+            "columnNumber": 33
+          },
+          {
+            "functionName": "WebGLRenderer.renderBufferDirect",
+            "scriptId": "557",
+            "url": "http://127.0.0.1:3502/reports/pointer-resume-20261112/desktop/qa-1794484748429-69120/vite-cache/deps/chunk-BWT6IPVN.js?v=18839f07",
+            "lineNumber": 41864,
+            "columnNumber": 22
+          },
+          {
+            "functionName": "renderObject",
+            "scriptId": "557",
+            "url": "http://127.0.0.1:3502/reports/pointer-resume-20261112/desktop/qa-1794484748429-69120/vite-cache/deps/chunk-BWT6IPVN.js?v=18839f07",
+            "lineNumber": 42317,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "renderObjects",
+            "scriptId": "557",
+            "url": "http://127.0.0.1:3502/reports/pointer-resume-20261112/desktop/qa-1794484748429-69120/vite-cache/deps/chunk-BWT6IPVN.js?v=18839f07",
+            "lineNumber": 42299,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "renderScene",
+            "scriptId": "557",
+            "url": "http://127.0.0.1:3502/reports/pointer-resume-20261112/desktop/qa-1794484748429-69120/vite-cache/deps/chunk-BWT6IPVN.js?v=18839f07",
+            "lineNumber": 42216,
+            "columnNumber": 36
+          },
+          {
+            "functionName": "WebGLRenderer.render",
+            "scriptId": "557",
+            "url": "http://127.0.0.1:3502/reports/pointer-resume-20261112/desktop/qa-1794484748429-69120/vite-cache/deps/chunk-BWT6IPVN.js?v=18839f07",
+            "lineNumber": 42119,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "_applyGGXFilter",
+            "scriptId": "557",
+            "url": "http://127.0.0.1:3502/reports/pointer-resume-20261112/desktop/qa-1794484748429-69120/vite-cache/deps/chunk-BWT6IPVN.js?v=18839f07",
+            "lineNumber": 33524,
+            "columnNumber": 13
+          },
+          {
+            "functionName": "_applyPMREM",
+            "scriptId": "557",
+            "url": "http://127.0.0.1:3502/reports/pointer-resume-20261112/desktop/qa-1794484748429-69120/vite-cache/deps/chunk-BWT6IPVN.js?v=18839f07",
+            "lineNumber": 33488,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "_fromTexture",
+            "scriptId": "557",
+            "url": "http://127.0.0.1:3502/reports/pointer-resume-20261112/desktop/qa-1794484748429-69120/vite-cache/deps/chunk-BWT6IPVN.js?v=18839f07",
+            "lineNumber": 33356,
+            "columnNumber": 9
+          },
+          {
+            "functionName": "fromEquirectangular",
+            "scriptId": "557",
+            "url": "http://127.0.0.1:3502/reports/pointer-resume-20261112/desktop/qa-1794484748429-69120/vite-cache/deps/chunk-BWT6IPVN.js?v=18839f07",
+            "lineNumber": 33275,
+            "columnNumber": 16
+          },
+          {
+            "functionName": "envProbe",
+            "scriptId": "234",
+            "url": "http://127.0.0.1:3502/src/game/renderer/envProbe.ts",
+            "lineNumber": 51,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "applyEnvProbe",
+            "scriptId": "12",
+            "url": "http://127.0.0.1:3502/src/game/renderer/renderer.ts",
+            "lineNumber": 4861,
+            "columnNumber": 29
+          },
+          {
+            "functionName": "buildLevel",
+            "scriptId": "12",
+            "url": "http://127.0.0.1:3502/src/game/renderer/renderer.ts",
+            "lineNumber": 4826,
+            "columnNumber": 9
+          },
+          {
+            "functionName": "renderFrame",
+            "scriptId": "12",
+            "url": "http://127.0.0.1:3502/src/game/renderer/renderer.ts",
+            "lineNumber": 1517,
+            "columnNumber": 105
+          },
+          {
+            "functionName": "render",
+            "scriptId": "12",
+            "url": "http://127.0.0.1:3502/src/game/renderer/renderer.ts",
+            "lineNumber": 1371,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "loop",
+            "scriptId": "780",
+            "url": "http://127.0.0.1:3502/src/App.tsx",
+            "lineNumber": 1209,
+            "columnNumber": 19
+          }
+        ]
+      }
+    }
+  ],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:3502/favicon.ico",
+      "status": 404
+    },
+    {
+      "url": "http://127.0.0.1:3502/favicon.ico",
+      "status": 404
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--headless=new",
+    "--enable-automation",
+    "--remote-debugging-port=3503",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\pointer-resume-20261112\\desktop\\qa-1794484748429-69120",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 54740,
+    "browser": 85160
+  },
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/157.0.8103.50",
+    "revision": "@049750111b1e5c11565c792b2aeed5541f332bad",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+    "jsVersion": "15.7.112.23"
+  },
+  "pointer": {
+    "requests": [
+      {
+        "raw": true,
+        "active": true,
+        "at": 31654.80000001192
+      },
+      {
+        "raw": true,
+        "active": true,
+        "at": 32658.30000001192
+      },
+      {
+        "raw": true,
+        "active": true,
+        "at": 33812
+      },
+      {
+        "raw": true,
+        "active": true,
+        "at": 35203.90000000596
+      },
+      {
+        "raw": true,
+        "active": false,
+        "at": 40284.69999998808
+      },
+      {
+        "raw": true,
+        "active": true,
+        "at": 41373.59999999404
+      },
+      {
+        "raw": true,
+        "active": true,
+        "at": 41651.19999998808
+      },
+      {
+        "raw": true,
+        "active": true,
+        "at": 41772.90000000596
+      },
+      {
+        "raw": true,
+        "active": true,
+        "at": 42814.80000001192
+      },
+      {
+        "raw": true,
+        "active": true,
+        "at": 43135.30000001192
+      },
+      {
+        "raw": true,
+        "active": true,
+        "at": 43424.5
+      },
+      {
+        "raw": true,
+        "active": true,
+        "at": 43801.09999999404
+      },
+      {
+        "raw": true,
+        "active": true,
+        "at": 45446.19999998808
+      },
+      {
+        "raw": true,
+        "active": true,
+        "at": 46274.69999998808
+      },
+      {
+        "raw": true,
+        "active": false,
+        "at": 53628
+      }
+    ],
+    "events": [
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 32191.59999999404
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 32199.69999998808
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": true,
+        "at": 33412.5
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 33600.30000001192
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": true,
+        "at": 33821.59999999404
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 35159.69999998808
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": true,
+        "at": 35218.5
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 35273
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": true,
+        "at": 40288.69999998808
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 40528.59999999404
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": true,
+        "at": 41381.40000000596
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 41425.80000001192
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": true,
+        "at": 41660.90000000596
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 41758.09999999404
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 41844.80000001192
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 41844.90000000596
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": true,
+        "at": 42826.5
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 43105.5
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": true,
+        "at": 43437.30000001192
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 43766.69999998808
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 44098.40000000596
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 44098.59999999404
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": true,
+        "at": 45478.59999999404
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 45945.59999999404
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": true,
+        "at": 46286.80000001192
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 46367.19999998808
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": true,
+        "at": 53663.90000000596
+      },
+      {
+        "type": "pointerlockchange",
+        "locked": false,
+        "at": 53750.69999998808
+      }
+    ],
+    "failures": [],
+    "deny": false,
+    "delay": 0
+  },
+  "ok": true,
+  "cleanup": {
+    "profileRemoved": true
+  }
+}
